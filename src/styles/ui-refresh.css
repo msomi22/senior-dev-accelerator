@@ -81,7 +81,13 @@ body {
 .search-panel,
 .topic-library,
 .category-library,
-.progress-card {
+.progress-card,
+.filters,
+.problem-breadcrumb,
+.advanced-search-panel summary,
+.pagination,
+.progress-list,
+.category-hub {
   border-radius: 20px;
   padding: 18px;
 }
@@ -91,7 +97,11 @@ body {
 .scenario-box,
 .question-prompt,
 .learning-panel,
-.search-preview-card {
+.search-preview-card,
+.loading-card,
+.progress-row,
+.reference-box,
+.topic-orbit {
   border-radius: 14px;
   padding: 14px;
 }
@@ -114,14 +124,18 @@ body {
 .learning-panel p,
 .workspace-block p,
 .workspace-block li,
-.search-preview-body p {
+.search-preview-body p,
+.render-note,
+.pagination-summary,
+.pagination-status {
   line-height: 1.58;
   font-size: 0.96rem;
 }
 
 .question-card h3,
 .problem-workspace h3,
-.search-preview-body h3 {
+.search-preview-body h3,
+.empty-state h3 {
   font-size: 1.12rem;
   line-height: 1.35;
 }
@@ -171,7 +185,9 @@ select:focus-visible,
 }
 
 .topic-tab,
-.category-card {
+.category-card,
+.search-preview-card,
+.question-card {
   min-height: 124px;
   border-radius: 14px;
   padding: 14px;
@@ -202,8 +218,10 @@ select:focus-visible,
   .layout {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - var(--nav-height));
-    overflow: hidden;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding-top: 0;
   }
 
   .sidebar {
@@ -234,7 +252,7 @@ select:focus-visible,
   .page-wrap,
   .main-content {
     height: auto;
-    overflow-y: auto;
+    overflow: visible;
     padding: var(--page-padding) var(--page-padding) 64px;
   }
 
