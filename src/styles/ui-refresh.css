@@ -91,9 +91,15 @@ body {
 .scenario-box,
 .question-prompt,
 .learning-panel,
+.think-box,
+.visual-model,
+.reference-box,
+.answer-banner,
+.practice-mode-banner,
+.option-btn,
 .search-preview-card {
   border-radius: 14px;
-  padding: 14px;
+  padding: 12px 14px;
 }
 
 .hero-card h1,
@@ -124,6 +130,77 @@ body {
 .search-preview-body h3 {
   font-size: 1.12rem;
   line-height: 1.35;
+}
+
+.question-card,
+.problem-workspace {
+  gap: 10px;
+}
+
+.workspace-block,
+.scenario-box,
+.question-prompt,
+.learning-panel,
+.think-box,
+.visual-model,
+.reference-box {
+  border-radius: 12px;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.mini-label {
+  margin-bottom: 4px;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+}
+
+.question-text,
+.explain,
+.scenario-box p,
+.question-prompt p,
+.learning-panel p,
+.workspace-block p,
+.workspace-block li {
+  font-size: 0.94rem;
+  line-height: 1.52;
+}
+
+.pill,
+.tags span,
+.time-pill,
+.type-pill,
+.concept-row span {
+  padding: 5px 9px;
+  font-size: 0.74rem;
+}
+
+.mark {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+}
+
+.question-actions {
+  gap: 8px;
+}
+
+.practice-mode-banner,
+.answer-banner {
+  box-shadow: none;
+}
+
+.option-btn {
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pagination,
+.random-controls,
+.filters,
+.progress-row,
+.topic-tab,
+.category-card {
+  border-radius: 14px;
 }
 
 .btn,
@@ -202,8 +279,9 @@ select:focus-visible,
   .layout {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - var(--nav-height));
-    overflow: hidden;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
   }
 
   .sidebar {
@@ -234,7 +312,7 @@ select:focus-visible,
   .page-wrap,
   .main-content {
     height: auto;
-    overflow-y: auto;
+    overflow: visible;
     padding: var(--page-padding) var(--page-padding) 64px;
   }
 
