@@ -39,6 +39,64 @@ function TextBlock({ title, children, className = '' }) {
   );
 }
 
+function getFallbackVisualWalkthrough(question) {
+  if (question.visualWalkthrough) return question.visualWalkthrough;
+  if (question.topicId !== 'sliding-window') return null;
+
+  return {
+    title: 'Mental model walkthrough',
+    summary: question.visualExplanation || '[left ... right] expands → violation appears → left moves until valid → answer updates',
+    diagram: {
+      title: 'Pointer movement: preserve a valid active region',
+      frames: [
+        {
+          label: '1. Expand',
+          value: 'a  b  c  d  e\n[--------]',
+          note: 'Move right to include one new item.'
+        },
+        {
+          label: '2. Detect',
+          value: 'a  b  c  c  e\n[-----------]',
+          note: 'A duplicate/violation appears inside the active region.'
+        },
+        {
+          label: '3. Repair',
+          value: 'a  b  c  c  e\n      [----]',
+          note: 'Move left only until the invariant becomes true again.'
+        }
+      ]
+    },
+    steps: [
+      {
+        title: 'Track the active region',
+        body: 'The window is the only part of the input you are currently reasoning about.'
+      },
+      {
+        title: 'Protect the invariant',
+        body: 'Before updating the answer, make sure the active region is valid.'
+      },
+      {
+        title: 'Reuse previous work',
+        body: 'Move one pointer at a time instead of recomputing every candidate from scratch.'
+      }
+    ],
+    media: [
+      {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200&auto=format&fit=crop',
+        alt: 'Code on a screen representing algorithm state transitions',
+        caption: 'Visual clarity means tracking how state moves, not memorizing syntax.'
+      },
+      {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1200&auto=format&fit=crop',
+        alt: 'Developer workstation used for visual algorithm reasoning',
+        caption: 'A strong mental model lets the same pattern transfer across variants.'
+      }
+    ]
+  };
+}
+
 function VisualMedia({ item }) {
   if (!item?.src) return null;
 
@@ -84,7 +142,7 @@ function VisualDiagram({ diagram }) {
 }
 
 function VisualWalkthrough({ question }) {
-  const visual = question.visualWalkthrough;
+  const visual = getFallbackVisualWalkthrough(question);
   const hasStructuredVisual = Boolean(
     visual?.summary ||
     visual?.steps?.length ||
