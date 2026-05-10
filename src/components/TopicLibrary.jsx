@@ -23,6 +23,30 @@ function topicHaystack(topic) {
     .toLowerCase();
 }
 
+function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
+  if (completionFilter === 'completed') {
+    return `${visibleTopicCount} topics contain completed questions.`;
+  }
+
+  if (completionFilter === 'incomplete') {
+    return `${visibleTopicCount} topics contain incomplete questions.`;
+  }
+
+  return `${visibleTopicCount} of ${allTopicsCount} topics match the current filters.`;
+}
+
+function getCountLabel(count, completionFilter) {
+  if (completionFilter === 'completed') {
+    return `${count} completed`;
+  }
+
+  if (completionFilter === 'incomplete') {
+    return `${count} incomplete`;
+  }
+
+  return `${count} quiz`;
+}
+
 export default function TopicLibrary({
   topics,
   allTopicsCount,
@@ -31,7 +55,9 @@ export default function TopicLibrary({
   onSelect,
   difficulty,
   onDifficultyChange,
-  difficultyOptions
+  difficultyOptions,
+  completionFilter,
+  onCompletionFilterChange
 }) {
   const [query, setQuery] = useState('');
   const [sortBy, setSortBy] = useState('recommended');
@@ -106,7 +132,7 @@ export default function TopicLibrary({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedQuery, difficulty, sortBy]);
+  }, [debouncedQuery, difficulty, completionFilter, sortBy]);
 
   function goToPage(page) {
     setCurrentPage(Math.min(Math.max(page, 1), totalPages));
@@ -122,16 +148,20 @@ export default function TopicLibrary({
       <div className="library-head">
         <div>
           <p className="eyebrow">Topic library</p>
+
           <h2>Choose a topic</h2>
 
           <p>
-            {filteredTopics.length} of {allTopicsCount ?? topics.length}{' '}
-            topics match the current filters.
+            {getFilterSummary(
+              completionFilter,
+              filteredTopics.length,
+              allTopicsCount ?? topics.length
+            )}
           </p>
         </div>
       </div>
 
-      <div className="topic-library-controls">
+      <div className="topic-library-controls topic-library-controls-4">
         <label>
           <span>Search topics</span>
 
@@ -160,6 +190,21 @@ export default function TopicLibrary({
         </label>
 
         <label>
+          <span>Status</span>
+
+          <select
+            value={completionFilter}
+            onChange={(event) =>
+              onCompletionFilterChange(event.target.value)
+            }
+          >
+            <option value="all">All questions</option>
+            <option value="completed">Completed only</option>
+            <option value="incomplete">Incomplete only</option>
+          </select>
+        </label>
+
+        <label>
           <span>Sort</span>
 
           <select
@@ -183,17 +228,20 @@ export default function TopicLibrary({
             completed
           );
 
+          const fullyCompleted =
+            count > 0 && progress.done === count;
+
           return (
             <button
               key={topic.id}
               type="button"
               className={`topic-tab glass ${
                 selectedId === topic.id ? 'active' : ''
-              }`}
+              } ${fullyCompleted ? 'done' : ''}`}
               onClick={() => onSelect(topic.id)}
             >
               <span className="eyebrow">
-                {count} quiz
+                {getCountLabel(count, completionFilter)}
               </span>
 
               <strong>{topic.name}</strong>
@@ -203,7 +251,16 @@ export default function TopicLibrary({
               </small>
 
               {difficulty !== ALL ? (
-                <small>Filtered by: {difficulty}</small>
+                <small>Difficulty: {difficulty}</small>
+              ) : null}
+
+              {completionFilter !== 'all' ? (
+                <small>
+                  Status:{' '}
+                  {completionFilter === 'completed'
+                    ? 'Completed only'
+                    : 'Incomplete only'}
+                </small>
               ) : null}
 
               <em>{topic.description}</em>

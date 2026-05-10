@@ -24,6 +24,15 @@ function matchesDifficulty(question, difficulty) {
   return question.difficulty === difficulty;
 }
 
+function matchesCompletion(question, completed, completionFilter) {
+  const isCompleted = !!completed[question.id];
+
+  if (completionFilter === 'completed') return isCompleted;
+  if (completionFilter === 'incomplete') return !isCompleted;
+
+  return true;
+}
+
 export default function CategoryPage({ fixedCategoryId }) {
   const params = useParams();
   const categoryId = fixedCategoryId || params.categoryId;
@@ -40,6 +49,7 @@ export default function CategoryPage({ fixedCategoryId }) {
   );
 
   const [topicDifficulty, setTopicDifficulty] = useState(ALL);
+  const [completionFilter, setCompletionFilter] = useState('all');
 
   const [loadingTopics, setLoadingTopics] = useState(true);
   const [loadingBanks, setLoadingBanks] = useState(true);
@@ -133,9 +143,12 @@ export default function CategoryPage({ fixedCategoryId }) {
   const filteredTopics = useMemo(() => {
     return topicsWithBanks
       .map((topic) => {
-        const filteredQuestions = topic.questions.filter((question) =>
-          matchesDifficulty(question, topicDifficulty)
-        );
+        const filteredQuestions = topic.questions.filter((question) => {
+          return (
+            matchesDifficulty(question, topicDifficulty) &&
+            matchesCompletion(question, completed, completionFilter)
+          );
+        });
 
         return {
           ...topic,
@@ -144,7 +157,7 @@ export default function CategoryPage({ fixedCategoryId }) {
         };
       })
       .filter((topic) => topic.filteredCount > 0);
-  }, [topicsWithBanks, topicDifficulty]);
+  }, [topicsWithBanks, topicDifficulty, completionFilter, completed]);
 
   const selectedTopic = useMemo(() => {
     return filteredTopics.find((topic) => topic.id === selectedId);
@@ -205,6 +218,8 @@ export default function CategoryPage({ fixedCategoryId }) {
             difficulty={topicDifficulty}
             onDifficultyChange={setTopicDifficulty}
             difficultyOptions={topicDifficultyOptions}
+            completionFilter={completionFilter}
+            onCompletionFilterChange={setCompletionFilter}
           />
 
           {selectedTopic ? (
@@ -218,7 +233,7 @@ export default function CategoryPage({ fixedCategoryId }) {
           ) : (
             <div className="empty-state glass-lite">
               <h3>No questions found</h3>
-              <p>Try another difficulty or clear the topic filter.</p>
+              <p>Try another difficulty or status filter.</p>
             </div>
           )}
 

@@ -1408,3 +1408,79 @@
   color: var(--accent);
   font-weight: 950;
 }
+
+/* ==========================================================================
+   Completion Status UI
+   ========================================================================== */
+
+   .topic-library-controls-4 {
+    grid-template-columns:
+      minmax(260px, 1.6fr)
+      minmax(160px, 0.8fr)
+      minmax(160px, 0.8fr)
+      minmax(160px, 0.8fr);
+  }
+  
+  .question-card.done,
+  .search-preview-card.done,
+  .topic-tab.done {
+    border-color: rgba(52, 211, 153, 0.85);
+  
+    background:
+      linear-gradient(
+        135deg,
+        rgba(52, 211, 153, 0.16),
+        rgba(56, 189, 248, 0.06)
+      );
+  
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.35),
+      0 18px 45px rgba(52, 211, 153, 0.12);
+  }
+  
+  .question-card.done::before,
+  .search-preview-card.done::before {
+    content: "✓ Completed";
+  
+    width: fit-content;
+  
+    padding: 6px 10px;
+  
+    border-radius: 999px;
+  
+    background: rgba(52, 211, 153, 0.18);
+    color: var(--ok);
+  
+    font-size: 0.78rem;
+    font-weight: 950;
+  }
+  
+  .topic-tab.done::after {
+    content: "✓ Fully completed";
+  
+    width: fit-content;
+  
+    margin-top: 8px;
+  
+    padding: 6px 10px;
+  
+    border-radius: 999px;
+  
+    background: rgba(52, 211, 153, 0.18);
+    color: var(--ok);
+  
+    font-size: 0.78rem;
+    font-weight: 950;
+  }
+  
+  @media (max-width: 1100px) {
+    .topic-library-controls-4 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  @media (max-width: 760px) {
+    .topic-library-controls-4 {
+      grid-template-columns: 1fr;
+    }
+  }
