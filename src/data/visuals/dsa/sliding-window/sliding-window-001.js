@@ -1,101 +1,67 @@
+import firstWindowImage from '../../../../assets/visuals/sliding-window-001/k-day-volume-01-first-window.svg';
+import slideRightImage from '../../../../assets/visuals/sliding-window-001/k-day-volume-02-slide-right.svg';
+import bestWindowImage from '../../../../assets/visuals/sliding-window-001/k-day-volume-03-best-window.svg';
+
 const visualWalkthrough = {
-  title: 'Mental model walkthrough',
-  summary: '[left ... right] expands → violation appears → left moves until valid → answer updates',
+  title: 'Maximum Sum Subarray of Size K — visual walkthrough',
+  summary: 'Fixed-size sliding window: build the first k items once, then slide exactly one step at a time by subtracting the value leaving the window and adding the value entering it.',
   diagram: {
-    title: 'Pointer movement: preserve a valid active region',
+    title: 'State trace for nums = [2, 1, 5, 1, 3, 2], k = 3',
     frames: [
       {
-        label: '1. Start',
-        value: 'a  b  c  d  e\n^\nL,R',
-        note: 'Both pointers begin at the first candidate item.'
+        label: '1. First full window',
+        value: 'nums:      2   1   5   1   3   2\nwindow:   [2   1   5]\nsum:      2 + 1 + 5 = 8\nmaxSum:   8',
+        note: 'The first k values create the first valid candidate. No shrinking loop is needed because the size is fixed.'
       },
       {
-        label: '2. Expand right',
-        value: 'a  b  c  d  e\n[--]\nL  R',
-        note: 'Move right to include one new item and reuse previous state.'
+        label: '2. Slide right once',
+        value: 'leave: 2, enter: 1\nwindow:       [1   5   1]\nsum: 8 - 2 + 1 = 7\nmaxSum: max(8, 7) = 8',
+        note: 'A fixed-size window reuses the previous sum instead of recalculating all three values.'
       },
       {
-        label: '3. Keep growing',
-        value: 'a  b  c  d  e\n[-----]\nL     R',
-        note: 'The active region remains contiguous while state is valid.'
+        label: '3. Slide right again',
+        value: 'leave: 1, enter: 3\nwindow:           [5   1   3]\nsum: 7 - 1 + 3 = 9\nmaxSum: max(8, 9) = 9',
+        note: 'This is the best window so far, so maxSum changes from 8 to 9.'
       },
       {
-        label: '4. Violation appears',
-        value: 'a  b  c  c  e\n[--------]\nL        R',
-        note: 'A duplicate or invalid condition appears inside the window.'
-      },
-      {
-        label: '5. Pause answer update',
-        value: 'a  b  c  c  e\n[invalid]\nL        R',
-        note: 'Do not update the answer while the invariant is broken.'
-      },
-      {
-        label: '6. Move left',
-        value: 'a  b  c  c  e\n   [-----]\n   L     R',
-        note: 'Shrink from the left until the bad state is removed.'
-      },
-      {
-        label: '7. Valid again',
-        value: 'a  b  c  c  e\n      [--]\n      L  R',
-        note: 'The window is valid again, so it is safe to compare answers.'
-      },
-      {
-        label: '8. Continue scan',
-        value: 'a  b  c  c  e\n      [-----]\n      L     R',
-        note: 'Continue expanding and repairing until the input is exhausted.'
+        label: '4. Final slide',
+        value: 'leave: 5, enter: 2\nwindow:               [1   3   2]\nsum: 9 - 5 + 2 = 6\nmaxSum: max(9, 6) = 9',
+        note: 'The scan ends after the last size-k window. The answer remains 9.'
       }
     ]
   },
   steps: [
     {
-      title: 'Track the active region',
-      body: 'The window is the only part of the input you are currently reasoning about.'
+      title: 'Lock the window size',
+      body: 'This problem is not about growing until invalid. Every candidate must contain exactly k elements.'
     },
     {
-      title: 'Protect the invariant',
-      body: 'Before updating the answer, make sure the active region is valid.'
+      title: 'Carry the rolling sum',
+      body: 'When the window moves, one value exits and one value enters, so the new sum can be updated in constant time.'
     },
     {
-      title: 'Reuse previous work',
-      body: 'Move one pointer at a time instead of recomputing every candidate from scratch.'
+      title: 'Compare only valid windows',
+      body: 'Update maxSum only after the window has exactly k values. For the example, the best window is [5, 1, 3].'
     }
   ],
   media: [
     {
       type: 'image',
-      src: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200&auto=format&fit=crop',
-      alt: 'Code on a screen representing algorithm state transitions',
-      caption: 'Visual clarity means tracking how state moves, not memorizing syntax.'
+      src: firstWindowImage,
+      alt: 'First fixed-size window covering values 2, 1, and 5 with sum 8',
+      caption: 'Frame 1: build the first complete k-day window and initialize maxSum.'
     },
     {
       type: 'image',
-      src: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=1200&auto=format&fit=crop',
-      alt: 'Developer workstation used for visual algorithm reasoning',
-      caption: 'A strong mental model lets the same pattern transfer across variants.'
+      src: slideRightImage,
+      alt: 'Fixed-size window slides right by removing 2 and adding 1',
+      caption: 'Frame 2: slide the window by subtracting the outgoing value and adding the incoming value.'
     },
     {
       type: 'image',
-      src: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop',
-      alt: 'Laptop showing software engineering workspace',
-      caption: 'Trace one small example until pointer movement becomes obvious.'
-    },
-    {
-      type: 'image',
-      src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop',
-      alt: 'Data dashboard representing evolving state',
-      caption: 'Sliding windows are useful anywhere state changes over a moving range.'
-    },
-    {
-      type: 'image',
-      src: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop',
-      alt: 'Server racks representing production stream processing',
-      caption: 'The same mental model appears in streaming, rate limits, and observability.'
-    },
-    {
-      type: 'image',
-      src: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop',
-      alt: 'Developer learning with laptop and notes',
-      caption: 'Use visuals to explain the invariant before writing final code.'
+      src: bestWindowImage,
+      alt: 'Best fixed-size window covering values 5, 1, and 3 with sum 9',
+      caption: 'Frame 3: the best window becomes [5, 1, 3], producing maxSum = 9.'
     }
   ]
 };
