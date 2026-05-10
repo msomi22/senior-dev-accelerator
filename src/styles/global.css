@@ -1365,3 +1365,46 @@
   border-color: var(--accent);
   color: var(--accent);
 }
+
+
+.search-preview-card {
+  display: grid;
+  gap: 14px;
+
+  padding: 20px;
+
+  border-radius: 26px;
+
+  color: var(--text);
+
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.search-preview-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.65);
+  box-shadow: 0 18px 50px rgba(56, 189, 248, 0.12);
+}
+
+.search-preview-card.done {
+  outline: 2px solid var(--ok);
+}
+
+.search-preview-body h3 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+}
+
+.search-preview-body p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.open-focused-link {
+  color: var(--accent);
+  font-weight: 950;
+}

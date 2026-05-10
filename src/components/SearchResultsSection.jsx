@@ -1,7 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-import QuestionCard from './QuestionCard.jsx';
 import Button from './Button.jsx';
 
 import { searchConfig } from '../config/searchConfig.js';
@@ -29,9 +28,53 @@ function buildPageNumbers(currentPage, totalPages, windowSize) {
   return pages;
 }
 
-function SearchResultsSection({ results, completed, onToggle }) {
-  const navigate = useNavigate();
+function SearchResultPreview({ entry, completed }) {
+  const question = entry.question;
+  const questionId = question.id || entry.id;
 
+  return (
+    <NavLink
+      className={`search-preview-card glass-lite ${
+        completed ? 'done' : ''
+      }`}
+      to={`/problem/${encodeURIComponent(questionId)}`}
+      state={{
+        searchEntry: entry
+      }}
+    >
+      <div className="result-context">
+        <span>{entry.topicName}</span>
+
+        <small>
+          {entry.type} · {entry.difficulty}
+        </small>
+      </div>
+
+      <div className="search-preview-body">
+        <h3>{question.title}</h3>
+
+        <p>
+          {question.scenario ||
+            question.question ||
+            entry.snippet ||
+            'Open this problem in the focused workspace.'}
+        </p>
+      </div>
+
+      <div className="tags">
+        {question.tags?.slice(0, 5).map((tag) => (
+          <span key={tag}>#{tag}</span>
+        ))}
+      </div>
+
+      <strong className="open-focused-link">
+        Open focused workspace →
+      </strong>
+    </NavLink>
+  );
+}
+
+function SearchResultsSection({ results, completed }) {
   const [currentPage, setCurrentPage] = useState(1);
   const sectionRef = useRef(null);
 
@@ -73,33 +116,6 @@ function SearchResultsSection({ results, completed, onToggle }) {
     });
   }
 
-  function openProblem(entry) {
-    const questionId = entry?.question?.id || entry?.id;
-
-    if (!questionId) return;
-
-    navigate(`/problem/${encodeURIComponent(questionId)}`, {
-      state: {
-        searchEntry: entry
-      }
-    });
-  }
-
-  function handleSearchResultClick(event, entry) {
-    const interactive = event.target.closest(
-      'button, input, select, textarea, summary, details, [data-no-card-nav]'
-    );
-
-    if (interactive) return;
-
-    openProblem(entry);
-  }
-
-  function handleSearchResultKeyDown(event, entry) {
-    if (event.key !== 'Enter') return;
-    handleSearchResultClick(event, entry);
-  }
-
   if (!totalQuestions) {
     return (
       <section className="search-results-section" ref={sectionRef}>
@@ -124,37 +140,19 @@ function SearchResultsSection({ results, completed, onToggle }) {
           <h2>{totalQuestions} matching problems</h2>
 
           <p className="render-note">
-            Showing results {pageStart + 1}-{pageEnd}. Click anywhere
-            on a result card to open the focused workspace.
+            Showing results {pageStart + 1}-{pageEnd}. Click any result
+            to open the focused problem workspace.
           </p>
         </div>
       </div>
 
       <div className="card-grid compact-grid">
         {visibleResults.map((entry) => (
-          <article
+          <SearchResultPreview
             key={entry.id}
-            className="search-result-item clickable-problem-card"
-            role="button"
-            tabIndex={0}
-            onClick={(event) => handleSearchResultClick(event, entry)}
-            onKeyDown={(event) => handleSearchResultKeyDown(event, entry)}
-          >
-            <div className="result-context">
-              <span>{entry.topicName}</span>
-
-              <small>
-                {entry.type} · {entry.difficulty}
-              </small>
-            </div>
-
-            <QuestionCard
-              question={entry.question}
-              completed={!!completed[entry.question.id]}
-              onToggle={onToggle}
-              disableCardNavigation
-            />
-          </article>
+            entry={entry}
+            completed={!!completed[entry.question.id || entry.id]}
+          />
         ))}
       </div>
 
