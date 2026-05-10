@@ -1,0 +1,169 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+function formatMetricLabel(key) {
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (char) => char.toUpperCase());
+}
+
+function VisualFrame({ frame, index, active }) {
+  return (
+    <article className={`visual-frame cinematic-frame ${active ? 'active' : ''}`} data-frame-index={index}>
+      <div className="visual-frame-top">
+        {frame.label ? <span>{frame.label}</span> : null}
+      </div>
+
+      {frame.image ? (
+        <div className="visual-frame-image-shell">
+          <img
+            src={frame.image}
+            alt={frame.imageAlt || frame.label || 'Algorithm walkthrough frame'}
+            className="visual-frame-image"
+            loading="lazy"
+          />
+        </div>
+      ) : null}
+
+      {frame.value ? <code>{frame.value}</code> : null}
+
+      {frame.metrics ? (
+        <div className="visual-metrics-grid">
+          {Object.entries(frame.metrics).map(([key, value]) => (
+            <div className="visual-metric" key={key}>
+              <small>{formatMetricLabel(key)}</small>
+              <strong>{String(value)}</strong>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {frame.note ? <small>{frame.note}</small> : null}
+    </article>
+  );
+}
+
+function StateHud({ frame }) {
+  if (!frame?.metrics) return null;
+
+  return (
+    <div className="visual-state-hud" aria-label="Current algorithm state">
+      {Object.entries(frame.metrics).map(([key, value]) => (
+        <div key={key}>
+          <small>{formatMetricLabel(key)}</small>
+          <strong>{String(value)}</strong>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext, onTogglePlay }) {
+  if (frameCount <= 1) return null;
+
+  return (
+    <div className="visual-playback-controls" data-no-card-nav>
+      <button type="button" onClick={onPrevious} aria-label="Show previous visual frame">
+        ← Previous
+      </button>
+      <button type="button" className="primary-playback" onClick={onTogglePlay} aria-label={playing ? 'Pause visual playback' : 'Play visual walkthrough'}>
+        {playing ? 'Pause' : 'Play'}
+      </button>
+      <button type="button" onClick={onNext} aria-label="Show next visual frame">
+        Next →
+      </button>
+      <span>{activeIndex + 1} / {frameCount}</span>
+    </div>
+  );
+}
+
+function VisualRail({ diagram }) {
+  const frames = diagram?.frames || [];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const railRef = useRef(null);
+
+  const activeFrame = frames[activeIndex];
+  const progress = useMemo(() => {
+    if (frames.length <= 1) return 100;
+    return ((activeIndex + 1) / frames.length) * 100;
+  }, [activeIndex, frames.length]);
+
+  useEffect(() => {
+    setActiveIndex(0);
+    setPlaying(false);
+  }, [diagram]);
+
+  useEffect(() => {
+    if (!playing || frames.length <= 1) return undefined;
+
+    const timer = window.setInterval(() => {
+      setActiveIndex((current) => {
+        if (current >= frames.length - 1) {
+          setPlaying(false);
+          return current;
+        }
+        return current + 1;
+      });
+    }, diagram?.intervalMs || 2200);
+
+    return () => window.clearInterval(timer);
+  }, [playing, frames.length, diagram?.intervalMs]);
+
+  useEffect(() => {
+    const activeNode = railRef.current?.querySelector(`[data-frame-index="${activeIndex}"]`);
+    activeNode?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, [activeIndex]);
+
+  if (!frames.length) return null;
+
+  const goPrevious = () => {
+    setPlaying(false);
+    setActiveIndex((current) => Math.max(0, current - 1));
+  };
+
+  const goNext = () => {
+    setPlaying(false);
+    setActiveIndex((current) => Math.min(frames.length - 1, current + 1));
+  };
+
+  return (
+    <div className="visual-diagram" aria-label={diagram.title || 'Visual diagram'}>
+      <div className="visual-diagram-header">
+        {diagram.title ? <strong>{diagram.title}</strong> : null}
+        <div className="visual-progress-track" aria-hidden="true">
+          <span style={{ width: `${progress}%` }} />
+        </div>
+      </div>
+
+      <StateHud frame={activeFrame} />
+
+      <PlaybackControls
+        activeIndex={activeIndex}
+        frameCount={frames.length}
+        playing={playing}
+        onPrevious={goPrevious}
+        onNext={goNext}
+        onTogglePlay={() => setPlaying((current) => !current)}
+      />
+
+      <div className="visual-diagram-frames" ref={railRef}>
+        {frames.map((frame, index) => (
+          <button
+            type="button"
+            className="visual-frame-button"
+            key={`${frame.label || frame.value}-${index}`}
+            onClick={() => {
+              setPlaying(false);
+              setActiveIndex(index);
+            }}
+            data-no-card-nav
+          >
+            <VisualFrame frame={frame} index={index} active={index === activeIndex} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default VisualRail;
