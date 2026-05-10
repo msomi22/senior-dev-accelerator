@@ -2,7 +2,10 @@ const visualModules = import.meta.glob('../data/visuals/**/*.js');
 
 function buildCandidatePaths(questionId) {
   const segments = questionId.split('-');
-  if (segments.length < 3) return [];
+
+  if (segments.length < 2) {
+    return [];
+  }
 
   const topicFolder = segments.slice(0, -1).join('-');
 
