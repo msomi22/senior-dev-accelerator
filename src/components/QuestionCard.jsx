@@ -71,13 +71,40 @@ function VisualDiagram({ diagram }) {
   return (
     <div className="visual-diagram" aria-label={diagram.title || 'Visual diagram'}>
       {diagram.title ? <strong>{diagram.title}</strong> : null}
+
       <div className="visual-diagram-frames">
         {diagram.frames.map((frame, index) => (
-          <div className="visual-frame" key={`${frame.label || frame.value}-${index}`}>
-            {frame.label ? <span>{frame.label}</span> : null}
-            <code>{frame.value}</code>
+          <article className="visual-frame cinematic-frame" key={`${frame.label || frame.value}-${index}`}>
+            <div className="visual-frame-top">
+              {frame.label ? <span>{frame.label}</span> : null}
+            </div>
+
+            {frame.image ? (
+              <div className="visual-frame-image-shell">
+                <img
+                  src={frame.image}
+                  alt={frame.imageAlt || frame.label || 'Algorithm walkthrough frame'}
+                  className="visual-frame-image"
+                  loading="lazy"
+                />
+              </div>
+            ) : null}
+
+            {frame.value ? <code>{frame.value}</code> : null}
+
+            {frame.metrics ? (
+              <div className="visual-metrics-grid">
+                {Object.entries(frame.metrics).map(([key, value]) => (
+                  <div className="visual-metric" key={key}>
+                    <small>{key}</small>
+                    <strong>{String(value)}</strong>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+
             {frame.note ? <small>{frame.note}</small> : null}
-          </div>
+          </article>
         ))}
       </div>
     </div>
@@ -123,6 +150,17 @@ function VisualWalkthrough({ question }) {
       {visual?.summary ? <p className="visual-summary">{visual.summary}</p> : null}
 
       <VisualDiagram diagram={visual?.diagram} />
+
+      {visual?.productionMapping?.length ? (
+        <div className="production-mapping-panel">
+          <span className="mini-label">Production relevance</span>
+          <div className="production-mapping-grid">
+            {visual.productionMapping.map((item) => (
+              <div className="production-chip" key={item}>{item}</div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {visual?.steps?.length ? (
         <ol className="visual-step-list">
@@ -299,95 +337,6 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
           <span> Pause, reason through the approach, then reveal hints and the explanation journey.</span>
         </div>
       )}
-
-      <div className="question-actions">
-        <Button
-          className={showHints ? 'ghost active-action' : 'ghost'}
-          onClick={() => togglePanel('hints')}
-        >
-          {showHints ? '✓ Hints active' : 'Show hints'}
-        </Button>
-
-        <Button
-          className={showThinking ? 'ghost active-action' : 'ghost'}
-          onClick={() => togglePanel('thinking')}
-        >
-          {showThinking ? '✓ Thinking active' : primaryActionLabel}
-        </Button>
-
-        <Button
-          className={showSolution ? 'ghost active-action' : 'ghost'}
-          onClick={() => togglePanel('solution')}
-        >
-          {showSolution ? '✓ Explanation active' : 'Reveal full explanation'}
-        </Button>
-      </div>
-
-      {showHints ? <ListBlock title="Hints" items={question.hints} ordered /> : null}
-
-      {showThinking ? (
-        <section className="learning-panel thinking-panel">
-          <TextBlock title="Intuition">{question.intuition}</TextBlock>
-          <TextBlock title="Visual mental model" className="visual-model">
-            {question.visualExplanation}
-          </TextBlock>
-          <ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered />
-          <TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock>
-          <TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock>
-        </section>
-      ) : null}
-
-      {showSolution ? (
-        <section className="learning-panel explanation-panel">
-          <div className="solution-header">
-            <span className="mini-label">Final mental model</span>
-            <strong>{question.finalPattern}</strong>
-          </div>
-
-          <p>{question.explanation}</p>
-
-          <TextBlock title="Complexity / trade-off analysis">
-            {question.complexityAnalysis}
-          </TextBlock>
-
-          <div className="insight-grid">
-            <div>
-              <strong>Engineering insight</strong>
-              <p>{question.engineeringInsight}</p>
-            </div>
-            <div>
-              <strong>Production reality</strong>
-              <p>{question.productionReality}</p>
-            </div>
-            <div>
-              <strong>Common mistake</strong>
-              <p>{question.commonMistake}</p>
-            </div>
-            <div>
-              <strong>Follow-up question</strong>
-              <p>{question.followUpQuestion}</p>
-            </div>
-          </div>
-
-          <ListBlock title="Common mistakes" items={question.commonMistakes} />
-          <ListBlock title="Follow-up questions" items={question.followUpQuestions} ordered />
-
-          {question.relatedConcepts?.length ? (
-            <div className="concept-row">
-              {question.relatedConcepts.map(concept => <span key={concept}>{concept}</span>)}
-            </div>
-          ) : null}
-
-          {question.references?.length ? (
-            <details className="reference-box">
-              <summary>References</summary>
-              <ul>
-                {question.references.map(ref => <li key={ref}>{ref}</li>)}
-              </ul>
-            </details>
-          ) : null}
-        </section>
-      ) : null}
 
       <div className="tags">{question.tags?.map(t => <span key={t}>#{t}</span>)}</div>
     </article>
