@@ -122,14 +122,7 @@ function VisualRail({ diagram }) {
     if (!playing || frames.length <= 1) return undefined;
 
     const timer = window.setInterval(() => {
-      setActiveIndex((current) => {
-        if (current >= frames.length - 1) {
-          setPlaying(false);
-          return current;
-        }
-
-        return current + 1;
-      });
+      setActiveIndex((current) => (current + 1) % frames.length);
     }, diagram?.intervalMs || 2200);
 
     return () => window.clearInterval(timer);
@@ -149,12 +142,12 @@ function VisualRail({ diagram }) {
 
   const goPrevious = () => {
     setPlaying(false);
-    setActiveIndex((current) => Math.max(0, current - 1));
+    setActiveIndex((current) => (current - 1 + frames.length) % frames.length);
   };
 
   const goNext = () => {
     setPlaying(false);
-    setActiveIndex((current) => Math.min(frames.length - 1, current + 1));
+    setActiveIndex((current) => (current + 1) % frames.length);
   };
 
   return (
