@@ -1,4 +1,5 @@
 import { categoryManifest, topicManifest, getTopicsByCategory } from '../data/topicManifest.js';
+import { applyQuestionOverrides } from '../data/banks/question-overrides.js';
 
 const bankModules = import.meta.glob('../data/banks/**/*.js');
 
@@ -13,7 +14,6 @@ function getBankPath(topicId) {
 
   return path;
 }
-
 
 const bankCache = new Map();
 const countCache = new Map();
@@ -34,8 +34,13 @@ export function getTopicsForCategory(categoryId) {
 export async function loadTopicBank(topicId) {
   if (!bankCache.has(topicId)) {
     const path = getBankPath(topicId);
-    bankCache.set(topicId, bankModules[path]().then((module) => module.default));
+
+    bankCache.set(
+      topicId,
+      bankModules[path]().then((module) => applyQuestionOverrides(module.default))
+    );
   }
+
   return bankCache.get(topicId);
 }
 
@@ -110,7 +115,6 @@ export async function getRandomQuestion(filters = {}) {
 
   return { ...question, parentTopic: bank.name, category: bank.category };
 }
-
 
 export async function findQuestionById(questionId) {
   for (const topic of allTopics) {
