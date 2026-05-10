@@ -7,10 +7,23 @@ function formatMetricLabel(key) {
 }
 
 function VisualFrame({ frame, index, active }) {
+  const frameTypeClass = frame?.frameType
+    ? `frame-type-${frame.frameType}`
+    : 'frame-type-generic';
+
   return (
-    <article className={`visual-frame cinematic-frame ${active ? 'active' : ''}`} data-frame-index={index}>
+    <article
+      className={`visual-frame cinematic-frame ${frameTypeClass} ${active ? 'active' : ''}`}
+      data-frame-index={index}
+    >
       <div className="visual-frame-top">
-        {frame.label ? <span>{frame.label}</span> : null}
+        <div className="visual-frame-labels">
+          {frame.label ? <span>{frame.label}</span> : null}
+
+          {frame.frameType ? (
+            <em className="visual-frame-type-tag">{frame.frameType}</em>
+          ) : null}
+        </div>
       </div>
 
       {frame.image ? (
@@ -65,12 +78,20 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
       <button type="button" onClick={onPrevious} aria-label="Show previous visual frame">
         ← Previous
       </button>
-      <button type="button" className="primary-playback" onClick={onTogglePlay} aria-label={playing ? 'Pause visual playback' : 'Play visual walkthrough'}>
+
+      <button
+        type="button"
+        className="primary-playback"
+        onClick={onTogglePlay}
+        aria-label={playing ? 'Pause visual playback' : 'Play visual walkthrough'}
+      >
         {playing ? 'Pause' : 'Play'}
       </button>
+
       <button type="button" onClick={onNext} aria-label="Show next visual frame">
         Next →
       </button>
+
       <span>{activeIndex + 1} / {frameCount}</span>
     </div>
   );
@@ -83,8 +104,10 @@ function VisualRail({ diagram }) {
   const railRef = useRef(null);
 
   const activeFrame = frames[activeIndex];
+
   const progress = useMemo(() => {
     if (frames.length <= 1) return 100;
+
     return ((activeIndex + 1) / frames.length) * 100;
   }, [activeIndex, frames.length]);
 
@@ -102,6 +125,7 @@ function VisualRail({ diagram }) {
           setPlaying(false);
           return current;
         }
+
         return current + 1;
       });
     }, diagram?.intervalMs || 2200);
@@ -111,7 +135,12 @@ function VisualRail({ diagram }) {
 
   useEffect(() => {
     const activeNode = railRef.current?.querySelector(`[data-frame-index="${activeIndex}"]`);
-    activeNode?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+    activeNode?.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest'
+    });
   }, [activeIndex]);
 
   if (!frames.length) return null;
@@ -130,6 +159,7 @@ function VisualRail({ diagram }) {
     <div className="visual-diagram" aria-label={diagram.title || 'Visual diagram'}>
       <div className="visual-diagram-header">
         {diagram.title ? <strong>{diagram.title}</strong> : null}
+
         <div className="visual-progress-track" aria-hidden="true">
           <span style={{ width: `${progress}%` }} />
         </div>
