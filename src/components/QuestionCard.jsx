@@ -50,19 +50,44 @@ function getFallbackVisualWalkthrough(question) {
       title: 'Pointer movement: preserve a valid active region',
       frames: [
         {
-          label: '1. Expand',
-          value: 'a  b  c  d  e\n[--------]',
-          note: 'Move right to include one new item.'
+          label: '1. Start',
+          value: 'a  b  c  d  e\n^\nL,R',
+          note: 'Both pointers begin at the first candidate item.'
         },
         {
-          label: '2. Detect',
-          value: 'a  b  c  c  e\n[-----------]',
-          note: 'A duplicate/violation appears inside the active region.'
+          label: '2. Expand right',
+          value: 'a  b  c  d  e\n[--]\nL  R',
+          note: 'Move right to include one new item and reuse previous state.'
         },
         {
-          label: '3. Repair',
-          value: 'a  b  c  c  e\n      [----]',
-          note: 'Move left only until the invariant becomes true again.'
+          label: '3. Keep growing',
+          value: 'a  b  c  d  e\n[-----]\nL     R',
+          note: 'The active region remains contiguous while state is valid.'
+        },
+        {
+          label: '4. Violation appears',
+          value: 'a  b  c  c  e\n[--------]\nL        R',
+          note: 'A duplicate or invalid condition appears inside the window.'
+        },
+        {
+          label: '5. Pause answer update',
+          value: 'a  b  c  c  e\n[invalid]\nL        R',
+          note: 'Do not update the answer while the invariant is broken.'
+        },
+        {
+          label: '6. Move left',
+          value: 'a  b  c  c  e\n   [-----]\n   L     R',
+          note: 'Shrink from the left until the bad state is removed.'
+        },
+        {
+          label: '7. Valid again',
+          value: 'a  b  c  c  e\n      [--]\n      L  R',
+          note: 'The window is valid again, so it is safe to compare answers.'
+        },
+        {
+          label: '8. Continue scan',
+          value: 'a  b  c  c  e\n      [-----]\n      L     R',
+          note: 'Continue expanding and repairing until the input is exhausted.'
         }
       ]
     },
