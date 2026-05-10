@@ -1,7 +1,7 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button.jsx';
-import { getVisualWalkthroughForQuestion } from '../data/banks/visual-walkthroughs.js';
+import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
 
 const TYPE_LABELS = {
   coding: 'Coding reasoning',
@@ -38,10 +38,6 @@ function TextBlock({ title, children, className = '' }) {
       <p>{children}</p>
     </section>
   );
-}
-
-function getQuestionVisualWalkthrough(question) {
-  return question.visualWalkthrough || getVisualWalkthroughForQuestion(question.id);
 }
 
 function VisualMedia({ item }) {
@@ -89,7 +85,25 @@ function VisualDiagram({ diagram }) {
 }
 
 function VisualWalkthrough({ question }) {
-  const visual = getQuestionVisualWalkthrough(question);
+  const [loadedVisual, setLoadedVisual] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    setLoadedVisual(question.visualWalkthrough || null);
+
+    if (!question.visualWalkthrough && question?.id) {
+      loadVisualWalkthrough(question.id).then((visual) => {
+        if (active) setLoadedVisual(visual);
+      });
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [question.id, question.visualWalkthrough]);
+
+  const visual = question.visualWalkthrough || loadedVisual;
   const hasStructuredVisual = Boolean(
     visual?.summary ||
     visual?.steps?.length ||
