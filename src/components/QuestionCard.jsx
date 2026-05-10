@@ -39,6 +39,99 @@ function TextBlock({ title, children, className = '' }) {
   );
 }
 
+function VisualMedia({ item }) {
+  if (!item?.src) return null;
+
+  const type = item.type || (item.src.endsWith('.mp4') || item.src.endsWith('.webm') ? 'video' : 'image');
+
+  return (
+    <figure className={`visual-media visual-media-${type}`}>
+      {type === 'video' ? (
+        <video
+          src={item.src}
+          poster={item.poster}
+          controls={item.controls !== false}
+          muted={item.muted !== false}
+          loop={item.loop !== false}
+          playsInline
+        />
+      ) : (
+        <img src={item.src} alt={item.alt || item.caption || 'Visual explanation'} loading="lazy" />
+      )}
+
+      {item.caption ? <figcaption>{item.caption}</figcaption> : null}
+    </figure>
+  );
+}
+
+function VisualDiagram({ diagram }) {
+  if (!diagram?.frames?.length) return null;
+
+  return (
+    <div className="visual-diagram" aria-label={diagram.title || 'Visual diagram'}>
+      {diagram.title ? <strong>{diagram.title}</strong> : null}
+      <div className="visual-diagram-frames">
+        {diagram.frames.map((frame, index) => (
+          <div className="visual-frame" key={`${frame.label || frame.value}-${index}`}>
+            {frame.label ? <span>{frame.label}</span> : null}
+            <code>{frame.value}</code>
+            {frame.note ? <small>{frame.note}</small> : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VisualWalkthrough({ question }) {
+  const visual = question.visualWalkthrough;
+  const hasStructuredVisual = Boolean(
+    visual?.summary ||
+    visual?.steps?.length ||
+    visual?.media?.length ||
+    visual?.diagram?.frames?.length
+  );
+
+  if (!hasStructuredVisual && !question.visualExplanation) return null;
+
+  return (
+    <section className="learning-panel visual-walkthrough-panel">
+      <div className="visual-walkthrough-header">
+        <span className="mini-label">Visual clarity</span>
+        <strong>{visual?.title || 'Mental model walkthrough'}</strong>
+      </div>
+
+      {visual?.summary || question.visualExplanation ? (
+        <p className="visual-summary">{visual?.summary || question.visualExplanation}</p>
+      ) : null}
+
+      <VisualDiagram diagram={visual?.diagram} />
+
+      {visual?.steps?.length ? (
+        <ol className="visual-step-list">
+          {visual.steps.map((step, index) => (
+            <li key={`${step.title || step.body}-${index}`}>
+              <span>{index + 1}</span>
+              <div>
+                {step.title ? <strong>{step.title}</strong> : null}
+                {step.body ? <p>{step.body}</p> : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : null}
+
+      {visual?.media?.length ? (
+        <div className="visual-media-grid">
+          {visual.media.map((item, index) => (
+            <VisualMedia item={item} key={`${item.src}-${index}`} />
+          ))}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 function McqBlock({ question, selected, setSelected, showExplanation }) {
   if (!question.options?.length) return null;
   const answered = selected !== null;
@@ -86,9 +179,6 @@ function McqBlock({ question, selected, setSelected, showExplanation }) {
 
 function QuestionCard({ question, completed, onToggle, disableCardNavigation = false }) {
   const [selected, setSelected] = useState(null);
-  // const [showHints, setShowHints] = useState(false);
-  // const [showThinking, setShowThinking] = useState(false);
-  // const [showSolution, setShowSolution] = useState(false);
   const [activePanel, setActivePanel] = useState(null);
 
   const showHints = activePanel === 'hints';
@@ -101,13 +191,11 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
     );
   }
 
-
   const navigate = useNavigate();
 
   const isMcq = question.type === 'mcq' && question.options?.length;
   const typeLabel = TYPE_LABELS[question.type] || 'Learning problem';
   const typeClass = `type-${question.type || 'learning'}`;
-
 
   const openFocusedProblem = () => {
     if (!disableCardNavigation && question?.id) {
@@ -174,6 +262,8 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
       <TextBlock title="Problem" className="question-prompt">
         {question.question}
       </TextBlock>
+
+      <VisualWalkthrough question={question} />
 
       <TextBlock title="Think first" className="think-box">
         {question.starterThought}
