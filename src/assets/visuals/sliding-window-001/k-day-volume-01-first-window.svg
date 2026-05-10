@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+  <title id="title">First K-day transaction volume window</title>
+  <desc id="desc">A fixed-size sliding window over transaction volumes for days one through three.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#081827"/>
+      <stop offset="1" stop-color="#123047"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" rx="32" fill="url(#bg)"/>
+  <text x="48" y="62" fill="#eaf6ff" font-family="Inter, Arial" font-size="30" font-weight="800">K-day rolling transaction volume</text>
+  <text x="48" y="100" fill="#9fb7cc" font-family="Inter, Arial" font-size="18">Example: nums = [2, 1, 5, 1, 3, 2], k = 3</text>
+  <g transform="translate(58 160)">
+    <rect x="0" y="170" width="100" height="90" rx="18" fill="#10263a" stroke="#27445d"/>
+    <rect x="122" y="210" width="100" height="50" rx="18" fill="#10263a" stroke="#27445d"/>
+    <rect x="244" y="50" width="100" height="210" rx="18" fill="#10263a" stroke="#27445d"/>
+    <rect x="366" y="210" width="100" height="50" rx="18" fill="#10263a" stroke="#27445d"/>
+    <rect x="488" y="130" width="100" height="130" rx="18" fill="#10263a" stroke="#27445d"/>
+    <rect x="610" y="170" width="100" height="90" rx="18" fill="#10263a" stroke="#27445d"/>
+    <rect x="-14" y="32" width="372" height="252" rx="26" fill="none" stroke="url(#accent)" stroke-width="8"/>
+    <text x="37" y="152" fill="#eaf6ff" font-family="Inter, Arial" font-size="30" font-weight="800">2</text>
+    <text x="159" y="192" fill="#eaf6ff" font-family="Inter, Arial" font-size="30" font-weight="800">1</text>
+    <text x="281" y="32" fill="#eaf6ff" font-family="Inter, Arial" font-size="30" font-weight="800">5</text>
+    <text x="403" y="192" fill="#8aa0b3" font-family="Inter, Arial" font-size="30" font-weight="800">1</text>
+    <text x="525" y="112" fill="#8aa0b3" font-family="Inter, Arial" font-size="30" font-weight="800">3</text>
+    <text x="647" y="152" fill="#8aa0b3" font-family="Inter, Arial" font-size="30" font-weight="800">2</text>
+    <text x="18" y="312" fill="#9fb7cc" font-family="Inter, Arial" font-size="16">Day 1</text>
+    <text x="140" y="312" fill="#9fb7cc" font-family="Inter, Arial" font-size="16">Day 2</text>
+    <text x="262" y="312" fill="#9fb7cc" font-family="Inter, Arial" font-size="16">Day 3</text>
+  </g>
+  <rect x="54" y="430" width="792" height="52" rx="18" fill="#0d2234" stroke="#28435b"/>
+  <text x="80" y="463" fill="#eaf6ff" font-family="Inter, Arial" font-size="20" font-weight="700">First full window: 2 + 1 + 5 = 8. This becomes the first valid maxSum.</text>
+</svg>
