@@ -107,7 +107,10 @@ body {
 }
 
 .hero-card h1,
-.page-title h1 {
+.page-title h1,
+.library-head h2,
+.section-head h2,
+.search-header h2 {
   font-size: clamp(1.65rem, 3vw, 2.3rem);
   line-height: 1.15;
   margin-bottom: 10px;
@@ -127,7 +130,11 @@ body {
 .search-preview-body p,
 .render-note,
 .pagination-summary,
-.pagination-status {
+.pagination-status,
+.library-head p,
+.search-status,
+.category-card p,
+.topic-tab em {
   line-height: 1.58;
   font-size: 0.96rem;
 }
@@ -145,6 +152,14 @@ body {
 .page-btn,
 .clear-search {
   font-weight: 700;
+}
+
+input,
+select,
+.option-btn,
+.random-controls .btn,
+.filters .btn {
+  min-height: 42px;
 }
 
 .btn:focus-visible,
@@ -201,6 +216,32 @@ select:focus-visible,
 .category-library-controls {
   gap: 10px;
   margin-bottom: 12px;
+}
+
+.topic-library-controls label,
+.category-library-controls label,
+.search-field {
+  gap: 6px;
+}
+
+.topic-library-controls label,
+.category-library-controls label span,
+.search-field span {
+  font-size: 0.76rem;
+}
+
+.topic-library,
+.topic-section,
+.category-library,
+.search-panel,
+.progress-card,
+.learning-map,
+.page-title {
+  gap: 14px;
+}
+
+.pagination {
+  margin-top: 12px;
 }
 
 .topic-picker,
