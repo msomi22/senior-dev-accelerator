@@ -47,36 +47,59 @@ export default function RandomQuestionPage() {
   const toggle = (id) => setCompleted(storageService.toggleComplete(id));
 
   return (
-    <>
+    <main className="page random-page">
       <section className="page-title">
         <p className="eyebrow">Random engine</p>
+  
         <h1>Train under uncertainty</h1>
-        <p>The random engine works with any number of categories. Choose all categories, one category, or one exact topic.</p>
+  
+        <p>
+          The random engine works with any number of categories.
+          Choose all categories, one category, or one exact topic.
+        </p>
       </section>
-
-      <div className="filters glass">
-        <select value={filters.category} onChange={(event) => updateCategory(event.target.value)}>
+  
+      <div className="filters glass random-controls">
+        <select
+          value={filters.category}
+          onChange={(event) => updateCategory(event.target.value)}
+        >
           <option value="all">All categories</option>
+  
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
             </option>
           ))}
         </select>
-
-        <select value={filters.topicId} onChange={(event) => updateTopic(event.target.value)}>
+  
+        <select
+          value={filters.topicId}
+          onChange={(event) => updateTopic(event.target.value)}
+        >
           <option value="">Any subtopic</option>
-          {topics.map((topic) => <option key={topic.id} value={topic.id}>{topic.name}</option>)}
+  
+          {topics.map((topic) => (
+            <option key={topic.id} value={topic.id}>
+              {topic.name}
+            </option>
+          ))}
         </select>
-
-        <Button onClick={() => pickQuestion(filters, true)}>Give me a question</Button>
+  
+        <Button onClick={() => pickQuestion(filters, true)}>
+          Give me a question
+        </Button>
       </div>
-
+  
       {loading || !q ? (
         <LoadingCard label="Choosing a question…" />
       ) : (
-        <QuestionCard question={q} completed={!!completed[q.id]} onToggle={toggle} />
+        <QuestionCard
+          question={q}
+          completed={!!completed[q.id]}
+          onToggle={toggle}
+        />
       )}
-    </>
+    </main>
   );
 }

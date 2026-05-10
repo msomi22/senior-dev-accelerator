@@ -1,146 +1,269 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+
 import TopicSection from '../components/TopicSection.jsx';
 import TopicLibrary from '../components/TopicLibrary.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
 import SearchPanel from '../components/SearchPanel.jsx';
 import SearchResultsSection from '../components/SearchResultsSection.jsx';
+
 import { storageService } from '../services/storageService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { useQuestionSearch } from '../hooks/useQuestionSearch.js';
-import { getCategory, getTopicsForCategory, loadTopicBank } from '../services/questionBankService.js';
+
+import {
+  getCategory,
+  getTopicsForCategory,
+  loadTopicBank
+} from '../services/questionBankService.js';
+
+const ALL = 'all';
+
+function matchesDifficulty(question, difficulty) {
+  if (difficulty === ALL) return true;
+  return question.difficulty === difficulty;
+}
 
 export default function CategoryPage({ fixedCategoryId }) {
   const params = useParams();
   const categoryId = fixedCategoryId || params.categoryId;
   const category = getCategory(categoryId);
+
   const pref = usePreferences();
 
   const [topics, setTopics] = useState([]);
+  const [topicBanks, setTopicBanks] = useState({});
   const [completed, setCompleted] = useState(pref.completed);
-  const [selectedId, setSelectedId] = useState(pref.selectedTopics?.[categoryId] || '');
-  const [topic, setTopic] = useState(null);
+
+  const [selectedId, setSelectedId] = useState(
+    pref.selectedTopics?.[categoryId] || ''
+  );
+
+  const [topicDifficulty, setTopicDifficulty] = useState(ALL);
+
   const [loadingTopics, setLoadingTopics] = useState(true);
-  const [loadingTopic, setLoadingTopic] = useState(true);
+  const [loadingBanks, setLoadingBanks] = useState(true);
 
   useEffect(() => {
     let alive = true;
+
     setLoadingTopics(true);
+    setLoadingBanks(true);
 
     Promise.resolve(getTopicsForCategory(categoryId))
-      .then((nextTopics) => {
+      .then(async (nextTopics) => {
         if (!alive) return;
+
         setTopics(nextTopics);
 
-        const storedSelectedId = storageService.getSelectedTopic?.(categoryId) || selectedId;
-        const stillValid = nextTopics.some((topicMeta) => topicMeta.id === storedSelectedId);
-        if (!storedSelectedId || !stillValid) {
-          setSelectedId(nextTopics[0]?.id || '');
-        } else {
-          setSelectedId(storedSelectedId);
-        }
+        const storedSelectedId =
+          storageService.getSelectedTopic?.(categoryId) || selectedId;
+
+        const validSelectedId = nextTopics.some(
+          (topic) => topic.id === storedSelectedId
+        )
+          ? storedSelectedId
+          : nextTopics[0]?.id || '';
+
+        setSelectedId(validSelectedId);
+
+        const loadedBanks = await Promise.all(
+          nextTopics.map(async (topic) => {
+            const bank = await loadTopicBank(topic.id);
+            return [topic.id, bank];
+          })
+        );
+
+        if (!alive) return;
+
+        setTopicBanks(Object.fromEntries(loadedBanks));
       })
       .finally(() => {
-        if (alive) setLoadingTopics(false);
+        if (!alive) return;
+
+        setLoadingTopics(false);
+        setLoadingBanks(false);
       });
 
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [categoryId]);
 
   useEffect(() => {
-    if (!selectedId) return;
-
-    let alive = true;
-    setLoadingTopic(true);
-
-    loadTopicBank(selectedId)
-      .then((bank) => {
-        if (alive) setTopic(bank);
-      })
-      .finally(() => {
-        if (alive) setLoadingTopic(false);
-      });
-
-    storageService.setSelectedTopic(categoryId, selectedId);
-
-    return () => { alive = false; };
+    if (selectedId) {
+      storageService.setSelectedTopic(categoryId, selectedId);
+    }
   }, [categoryId, selectedId]);
+
+  const topicsWithBanks = useMemo(() => {
+    return topics.map((topic) => {
+      const bank = topicBanks[topic.id];
+
+      return {
+        ...topic,
+        questions: bank?.questions || [],
+        count: bank?.questions?.length || 0
+      };
+    });
+  }, [topics, topicBanks]);
+
+  const topicDifficultyOptions = useMemo(() => {
+    const order = {
+      Easy: 1,
+      Medium: 2,
+      Hard: 3
+    };
+
+    const set = new Set();
+
+    topicsWithBanks.forEach((topic) => {
+      topic.questions.forEach((question) => {
+        if (question.difficulty) {
+          set.add(question.difficulty);
+        }
+      });
+    });
+
+    return Array.from(set).sort(
+      (a, b) => (order[a] || 99) - (order[b] || 99)
+    );
+  }, [topicsWithBanks]);
+
+  const filteredTopics = useMemo(() => {
+    return topicsWithBanks
+      .map((topic) => {
+        const filteredQuestions = topic.questions.filter((question) =>
+          matchesDifficulty(question, topicDifficulty)
+        );
+
+        return {
+          ...topic,
+          filteredQuestions,
+          filteredCount: filteredQuestions.length
+        };
+      })
+      .filter((topic) => topic.filteredCount > 0);
+  }, [topicsWithBanks, topicDifficulty]);
+
+  const selectedTopic = useMemo(() => {
+    return filteredTopics.find((topic) => topic.id === selectedId);
+  }, [filteredTopics, selectedId]);
+
+  useEffect(() => {
+    if (!filteredTopics.length) return;
+
+    const selectedStillVisible = filteredTopics.some(
+      (topic) => topic.id === selectedId
+    );
+
+    if (!selectedStillVisible) {
+      setSelectedId(filteredTopics[0].id);
+    }
+  }, [filteredTopics, selectedId]);
 
   const searchTopics = useMemo(() => topics, [topics]);
   const search = useQuestionSearch(searchTopics);
 
-  const toggle = (id) => setCompleted(storageService.toggleComplete(id));
+  const toggle = (id) => {
+    setCompleted(storageService.toggleComplete(id));
+  };
 
   if (!category) {
     return (
-      <section className="hero-card glass">
-        <p className="eyebrow">Unknown category</p>
-        <h1>Category not found</h1>
-        <p>This category does not exist in the category manifest.</p>
-        <Link className="btn" to="/">Go back home</Link>
-      </section>
+      <main className="page category-page">
+        <section className="hero-card glass">
+          <p className="eyebrow">Unknown category</p>
+          <h1>Category not found</h1>
+          <p>This category does not exist in the category manifest.</p>
+          <Link className="btn" to="/">
+            Go back home
+          </Link>
+        </section>
+      </main>
     );
   }
 
   return (
-    <>
+    <main className="page category-page">
       <section className="page-title">
         <p className="eyebrow">{category.shortName || category.name}</p>
         <h1>{category.name}</h1>
         <p>{category.description}</p>
       </section>
 
-      {loadingTopics ? (
+      {loadingTopics || loadingBanks ? (
         <LoadingCard label="Loading category topics…" />
       ) : (
         <>
-          <SearchPanel
-            topics={topics}
-            query={search.query}
-            topicId={search.topicId}
-            difficulty={search.difficulty}
-            type={search.type}
-            onQueryChange={search.setQuery}
-            onTopicChange={search.setTopicId}
-            onDifficultyChange={search.setDifficulty}
-            onTypeChange={search.setType}
-            onClear={search.clearSearch}
-            isActive={search.isActive}
-            isIndexing={search.isIndexing}
-            resultCount={search.results.length}
+          <TopicLibrary
+            topics={filteredTopics}
+            allTopicsCount={topics.length}
+            selectedId={selectedId}
+            completed={completed}
+            onSelect={setSelectedId}
+            difficulty={topicDifficulty}
+            onDifficultyChange={setTopicDifficulty}
+            difficultyOptions={topicDifficultyOptions}
           />
 
-          {search.isActive ? (
-            search.isIndexing ? (
-              <LoadingCard label="Building search index…" />
-            ) : (
-              <SearchResultsSection
-                results={search.results}
-                completed={completed}
-                onToggle={toggle}
-              />
-            )
+          {selectedTopic ? (
+            <TopicSection
+              topic={selectedTopic}
+              questions={selectedTopic.filteredQuestions}
+              completed={completed}
+              onToggle={toggle}
+              activeDifficulty={topicDifficulty}
+            />
           ) : (
-            <>
-              <TopicLibrary
-                topics={topics}
-                selectedId={selectedId}
-                completed={completed}
-                onSelect={setSelectedId}
-              />
-              {loadingTopic ? (
-                <LoadingCard label="Loading topic bank…" />
+            <div className="empty-state glass-lite">
+              <h3>No questions found</h3>
+              <p>Try another difficulty or clear the topic filter.</p>
+            </div>
+          )}
+
+          <details
+            className="advanced-search-panel glass-lite"
+            open={search.isActive}
+          >
+            <summary>
+              <span>Advanced problem search</span>
+              <small>
+                Search across titles, scenarios, tags, explanations, and
+                production notes.
+              </small>
+            </summary>
+
+            <SearchPanel
+              topics={topics}
+              query={search.query}
+              topicId={search.topicId}
+              difficulty={search.difficulty}
+              type={search.type}
+              onQueryChange={search.setQuery}
+              onTopicChange={search.setTopicId}
+              onDifficultyChange={search.setDifficulty}
+              onTypeChange={search.setType}
+              onClear={search.clearSearch}
+              isActive={search.isActive}
+              isIndexing={search.isIndexing}
+              resultCount={search.results.length}
+            />
+
+            {search.isActive ? (
+              search.isIndexing ? (
+                <LoadingCard label="Building search index…" />
               ) : (
-                <TopicSection
-                  topic={topic}
+                <SearchResultsSection
+                  results={search.results}
                   completed={completed}
                   onToggle={toggle}
                 />
-              )}
-            </>
-          )}
+              )
+            ) : null}
+          </details>
         </>
       )}
-    </>
+    </main>
   );
 }
