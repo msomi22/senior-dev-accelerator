@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import {
   getAllTopicsWithCounts,
   progressSummary,
@@ -6,7 +7,6 @@ import {
 } from '../services/questionBankService.js';
 
 import { usePreferences } from '../hooks/usePreferences.js';
-
 import ProgressChart from '../components/ProgressChart.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
 
@@ -47,16 +47,15 @@ export default function ProgressPage() {
   }, [completed]);
 
   return (
-    <div className="page progress-page">
-
-      <section className="page-title">
+    <main className="page progress-page">
+      <section className="page-title glass">
         <p className="eyebrow">Browser storage</p>
 
         <h1>Your progress</h1>
 
         <p>
-          Progress totals are now computed from the real
-          quiz banks, not hardcoded manifest counts.
+          Progress totals are computed from the real quiz banks,
+          not hardcoded manifest counts.
         </p>
       </section>
 
@@ -65,7 +64,7 @@ export default function ProgressPage() {
       {loading ? (
         <LoadingCard label="Calculating real progress counts…" />
       ) : (
-        <div className="progress-list">
+        <section className="progress-list">
           {topics.map((topic) => {
             const p = topicProgress(topic, completed);
 
@@ -88,9 +87,8 @@ export default function ProgressPage() {
               </div>
             );
           })}
-        </div>
+        </section>
       )}
-
-    </div>
+    </main>
   );
 }

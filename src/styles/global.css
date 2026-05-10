@@ -1887,8 +1887,176 @@ meter {
      }
    }
 
+  /* ==========================================================================
+   Progress Page Alignment
+   ========================================================================== */
+
+.progress-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.progress-page .page-title,
+.progress-page .progress-card,
+.progress-page .progress-list {
+  width: 100%;
+}
+
+.progress-page .progress-card {
+  justify-content: flex-start;
+}
+
+.progress-page .progress-list {
+  display: grid;
+  gap: 12px;
+}
+
+
+
+
+
+
+/* ==========================================================================
+   MAIN CONTENT WIDTH FIX
+   --------------------------------------------------------------------------
+   One source of truth for all page widths.
+   ========================================================================== */
+
+   .main-content,
+   .page-wrap {
+     width: 100%;
+     max-width: none;
+   
+     padding: 28px;
+   
+     overflow-y: auto;
+     overflow-x: hidden;
+   }
+   
+   /* Every page gets the same usable width */
+   .page,
+   .page-title,
+   .hero-card,
+   .topic-section,
+   .learning-map,
+   .progress-page,
+   .category-library,
+   .topic-library,
+   .search-panel,
+   .problem-detail-shell {
+     width: 100%;
+     max-width: none;
+   }
+   
+   /* Progress children should not shrink */
+   .progress-page .progress-card,
+   .progress-page .progress-list,
+   .progress-page .progress-row {
+     width: 100%;
+     max-width: none;
+   }
+   
+   /* Keep the progress chart aligned left and full-width */
+   .progress-card {
+     justify-content: flex-start;
+   }
+   
+   /* Prevent old centering rules from winning */
    .progress-page {
-    width: 100%;
-    max-width: 1180px;
-    margin: 0 auto;
-  }
+     margin: 0 !important;
+   }
+
+
+
+/* ==========================================================================
+   FINAL DASHBOARD LAYOUT OVERRIDE
+   Force one consistent canvas for every page
+   ========================================================================== */
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-shell {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.nav,
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 82px;
+  z-index: 1000;
+}
+
+.layout {
+  width: 100%;
+  max-width: none;
+
+  height: calc(100vh - 82px);
+
+  margin: 82px 0 0 0;
+  padding: 0;
+  gap: 0;
+
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+
+  overflow: hidden;
+}
+
+.sidebar {
+  position: relative;
+  top: auto;
+
+  width: 280px;
+  height: 100%;
+
+  border-radius: 0;
+
+  overflow-y: auto;
+}
+
+.page-wrap,
+.main-content {
+  width: 100%;
+  max-width: none;
+
+  height: 100%;
+
+  padding: 28px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.page,
+.page-wrap > *,
+.main-content > * {
+  width: 100%;
+  max-width: none;
+}
+
+.progress-page,
+.progress-page > *,
+.progress-page .page-title,
+.progress-page .progress-card,
+.progress-page .progress-list,
+.progress-page .progress-row {
+  width: 100%;
+  max-width: none;
+}
+
+.progress-card {
+  justify-content: flex-start;
+}

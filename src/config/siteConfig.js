@@ -5,7 +5,7 @@ export const siteConfig = {
   paypal: {
     enabled: import.meta.env.VITE_PAYPAL_ENABLED !== 'false',
     label: import.meta.env.VITE_PAYPAL_LABEL || '☕ Buy me a coffee',
-    hostedButtonId: import.meta.env.VITE_PAYPAL_HOSTED_BUTTON_ID || 'REPLACE_WITH_YOUR_PAYPAL_HOSTED_BUTTON_ID',
+    hostedButtonId: import.meta.env.VITE_PAYPAL_HOSTED_BUTTON_ID || 'GFP9HAYP9P5NY',
     currencyCode: import.meta.env.VITE_PAYPAL_CURRENCY || 'USD'
   }
 };
