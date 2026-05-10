@@ -37,20 +37,22 @@ function VisualFrame({ frame, index, active }) {
         </div>
       ) : null}
 
-      {frame.value ? <code>{frame.value}</code> : null}
+      <div className="visual-frame-side">
+        {frame.value ? <code>{frame.value}</code> : null}
 
-      {frame.metrics ? (
-        <div className="visual-metrics-grid">
-          {Object.entries(frame.metrics).map(([key, value]) => (
-            <div className="visual-metric" key={key}>
-              <small>{formatMetricLabel(key)}</small>
-              <strong>{String(value)}</strong>
-            </div>
-          ))}
-        </div>
-      ) : null}
+        {frame.metrics ? (
+          <div className="visual-metrics-grid">
+            {Object.entries(frame.metrics).map(([key, value]) => (
+              <div className="visual-metric" key={key}>
+                <small>{formatMetricLabel(key)}</small>
+                <strong>{String(value)}</strong>
+              </div>
+            ))}
+          </div>
+        ) : null}
 
-      {frame.note ? <small>{frame.note}</small> : null}
+        {frame.note ? <small>{frame.note}</small> : null}
+      </div>
     </article>
   );
 }
@@ -75,24 +77,24 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
 
   return (
     <div className="visual-playback-controls" data-no-card-nav>
-      <button type="button" onClick={onPrevious} aria-label="Show previous visual frame">
-        ← Previous
+      <button type="button" onClick={onPrevious} aria-label="Show previous walkthrough step">
+        ← Prev step
       </button>
 
       <button
         type="button"
         className="primary-playback"
         onClick={onTogglePlay}
-        aria-label={playing ? 'Pause visual playback' : 'Play visual walkthrough'}
+        aria-label={playing ? 'Pause automatic walkthrough' : 'Start automatic walkthrough'}
       >
-        {playing ? 'Pause' : 'Play'}
+        {playing ? 'Pause auto' : 'Auto walk'}
       </button>
 
-      <button type="button" onClick={onNext} aria-label="Show next visual frame">
-        Next →
+      <button type="button" onClick={onNext} aria-label="Show next walkthrough step">
+        Next step →
       </button>
 
-      <span>{activeIndex + 1} / {frameCount}</span>
+      <span>Step {activeIndex + 1} of {frameCount}</span>
     </div>
   );
 }
