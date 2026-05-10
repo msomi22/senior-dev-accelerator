@@ -70,7 +70,8 @@ body {
 }
 
 .page {
-  max-width: 1240px;
+  max-width: none;
+  margin: 0;
   gap: 14px;
 }
 
@@ -191,20 +192,6 @@ select:focus-visible,
 .card-grid,
 .category-grid {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-/* ==========================================================================
-   Direct app-wide compact refresh
-   Dashboard was compact because Home is not wrapped by .page. Category/DSA,
-   Progress, Random, and Problem pages are wrapped by .page, so they were being
-   centered/narrowed and kept old bulky nested panels. Keep the PR #1 values but
-   apply the same density to every route and nested learning block.
-   ========================================================================== */
-
-.page {
-  max-width: none;
-  margin: 0;
-  gap: 14px;
 }
 
 .category-page,
@@ -524,9 +511,13 @@ select {
     border-bottom: 1px solid var(--line);
     padding: 8px var(--page-padding);
     gap: 8px;
-    background: rgba(7, 17, 31, 0.65);
+    background: rgba(7, 17, 31, 0.82);
     box-shadow: none;
     scrollbar-width: thin;
+  }
+
+  .sidebar .eyebrow {
+    display: none;
   }
 
   .sidebar a,
@@ -558,24 +549,22 @@ select {
 }
 
 @media (max-width: 760px) {
+  :root {
+    --nav-height: 56px;
+    --page-padding: 12px;
+  }
+
+  html,
+  body,
+  #root {
+    height: auto;
+    min-height: 100%;
+  }
+
   body {
     overflow-x: hidden;
     overflow-y: auto;
-  }
-
-  .nav,
-  .navbar {
-    position: sticky;
-    padding: 10px 12px;
-    gap: 8px;
-  }
-
-  .nav nav {
-    width: 100%;
-    gap: 10px;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 2px;
+    font-size: 14px;
   }
 
   .app-shell,
@@ -587,13 +576,115 @@ select {
     min-height: 0;
   }
 
+  .nav,
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1200;
+    height: var(--nav-height);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .brand {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .brand span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.96rem;
+  }
+
+  .logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    flex: 0 0 auto;
+  }
+
+  .nav nav {
+    display: none;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
   .layout {
+    display: flex;
+    flex-direction: column;
     padding-top: 0;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: var(--nav-height);
+    z-index: 1100;
+    width: 100%;
+    height: 52px;
+    min-height: 52px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 7px 10px;
+    border-radius: 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: rgba(7, 17, 31, 0.96);
+    box-shadow: none;
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar .eyebrow,
+  .sidebar .coffee,
+  .sidebar form,
+  .sidebar .coffee-btn {
+    display: none !important;
+  }
+
+  .sidebar a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  .sidebar a.active {
+    border: 1px solid rgba(56, 189, 248, 0.6);
+    background: rgba(56, 189, 248, 0.16);
   }
 
   .page-wrap,
   .main-content {
-    padding: 12px 12px 60px;
+    padding: 12px 12px 52px;
+  }
+
+  .page {
+    width: 100%;
+    max-width: none;
+    gap: 12px;
   }
 
   .hero-card,
@@ -610,12 +701,41 @@ select {
 
   .hero-card h1,
   .page-title h1 {
-    font-size: clamp(1.55rem, 7vw, 2.05rem);
+    font-size: clamp(1.45rem, 6.5vw, 1.9rem);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
   }
 
-  .hero-actions,
-  .question-actions {
-    gap: 6px;
+  .hero-card p,
+  .page-title p,
+  .section-head p,
+  .search-header p,
+  .question-text,
+  .explain,
+  .scenario-box p,
+  .question-prompt p,
+  .learning-panel p,
+  .workspace-block p,
+  .workspace-block li,
+  .search-preview-body p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    margin-bottom: 8px;
+  }
+
+  .section-head,
+  .library-head,
+  .search-header,
+  .pagination,
+  .q-top {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .dashboard-grid,
@@ -630,32 +750,65 @@ select {
     grid-template-columns: 1fr;
   }
 
+  .topic-tab,
+  .category-card,
+  .search-preview-card {
+    min-height: auto;
+    padding: 12px;
+  }
+
+  .question-card {
+    padding: 11px;
+    gap: 9px;
+  }
+
+  .workspace-block,
+  .scenario-box,
+  .question-prompt,
+  .learning-panel,
+  .think-box,
+  .visual-model,
+  .practice-mode-banner,
+  .answer-banner,
+  .reference-box,
+  .option-btn {
+    padding: 9px 10px;
+  }
+
+  .meta-strip,
+  .tags,
+  .concept-row,
+  .question-actions,
+  .hero-actions,
+  .pagination-controls {
+    gap: 6px;
+  }
+
+  .mark,
+  .btn,
+  .page-btn,
+  .clear-search,
+  .option-btn,
+  input,
+  select {
+    min-height: 40px;
+  }
+
+  input,
+  select {
+    font-size: 0.9rem;
+  }
+
   .progress-card {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .random-controls,
-  .filters {
-    grid-template-columns: 1fr;
-    padding: 12px;
+  .progress-card svg {
+    width: 96px;
   }
 
-  .q-top,
-  .section-head,
-  .library-head,
-  .search-header,
-  .pagination {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .btn,
-  .page-btn,
-  .option-btn,
-  .sidebar a,
-  input,
-  select {
-    min-height: 42px;
+  .advanced-search-panel > summary {
+    padding: 12px 14px;
   }
 }
