@@ -9,7 +9,9 @@ export default function Navbar() {
 
   return (
     <header className="nav glass">
-      <NavLink to="/" className="brand"><span className="logo">Σ</span><span>{siteConfig.appName}</span></NavLink>
+      <NavLink to="/" className="brand">
+        <img src="/brand-logo.svg" alt="Senior Dev Accelerator" className="brand-logo" />
+      </NavLink>
       <nav>
         {featured.map((category) => (
           <NavLink key={category.id} to={category.route || `/category/${category.id}`}>
@@ -19,7 +21,9 @@ export default function Navbar() {
         <NavLink to="/random">Random</NavLink>
         <NavLink to="/progress">Progress</NavLink>
       </nav>
-      <button className="icon-btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>{theme === 'dark' ? '☀️' : '🌙'}</button>
+      <button className="icon-btn" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
     </header>
-  );
+  )
 }
