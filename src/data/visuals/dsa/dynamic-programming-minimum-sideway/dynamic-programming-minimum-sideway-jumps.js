@@ -1,5 +1,3 @@
-const sharedFrameImage = '/visuals/minimum-sideway-jumps-overview.svg';
-
 const visualWalkthrough = {
   title: 'Minimum Sideway Jumps — lane DP visual walkthrough',
   summary:
@@ -21,8 +19,8 @@ const visualWalkthrough = {
       {
         label: 'Start at position 0',
         frameType: 'initial-state',
-        image: sharedFrameImage,
-        imageAlt: 'Minimum Sideway Jumps lane overview',
+        image: '/visuals/minimum-sideway-jumps-step-0.svg',
+        imageAlt: 'Minimum Sideway Jumps initial DP state',
         scene: {
           position: 0,
           frogLane: 2,
@@ -46,8 +44,8 @@ const visualWalkthrough = {
       {
         label: 'Position 1 blocks lane 1',
         frameType: 'obstacle-filter',
-        image: sharedFrameImage,
-        imageAlt: 'Minimum Sideway Jumps obstacle transition',
+        image: '/visuals/minimum-sideway-jumps-step-1.svg',
+        imageAlt: 'Minimum Sideway Jumps lane 1 blocked state',
         scene: {
           position: 1,
           frogLane: 2,
@@ -71,8 +69,8 @@ const visualWalkthrough = {
       {
         label: 'Position 2 blocks lane 2',
         frameType: 'side-jump-relaxation',
-        image: sharedFrameImage,
-        imageAlt: 'Minimum Sideway Jumps side jump state',
+        image: '/visuals/minimum-sideway-jumps-step-2.svg',
+        imageAlt: 'Minimum Sideway Jumps lane 2 blocked side jump state',
         scene: {
           position: 2,
           frogLane: 3,
@@ -96,8 +94,8 @@ const visualWalkthrough = {
       {
         label: 'Position 3 blocks lane 3',
         frameType: 'side-jump-relaxation',
-        image: sharedFrameImage,
-        imageAlt: 'Minimum Sideway Jumps lane survival state',
+        image: '/visuals/minimum-sideway-jumps-step-3.svg',
+        imageAlt: 'Minimum Sideway Jumps lane 3 blocked lane 1 survival state',
         scene: {
           position: 3,
           frogLane: 1,
@@ -121,7 +119,7 @@ const visualWalkthrough = {
       {
         label: 'Finish at position 4',
         frameType: 'answer-state',
-        image: sharedFrameImage,
+        image: '/visuals/minimum-sideway-jumps-step-4.svg',
         imageAlt: 'Minimum Sideway Jumps final answer state',
         scene: {
           position: 4,
