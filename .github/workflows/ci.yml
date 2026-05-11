@@ -29,7 +29,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Verify formatting and structure
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Integration tests
+        run: npm run test:integration
+
+      - name: Build production
         run: npm run build
 
       - name: Read version
