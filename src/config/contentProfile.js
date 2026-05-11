@@ -1,5 +1,10 @@
 function readContentProfile() {
-  return import.meta.env?.VITE_CONTENT_PROFILE || process.env.VITE_CONTENT_PROFILE || 'dev';
+  const viteProfile = import.meta.env?.VITE_CONTENT_PROFILE;
+  const nodeProfile = typeof process !== 'undefined'
+    ? process.env?.VITE_CONTENT_PROFILE
+    : undefined;
+
+  return viteProfile || nodeProfile || 'dev';
 }
 
 const CONTENT_PROFILE = readContentProfile();
