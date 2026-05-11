@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Senior Dev Accelerator favicon">
+  <defs>
+    <linearGradient id="bg" x1="16" y1="32" x2="232" y2="232" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0ea5e9"/>
+      <stop offset="0.48" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#9333ea"/>
+    </linearGradient>
+    <linearGradient id="rocket" x1="103" y1="62" x2="155" y2="174" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#e5edf7"/>
+      <stop offset="1" stop-color="#a7b5cc"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="112" y1="158" x2="99" y2="216" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff7ad"/>
+      <stop offset="0.45" stop-color="#f97316"/>
+      <stop offset="1" stop-color="#ef4444"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#020617" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect x="18" y="18" width="220" height="220" rx="52" fill="url(#bg)"/>
+  <path d="M64 119 35 139l29 20" fill="none" stroke="#eaf6ff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.94"/>
+  <path d="M192 119 221 139l-29 20" fill="none" stroke="#eaf6ff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.94"/>
+
+  <g filter="url(#shadow)">
+    <path d="M92 169c-8 7-20 11-34 13 3-14 8-26 16-35l18 22Z" fill="#334155"/>
+    <path d="M150 151c7 12 9 27 6 45-12-12-21-25-26-39l20-6Z" fill="#334155"/>
+    <path d="M79 187c7-3 17-10 27-25l19 18c-15 13-28 20-43 24 2-6 1-11-3-17Z" fill="url(#flame)"/>
+    <path d="M94 156c5-35 28-67 68-95 1 46-14 80-44 102l-24-7Z" fill="url(#rocket)"/>
+    <path d="M125 83c12-10 24-17 37-22-2 15-6 29-12 41l-25-19Z" fill="#1e293b" opacity="0.9"/>
+    <circle cx="128" cy="105" r="15" fill="#0f172a"/>
+    <circle cx="128" cy="105" r="10" fill="#f97316"/>
+    <path d="M100 157 87 193l35-23" fill="#cbd5e1" opacity="0.92"/>
+  </g>
+
+  <path d="M77 59 83 72l13 6-13 6-6 13-6-13-13-6 13-6 6-13Z" fill="#facc15"/>
+  <path d="M188 72 192 82l10 4-10 4-4 10-4-10-10-4 10-4 4-10Z" fill="#ffffff"/>
+</svg>
