@@ -1,12 +1,14 @@
 .brand {
   min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 .brand-logo {
   display: block;
-  width: clamp(170px, 18vw, 260px);
+  width: clamp(150px, 16vw, 220px);
   height: auto;
-  max-height: 58px;
+  max-height: 52px;
   object-fit: contain;
 }
 
@@ -20,6 +22,11 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.nav {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
 }
 
 @media (max-width: 760px) {
