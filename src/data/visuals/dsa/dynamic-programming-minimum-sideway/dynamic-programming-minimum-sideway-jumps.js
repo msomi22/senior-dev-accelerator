@@ -1,3 +1,5 @@
+const sharedFrameImage = '/visuals/minimum-sideway-jumps-overview.svg';
+
 const visualWalkthrough = {
   title: 'Minimum Sideway Jumps — lane DP visual walkthrough',
   summary:
@@ -19,6 +21,8 @@ const visualWalkthrough = {
       {
         label: 'Start at position 0',
         frameType: 'initial-state',
+        image: sharedFrameImage,
+        imageAlt: 'Minimum Sideway Jumps lane overview',
         scene: {
           position: 0,
           frogLane: 2,
@@ -42,6 +46,8 @@ const visualWalkthrough = {
       {
         label: 'Position 1 blocks lane 1',
         frameType: 'obstacle-filter',
+        image: sharedFrameImage,
+        imageAlt: 'Minimum Sideway Jumps obstacle transition',
         scene: {
           position: 1,
           frogLane: 2,
@@ -65,6 +71,8 @@ const visualWalkthrough = {
       {
         label: 'Position 2 blocks lane 2',
         frameType: 'side-jump-relaxation',
+        image: sharedFrameImage,
+        imageAlt: 'Minimum Sideway Jumps side jump state',
         scene: {
           position: 2,
           frogLane: 3,
@@ -88,6 +96,8 @@ const visualWalkthrough = {
       {
         label: 'Position 3 blocks lane 3',
         frameType: 'side-jump-relaxation',
+        image: sharedFrameImage,
+        imageAlt: 'Minimum Sideway Jumps lane survival state',
         scene: {
           position: 3,
           frogLane: 1,
@@ -111,6 +121,8 @@ const visualWalkthrough = {
       {
         label: 'Finish at position 4',
         frameType: 'answer-state',
+        image: sharedFrameImage,
+        imageAlt: 'Minimum Sideway Jumps final answer state',
         scene: {
           position: 4,
           frogLane: 1,
