@@ -2,15 +2,6 @@ const visualWalkthrough = {
   title: 'Minimum Sideway Jumps — lane DP visual walkthrough',
   summary:
     'Watch the frog move through a three-lane road while the DP state tracks the cheapest cost to stand on each lane. Each frame shows the blocked lane, the current lane costs, and the reason the state changes.',
-  media: [
-    {
-      type: 'image',
-      src: '/visuals/minimum-sideway-jumps-overview.svg',
-      alt: 'Animated SVG walkthrough for Minimum Sideway Jumps',
-      caption:
-        'Animated intuition layer: the frog shifts lanes while DP states evolve beside obstacle transitions.'
-    }
-  ],
   diagram: {
     title: 'Three-lane road + compressed DP state',
     intervalMs: 2600,
