@@ -1,4 +1,8 @@
-const CONTENT_PROFILE = import.meta.env.VITE_CONTENT_PROFILE || 'dev';
+function readContentProfile() {
+  return import.meta.env?.VITE_CONTENT_PROFILE || process.env.VITE_CONTENT_PROFILE || 'dev';
+}
+
+const CONTENT_PROFILE = readContentProfile();
 
 const APPROVED_PROD_QUESTION_IDS = new Set([
   'sliding-window-001'
