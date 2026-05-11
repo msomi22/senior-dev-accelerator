@@ -2,13 +2,40 @@ const visualWalkthrough = {
   title: 'Minimum Sideway Jumps — lane DP visual walkthrough',
   summary:
     'Watch the frog move through a three-lane road while the DP state tracks the cheapest cost to stand on each lane. Each frame shows the blocked lane, the current lane costs, and the reason the state changes.',
+  media: [
+    {
+      type: 'image',
+      src: '/visuals/minimum-sideway-jumps-overview.svg',
+      alt: 'Animated SVG walkthrough for Minimum Sideway Jumps',
+      caption:
+        'Animated intuition layer: the frog shifts lanes while DP states evolve beside obstacle transitions.'
+    }
+  ],
   diagram: {
     title: 'Three-lane road + compressed DP state',
     intervalMs: 2600,
+    laneScene: {
+      title: 'Interactive lane-state animation',
+      positions: [0, 1, 2, 3, 4],
+      lanes: [1, 2, 3],
+      obstacles: [
+        { lane: 1, position: 1 },
+        { lane: 2, position: 2 },
+        { lane: 3, position: 3 }
+      ]
+    },
     frames: [
       {
         label: 'Start at position 0',
         frameType: 'initial-state',
+        scene: {
+          position: 0,
+          frogLane: 2,
+          blockedLane: null,
+          dp: [1, 0, 1],
+          caption:
+            'The frog starts on lane 2. Other lanes are reachable with one side jump.'
+        },
         value:
           'pos: 0\n\nLane 1:  .   .   .   .   .\nLane 2:  F   .   .   .   .\nLane 3:  .   .   .   .   .\n\nDP = [1, 0, 1]',
         metrics: {
@@ -24,6 +51,14 @@ const visualWalkthrough = {
       {
         label: 'Position 1 blocks lane 1',
         frameType: 'obstacle-filter',
+        scene: {
+          position: 1,
+          frogLane: 2,
+          blockedLane: 1,
+          dp: ['∞', 0, 1],
+          caption:
+            'Lane 1 becomes invalid. Lane 2 remains the cheapest safe route.'
+        },
         value:
           'pos: 1\n\nLane 1:  .   X   .   .   .\nLane 2:  F → .   .   .   .\nLane 3:  .   .   .   .   .\n\nBefore relax: [∞, 0, 1]\nAfter relax:  [∞, 0, 1]',
         metrics: {
@@ -39,6 +74,14 @@ const visualWalkthrough = {
       {
         label: 'Position 2 blocks lane 2',
         frameType: 'side-jump-relaxation',
+        scene: {
+          position: 2,
+          frogLane: 3,
+          blockedLane: 2,
+          dp: [2, '∞', 1],
+          caption:
+            'The frog shifts to lane 3 because lane 2 becomes blocked.'
+        },
         value:
           'pos: 2\n\nLane 1:  .   X   .   .   .\nLane 2:  F → .   X   .   .\nLane 3:  .   .   .   .   .\n\nBlock lane 2: [∞, ∞, 1]\nRelax lane 1: min(∞, lane3 + 1) = 2\nDP = [2, ∞, 1]',
         metrics: {
@@ -54,6 +97,14 @@ const visualWalkthrough = {
       {
         label: 'Position 3 blocks lane 3',
         frameType: 'side-jump-relaxation',
+        scene: {
+          position: 3,
+          frogLane: 1,
+          blockedLane: 3,
+          dp: [2, 3, '∞'],
+          caption:
+            'Lane 1 now becomes the strongest surviving state.'
+        },
         value:
           'pos: 3\n\nLane 1:  .   X   .   .   .\nLane 2:  F → .   X   .   .\nLane 3:  .   .   .   X   .\n\nBlock lane 3: [2, ∞, ∞]\nRelax lane 2: min(∞, lane1 + 1) = 3\nDP = [2, 3, ∞]',
         metrics: {
@@ -69,6 +120,14 @@ const visualWalkthrough = {
       {
         label: 'Finish at position 4',
         frameType: 'answer-state',
+        scene: {
+          position: 4,
+          frogLane: 1,
+          blockedLane: null,
+          dp: [2, 3, 3],
+          caption:
+            'All lanes are open again. The minimum final cost is 2.'
+        },
         value:
           'pos: 4\n\nLane 1:  .   X   .   .   ✓\nLane 2:  F → .   X   .   .\nLane 3:  .   .   .   X   .\n\nAll lanes open.\nRelaxed DP = [2, 3, 3]\nAnswer = min(DP) = 2',
         metrics: {
