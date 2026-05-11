@@ -3,7 +3,7 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm install --no-package-lock --no-audit --no-fund --registry=https://registry.npmjs.org/
 
 COPY . .
 RUN npm run build
