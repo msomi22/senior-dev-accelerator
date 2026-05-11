@@ -1,60 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 function formatMetricLabel(key) {
   return key
     .replace(/([A-Z])/g, ' $1')
     .replace(/^./, (char) => char.toUpperCase());
-}
-
-function VisualFrame({ frame, index, active }) {
-  const frameTypeClass = frame?.frameType
-    ? `frame-type-${frame.frameType}`
-    : 'frame-type-generic';
-
-  return (
-    <article
-      className={`visual-frame cinematic-frame ${frameTypeClass} ${active ? 'active' : ''}`}
-      data-frame-index={index}
-    >
-      <div className="visual-frame-top">
-        <div className="visual-frame-labels">
-          {frame.label ? <span>{frame.label}</span> : null}
-
-          {frame.frameType ? (
-            <em className="visual-frame-type-tag">{frame.frameType}</em>
-          ) : null}
-        </div>
-      </div>
-
-      {frame.image ? (
-        <div className="visual-frame-image-shell">
-          <img
-            src={frame.image}
-            alt={frame.imageAlt || frame.label || 'Algorithm walkthrough frame'}
-            className="visual-frame-image"
-            loading="lazy"
-          />
-        </div>
-      ) : null}
-
-      <div className="visual-frame-side">
-        {frame.value ? <code>{frame.value}</code> : null}
-
-        {frame.metrics ? (
-          <div className="visual-metrics-grid">
-            {Object.entries(frame.metrics).map(([key, value]) => (
-              <div className="visual-metric" key={key}>
-                <small>{formatMetricLabel(key)}</small>
-                <strong>{String(value)}</strong>
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        {frame.note ? <small>{frame.note}</small> : null}
-      </div>
-    </article>
-  );
 }
 
 function StateHud({ frame }) {
@@ -78,7 +27,7 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
   return (
     <div className="visual-playback-controls" data-no-card-nav>
       <button type="button" onClick={onPrevious} aria-label="Show previous walkthrough step">
-        ← Prev step
+        ← Prev
       </button>
 
       <button
@@ -87,14 +36,84 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
         onClick={onTogglePlay}
         aria-label={playing ? 'Pause automatic walkthrough' : 'Start automatic walkthrough'}
       >
-        {playing ? 'Pause auto' : 'Auto walk'}
+        {playing ? 'Pause' : 'Auto play'}
       </button>
 
       <button type="button" onClick={onNext} aria-label="Show next walkthrough step">
-        Next step →
+        Next →
       </button>
 
       <span>Step {activeIndex + 1} of {frameCount}</span>
+    </div>
+  );
+}
+
+function ActiveScene({ frame, activeIndex }) {
+  const frameTypeClass = frame?.frameType
+    ? `frame-type-${frame.frameType}`
+    : 'frame-type-generic';
+
+  return (
+    <section
+      className={`visual-active-scene ${frameTypeClass}`}
+      key={`${frame?.label}-${activeIndex}`}
+      aria-live="polite"
+    >
+      <div className="visual-active-image-shell">
+        {frame?.image ? (
+          <img
+            src={frame.image}
+            alt={frame.imageAlt || frame.label || 'Algorithm walkthrough frame'}
+            className="visual-active-image"
+            loading="eager"
+          />
+        ) : (
+          <div className="visual-empty-image">No visual frame configured.</div>
+        )}
+      </div>
+
+      <aside className="visual-active-state-card">
+        <div className="visual-frame-labels">
+          {frame?.label ? <span>{frame.label}</span> : null}
+          {frame?.frameType ? <em className="visual-frame-type-tag">{frame.frameType}</em> : null}
+        </div>
+
+        {frame?.value ? <code>{frame.value}</code> : null}
+
+        {frame?.metrics ? (
+          <div className="visual-metrics-grid">
+            {Object.entries(frame.metrics).map(([key, value]) => (
+              <div className="visual-metric" key={key}>
+                <small>{formatMetricLabel(key)}</small>
+                <strong>{String(value)}</strong>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {frame?.note ? <p className="visual-active-note">{frame.note}</p> : null}
+      </aside>
+    </section>
+  );
+}
+
+function Timeline({ frames, activeIndex, onSelect }) {
+  if (frames.length <= 1) return null;
+
+  return (
+    <div className="visual-timeline" data-no-card-nav aria-label="Walkthrough timeline">
+      {frames.map((frame, index) => (
+        <button
+          type="button"
+          key={`${frame.label || frame.value}-${index}`}
+          className={`visual-timeline-step ${index === activeIndex ? 'active' : ''}`}
+          onClick={() => onSelect(index)}
+          aria-label={`Show step ${index + 1}: ${frame.label || 'walkthrough frame'}`}
+        >
+          <span>{index + 1}</span>
+          <strong>{frame.label || `Step ${index + 1}`}</strong>
+        </button>
+      ))}
     </div>
   );
 }
@@ -103,13 +122,11 @@ function VisualRail({ diagram }) {
   const frames = diagram?.frames || [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const railRef = useRef(null);
 
   const activeFrame = frames[activeIndex];
 
   const progress = useMemo(() => {
     if (frames.length <= 1) return 100;
-
     return ((activeIndex + 1) / frames.length) * 100;
   }, [activeIndex, frames.length]);
 
@@ -123,20 +140,10 @@ function VisualRail({ diagram }) {
 
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % frames.length);
-    }, diagram?.intervalMs || 2200);
+    }, diagram?.intervalMs || 2600);
 
     return () => window.clearInterval(timer);
   }, [playing, frames.length, diagram?.intervalMs]);
-
-  useEffect(() => {
-    const activeNode = railRef.current?.querySelector(`[data-frame-index="${activeIndex}"]`);
-
-    activeNode?.scrollIntoView({
-      behavior: 'smooth',
-      inline: 'center',
-      block: 'nearest'
-    });
-  }, [activeIndex]);
 
   if (!frames.length) return null;
 
@@ -150,43 +157,38 @@ function VisualRail({ diagram }) {
     setActiveIndex((current) => (current + 1) % frames.length);
   };
 
-  return (
-    <div className="visual-diagram" aria-label={diagram.title || 'Visual diagram'}>
-      <div className="visual-diagram-header">
-        {diagram.title ? <strong>{diagram.title}</strong> : null}
+  const selectStep = (index) => {
+    setPlaying(false);
+    setActiveIndex(index);
+  };
 
-        <div className="visual-progress-track" aria-hidden="true">
-          <span style={{ width: `${progress}%` }} />
+  return (
+    <div className="visual-diagram visual-synchronized-diagram" aria-label={diagram.title || 'Visual diagram'}>
+      <div className="visual-diagram-header visual-diagram-header-row">
+        <div>
+          {diagram.title ? <strong>{diagram.title}</strong> : null}
+          {activeFrame?.scene?.caption ? <p>{activeFrame.scene.caption}</p> : null}
         </div>
+
+        <PlaybackControls
+          activeIndex={activeIndex}
+          frameCount={frames.length}
+          playing={playing}
+          onPrevious={goPrevious}
+          onNext={goNext}
+          onTogglePlay={() => setPlaying((current) => !current)}
+        />
+      </div>
+
+      <div className="visual-progress-track" aria-hidden="true">
+        <span style={{ width: `${progress}%` }} />
       </div>
 
       <StateHud frame={activeFrame} />
 
-      <PlaybackControls
-        activeIndex={activeIndex}
-        frameCount={frames.length}
-        playing={playing}
-        onPrevious={goPrevious}
-        onNext={goNext}
-        onTogglePlay={() => setPlaying((current) => !current)}
-      />
+      <ActiveScene frame={activeFrame} activeIndex={activeIndex} />
 
-      <div className="visual-diagram-frames" ref={railRef}>
-        {frames.map((frame, index) => (
-          <button
-            type="button"
-            className="visual-frame-button"
-            key={`${frame.label || frame.value}-${index}`}
-            onClick={() => {
-              setPlaying(false);
-              setActiveIndex(index);
-            }}
-            data-no-card-nav
-          >
-            <VisualFrame frame={frame} index={index} active={index === activeIndex} />
-          </button>
-        ))}
-      </div>
+      <Timeline frames={frames} activeIndex={activeIndex} onSelect={selectStep} />
     </div>
   );
 }
