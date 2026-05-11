@@ -1,5 +1,9 @@
 import { categoryManifest, topicManifest, getTopicsByCategory } from '../data/topicManifest.js';
 import { applyQuestionOverrides } from '../data/banks/question-overrides.js';
+import {
+  filterQuestionsForActiveProfile,
+  filterTopicsForActiveProfile
+} from '../config/contentProfile.js';
 
 const bankModules = import.meta.glob('../data/banks/**/*.js');
 
@@ -15,20 +19,27 @@ function getBankPath(topicId) {
   return path;
 }
 
+function applyContentProfileToBank(bank) {
+  return {
+    ...bank,
+    questions: filterQuestionsForActiveProfile(bank.questions || [])
+  };
+}
+
 const bankCache = new Map();
 const countCache = new Map();
 
 export const categories = categoryManifest;
-export const allTopics = topicManifest;
-export const dsaTopics = getTopicsByCategory('dsa');
-export const systemDesignTopics = getTopicsByCategory('system');
+export const allTopics = filterTopicsForActiveProfile(topicManifest);
+export const dsaTopics = filterTopicsForActiveProfile(getTopicsByCategory('dsa'));
+export const systemDesignTopics = filterTopicsForActiveProfile(getTopicsByCategory('system'));
 
 export function getCategory(categoryId) {
   return categories.find((category) => category.id === categoryId);
 }
 
 export function getTopicsForCategory(categoryId) {
-  return getTopicsByCategory(categoryId);
+  return filterTopicsForActiveProfile(getTopicsByCategory(categoryId));
 }
 
 export async function loadTopicBank(topicId) {
@@ -37,7 +48,10 @@ export async function loadTopicBank(topicId) {
 
     bankCache.set(
       topicId,
-      bankModules[path]().then((module) => applyQuestionOverrides(module.default))
+      bankModules[path]().then((module) => {
+        const overridden = applyQuestionOverrides(module.default);
+        return applyContentProfileToBank(overridden);
+      })
     );
   }
 
