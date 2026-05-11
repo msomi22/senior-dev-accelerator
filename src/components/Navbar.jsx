@@ -9,11 +9,15 @@ export default function Navbar() {
     .filter((category) => category.featured !== false)
     .slice(0, 2);
 
+  const logoSrc = theme === 'dark'
+    ? '/brand-logo-dark.svg'
+    : '/brand-logo-light.svg';
+
   return (
     <header className="nav glass">
       <NavLink to="/" className="brand">
         <img
-          src="/brand-logo.svg"
+          src={logoSrc}
           alt="Senior Dev Accelerator"
           className="brand-logo"
         />
