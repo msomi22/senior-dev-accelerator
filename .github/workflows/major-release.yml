@@ -1,0 +1,62 @@
+name: Manual Major Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  major-bump:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: |
+          if [ -f VERSION ]; then
+            VERSION=$(cat VERSION)
+          else
+            VERSION="1.0.0"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Bump MAJOR
+        id: new_version
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          MAJOR=$((MAJOR+1))
+          MINOR=0
+          PATCH=0
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "$NEW_VERSION" > VERSION
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit + push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add VERSION
+          git diff --cached --quiet || git commit -m "chore: major release ${{ steps.new_version.outputs.new_version }}"
+
+          git pull --rebase origin main
+          git push
+
+      - name: Create tag
+        run: |
+          git tag v${{ steps.new_version.outputs.new_version }} || echo "Tag exists"
+          git push origin v${{ steps.new_version.outputs.new_version }} || echo "Tag already pushed"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.new_version.outputs.new_version }}
+          name: Release v${{ steps.new_version.outputs.new_version }}
+          generate_release_notes: true

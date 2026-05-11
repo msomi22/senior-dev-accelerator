@@ -1,0 +1,29 @@
+name: Enforce Branch Naming
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Checking branch: $BRANCH_NAME"
+
+          if [[ ! "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix|release)\/[a-zA-Z0-9._-]+$ ]]; then
+            echo "❌ Invalid branch name: $BRANCH_NAME"
+            echo ""
+            echo "👉 Allowed formats:"
+            echo "  - feature/your-feature-name"
+            echo "  - bugfix/your-fix-name"
+            echo "  - hotfix/urgent-fix"
+            echo "  - release/1.0.0"
+            echo ""
+            exit 1
+          fi
+
+          echo "✅ Branch name is valid"

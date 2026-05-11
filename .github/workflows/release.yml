@@ -1,0 +1,122 @@
+name: Release Versioning
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  APP_NAME: senior-dev-accelerator-ui
+
+permissions:
+  contents: write
+
+jobs:
+  version-and-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract branch from merge commit
+        id: extract
+        run: |
+          MSG="${{ github.event.head_commit.message }}"
+
+          FULL=$(echo "$MSG" | grep -oE 'from ([^ ]+)' | awk '{print $2}')
+
+          if [ -z "$FULL" ]; then
+            BRANCH="unknown"
+          else
+            BRANCH=$(echo "$FULL" | cut -d'/' -f2-)
+          fi
+
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Get last version
+        id: version
+        run: |
+          if [ -f VERSION ]; then
+            VERSION=$(cat VERSION)
+          else
+            VERSION="1.0.0"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Determine bump type
+        id: bump
+        run: |
+          BRANCH="${{ steps.extract.outputs.branch }}"
+
+          if [[ "$BRANCH" == feature/* || "$BRANCH" == bugfix/* ]]; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          elif [[ "$BRANCH" == hotfix/* ]]; then
+            echo "type=patch" >> $GITHUB_OUTPUT
+          else
+            echo "type=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump version
+        id: new_version
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          if [[ "${{ steps.bump.outputs.type }}" == "minor" ]]; then
+            MINOR=$((MINOR+1))
+            PATCH=0
+          elif [[ "${{ steps.bump.outputs.type }}" == "patch" ]]; then
+            PATCH=$((PATCH+1))
+          else
+            echo "new_version=$VERSION" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "$NEW_VERSION" > VERSION
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit version
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add VERSION
+          git diff --cached --quiet || git commit -m "chore: bump version to ${{ steps.new_version.outputs.new_version }}"
+
+          git pull --rebase origin main
+          git push
+
+      - name: Create tag
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          git tag v${{ steps.new_version.outputs.new_version }} || echo "Tag exists"
+          git push origin v${{ steps.new_version.outputs.new_version }} || echo "Tag already pushed"
+
+      - name: Create GitHub Release
+        if: steps.bump.outputs.type != 'none'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.new_version.outputs.new_version }}
+          name: Release v${{ steps.new_version.outputs.new_version }}
+          generate_release_notes: true
+
+      - name: Docker login
+        if: steps.bump.outputs.type != 'none'
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Docker build
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKER_USERNAME }}/$APP_NAME:${{ steps.new_version.outputs.new_version }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/$APP_NAME:latest .
+
+      - name: Docker push
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/$APP_NAME:${{ steps.new_version.outputs.new_version }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/$APP_NAME:latest
