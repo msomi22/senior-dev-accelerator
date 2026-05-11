@@ -273,6 +273,8 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
         {question.question}
       </TextBlock>
 
+      <VisualWalkthrough question={question} />
+
       <TextBlock title="Think first" className="think-box">
         {question.starterThought}
       </TextBlock>
