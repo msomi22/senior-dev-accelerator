@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import test from 'node:test';
+import assert from 'node:assert/strict';
 
 function buildCandidatePaths(questionId) {
   const segments = questionId.split('-');
@@ -15,16 +16,14 @@ function buildCandidatePaths(questionId) {
   ];
 }
 
-describe('visual walkthrough path resolution', () => {
-  it('supports two-segment IDs', () => {
-    const paths = buildCandidatePaths('backtracking-001');
+test('supports two-segment IDs', () => {
+  const paths = buildCandidatePaths('backtracking-001');
 
-    expect(paths[0]).toContain('backtracking');
-  });
+  assert.ok(paths[0].includes('backtracking'));
+});
 
-  it('supports multi-segment IDs', () => {
-    const paths = buildCandidatePaths('sliding-window-001');
+test('supports multi-segment IDs', () => {
+  const paths = buildCandidatePaths('sliding-window-001');
 
-    expect(paths[0]).toContain('sliding-window');
-  });
+  assert.ok(paths[0].includes('sliding-window'));
 });
