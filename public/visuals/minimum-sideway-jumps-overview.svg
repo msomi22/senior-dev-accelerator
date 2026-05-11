@@ -1,58 +1,189 @@
-<svg width="1200" height="420" viewBox="0 0 1200 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="1400" height="720" viewBox="0 0 1400 720" fill="none" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .road { fill:#0f172a; opacity:0.92; }
-    .lane { stroke:#475569; stroke-width:4; stroke-dasharray:18 18; }
-    .obstacle { fill:#ef4444; }
-    .safe { fill:#10b981; }
-    .frog { font: 52px sans-serif; }
-    .label { fill:#e2e8f0; font: 700 22px sans-serif; }
-    .title { fill:#38bdf8; font: 800 34px sans-serif; }
-    .dp { fill:#f8fafc; font: 700 24px monospace; }
+    .bg { fill: #07111f; }
+    .panel { fill: #0b1728; stroke: rgba(56,189,248,0.18); stroke-width: 2; }
+    .lane-bg { fill: rgba(255,255,255,0.10); stroke: rgba(148,163,184,0.18); stroke-width: 1; }
+    .lane-active { fill: rgba(34,197,94,0.15); }
+    .goal-zone { fill: rgba(34,197,94,0.18); stroke: rgba(34,197,94,0.65); stroke-width: 3; }
+    .grid-line { stroke: rgba(148,163,184,0.18); stroke-width: 2; stroke-dasharray: 8 10; }
+    .road-line { stroke: rgba(203,213,225,0.45); stroke-width: 4; stroke-dasharray: 34 20; }
+    .label { fill: #dbeafe; font: 800 28px Inter, Arial, sans-serif; }
+    .position { fill: #e2e8f0; font: 900 26px Inter, Arial, sans-serif; opacity: .9; }
+    .muted { fill: #a9bdd3; font: 800 24px Inter, Arial, sans-serif; }
+    .title { fill: #38bdf8; font: 900 38px Inter, Arial, sans-serif; }
+    .subtle { fill: #cbd5e1; font: 700 20px Inter, Arial, sans-serif; }
+    .dp { fill: #f8fafc; font: 900 25px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .dp-small { fill: #bae6fd; font: 850 20px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .lane-pill { fill: #0b4a9f; stroke: rgba(56,189,248,.28); stroke-width: 2; }
+    .obstacle { fill: url(#obstacleGrad); filter: drop-shadow(0 12px 18px rgba(239,68,68,.25)); }
+    .frog-ring { fill: rgba(34,197,94,0.22); }
+    .frog { font: 44px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif; }
+    .flag { font: 38px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif; }
+    .arrow { stroke: #0ea5e9; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 12 12; fill: none; marker-end: url(#arrowHead); }
+    .legend { fill: #0b1728; stroke: rgba(56,189,248,0.16); stroke-width: 2; }
+    .legend-text { fill: #dbeafe; font: 750 20px Inter, Arial, sans-serif; }
 
-    .frogMove {
-      animation: jump 5s ease-in-out infinite;
+    .frog-runner { animation: frogPath 7.5s ease-in-out infinite; }
+    .frog-squash { animation: frogBob .9s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .jump-arrow-1 { animation: fadeStep 7.5s ease-in-out infinite; animation-delay: 1.4s; opacity: 0; }
+    .jump-arrow-2 { animation: fadeStep 7.5s ease-in-out infinite; animation-delay: 2.9s; opacity: 0; }
+    .jump-arrow-3 { animation: fadeStep 7.5s ease-in-out infinite; animation-delay: 4.4s; opacity: 0; }
+    .obstacle-pulse { animation: obstaclePulse 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .goal-pulse { animation: goalPulse 2.2s ease-in-out infinite; }
+
+    .state-0 { animation: stateFade 7.5s steps(1) infinite; }
+    .state-1 { animation: stateFade1 7.5s steps(1) infinite; opacity: 0; }
+    .state-2 { animation: stateFade2 7.5s steps(1) infinite; opacity: 0; }
+    .state-3 { animation: stateFade3 7.5s steps(1) infinite; opacity: 0; }
+    .state-4 { animation: stateFade4 7.5s steps(1) infinite; opacity: 0; }
+
+    @keyframes frogPath {
+      0%, 12% { transform: translate(0px, 0px); }
+      22%, 30% { transform: translate(185px, 0px); }
+      40%, 48% { transform: translate(370px, 120px); }
+      58%, 66% { transform: translate(555px, -120px); }
+      76%, 84% { transform: translate(740px, -120px); }
+      94%, 100% { transform: translate(925px, -120px); }
     }
 
-    .pulse {
-      animation: pulse 2s ease-in-out infinite;
+    @keyframes frogBob {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.04); }
     }
 
-    @keyframes jump {
-      0% { transform: translate(0px, 0px); }
-      20% { transform: translate(180px, 0px); }
-      40% { transform: translate(360px, -90px); }
-      60% { transform: translate(540px, 90px); }
-      80% { transform: translate(720px, 0px); }
-      100% { transform: translate(900px, 0px); }
+    @keyframes fadeStep {
+      0%, 18%, 100% { opacity: 0; }
+      28%, 48% { opacity: 1; }
+      58% { opacity: 0; }
     }
 
-    @keyframes pulse {
-      0%,100% { opacity:0.5; }
-      50% { opacity:1; }
+    @keyframes obstaclePulse {
+      0%,100% { transform: scale(1); opacity: .92; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    @keyframes goalPulse {
+      0%,100% { opacity: .68; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes stateFade {
+      0%, 19% { opacity: 1; }
+      20%, 100% { opacity: 0; }
+    }
+    @keyframes stateFade1 {
+      0%, 19% { opacity: 0; }
+      20%, 39% { opacity: 1; }
+      40%, 100% { opacity: 0; }
+    }
+    @keyframes stateFade2 {
+      0%, 39% { opacity: 0; }
+      40%, 59% { opacity: 1; }
+      60%, 100% { opacity: 0; }
+    }
+    @keyframes stateFade3 {
+      0%, 59% { opacity: 0; }
+      60%, 79% { opacity: 1; }
+      80%, 100% { opacity: 0; }
+    }
+    @keyframes stateFade4 {
+      0%, 79% { opacity: 0; }
+      80%, 100% { opacity: 1; }
     }
   </style>
 
-  <rect width="1200" height="420" rx="28" class="road"/>
+  <defs>
+    <linearGradient id="obstacleGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f87171"/>
+      <stop offset="1" stop-color="#b91c1c"/>
+    </linearGradient>
+    <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#0ea5e9"/>
+    </marker>
+  </defs>
 
-  <text x="60" y="58" class="title">Minimum Sideway Jumps — Visual DP Intuition</text>
+  <rect class="bg" width="1400" height="720" rx="26"/>
+  <rect class="panel" x="28" y="28" width="1344" height="664" rx="28"/>
 
-  <line x1="120" y1="130" x2="1100" y2="130" class="lane"/>
-  <line x1="120" y1="210" x2="1100" y2="210" class="lane"/>
-  <line x1="120" y1="290" x2="1100" y2="290" class="lane"/>
+  <text x="58" y="78" class="title">Minimum Sideway Jumps — Animated DP Intuition</text>
+  <text x="58" y="112" class="subtle">The frog moves forward for free, side-jumps only when a future obstacle makes the current lane unsafe.</text>
 
-  <text x="40" y="138" class="label">Lane 1</text>
-  <text x="40" y="218" class="label">Lane 2</text>
-  <text x="40" y="298" class="label">Lane 3</text>
+  <text x="58" y="166" class="muted">Position</text>
+  <text x="280" y="166" class="position">0</text>
+  <text x="465" y="166" class="position">1</text>
+  <text x="650" y="166" class="position">2</text>
+  <text x="835" y="166" class="position">3</text>
+  <text x="1020" y="166" class="position">4</text>
+  <text x="1205" y="166" class="position">5</text>
 
-  <rect x="320" y="98" width="48" height="64" rx="12" class="obstacle pulse"/>
-  <rect x="540" y="178" width="48" height="64" rx="12" class="obstacle pulse"/>
-  <rect x="760" y="258" width="48" height="64" rx="12" class="obstacle pulse"/>
-
-  <rect x="1010" y="90" width="70" height="220" rx="18" class="safe" opacity="0.18"/>
-
-  <g class="frogMove">
-    <text x="150" y="228" class="frog">🐸</text>
+  <g transform="translate(0, 0)">
+    <rect class="lane-pill" x="48" y="206" width="122" height="58" rx="16"/>
+    <text x="70" y="244" class="label">Lane 1</text>
+    <rect class="lane-pill" x="48" y="326" width="122" height="58" rx="16"/>
+    <text x="70" y="364" class="label">Lane 2</text>
+    <rect class="lane-pill" x="48" y="446" width="122" height="58" rx="16"/>
+    <text x="70" y="484" class="label">Lane 3</text>
   </g>
 
-  <text x="70" y="370" class="dp">DP states evolve: [1,0,1] → [∞,0,1] → [2,∞,1] → [2,3,∞] → [2,3,3]</text>
+  <g transform="translate(200, 190)">
+    <rect class="lane-bg" x="0" y="0" width="1150" height="92" rx="18"/>
+    <rect class="lane-bg lane-active" x="0" y="120" width="1150" height="92" rx="18"/>
+    <rect class="lane-bg" x="0" y="240" width="1150" height="92" rx="18"/>
+
+    <line class="road-line" x1="0" y1="46" x2="1150" y2="46"/>
+    <line class="road-line" x1="0" y1="166" x2="1150" y2="166"/>
+    <line class="road-line" x1="0" y1="286" x2="1150" y2="286"/>
+
+    <line class="grid-line" x1="185" y1="-14" x2="185" y2="346"/>
+    <line class="grid-line" x1="370" y1="-14" x2="370" y2="346"/>
+    <line class="grid-line" x1="555" y1="-14" x2="555" y2="346"/>
+    <line class="grid-line" x1="740" y1="-14" x2="740" y2="346"/>
+    <line class="grid-line" x1="925" y1="-14" x2="925" y2="346"/>
+
+    <rect class="goal-zone goal-pulse" x="975" y="0" width="100" height="332" rx="18"/>
+    <text x="1007" y="61" class="flag">⚑</text>
+    <text x="1007" y="181" class="flag">⚑</text>
+    <text x="1007" y="301" class="flag">⚑</text>
+
+    <g class="obstacle-pulse">
+      <rect class="obstacle" x="238" y="16" width="78" height="62" rx="12"/>
+      <text x="261" y="60" fill="white" font-size="42" font-weight="900">×</text>
+    </g>
+    <g class="obstacle-pulse" style="animation-delay:.35s">
+      <rect class="obstacle" x="423" y="136" width="78" height="62" rx="12"/>
+      <text x="446" y="180" fill="white" font-size="42" font-weight="900">×</text>
+    </g>
+    <g class="obstacle-pulse" style="animation-delay:.7s">
+      <rect class="obstacle" x="608" y="256" width="78" height="62" rx="12"/>
+      <text x="631" y="300" fill="white" font-size="42" font-weight="900">×</text>
+    </g>
+
+    <path class="arrow jump-arrow-1" d="M170 166 C210 166, 208 82, 250 54"/>
+    <path class="arrow jump-arrow-2" d="M350 166 C390 166, 396 250, 438 278"/>
+    <path class="arrow jump-arrow-3" d="M535 286 C575 286, 583 82, 625 54"/>
+
+    <g class="frog-runner">
+      <circle class="frog-ring" cx="92" cy="166" r="42"/>
+      <text class="frog frog-squash" x="68" y="183">🐸</text>
+    </g>
+  </g>
+
+  <rect class="legend" x="58" y="548" width="1284" height="82" rx="18"/>
+  <text x="96" y="600" class="legend-text">🐸 Frog</text>
+  <line x1="255" y1="591" x2="315" y2="591" class="road-line"/>
+  <text x="335" y="600" class="legend-text">Move forward cost 0</text>
+  <path d="M565 591 C588 591, 590 571, 616 571" class="arrow"/>
+  <text x="646" y="600" class="legend-text">Side jump cost 1</text>
+  <rect class="obstacle" x="875" y="567" width="36" height="36" rx="8"/>
+  <text x="887" y="596" fill="white" font-size="28" font-weight="900">×</text>
+  <text x="930" y="600" class="legend-text">Blocked lane</text>
+  <text x="1140" y="600" class="legend-text">⚑ End goal</text>
+
+  <g transform="translate(58, 657)">
+    <text class="dp state-0" x="0" y="0">DP state: [1, 0, 1] — start on lane 2</text>
+    <text class="dp state-1" x="0" y="0">DP state: [∞, 0, 1] — lane 1 is blocked</text>
+    <text class="dp state-2" x="0" y="0">DP state: [2, ∞, 1] — lane 2 is blocked, jump to lane 3</text>
+    <text class="dp state-3" x="0" y="0">DP state: [2, 3, ∞] — lane 3 is blocked, lane 1 survives</text>
+    <text class="dp state-4" x="0" y="0">DP state: [2, 3, 3] — answer = 2 minimum side jumps</text>
+  </g>
 </svg>
