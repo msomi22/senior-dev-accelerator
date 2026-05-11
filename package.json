@@ -11,10 +11,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "npm run build",
-    "test": "vitest run",
-    "test:unit": "vitest run",
-    "test:integration": "vitest run",
-    "test:ci": "vitest run"
+    "test": "node --test",
+    "test:unit": "node --test src/config/*.test.js src/services/*.test.js",
+    "test:integration": "node --test src/config/*.test.js src/services/*.test.js",
+    "test:ci": "node --test"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
@@ -23,7 +23,5 @@
     "react-dom": "latest",
     "react-router-dom": "latest"
   },
-  "devDependencies": {
-    "vitest": "latest"
-  }
+  "devDependencies": {}
 }
