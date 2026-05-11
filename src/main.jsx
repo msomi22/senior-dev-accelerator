@@ -4,6 +4,7 @@ import App from './App.jsx';
 import './styles/global.css';
 import './styles/ui-refresh.css';
 import './styles/visual-learning.css';
+import './styles/sideway-visual.css';
 import './styles/learning-dashboard.css';
 
 createRoot(document.getElementById('root')).render(
