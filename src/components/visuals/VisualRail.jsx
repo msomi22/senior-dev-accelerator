@@ -6,6 +6,87 @@ function formatMetricLabel(key) {
     .replace(/^./, (char) => char.toUpperCase());
 }
 
+function LaneMotionScene({ diagram, activeFrame }) {
+  const scene = diagram?.laneScene;
+  const frameScene = activeFrame?.scene;
+
+  if (!scene?.positions?.length || !scene?.lanes?.length || !frameScene) return null;
+
+  const obstacles = scene.obstacles || [];
+  const dpState = frameScene.dp || [];
+
+  function isBlocked(lane, position) {
+    return obstacles.some((item) => item.lane === lane && item.position === position);
+  }
+
+  return (
+    <section className="lane-motion-scene" aria-label={scene.title || 'Animated lane diagram'}>
+      <div className="lane-motion-head">
+        <div>
+          <span className="mini-label">Animated mental model</span>
+          <strong>{scene.title || 'Lane transition view'}</strong>
+        </div>
+        <div className="lane-motion-position-pill">Position {frameScene.position}</div>
+      </div>
+
+      <div className="lane-road" style={{ '--position-count': scene.positions.length }}>
+        <div className="lane-axis lane-axis-top">
+          <span />
+          {scene.positions.map((position) => (
+            <strong key={position}>{position}</strong>
+          ))}
+        </div>
+
+        {scene.lanes.map((lane) => (
+          <div className="lane-row" key={lane}>
+            <strong className="lane-label">Lane {lane}</strong>
+            {scene.positions.map((position) => {
+              const blocked = isBlocked(lane, position);
+              const activeColumn = frameScene.position === position;
+              const frogHere = frameScene.frogLane === lane && frameScene.position === position;
+              const openCurrentLane = activeColumn && !blocked;
+
+              return (
+                <div
+                  key={`${lane}-${position}`}
+                  className={[
+                    'lane-cell',
+                    blocked ? 'blocked' : '',
+                    activeColumn ? 'active-column' : '',
+                    openCurrentLane ? 'open-current-lane' : '',
+                    frogHere ? 'frog-cell' : ''
+                  ].filter(Boolean).join(' ')}
+                >
+                  {blocked ? <span className="obstacle-token">×</span> : null}
+                  {frogHere ? <span className="frog-token" aria-label="frog">🐸</span> : null}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      <div className="lane-dp-strip" aria-label="Compressed dynamic programming state">
+        {scene.lanes.map((lane, index) => (
+          <div
+            className={[
+              'lane-dp-chip',
+              frameScene.blockedLane === lane ? 'blocked' : '',
+              frameScene.frogLane === lane ? 'frog-lane' : ''
+            ].filter(Boolean).join(' ')}
+            key={lane}
+          >
+            <small>Lane {lane}</small>
+            <strong>{String(dpState[index] ?? '—')}</strong>
+          </div>
+        ))}
+      </div>
+
+      {frameScene.caption ? <p className="lane-motion-caption">{frameScene.caption}</p> : null}
+    </section>
+  );
+}
+
 function VisualFrame({ frame, index, active }) {
   const frameTypeClass = frame?.frameType
     ? `frame-type-${frame.frameType}`
@@ -161,6 +242,8 @@ function VisualRail({ diagram }) {
       </div>
 
       <StateHud frame={activeFrame} />
+
+      <LaneMotionScene diagram={diagram} activeFrame={activeFrame} />
 
       <PlaybackControls
         activeIndex={activeIndex}
