@@ -40,6 +40,7 @@
   --font-mono: 'JetBrains Mono', SFMono-Regular, Consolas, monospace;
   --nav-height: 56px;
   --sidebar-width: 220px;
+  --footer-height: 36px;
   --page-padding: 32px;
 }
 
@@ -120,7 +121,7 @@ body {
   height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: calc(var(--nav-height) + var(--page-padding)) var(--page-padding) 48px;
+  padding: calc(var(--nav-height) + var(--page-padding)) var(--page-padding) calc(48px + var(--footer-height));
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
 }
@@ -1141,6 +1142,51 @@ meter {
   box-shadow: none;
 }
 
+.status-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: var(--sidebar-width);
+  z-index: 1000;
+  height: var(--footer-height);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 28px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: 0 -1px 3px rgba(26, 24, 20, 0.04);
+  scrollbar-width: none;
+}
+
+.status-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.status-item strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.status-sep {
+  width: 1px;
+  height: 14px;
+  flex: 0 0 auto;
+  background: var(--border);
+}
+
 .search-preview-card.done::before,
 .question-card.done::before {
   content: "Completed";
@@ -1238,7 +1284,12 @@ meter {
     height: auto;
     min-height: 0;
     overflow: visible;
-    padding: var(--page-padding) var(--page-padding) 56px;
+    padding: var(--page-padding) var(--page-padding) calc(56px + var(--footer-height));
+  }
+
+  .status-bar {
+    left: 0;
+    padding: 0 var(--page-padding);
   }
 
   .dashboard-grid,
@@ -1296,6 +1347,10 @@ meter {
     top: var(--nav-height);
     min-height: 48px;
     padding: 7px 10px;
+  }
+
+  .status-bar {
+    gap: 12px;
   }
 
   .page {

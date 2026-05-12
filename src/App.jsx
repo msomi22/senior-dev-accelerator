@@ -5,6 +5,7 @@ import { Suspense, lazy, useEffect } from 'react';
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
+import StatusBar from './components/StatusBar.jsx';
 import LoadingCard from './components/LoadingCard.jsx';
 import { useContentProtection } from './hooks/useContentProtection.js';
 import { usePreferences } from './hooks/usePreferences.js';
@@ -67,6 +68,7 @@ export default function App() {
           </Suspense>
         </main>
       </div>
+      <StatusBar />
     </div>
   );
 }
