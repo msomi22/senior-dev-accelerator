@@ -2,26 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { topicLibraryConfig } from '../config/topicLibraryConfig.js';
 import { topicProgress } from '../services/questionBankService.js';
-import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
 
 const ALL = 'all';
-
-function normalize(value) {
-  return String(value || '').toLowerCase().trim();
-}
-
-function topicHaystack(topic) {
-  return [
-    topic.id,
-    topic.name,
-    topic.description,
-    topic.category,
-    topic.domain,
-    ...(topic.tags || [])
-  ]
-    .join(' ')
-    .toLowerCase();
-}
 
 function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
   if (completionFilter === 'completed') {
@@ -59,24 +41,11 @@ export default function TopicLibrary({
   completionFilter,
   onCompletionFilterChange
 }) {
-  const [query, setQuery] = useState('');
   const [sortBy, setSortBy] = useState('recommended');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const debouncedQuery = useDebouncedValue(
-    query,
-    topicLibraryConfig.topicSearchDebounceMs
-  );
-
   const filteredTopics = useMemo(() => {
-    const q = normalize(debouncedQuery);
-
-    let next = topics.filter((topic) => {
-      if (!q) return true;
-      return topicHaystack(topic).includes(q);
-    });
-
-    next = [...next].sort((a, b) => {
+    return [...topics].sort((a, b) => {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name);
       }
@@ -108,9 +77,7 @@ export default function TopicLibrary({
         a.name.localeCompare(b.name)
       );
     });
-
-    return next;
-  }, [topics, debouncedQuery, sortBy, completed]);
+  }, [topics, sortBy, completed]);
 
   const totalPages = Math.max(
     1,
@@ -132,7 +99,7 @@ export default function TopicLibrary({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedQuery, difficulty, completionFilter, sortBy]);
+  }, [difficulty, completionFilter, sortBy]);
 
   function goToPage(page) {
     setCurrentPage(Math.min(Math.max(page, 1), totalPages));
@@ -161,17 +128,7 @@ export default function TopicLibrary({
         </div>
       </div>
 
-      <div className="topic-library-controls topic-library-controls-4">
-        <label>
-          <span>Search topics</span>
-
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search title, tags, description..."
-          />
-        </label>
-
+      <div className="topic-library-controls">
         <label>
           <span>Difficulty</span>
 
@@ -272,7 +229,7 @@ export default function TopicLibrary({
       {filteredTopics.length === 0 ? (
         <div className="empty-state glass-lite">
           <h3>No topics found</h3>
-          <p>Try a broader search or clear the filters.</p>
+          <p>Try clearing the difficulty or status filters.</p>
         </div>
       ) : null}
 
