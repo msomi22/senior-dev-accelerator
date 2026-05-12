@@ -722,7 +722,8 @@ body {
 }
 
 input,
-select {
+select,
+textarea {
   min-height: 38px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -733,15 +734,40 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.18);
+}
+
+textarea {
+  min-height: 78px;
+  padding: 10px 12px;
+  resize: vertical;
+  line-height: 1.45;
 }
 
 .advanced-search-panel {
   border-radius: 12px;
   overflow: hidden;
   background: var(--bg-card);
+}
+
+.search-only-card {
+  padding: 14px;
+}
+
+.search-only-card .search-panel {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.search-only-panel .search-field {
+  display: grid;
+  gap: 8px;
 }
 
 .advanced-search-panel > summary {

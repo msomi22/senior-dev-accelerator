@@ -237,46 +237,24 @@ export default function CategoryPage({ fixedCategoryId }) {
             </div>
           )}
 
-          <details
-            className="advanced-search-panel glass-lite"
-            open={search.isActive}
-          >
-            <summary>
-              <span>Advanced problem search</span>
-              <small>
-                Search across titles, scenarios, tags, explanations, and
-                production notes.
-              </small>
-            </summary>
-
+          <section className="advanced-search-panel glass-lite search-only-card">
             <SearchPanel
-              topics={topics}
               query={search.query}
-              topicId={search.topicId}
-              difficulty={search.difficulty}
-              type={search.type}
               onQueryChange={search.setQuery}
-              onTopicChange={search.setTopicId}
-              onDifficultyChange={search.setDifficulty}
-              onTypeChange={search.setType}
-              onClear={search.clearSearch}
-              isActive={search.isActive}
-              isIndexing={search.isIndexing}
-              resultCount={search.results.length}
             />
+          </section>
 
-            {search.isActive ? (
-              search.isIndexing ? (
-                <LoadingCard label="Building search index…" />
-              ) : (
-                <SearchResultsSection
-                  results={search.results}
-                  completed={completed}
-                  onToggle={toggle}
-                />
-              )
-            ) : null}
-          </details>
+          {search.isActive ? (
+            search.isIndexing ? (
+              <LoadingCard label="Building search index…" />
+            ) : (
+              <SearchResultsSection
+                results={search.results}
+                completed={completed}
+                onToggle={toggle}
+              />
+            )
+          ) : null}
         </>
       )}
     </main>
