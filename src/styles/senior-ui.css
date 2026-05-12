@@ -626,6 +626,10 @@ body {
   gap: 14px;
 }
 
+.card-grid.compact-grid {
+  align-items: start;
+}
+
 .topic-tab,
 .category-card,
 .search-preview-card {
@@ -762,6 +766,8 @@ select:focus {
 }
 
 .question-card {
+  align-self: start;
+  align-content: start;
   display: grid;
   gap: 11px;
   border-radius: 12px;
@@ -769,6 +775,9 @@ select:focus {
   background: var(--bg-card);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
+  contain: none;
+  contain-intrinsic-size: auto;
+  content-visibility: visible;
 }
 
 .problem-workspace {
