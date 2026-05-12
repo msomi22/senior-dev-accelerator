@@ -1,6 +1,6 @@
 import { siteConfig } from '../config/siteConfig.js';
 
-const defaults = { theme: 'dark', completed: {}, randomCount: 0, selectedTopics: {} };
+const defaults = { theme: 'light', completed: {}, randomCount: 0, selectedTopics: {} };
 
 export const storageService = {
   read() {
