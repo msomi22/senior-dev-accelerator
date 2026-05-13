@@ -9,6 +9,7 @@ import './styles/senior-ui.css';
 import './styles/problem-pill-fixes.css';
 import './styles/theme-page-parity.css';
 import './styles/theme-dark-palette-fix.css';
+import './styles/sidebar-spacing-fix.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
