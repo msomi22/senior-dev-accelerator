@@ -2,16 +2,6 @@ import { useEffect, useState } from 'react';
 import VisualRail from './visuals/VisualRail.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
 
-const TYPE_LABELS = {
-  coding: 'Coding reasoning',
-  mcq: 'Quick check',
-  debugging: 'Debugging',
-  trace: 'Trace walkthrough',
-  optimization: 'Optimization',
-  'system-design': 'System design',
-  'production-scenario': 'Production scenario'
-};
-
 const TABS = [
   ['walkthrough', '⊞', 'Visual Walkthrough'],
   ['intuition', 'ϟ', 'Intuition'],
@@ -104,25 +94,24 @@ function VisualBlock({ question }) {
   );
 }
 
-export default function FocusedProblemWorkspace({ question, completed, onToggle }) {
+export default function FocusedProblemWorkspace({ question, completed, onToggle, hideTopline = false }) {
   const [activeTab, setActiveTab] = useState('walkthrough');
-  const typeLabel = TYPE_LABELS[question.type] || 'Learning problem';
-  const typeClass = `type-${question.type || 'learning'}`;
   const codeContent = question.solutionCode || question.code || question.pseudocode || question.approachPseudocode;
 
   return (
     <article className={`focused-problem-workspace glass-lite ${completed ? 'done' : ''}`}>
-      <div className="focused-problem-topline">
-        <div className="meta-strip">
-          <span className={`pill type-pill ${typeClass}`}>{typeLabel}</span>
-          <span className="pill">{question.difficulty}</span>
-          <span className="time-pill">⏱ {question.estimatedTime || '10 min'}</span>
-        </div>
+      {!hideTopline ? (
+        <div className="focused-problem-topline">
+          <div className="meta-strip">
+            <span className="pill">{question.difficulty}</span>
+            <span className="time-pill">⏱ {question.estimatedTime || '10 min'}</span>
+          </div>
 
-        <button className="mark" onClick={() => onToggle?.(question.id)}>
-          {completed ? '✓ Completed' : 'Mark done'}
-        </button>
-      </div>
+          <button className="mark" onClick={() => onToggle?.(question.id)}>
+            {completed ? '✓ Completed' : 'Mark done'}
+          </button>
+        </div>
+      ) : null}
 
       <div className="focused-tabs" role="tablist" aria-label="Problem learning sections">
         {TABS.map(([id, icon, label]) => (
