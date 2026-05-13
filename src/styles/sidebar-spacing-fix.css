@@ -10,14 +10,56 @@ html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo,
 html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo,
 html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo,
 html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo {
-  display: flex !important;
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 64px minmax(0, 1fr) !important;
   align-items: center !important;
+  column-gap: 18px !important;
   visibility: visible !important;
   opacity: 1 !important;
-  min-height: 72px !important;
-  padding: 24px 20px 28px !important;
+  min-height: 116px !important;
+  padding: 26px 24px 30px !important;
   margin: 0 !important;
+  border-bottom: 0 !important;
   color: var(--text-sidebar) !important;
+  text-decoration: none !important;
+}
+
+/* Render the brand at the sidebar-logo level so the logo cannot disappear because of child-span overrides. */
+html body #root aside.sidebar.app-sidebar > .sidebar-logo::before,
+html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::before,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::before,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::before,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::before {
+  content: 'S' !important;
+  width: 64px !important;
+  height: 64px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  background: var(--accent) !important;
+  color: var(--sidebar-logo-ink) !important;
+  font-family: var(--font-serif) !important;
+  font-size: 36px !important;
+  font-style: italic !important;
+  line-height: 1 !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+html body #root aside.sidebar.app-sidebar > .sidebar-logo::after,
+html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::after,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::after,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::after,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::after {
+  content: 'Senior Dev\A Accelerator' !important;
+  white-space: pre-line !important;
+  display: block !important;
+  color: var(--text-sidebar) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.02em !important;
 }
 
 html body #root aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
@@ -30,9 +72,7 @@ html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo
 html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
 html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
 html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-text {
-  display: grid !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  display: none !important;
 }
 
 html body #root aside.sidebar.app-sidebar > .nav-section:first-of-type,
