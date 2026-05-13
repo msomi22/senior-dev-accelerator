@@ -115,3 +115,58 @@
   font-size: 16px;
   font-weight: 800;
 }
+
+/* Final light-logo geometry override.
+   The base light theme gives .sidebar-logo card-like styling; remove it so it
+   matches the dark theme's compact top row. Keep this block last in this file. */
+html[data-theme="light"] body .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="light"] body .app-shell.light .sidebar-logo {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  height: 104px !important;
+  min-height: 104px !important;
+  max-height: 104px !important;
+  padding: 20px 20px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+html[data-theme="light"] body .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="light"] body .app-shell.light .sidebar-logo > .logo-mark {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  flex: 0 0 56px !important;
+  border-radius: 14px !important;
+  font-size: 28px !important;
+}
+
+html[data-theme="light"] body .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="light"] body .app-shell.light .sidebar-logo > .logo-text {
+  display: grid !important;
+  gap: 3px !important;
+  margin: 0 !important;
+  color: var(--text) !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+}
+
+html[data-theme="light"] body .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="light"] body .app-shell.light .sidebar-logo > .logo-text > span {
+  margin: 0 !important;
+  color: var(--muted) !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
+}
