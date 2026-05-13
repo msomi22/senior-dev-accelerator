@@ -1,0 +1,90 @@
+:root[data-theme="dark"] {
+  --bg: #0b0f14;
+  --bg-soft: #101720;
+  --bg-card: #171e29;
+  --bg-sidebar: #101821;
+  --text: #f4f7fb;
+  --text-primary: #f4f7fb;
+  --text-secondary: #aeb8ca;
+  --text-muted: #738198;
+  --text-sidebar: #f4f7fb;
+  --text-sidebar-muted: #9aa6ba;
+  --card: #171e29;
+  --line: #243042;
+  --border: #283449;
+  --border-strong: #3a475e;
+  --sidebar-border: #243042;
+  --sidebar-hover: rgba(48, 224, 199, 0.08);
+  --sidebar-active-bg: rgba(48, 224, 199, 0.14);
+  --sidebar-active-border: rgba(48, 224, 199, 0.85);
+  --sidebar-active-text: #30e0c7;
+  --sidebar-coffee-bg: rgba(48, 224, 199, 0.06);
+  --sidebar-logo-ink: #071014;
+  --button-bg: linear-gradient(135deg, #37f1d4, #22c7b8);
+  --button-border: rgba(48, 224, 199, 0.7);
+  --button-text: #071014;
+  --button-hover-bg: linear-gradient(135deg, #5af6df, #31d4c7);
+  --button-hover-border: #5af6df;
+  --button-hover-text: #071014;
+  --button-secondary-bg: #20283a;
+  --button-secondary-border: #33415a;
+  --button-secondary-text: #f4f7fb;
+  --button-secondary-hover-bg: #273148;
+  --button-secondary-hover-border: #30e0c7;
+  --button-secondary-hover-text: #f4f7fb;
+  --accent: #30e0c7;
+  --accent2: #8fc6ff;
+  --accent-dark: #30e0c7;
+  --accent-light: rgba(48, 224, 199, 0.14);
+  --ok: #58e0a0;
+  --danger: #ff7272;
+  --warning: #ffb86b;
+  --blue: #74b9ff;
+  --green-light: rgba(88, 224, 160, 0.16);
+  --red-light: rgba(255, 114, 114, 0.14);
+  --blue-light: rgba(116, 185, 255, 0.16);
+  --surface-subtle: rgba(255, 255, 255, 0.035);
+  --done-bg: linear-gradient(180deg, rgba(48, 224, 199, 0.10), rgba(23, 30, 41, 0.98));
+  --code-bg: #070b10;
+  --code-text: #f4f7fb;
+}
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] .app-shell,
+:root[data-theme="dark"] .main-content,
+:root[data-theme="dark"] .page-shell {
+  background: var(--bg);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] .hero-card,
+:root[data-theme="dark"] .section-card,
+:root[data-theme="dark"] .stat-card,
+:root[data-theme="dark"] .topic-library,
+:root[data-theme="dark"] .panel,
+:root[data-theme="dark"] .content-card,
+:root[data-theme="dark"] .problem-card,
+:root[data-theme="dark"] .progress-row,
+:root[data-theme="dark"] .question-card,
+:root[data-theme="dark"] .visual-panel,
+:root[data-theme="dark"] .topic-card {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] .page-hero,
+:root[data-theme="dark"] .dashboard-hero,
+:root[data-theme="dark"] .page-header-card {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+:root[data-theme="dark"] .section-kicker,
+:root[data-theme="dark"] .eyebrow,
+:root[data-theme="dark"] .metric-value,
+:root[data-theme="dark"] .nav-link.active,
+:root[data-theme="dark"] .top-nav .active {
+  color: var(--accent);
+}
