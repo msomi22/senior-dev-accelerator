@@ -18,6 +18,43 @@
   margin-top: 0 !important;
 }
 
+/* Keep light sidebar branding aligned with the dark theme proportions. */
+:root[data-theme="light"] .sidebar,
+:root[data-theme="light"] .app-sidebar {
+  padding-top: 0;
+}
+
+:root[data-theme="light"] .sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 18px 20px;
+  min-height: 82px;
+  border-bottom: 1px solid var(--line);
+}
+
+:root[data-theme="light"] .logo-mark {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 10px;
+  font-size: 19px;
+  line-height: 1;
+}
+
+:root[data-theme="light"] .logo-text {
+  display: grid;
+  gap: 2px;
+  font-size: 13px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+:root[data-theme="light"] .logo-text span {
+  font-size: 13px;
+  line-height: 1.1;
+}
+
 :root[data-theme="light"] .progress-card.glass {
   display: flex;
   align-items: center;
