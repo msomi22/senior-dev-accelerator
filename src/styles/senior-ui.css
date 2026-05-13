@@ -6,18 +6,24 @@
   --bg: #f5f2ec;
   --bg-soft: #f0ece5;
   --bg-card: #ffffff;
-  --bg-sidebar: #1a1814;
+  --bg-sidebar: #fffdf8;
   --text: #1a1814;
   --text-primary: #1a1814;
   --text-secondary: #6b6560;
   --text-muted: #9a958e;
-  --text-sidebar: #f5f2ec;
-  --text-sidebar-muted: #8b8580;
+  --text-sidebar: #1a1814;
+  --text-sidebar-muted: #6b6560;
   --card: #ffffff;
   --line: #e8e3da;
   --border: #e8e3da;
   --border-strong: #d4cdc2;
-  --sidebar-border: #2a2720;
+  --sidebar-border: #e4dccf;
+  --sidebar-hover: #f3eee6;
+  --sidebar-active-bg: #f5ead6;
+  --sidebar-active-border: #dcc38e;
+  --sidebar-active-text: #8a6318;
+  --sidebar-coffee-bg: #f5ead6;
+  --sidebar-logo-ink: #1a1814;
   --accent: #c8a96e;
   --accent2: #2c5f8a;
   --accent-dark: #9a7429;
@@ -61,6 +67,12 @@
   --border: #3b352c;
   --border-strong: #524a3d;
   --sidebar-border: #2a2720;
+  --sidebar-hover: rgba(245, 242, 236, 0.06);
+  --sidebar-active-bg: rgba(200, 169, 110, 0.16);
+  --sidebar-active-border: rgba(200, 169, 110, 0.22);
+  --sidebar-active-text: #d4b675;
+  --sidebar-coffee-bg: rgba(200, 169, 110, 0.10);
+  --sidebar-logo-ink: #11100d;
   --accent: #d4b675;
   --accent2: #78a8cc;
   --accent-dark: #f0d89d;
@@ -245,7 +257,7 @@ body {
   place-items: center;
   border-radius: 8px;
   background: var(--accent);
-  color: var(--bg-sidebar);
+  color: var(--sidebar-logo-ink);
   font-family: var(--font-serif);
   font-size: 18px;
   font-style: italic;
@@ -300,21 +312,21 @@ body {
 
 .nav-item:hover,
 .sidebar a:hover {
-  background: rgba(245, 242, 236, 0.06);
+  background: var(--sidebar-hover);
   color: var(--text-sidebar);
 }
 
 .nav-item.active,
 .sidebar a.active {
-  border-color: rgba(200, 169, 110, 0.22);
-  background: rgba(200, 169, 110, 0.16);
-  color: var(--accent);
+  border-color: var(--sidebar-active-border);
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
   font-weight: 700;
 }
 
 .coffee-link {
   margin: 0 12px;
-  background: rgba(200, 169, 110, 0.10);
+  background: var(--sidebar-coffee-bg);
   color: var(--text-sidebar);
 }
 
