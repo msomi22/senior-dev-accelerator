@@ -3,6 +3,21 @@
    Scoped to light mode only. Dark theme remains controlled by enhanced files.
    ========================================================================== */
 
+:root[data-theme="light"] .page-wrap,
+:root[data-theme="light"] .main-content {
+  padding-top: calc(var(--nav-height) + 44px);
+  scroll-padding-top: calc(var(--nav-height) + 44px);
+}
+
+:root[data-theme="light"] .page > :first-child,
+:root[data-theme="light"] .learning-dashboard-page > :first-child,
+:root[data-theme="light"] .category-page > :first-child,
+:root[data-theme="light"] .practice-page > :first-child,
+:root[data-theme="light"] .problem-detail-page > :first-child,
+:root[data-theme="light"] .progress-page > :first-child {
+  margin-top: 0 !important;
+}
+
 :root[data-theme="light"] .progress-card.glass {
   display: flex;
   align-items: center;
