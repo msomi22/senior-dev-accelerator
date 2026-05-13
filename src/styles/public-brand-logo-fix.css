@@ -13,21 +13,21 @@ aside.sidebar.app-sidebar > a.sidebar-logo {
   height: var(--nav-height) !important;
   min-height: var(--nav-height) !important;
   max-height: var(--nav-height) !important;
-  padding: 0 20px !important;
+  padding: 0 16px !important;
   margin: 0 !important;
   border-bottom: 1px solid var(--border-strong, var(--border)) !important;
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  overflow: visible !important;
+  overflow: hidden !important;
 }
 
 .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo {
-  border-bottom-color: rgba(120, 113, 108, 0.28) !important;
+  border-bottom-color: rgba(120, 113, 108, 0.34) !important;
 }
 
 .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
-  border-bottom-color: rgba(148, 163, 184, 0.24) !important;
+  border-bottom-color: rgba(148, 163, 184, 0.30) !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo::before,
@@ -38,13 +38,13 @@ aside.sidebar.app-sidebar > a.sidebar-logo::after {
 
 aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
   display: block !important;
-  width: auto !important;
-  max-width: 178px !important;
+  width: 208px !important;
+  max-width: 208px !important;
   height: auto !important;
-  max-height: calc(var(--nav-height) - 6px) !important;
+  max-height: none !important;
   object-fit: contain !important;
   object-position: left top !important;
-  margin-top: 0 !important;
+  margin-top: -7px !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
