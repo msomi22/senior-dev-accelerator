@@ -1,8 +1,8 @@
 /* Theme-agnostic sidebar spacing contract.
-   Light and dark must share the same sidebar geometry; only color tokens should differ. */
+   Logo rendering is handled by public-brand-logo-fix.css using the public SVG assets. */
 
 :root {
-  --sidebar-logo-section-gap: 34px;
+  --sidebar-logo-section-gap: 24px;
 }
 
 html body #root aside.sidebar.app-sidebar > .nav-section:first-of-type,

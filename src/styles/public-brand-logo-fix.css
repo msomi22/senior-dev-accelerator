@@ -1,0 +1,135 @@
+/* Restore the intended desktop shell contract:
+   - logo remains in the sidebar top slot
+   - logo row and topbar share one height
+   - their bottom borders meet as one continuous horizontal line
+   - Learn starts below that shared line */
+
+:root {
+  --sidebar-logo-section-gap: 24px;
+}
+
+aside.sidebar.app-sidebar > a.sidebar-logo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  height: var(--topbar-height, var(--nav-height)) !important;
+  min-height: var(--topbar-height, var(--nav-height)) !important;
+  max-height: var(--topbar-height, var(--nav-height)) !important;
+  padding: 0 20px !important;
+  margin: 0 !important;
+  border-bottom: 1px solid var(--theme-border, var(--border)) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  color: var(--theme-text, var(--text-primary)) !important;
+}
+
+aside.sidebar.app-sidebar > a.sidebar-logo::before,
+aside.sidebar.app-sidebar > a.sidebar-logo::after {
+  content: none !important;
+  display: none !important;
+}
+
+aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
+  display: block !important;
+  width: 208px !important;
+  max-width: calc(var(--sidebar-width) - 40px) !important;
+  height: auto !important;
+  max-height: calc(var(--topbar-height, var(--nav-height)) - 14px) !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+  margin: 0 !important;
+}
+
+aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  display: none !important;
+}
+
+.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light,
+html[data-theme='light'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light {
+  display: block !important;
+}
+
+.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark,
+html[data-theme='light'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark {
+  display: none !important;
+}
+
+.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light,
+html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light {
+  display: none !important;
+}
+
+.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark,
+html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark {
+  display: block !important;
+}
+
+aside.sidebar.app-sidebar > .nav-section:first-of-type {
+  margin-top: var(--sidebar-logo-section-gap) !important;
+  border-top: 0 !important;
+  box-shadow: none !important;
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .app-shell .layout,
+  .app-shell.light .layout,
+  .app-shell.dark .layout {
+    width: 100% !important;
+    height: 100vh !important;
+    display: grid !important;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  .app-shell .topbar,
+  .app-shell.light .topbar,
+  .app-shell.dark .topbar,
+  .app-shell .nav,
+  .app-shell.light .nav,
+  .app-shell.dark .nav,
+  .app-shell .navbar,
+  .app-shell.light .navbar,
+  .app-shell.dark .navbar {
+    inset: 0 0 auto var(--sidebar-width) !important;
+  }
+
+  .app-shell .sidebar,
+  .app-shell .app-sidebar,
+  .app-shell.light .sidebar,
+  .app-shell.light .app-sidebar,
+  .app-shell.dark .sidebar,
+  .app-shell.dark .app-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .app-shell .page-wrap,
+  .app-shell .main-content,
+  .app-shell.light .page-wrap,
+  .app-shell.light .main-content,
+  .app-shell.dark .page-wrap,
+  .app-shell.dark .main-content {
+    grid-column: 2 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    padding: calc(var(--nav-height) + var(--page-top-gap)) var(--page-x) calc(var(--page-bottom-gap) + var(--footer-height)) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .app-shell .status-bar,
+  .app-shell.light .status-bar,
+  .app-shell.dark .status-bar {
+    left: var(--sidebar-width) !important;
+  }
+}
