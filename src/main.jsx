@@ -6,6 +6,7 @@ import './styles/ui-refresh.css';
 import './styles/visual-learning.css';
 import './styles/learning-dashboard.css';
 import './styles/senior-ui.css';
+import './styles/enhanced-dark-theme.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
