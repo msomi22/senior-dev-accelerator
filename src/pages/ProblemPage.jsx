@@ -5,8 +5,8 @@ import {
   useParams
 } from 'react-router-dom';
 
+import FocusedProblemWorkspace from '../components/FocusedProblemWorkspace.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
-import QuestionCard from '../components/QuestionCard.jsx';
 
 import { findQuestionById } from '../services/questionBankService.js';
 import { storageService } from '../services/storageService.js';
@@ -112,7 +112,7 @@ export default function ProblemPage() {
   }
 
   return (
-    <main className="page problem-detail-shell">
+    <main className="page problem-detail-shell focused-problem-page">
       <div className="problem-breadcrumb glass-lite">
         <NavLink to="/">Dashboard</NavLink>
 
@@ -131,7 +131,7 @@ export default function ProblemPage() {
         <span>{entry.topic?.name || 'Topic'}</span>
       </div>
 
-      <div className="problem-detail-header hero-card">
+      <div className="problem-detail-header hero-card compact-problem-header">
         <p className="eyebrow">Focused problem workspace</p>
 
         <h1>{entry.question.title}</h1>
@@ -154,11 +154,10 @@ export default function ProblemPage() {
         </div>
       </div>
 
-      <QuestionCard
+      <FocusedProblemWorkspace
         question={entry.question}
         completed={!!completed[entry.question.id]}
         onToggle={handleToggle}
-        disableCardNavigation
       />
     </main>
   );
