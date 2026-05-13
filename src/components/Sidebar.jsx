@@ -97,11 +97,17 @@ export default function Sidebar() {
   return (
     <aside className="sidebar app-sidebar">
       <Link to="/" className="sidebar-logo" aria-label="Senior Dev Accelerator dashboard">
-        <span className="logo-mark">S</span>
-        <span className="logo-text">
-          Senior Dev
-          <span>Accelerator</span>
-        </span>
+        <img
+          className="brand-logo brand-logo-light"
+          src="/brand-logo-light.svg"
+          alt="Senior Dev Accelerator"
+        />
+        <img
+          className="brand-logo brand-logo-dark"
+          src="/brand-logo-dark.svg"
+          alt=""
+          aria-hidden="true"
+        />
       </Link>
 
       <div className="nav-section">
