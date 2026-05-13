@@ -11,6 +11,10 @@ import LoadingCard from '../components/LoadingCard.jsx';
 import { findQuestionById } from '../services/questionBankService.js';
 import { storageService } from '../services/storageService.js';
 
+function uniqueItems(items = []) {
+  return [...new Set(items.filter(Boolean))];
+}
+
 export default function ProblemPage() {
   const { questionId } = useParams();
   const location = useLocation();
@@ -111,53 +115,56 @@ export default function ProblemPage() {
     );
   }
 
+  const problemTags = uniqueItems([
+    entry.question.difficulty,
+    entry.topic?.name,
+    ...(entry.question.relatedConcepts || []),
+    ...(entry.question.tags || [])
+  ]);
+
   return (
     <main className="page problem-detail-shell focused-problem-page">
-      <div className="problem-breadcrumb glass-lite">
-        <NavLink to="/">Dashboard</NavLink>
+      <div className="problem-breadcrumb compact-problem-breadcrumb">
+        <NavLink to="/">‹ Dashboard</NavLink>
 
-        <span>›</span>
+        <span>/</span>
 
-        {entry.topic?.category ? (
-          <NavLink to={`/category/${entry.topic.category}`}>
-            {entry.categoryName || entry.topic.category}
-          </NavLink>
+        {entry.topic?.name ? (
+          <span>{entry.topic.name}</span>
         ) : (
-          <span>{entry.categoryName || 'Category'}</span>
+          <span>{entry.categoryName || 'Topic'}</span>
         )}
 
-        <span>›</span>
+        <span>/</span>
 
-        <span>{entry.topic?.name || 'Topic'}</span>
+        <span>{entry.question.title}</span>
       </div>
 
-      <div className="problem-detail-header hero-card compact-problem-header">
-        <p className="eyebrow">Focused problem workspace</p>
+      <section className="reference-problem-intro">
+        <div>
+          <h1>{entry.question.title}</h1>
 
-        <h1>{entry.question.title}</h1>
+          <div className="problem-meta-pills" aria-label="Problem metadata">
+            {problemTags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
 
-        <p>{entry.topic?.description}</p>
-
-        <div className="hero-actions">
-          {entry.topic?.category ? (
-            <NavLink
-              className="btn ghost"
-              to={`/category/${entry.topic.category}`}
-            >
-              Back to category
-            </NavLink>
-          ) : null}
-
-          <NavLink className="btn ghost" to="/random">
-            Try random question
-          </NavLink>
+          <p>
+            {entry.question.question || entry.topic?.description || entry.question.scenario}
+          </p>
         </div>
-      </div>
+
+        <button className="mark reference-mark" onClick={() => handleToggle(entry.question.id)}>
+          {completed[entry.question.id] ? '✓ Completed' : 'Mark done'}
+        </button>
+      </section>
 
       <FocusedProblemWorkspace
         question={entry.question}
         completed={!!completed[entry.question.id]}
         onToggle={handleToggle}
+        hideTopline
       />
     </main>
   );
