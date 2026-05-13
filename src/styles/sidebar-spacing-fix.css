@@ -5,74 +5,118 @@
   --sidebar-logo-section-gap: 34px;
 }
 
-html body #root aside.sidebar.app-sidebar > .sidebar-logo,
-html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo,
-html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo,
-html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo,
-html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo {
+/* Keep the real logo inside the sidebar logo row.
+   Do not fake it with pseudo-elements and do not move it into the page/topbar area. */
+html body #root aside.sidebar.app-sidebar > a.sidebar-logo,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+  box-sizing: border-box !important;
   position: relative !important;
-  display: grid !important;
-  grid-template-columns: 64px minmax(0, 1fr) !important;
+  display: flex !important;
+  flex-direction: row !important;
   align-items: center !important;
-  column-gap: 18px !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  min-height: 116px !important;
-  padding: 26px 24px 30px !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  height: var(--sidebar-logo-height) !important;
+  min-height: var(--sidebar-logo-height) !important;
+  max-height: var(--sidebar-logo-height) !important;
+  padding: 20px !important;
   margin: 0 !important;
-  border-bottom: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   color: var(--text-sidebar) !important;
   text-decoration: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  overflow: visible !important;
 }
 
-/* Render the brand at the sidebar-logo level so the logo cannot disappear because of child-span overrides. */
-html body #root aside.sidebar.app-sidebar > .sidebar-logo::before,
-html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::before,
-html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::before,
-html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::before,
-html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::before {
-  content: 'S' !important;
-  width: 64px !important;
-  height: 64px !important;
+html body #root aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html body #root aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::after {
+  content: none !important;
+  display: none !important;
+}
+
+html body #root aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark {
+  box-sizing: border-box !important;
   display: grid !important;
   place-items: center !important;
-  border-radius: 18px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: var(--sidebar-logo-size) !important;
+  height: var(--sidebar-logo-size) !important;
+  min-width: var(--sidebar-logo-size) !important;
+  max-width: var(--sidebar-logo-size) !important;
+  min-height: var(--sidebar-logo-size) !important;
+  max-height: var(--sidebar-logo-size) !important;
+  flex: 0 0 var(--sidebar-logo-size) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 14px !important;
   background: var(--accent) !important;
   color: var(--sidebar-logo-ink) !important;
   font-family: var(--font-serif) !important;
-  font-size: 36px !important;
+  font-size: 28px !important;
   font-style: italic !important;
   line-height: 1 !important;
   box-shadow: var(--shadow-soft) !important;
 }
 
-html body #root aside.sidebar.app-sidebar > .sidebar-logo::after,
-html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::after,
-html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::after,
-html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo::after,
-html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo::after {
-  content: 'Senior Dev\A Accelerator' !important;
-  white-space: pre-line !important;
-  display: block !important;
+html body #root aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  box-sizing: border-box !important;
+  display: grid !important;
+  gap: 3px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
   color: var(--text-sidebar) !important;
   font-family: var(--font-sans) !important;
-  font-size: 26px !important;
-  font-weight: 800 !important;
-  line-height: 1.12 !important;
-  letter-spacing: -0.02em !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.01em !important;
+  white-space: normal !important;
 }
 
-html body #root aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
-html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
-html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
-html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
-html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
-html body #root aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
-html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
-html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
-html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
-html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-text {
-  display: none !important;
+html body #root aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: var(--text-sidebar-muted) !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
 }
 
 html body #root aside.sidebar.app-sidebar > .nav-section:first-of-type,
