@@ -1,6 +1,5 @@
 /* Final problem metadata pill normalization.
-   Only difficulty pills should carry semantic colors.
-   Topic, pattern, concept, and tag pills stay visually neutral. */
+   Difficulty, topic, and neutral tags have distinct visual hierarchy. */
 
 .problem-meta-pills .meta-pill,
 .problem-meta-pills span.meta-pill,
@@ -9,6 +8,16 @@
   background: rgba(148, 163, 184, 0.10) !important;
   border-color: rgba(148, 163, 184, 0.22) !important;
   color: var(--muted) !important;
+}
+
+.problem-meta-pills .topic-pill,
+.problem-meta-pills span.topic-pill,
+.reference-problem-intro .problem-meta-pills .topic-pill,
+.reference-problem-intro .problem-meta-pills span.topic-pill {
+  background: rgba(45, 212, 191, 0.12) !important;
+  border-color: rgba(45, 212, 191, 0.36) !important;
+  color: #2dd4bf !important;
+  font-weight: 900 !important;
 }
 
 .problem-meta-pills .difficulty-pill,
@@ -44,6 +53,15 @@
   background: rgba(120, 113, 108, 0.08) !important;
   border-color: rgba(120, 113, 108, 0.20) !important;
   color: var(--muted) !important;
+}
+
+:root[data-theme="light"] .problem-meta-pills .topic-pill,
+:root[data-theme="light"] .problem-meta-pills span.topic-pill,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills .topic-pill,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills span.topic-pill {
+  background: #ccfbf1 !important;
+  border-color: #5eead4 !important;
+  color: #0f766e !important;
 }
 
 :root[data-theme="light"] .problem-meta-pills .difficulty-easy,
