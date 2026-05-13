@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import GlobalSearch from './GlobalSearch.jsx';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { categories } from '../services/questionBankService.js';
@@ -35,20 +35,6 @@ export default function Navbar() {
 
   return (
     <header className="nav topbar">
-      <Link to="/" className="topbar-brand-logo" aria-label="Senior Dev Accelerator dashboard">
-        <img
-          className="brand-logo brand-logo-light"
-          src="/brand-logo-light.svg"
-          alt="Senior Dev Accelerator"
-        />
-        <img
-          className="brand-logo brand-logo-dark"
-          src="/brand-logo-dark.svg"
-          alt=""
-          aria-hidden="true"
-        />
-      </Link>
-
       <span className="topbar-title">{pageTitle(location.pathname)}</span>
 
       <GlobalSearch />
