@@ -1,68 +1,70 @@
 /* ========================================================================== 
    THEME PARITY CONTRACT
    --------------------------------------------------------------------------
-   All layout, sizing, spacing and typography live in shared .app-shell rules.
-   Theme classes only provide values/tokens. This prevents light and dark from
-   rendering different UIs.
+   This file is intentionally conservative.
+
+   Rule:
+   - Shared shell geometry lives here: sidebar, topbar, main scroll area, logo.
+   - Theme classes only provide values/tokens.
+   - Page internals must NOT be globally rewritten here. Dashboard, DSA,
+     progress, and problem pages keep their own component CSS.
+
+   This prevents light and dark from rendering different structures while also
+   avoiding the previous issue where generic selectors broke page content.
    ========================================================================== */
 
 .app-shell {
-  /* Shared geometry */
-  --sidebar-width: 260px;
+  --sidebar-width: 280px;
   --topbar-height: 72px;
-  --page-x: 36px;
-  --page-y: 48px;
-  --section-gap: 20px;
-  --card-radius: 14px;
-  --card-pad: 22px;
-  --card-min: 138px;
-  --hero-pad: 28px;
-  --hero-min: 250px;
-  --hero-side-width: 360px;
-  --hero-title-size: clamp(34px, 2.7vw, 48px);
-  --hero-title-line: 1.1;
-  --page-title-size: clamp(34px, 3vw, 52px);
-  --page-title-line: 1.08;
-  --body-size: 16px;
-  --body-line: 1.52;
-  --eyebrow-size: 13px;
-  --button-height: 40px;
-  --logo-size: 42px;
-  --logo-row-height: 96px;
-  --logo-gap: 14px;
+  --content-max-width: 1500px;
+  --content-pad-x: 28px;
+  --content-pad-y: 28px;
+
+  --brand-logo-size: 42px;
+  --brand-row-height: 96px;
+  --brand-gap: 12px;
+  --brand-pad-x: 20px;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
 }
 
-/* Theme values only: colors, surfaces, borders, shadows */
 .app-shell.light {
-  --page-bg: #f3f0ea;
-  --panel-bg: #ffffff;
-  --sidebar-bg: #fbfaf7;
-  --topbar-bg: #ffffff;
-  --panel-border: #ded7cb;
-  --text-strong: #191816;
-  --text-body: #625e59;
-  --text-muted: #4f6075;
-  --accent: #c6a765;
-  --accent-text: #9a6b19;
-  --accent-soft: #f5ead5;
-  --nav-active-bg: #f3e7cf;
-  --card-shadow: 0 12px 30px rgba(36, 27, 15, .10);
+  --theme-bg: #f3f0ea;
+  --theme-bg-soft: #fbfaf7;
+  --theme-surface: #ffffff;
+  --theme-surface-soft: #f8f4ec;
+  --theme-border: #ded7cb;
+  --theme-border-strong: #cfbe98;
+  --theme-text: #1b1a17;
+  --theme-text-soft: #625e59;
+  --theme-muted: #526176;
+  --theme-accent: #c6a765;
+  --theme-accent-strong: #9a6b19;
+  --theme-accent-soft: #f3e7cf;
+  --theme-active-bg: #f3e7cf;
+  --theme-shadow: 0 12px 30px rgba(36, 27, 15, 0.10);
 }
 
 .app-shell.dark {
-  --page-bg: #0b0f14;
-  --panel-bg: #151a24;
-  --sidebar-bg: #111822;
-  --topbar-bg: #111822;
-  --panel-border: #2a3342;
-  --text-strong: #f4f5fb;
-  --text-body: #a9b2c5;
-  --text-muted: #7d8aa2;
-  --accent: #35e0c8;
-  --accent-text: #35e0c8;
-  --accent-soft: rgba(53, 224, 200, .13);
-  --nav-active-bg: rgba(53, 224, 200, .13);
-  --card-shadow: 0 14px 34px rgba(0, 0, 0, .36);
+  --theme-bg: #0b0f14;
+  --theme-bg-soft: #111822;
+  --theme-surface: #151a24;
+  --theme-surface-soft: #121923;
+  --theme-border: #2a3342;
+  --theme-border-strong: #3a4658;
+  --theme-text: #f4f5fb;
+  --theme-text-soft: #a9b2c5;
+  --theme-muted: #7d8aa2;
+  --theme-accent: #35e0c8;
+  --theme-accent-strong: #35e0c8;
+  --theme-accent-soft: rgba(53, 224, 200, 0.13);
+  --theme-active-bg: rgba(53, 224, 200, 0.13);
+  --theme-shadow: 0 14px 34px rgba(0, 0, 0, 0.36);
 }
 
 .app-shell,
@@ -71,433 +73,336 @@
 }
 
 .app-shell {
-  background: var(--page-bg) !important;
-  color: var(--text-body) !important;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--theme-bg);
+  color: var(--theme-text-soft);
+  font-family: var(--font-body);
 }
 
-/* Shell: same dimensions in every theme */
-.app-shell .app-main,
-.app-shell main,
-.app-shell .content-area,
-.app-shell .page-content {
-  margin-left: var(--sidebar-width) !important;
-  width: calc(100vw - var(--sidebar-width)) !important;
-  max-width: none !important;
-  min-height: 100vh !important;
-  padding: var(--page-y) var(--page-x) 80px !important;
-  background: var(--page-bg) !important;
-  overflow-x: hidden !important;
+/* --------------------------------------------------------------------------
+   Root shell layout
+   -------------------------------------------------------------------------- */
+
+.app-shell .layout {
+  width: 100%;
+  height: 100vh;
+  padding-top: var(--topbar-height);
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--theme-bg);
 }
 
-.app-shell .sidebar,
-.app-shell .app-sidebar,
-.app-shell aside {
-  position: fixed !important;
-  inset: 0 auto 0 0 !important;
-  width: var(--sidebar-width) !important;
-  min-width: var(--sidebar-width) !important;
-  max-width: var(--sidebar-width) !important;
-  height: 100vh !important;
-  background: var(--sidebar-bg) !important;
-  color: var(--text-body) !important;
-  border-right: 1px solid var(--panel-border) !important;
-  overflow-y: auto !important;
+.app-shell .page-wrap {
+  grid-column: 2;
+  width: 100%;
+  height: calc(100vh - var(--topbar-height));
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--content-pad-y) var(--content-pad-x) 80px;
+  background: var(--theme-bg);
 }
 
-.app-shell .topbar,
-.app-shell .app-header,
-.app-shell header.site-header {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 20 !important;
-  height: var(--topbar-height) !important;
-  min-height: var(--topbar-height) !important;
-  padding: 0 32px !important;
-  margin: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  background: var(--topbar-bg) !important;
-  color: var(--text-strong) !important;
-  border-bottom: 1px solid var(--panel-border) !important;
+.app-shell .page {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
 }
 
-/* Brand/logo: exact geometry in every theme */
+/* --------------------------------------------------------------------------
+   Header / top navigation
+   -------------------------------------------------------------------------- */
+
+.app-shell .nav,
+.app-shell .navbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1000;
+  height: var(--topbar-height);
+  min-height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px 0 calc(var(--sidebar-width) + 28px);
+  background: var(--theme-bg-soft);
+  color: var(--theme-text);
+  border-bottom: 1px solid var(--theme-border);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.app-shell .nav nav,
+.app-shell .navbar nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.app-shell .nav a,
+.app-shell .navbar a {
+  color: var(--theme-text-soft);
+  font-weight: 800;
+}
+
+.app-shell .nav a.active,
+.app-shell .navbar a.active {
+  color: var(--theme-accent-strong);
+}
+
+.app-shell .icon-btn {
+  min-width: 74px;
+  width: auto;
+  height: 42px;
+  border-radius: 999px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--theme-accent-strong);
+  background: transparent;
+  color: var(--theme-accent-strong);
+  font-weight: 900;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar
+   -------------------------------------------------------------------------- */
+
+.app-shell .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  height: 100vh;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--theme-border);
+  border-radius: 0;
+  background: var(--theme-bg-soft);
+  box-shadow: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
 .app-shell .brand,
-.app-shell .sidebar-brand,
-.app-shell .logo-row {
-  height: var(--logo-row-height) !important;
-  min-height: var(--logo-row-height) !important;
-  max-height: var(--logo-row-height) !important;
-  padding: 20px !important;
-  margin: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: var(--logo-gap) !important;
-  border-bottom: 1px solid var(--panel-border) !important;
+.app-shell .sidebar .brand {
+  height: var(--brand-row-height);
+  min-height: var(--brand-row-height);
+  max-height: var(--brand-row-height);
+  padding: 0 var(--brand-pad-x);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--brand-gap);
+  border-bottom: 1px solid var(--theme-border);
 }
 
-.app-shell .brand img,
-.app-shell .sidebar-brand img,
-.app-shell .logo-row img,
-.app-shell .brand-mark,
-.app-shell .logo-mark {
-  width: var(--logo-size) !important;
-  height: var(--logo-size) !important;
-  min-width: var(--logo-size) !important;
-  min-height: var(--logo-size) !important;
-  max-width: var(--logo-size) !important;
-  max-height: var(--logo-size) !important;
-  flex: 0 0 var(--logo-size) !important;
-  aspect-ratio: 1 / 1 !important;
-  object-fit: contain !important;
-  border-radius: 12px !important;
-  margin: 0 !important;
-  padding: 0 !important;
+.app-shell .logo,
+.app-shell .brand .logo {
+  width: var(--brand-logo-size);
+  height: var(--brand-logo-size);
+  min-width: var(--brand-logo-size);
+  min-height: var(--brand-logo-size);
+  max-width: var(--brand-logo-size);
+  max-height: var(--brand-logo-size);
+  flex: 0 0 var(--brand-logo-size);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 12px;
+  background: var(--theme-accent);
+  color: #081015;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 400;
+  box-shadow: none;
 }
 
+.app-shell .brand strong,
 .app-shell .brand h1,
-.app-shell .sidebar-brand h1,
 .app-shell .brand-title {
-  margin: 0 !important;
-  font-size: 15px !important;
-  line-height: 1.12 !important;
-  font-weight: 900 !important;
-  color: var(--text-strong) !important;
+  margin: 0;
+  color: var(--theme-text);
+  font-size: 15px;
+  line-height: 1.12;
+  font-weight: 900;
 }
 
+.app-shell .brand small,
 .app-shell .brand p,
-.app-shell .sidebar-brand p,
 .app-shell .brand-subtitle {
-  margin: 2px 0 0 !important;
-  font-size: 14px !important;
-  line-height: 1.12 !important;
-  color: var(--text-muted) !important;
+  display: block;
+  margin: 2px 0 0;
+  color: var(--theme-muted);
+  font-size: 14px;
+  line-height: 1.12;
+  font-weight: 650;
 }
 
-/* Navigation: same structure, token colors */
-.app-shell .sidebar nav,
-.app-shell .app-sidebar nav,
-.app-shell aside nav {
-  padding: 18px 14px !important;
+.app-shell .sidebar nav {
+  padding: 18px 14px;
 }
 
-.app-shell .sidebar a,
-.app-shell .app-sidebar a,
-.app-shell aside a {
-  min-height: 40px !important;
-  padding: 0 12px !important;
-  border-radius: 10px !important;
-  display: flex !important;
-  align-items: center !important;
-  color: var(--text-body) !important;
-  text-decoration: none !important;
+.app-shell .sidebar a {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  color: var(--theme-text-soft);
+  text-decoration: none;
+  font-weight: 750;
+  border: 1px solid transparent;
+  background: transparent;
 }
 
-.app-shell .sidebar a.active,
-.app-shell .app-sidebar a.active,
-.app-shell aside a.active,
-.app-shell .sidebar .active,
-.app-shell .app-sidebar .active,
-.app-shell aside .active {
-  background: var(--nav-active-bg) !important;
-  color: var(--accent-text) !important;
-  border: 1px solid var(--accent) !important;
+.app-shell .sidebar a:hover {
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-strong);
 }
 
-/* Every page uses same outer geometry */
-.app-shell .learning-dashboard-page,
-.app-shell .problem-detail-page,
-.app-shell .focused-problem-page,
-.app-shell .category-page,
-.app-shell .progress-page,
-.app-shell .random-page,
-.app-shell .system-design-page,
-.app-shell .dsa-page {
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: var(--section-gap) !important;
-  transform: none !important;
+.app-shell .sidebar a.active {
+  background: var(--theme-active-bg);
+  color: var(--theme-accent-strong);
+  border-color: var(--theme-accent);
 }
 
-/* Shared cards/panels */
+.app-shell .coffee {
+  margin: auto 14px 16px;
+  min-height: 38px;
+  background: transparent;
+  color: var(--theme-text-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Theme token bridge for existing component CSS
+   -------------------------------------------------------------------------- */
+
+.app-shell.light,
+.app-shell.dark {
+  --bg: var(--theme-bg);
+  --bg-soft: var(--theme-bg-soft);
+  --text: var(--theme-text);
+  --muted: var(--theme-text-soft);
+  --card: var(--theme-surface);
+  --line: var(--theme-border);
+  --accent: var(--theme-accent);
+  --accent2: var(--theme-accent);
+  --shadow: var(--theme-shadow);
+}
+
 .app-shell .glass,
 .app-shell .glass-lite,
-.app-shell .card,
-.app-shell .panel,
-.app-shell .topic-card,
-.app-shell .learning-dashboard-card,
-.app-shell .learning-hero,
-.app-shell .visual-learning,
-.app-shell .problem-tabs,
-.app-shell .visual-walkthrough,
-.app-shell .learning-hero-panel {
-  background: var(--panel-bg) !important;
-  border: 1px solid var(--panel-border) !important;
-  box-shadow: var(--card-shadow) !important;
-  border-radius: var(--card-radius) !important;
-  color: var(--text-body) !important;
+.app-shell .hero-card,
+.app-shell .page-title,
+.app-shell .topic-section,
+.app-shell .learning-map,
+.app-shell .search-panel,
+.app-shell .topic-library,
+.app-shell .category-library,
+.app-shell .progress-card,
+.app-shell .question-card,
+.app-shell .workspace-block,
+.app-shell .scenario-box,
+.app-shell .question-prompt,
+.app-shell .learning-panel {
+  border-color: var(--theme-border);
 }
 
-/* Dashboard hero */
-.app-shell .learning-hero,
-.app-shell .hero-card.learning-hero {
-  width: 100% !important;
-  min-height: var(--hero-min) !important;
-  padding: var(--hero-pad) !important;
-  margin: 0 !important;
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) var(--hero-side-width) !important;
-  gap: 24px !important;
-  align-items: center !important;
-  overflow: hidden !important;
-}
+/* --------------------------------------------------------------------------
+   Compact problem metadata: category differs from normal tags
+   -------------------------------------------------------------------------- */
 
-.app-shell .learning-hero h1 {
-  max-width: 1050px !important;
-  margin: 0 0 14px !important;
-  font-size: var(--hero-title-size) !important;
-  line-height: var(--hero-title-line) !important;
-  font-family: Georgia, 'Times New Roman', serif !important;
-  font-style: italic !important;
-  font-weight: 400 !important;
-  letter-spacing: -.035em !important;
-  color: var(--text-strong) !important;
-}
-
-.app-shell .learning-hero-panel {
-  min-height: 190px !important;
-  padding: 24px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-}
-
-.app-shell .learning-hero-panel strong,
-.app-shell .learning-hero-panel h2,
-.app-shell .stage-card h2 {
-  font-size: 30px !important;
-  line-height: 1.15 !important;
-  color: var(--text-strong) !important;
-}
-
-/* Shared typography */
-.app-shell .learning-hero p,
-.app-shell .problem-detail-page p,
-.app-shell .focused-problem-page p,
-.app-shell .category-page p,
-.app-shell .progress-page p,
-.app-shell .random-page p,
-.app-shell .system-design-page p,
-.app-shell .dsa-page p {
-  font-size: var(--body-size) !important;
-  line-height: var(--body-line) !important;
-  color: var(--text-body) !important;
-}
-
-.app-shell .eyebrow,
-.app-shell [class*='eyebrow'] {
-  margin: 0 0 12px !important;
-  font-size: var(--eyebrow-size) !important;
-  line-height: 1.15 !important;
-  font-weight: 850 !important;
-  letter-spacing: .14em !important;
-  text-transform: uppercase !important;
-  color: var(--accent-text) !important;
-}
-
-.app-shell .problem-detail-page h1,
-.app-shell .focused-problem-page h1,
-.app-shell .category-page h1,
-.app-shell .progress-page h1,
-.app-shell .random-page h1,
-.app-shell .system-design-page h1,
-.app-shell .dsa-page h1 {
-  max-width: 1200px !important;
-  margin: 0 !important;
-  font-size: var(--page-title-size) !important;
-  line-height: var(--page-title-line) !important;
-  letter-spacing: -.035em !important;
-  color: var(--text-strong) !important;
-}
-
-.app-shell .learning-dashboard-card h2,
-.app-shell .category-library h2,
-.app-shell .learning-map h2 {
-  margin: 0 !important;
-  font-size: 24px !important;
-  line-height: 1.2 !important;
-  font-family: Georgia, 'Times New Roman', serif !important;
-  font-style: italic !important;
-  font-weight: 400 !important;
-  color: var(--text-strong) !important;
-}
-
-/* Dashboard grids */
-.app-shell .learning-stats-grid,
-.app-shell .dashboard-grid.learning-stats-grid {
-  display: grid !important;
-  grid-template-columns: minmax(320px, 1.55fr) repeat(3, minmax(170px, 1fr)) !important;
-  gap: 14px !important;
-  width: 100% !important;
-  margin: 0 !important;
-}
-
-.app-shell .learning-stats-grid > *,
-.app-shell .stat {
-  min-height: var(--card-min) !important;
-  padding: var(--card-pad) !important;
-}
-
-.app-shell .stat h2,
-.app-shell .learning-stats-grid h2 {
-  margin: 0 0 6px !important;
-  font-size: 30px !important;
-  line-height: 1 !important;
-  font-family: Georgia, 'Times New Roman', serif !important;
-  font-weight: 400 !important;
-  color: var(--accent-text) !important;
-}
-
-.app-shell .learning-dashboard-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 18px !important;
-  width: 100% !important;
-}
-
-.app-shell .learning-dashboard-card {
-  min-height: 285px !important;
-  padding: var(--card-pad) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 16px !important;
-}
-
-/* Problem pills/badges */
-.app-shell .problem-meta,
 .app-shell .problem-tags,
-.app-shell .pill-row,
-.app-shell .tag-list {
-  display: flex !important;
-  align-items: center !important;
-  flex-wrap: wrap !important;
-  gap: 8px !important;
-  margin: 10px 0 16px !important;
+.app-shell .problem-meta,
+.app-shell .tag-list,
+.app-shell .pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .app-shell .pill,
+.app-shell .tags span,
 .app-shell .tag,
 .app-shell .badge,
-.app-shell .problem-meta span,
-.app-shell .problem-tags span {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 24px !important;
-  max-height: 28px !important;
-  padding: 4px 10px !important;
-  border-radius: 999px !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  font-weight: 850 !important;
-  white-space: nowrap !important;
-  background: transparent !important;
-  border: 1px solid var(--panel-border) !important;
-  color: var(--text-muted) !important;
+.app-shell .time-pill,
+.app-shell .type-pill,
+.app-shell .concept-row span {
+  min-height: 24px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 850;
+  white-space: nowrap;
 }
 
+.app-shell .framework-pill,
 .app-shell .pill.category,
 .app-shell .tag.category,
-.app-shell .framework-pill {
-  color: var(--accent-text) !important;
-  border-color: var(--accent) !important;
-  background: var(--accent-soft) !important;
+.app-shell .category-pill {
+  color: var(--theme-accent-strong);
+  border: 1px solid var(--theme-accent);
+  background: var(--theme-accent-soft);
 }
 
-.app-shell .pill.difficulty-medium,
-.app-shell .difficulty-medium {
-  color: #ff8a2a !important;
-  border-color: rgba(255, 138, 42, .7) !important;
-  background: rgba(255, 138, 42, .16) !important;
+.app-shell .difficulty-medium,
+.app-shell .pill.difficulty-medium {
+  color: #ff8a2a;
+  border: 1px solid rgba(255, 138, 42, 0.70);
+  background: rgba(255, 138, 42, 0.16);
 }
 
-.app-shell .pill.difficulty-easy,
-.app-shell .difficulty-easy {
-  color: #2ed596 !important;
-  border-color: rgba(46, 213, 150, .7) !important;
-  background: rgba(46, 213, 150, .16) !important;
+.app-shell .difficulty-easy,
+.app-shell .pill.difficulty-easy {
+  color: #2ed596;
+  border: 1px solid rgba(46, 213, 150, 0.70);
+  background: rgba(46, 213, 150, 0.16);
 }
 
-.app-shell .pill.difficulty-hard,
-.app-shell .difficulty-hard {
-  color: #ff5d73 !important;
-  border-color: rgba(255, 93, 115, .75) !important;
-  background: rgba(255, 93, 115, .16) !important;
-}
-
-/* Controls */
-.app-shell .btn,
-.app-shell button,
-.app-shell a.btn {
-  min-height: var(--button-height) !important;
-  height: var(--button-height) !important;
-  padding: 0 14px !important;
-  border-radius: 8px !important;
-  font-size: 14px !important;
-  font-weight: 850 !important;
-  line-height: 1 !important;
-}
-
-.app-shell input,
-.app-shell select,
-.app-shell textarea {
-  min-height: 40px !important;
-  font-size: 15px !important;
-  border-radius: 8px !important;
-  background: var(--panel-bg) !important;
-  color: var(--text-strong) !important;
-  border: 1px solid var(--panel-border) !important;
-}
-
-@media (max-width: 1200px) {
-  .app-shell .learning-hero,
-  .app-shell .hero-card.learning-hero {
-    grid-template-columns: 1fr !important;
-  }
-
-  .app-shell .learning-stats-grid,
-  .app-shell .dashboard-grid.learning-stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  .app-shell .learning-dashboard-grid {
-    grid-template-columns: 1fr !important;
-  }
+.app-shell .difficulty-hard,
+.app-shell .pill.difficulty-hard {
+  color: #ff5d73;
+  border: 1px solid rgba(255, 93, 115, 0.75);
+  background: rgba(255, 93, 115, 0.16);
 }
 
 @media (max-width: 760px) {
   .app-shell {
-    --page-x: 18px;
-    --page-y: 28px;
-    --hero-title-size: clamp(32px, 10vw, 44px);
-    --page-title-size: clamp(34px, 10vw, 48px);
+    --sidebar-width: 0px;
+    --content-pad-x: 18px;
+    --content-pad-y: 24px;
   }
 
-  .app-shell .app-main,
-  .app-shell main,
-  .app-shell .content-area,
-  .app-shell .page-content {
-    margin-left: 0 !important;
-    width: 100vw !important;
+  .app-shell .nav,
+  .app-shell .navbar {
+    padding-left: 18px;
   }
 
-  .app-shell .learning-stats-grid,
-  .app-shell .dashboard-grid.learning-stats-grid {
-    grid-template-columns: 1fr !important;
+  .app-shell .sidebar {
+    display: none;
+  }
+
+  .app-shell .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell .page-wrap {
+    grid-column: 1;
   }
 }
