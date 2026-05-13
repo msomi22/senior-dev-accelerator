@@ -7,6 +7,7 @@ import './styles/visual-learning.css';
 import './styles/learning-dashboard.css';
 import './styles/senior-ui.css';
 import './styles/enhanced-dark-theme.css';
+import './styles/enhanced-dark-theme-fixes.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
