@@ -1,8 +1,17 @@
 /* Use the existing public logo assets for the sidebar brand. */
 
 :root {
-  --sidebar-logo-height: var(--nav-height);
+  --sidebar-logo-height: var(--topbar-height, var(--nav-height));
   --sidebar-logo-section-gap: 34px;
+}
+
+.app-shell .topbar,
+.app-shell.light .topbar,
+.app-shell.dark .topbar {
+  height: var(--topbar-height, var(--nav-height)) !important;
+  min-height: var(--topbar-height, var(--nav-height)) !important;
+  max-height: var(--topbar-height, var(--nav-height)) !important;
+  border-bottom: 1px solid var(--theme-border, var(--border-strong, var(--border))) !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo {
@@ -10,24 +19,21 @@ aside.sidebar.app-sidebar > a.sidebar-logo {
   align-items: flex-start !important;
   justify-content: flex-start !important;
   width: 100% !important;
-  height: var(--nav-height) !important;
-  min-height: var(--nav-height) !important;
-  max-height: var(--nav-height) !important;
+  height: var(--sidebar-logo-height) !important;
+  min-height: var(--sidebar-logo-height) !important;
+  max-height: var(--sidebar-logo-height) !important;
   padding: 0 16px !important;
   margin: 0 !important;
-  border-bottom: 1px solid var(--border-strong, var(--border)) !important;
+  border-bottom: 1px solid var(--theme-border, var(--border-strong, var(--border))) !important;
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
   overflow: hidden !important;
 }
 
-.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo {
-  border-bottom-color: rgba(120, 113, 108, 0.34) !important;
-}
-
+.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
 .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
-  border-bottom-color: rgba(148, 163, 184, 0.30) !important;
+  border-bottom-color: var(--theme-border, var(--border-strong, var(--border))) !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo::before,
