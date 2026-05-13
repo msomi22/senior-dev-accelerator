@@ -1,85 +1,66 @@
-/* Use the existing public logo assets for the sidebar brand. */
+/* Show the public logo assets in the existing top header slot without changing
+   the working master shell geometry. */
 
-:root {
-  --sidebar-logo-height: var(--topbar-height, var(--nav-height));
-  --sidebar-logo-section-gap: 34px;
-}
-
-.app-shell .topbar,
-.app-shell.light .topbar,
-.app-shell.dark .topbar {
+.topbar-brand-logo {
+  position: fixed !important;
+  inset: 0 auto auto 0 !important;
+  z-index: 1002 !important;
+  width: var(--sidebar-width) !important;
   height: var(--topbar-height, var(--nav-height)) !important;
   min-height: var(--topbar-height, var(--nav-height)) !important;
-  max-height: var(--topbar-height, var(--nav-height)) !important;
-  border-bottom: 1px solid var(--theme-border, var(--border-strong, var(--border))) !important;
-}
-
-aside.sidebar.app-sidebar > a.sidebar-logo {
   display: flex !important;
-  align-items: flex-start !important;
+  align-items: center !important;
   justify-content: flex-start !important;
-  width: 100% !important;
-  height: var(--sidebar-logo-height) !important;
-  min-height: var(--sidebar-logo-height) !important;
-  max-height: var(--sidebar-logo-height) !important;
-  padding: 0 16px !important;
-  margin: 0 !important;
-  border-bottom: 1px solid var(--theme-border, var(--border-strong, var(--border))) !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  overflow: hidden !important;
+  padding: 0 20px !important;
+  border-right: 1px solid var(--theme-border, var(--border)) !important;
+  background: var(--theme-bg-soft, var(--bg-card)) !important;
+  color: var(--theme-text, var(--text-primary)) !important;
+  text-decoration: none !important;
 }
 
-.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
-.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
-  border-bottom-color: var(--theme-border, var(--border-strong, var(--border))) !important;
-}
-
-aside.sidebar.app-sidebar > a.sidebar-logo::before,
-aside.sidebar.app-sidebar > a.sidebar-logo::after {
+.topbar-brand-logo::before,
+.topbar-brand-logo::after {
   content: none !important;
   display: none !important;
 }
 
-aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
+.topbar-brand-logo > .brand-logo {
   display: block !important;
   width: 208px !important;
-  max-width: 208px !important;
+  max-width: calc(var(--sidebar-width) - 40px) !important;
   height: auto !important;
-  max-height: none !important;
   object-fit: contain !important;
-  object-position: left top !important;
-  margin-top: -7px !important;
+  object-position: left center !important;
 }
 
-aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
-aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
-  display: none !important;
-}
-
-.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light,
-html[data-theme='light'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light {
+.app-shell.light .topbar-brand-logo > .brand-logo-light,
+html[data-theme='light'] .topbar-brand-logo > .brand-logo-light {
   display: block !important;
 }
 
-.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark,
-html[data-theme='light'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark {
+.app-shell.light .topbar-brand-logo > .brand-logo-dark,
+html[data-theme='light'] .topbar-brand-logo > .brand-logo-dark {
   display: none !important;
 }
 
-.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light,
-html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light {
+.app-shell.dark .topbar-brand-logo > .brand-logo-light,
+html[data-theme='dark'] .topbar-brand-logo > .brand-logo-light {
   display: none !important;
 }
 
-.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark,
-html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark {
+.app-shell.dark .topbar-brand-logo > .brand-logo-dark,
+html[data-theme='dark'] .topbar-brand-logo > .brand-logo-dark {
   display: block !important;
+}
+
+/* Keep the sidebar aligned to the original master behavior: it starts below the
+   header line, so the header border remains one continuous straight line. */
+aside.sidebar.app-sidebar > a.sidebar-logo {
+  display: none !important;
 }
 
 aside.sidebar.app-sidebar > .nav-section:first-of-type {
-  margin-top: var(--sidebar-logo-section-gap) !important;
+  margin-top: 0 !important;
 }
 
 @media (min-width: 641px) and (max-width: 900px) {
@@ -102,7 +83,7 @@ aside.sidebar.app-sidebar > .nav-section:first-of-type {
   .app-shell .navbar,
   .app-shell.light .navbar,
   .app-shell.dark .navbar {
-    inset: 0 0 auto var(--sidebar-width) !important;
+    inset: 0 0 auto 0 !important;
   }
 
   .app-shell .sidebar,
@@ -112,10 +93,10 @@ aside.sidebar.app-sidebar > .nav-section:first-of-type {
   .app-shell.dark .sidebar,
   .app-shell.dark .app-sidebar {
     position: fixed !important;
-    inset: 0 auto 0 0 !important;
+    inset: var(--topbar-height, var(--nav-height)) auto 0 0 !important;
     width: var(--sidebar-width) !important;
-    height: 100vh !important;
-    min-height: 100vh !important;
+    height: calc(100vh - var(--topbar-height, var(--nav-height))) !important;
+    min-height: calc(100vh - var(--topbar-height, var(--nav-height))) !important;
     margin: 0 !important;
     border-radius: 0 !important;
   }
@@ -128,8 +109,8 @@ aside.sidebar.app-sidebar > .nav-section:first-of-type {
   .app-shell.dark .main-content {
     grid-column: 2 !important;
     width: 100% !important;
-    height: 100vh !important;
-    min-height: 100vh !important;
+    height: calc(100vh - var(--topbar-height, var(--nav-height))) !important;
+    min-height: calc(100vh - var(--topbar-height, var(--nav-height))) !important;
     padding: calc(var(--nav-height) + var(--page-top-gap)) var(--page-x) calc(var(--page-bottom-gap) + var(--footer-height)) !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
