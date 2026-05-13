@@ -203,7 +203,28 @@ export default function CategoryPage({ fixedCategoryId }) {
         <p className="eyebrow">{category.shortName || category.name}</p>
         <h1>{category.name}</h1>
         <p>{category.description}</p>
+
+        {!loadingTopics && !loadingBanks ? (
+          <div className="header-search">
+            <SearchPanel
+              query={search.query}
+              onQueryChange={search.setQuery}
+            />
+          </div>
+        ) : null}
       </section>
+
+      {!loadingTopics && !loadingBanks && search.isActive ? (
+        search.isIndexing ? (
+          <LoadingCard label="Building search index…" />
+        ) : (
+          <SearchResultsSection
+            results={search.results}
+            completed={completed}
+            onToggle={toggle}
+          />
+        )
+      ) : null}
 
       {loadingTopics || loadingBanks ? (
         <LoadingCard label="Loading category topics…" />
@@ -237,24 +258,6 @@ export default function CategoryPage({ fixedCategoryId }) {
             </div>
           )}
 
-          <section className="advanced-search-panel glass-lite search-only-card">
-            <SearchPanel
-              query={search.query}
-              onQueryChange={search.setQuery}
-            />
-          </section>
-
-          {search.isActive ? (
-            search.isIndexing ? (
-              <LoadingCard label="Building search index…" />
-            ) : (
-              <SearchResultsSection
-                results={search.results}
-                completed={completed}
-                onToggle={toggle}
-              />
-            )
-          ) : null}
         </>
       )}
     </main>

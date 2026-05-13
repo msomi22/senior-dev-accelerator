@@ -770,6 +770,22 @@ textarea {
   gap: 8px;
 }
 
+.header-search {
+  margin-top: 16px;
+}
+
+.page-title .header-search .search-panel {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.page-title .header-search textarea {
+  min-height: 64px;
+}
+
 .advanced-search-panel > summary {
   padding: 16px 18px;
 }
