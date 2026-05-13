@@ -28,13 +28,7 @@ export function getFilteredTopicQuestions(
   );
 
   if (completionFilter === 'completed') {
-    const completedQuestions = difficultyScopedQuestions.filter(
-      (question) => completed[question.id]
-    );
-
-    return completedQuestions.length === difficultyScopedQuestions.length
-      ? completedQuestions
-      : [];
+    return difficultyScopedQuestions.filter((question) => completed[question.id]);
   }
 
   if (completionFilter === 'incomplete') {
