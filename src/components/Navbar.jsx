@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
+import GlobalSearch from './GlobalSearch.jsx';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { categories } from '../services/questionBankService.js';
 
@@ -35,6 +36,8 @@ export default function Navbar() {
   return (
     <header className="nav topbar">
       <span className="topbar-title">{pageTitle(location.pathname)}</span>
+
+      <GlobalSearch />
 
       <nav className="topbar-links" aria-label="Primary">
         {featured.map((category) => (

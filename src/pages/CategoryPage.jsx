@@ -4,8 +4,6 @@ import { Link, useParams } from 'react-router-dom';
 import TopicSection from '../components/TopicSection.jsx';
 import TopicLibrary from '../components/TopicLibrary.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
-import SearchPanel from '../components/SearchPanel.jsx';
-import SearchResultsSection from '../components/SearchResultsSection.jsx';
 
 import { storageService } from '../services/storageService.js';
 import {
@@ -13,7 +11,6 @@ import {
   getFilteredTopicQuestions
 } from '../services/topicFilterService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
-import { useQuestionSearch } from '../hooks/useQuestionSearch.js';
 
 import {
   getCategory,
@@ -151,6 +148,14 @@ export default function CategoryPage({ fixedCategoryId }) {
     return filteredTopics.find((topic) => topic.id === selectedId);
   }, [filteredTopics, selectedId]);
 
+  const visibleLibraryTopics = useMemo(() => {
+    if (completionFilter === 'all') {
+      return filteredTopics;
+    }
+
+    return selectedTopic ? [selectedTopic] : filteredTopics.slice(0, 1);
+  }, [completionFilter, filteredTopics, selectedTopic]);
+
   useEffect(() => {
     if (!filteredTopics.length) return;
 
@@ -162,9 +167,6 @@ export default function CategoryPage({ fixedCategoryId }) {
       setSelectedId(filteredTopics[0].id);
     }
   }, [filteredTopics, selectedId]);
-
-  const searchTopics = useMemo(() => topics, [topics]);
-  const search = useQuestionSearch(searchTopics);
 
   const toggle = (id) => {
     setCompleted(storageService.toggleComplete(id));
@@ -191,35 +193,14 @@ export default function CategoryPage({ fixedCategoryId }) {
         <p className="eyebrow">{category.shortName || category.name}</p>
         <h1>{category.name}</h1>
         <p>{category.description}</p>
-
-        {!loadingTopics && !loadingBanks ? (
-          <div className="header-search">
-            <SearchPanel
-              query={search.query}
-              onQueryChange={search.setQuery}
-            />
-          </div>
-        ) : null}
       </section>
-
-      {!loadingTopics && !loadingBanks && search.isActive ? (
-        search.isIndexing ? (
-          <LoadingCard label="Building search index…" />
-        ) : (
-          <SearchResultsSection
-            results={search.results}
-            completed={completed}
-            onToggle={toggle}
-          />
-        )
-      ) : null}
 
       {loadingTopics || loadingBanks ? (
         <LoadingCard label="Loading category topics…" />
       ) : (
         <>
           <TopicLibrary
-            topics={filteredTopics}
+            topics={visibleLibraryTopics}
             allTopicsCount={topics.length}
             selectedId={selectedId}
             completed={completed}
@@ -239,12 +220,7 @@ export default function CategoryPage({ fixedCategoryId }) {
               onToggle={toggle}
               activeDifficulty={topicDifficulty}
             />
-          ) : (
-            <div className="empty-state glass-lite">
-              <h3>No questions found</h3>
-              <p>Try another difficulty or status filter.</p>
-            </div>
-          )}
+          ) : null}
 
         </>
       )}

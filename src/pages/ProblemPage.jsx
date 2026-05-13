@@ -197,9 +197,19 @@ export default function ProblemPage() {
           </p>
         </div>
 
-        <button className="mark reference-mark" onClick={() => handleToggle(entry.question.id)}>
-          {completed[entry.question.id] ? '✓ Completed' : 'Mark done'}
-        </button>
+        <div className="reference-action-group" aria-label="Focused problem actions">
+          <NavLink className="btn ghost" to={categoryBackPath}>
+            Back to category
+          </NavLink>
+
+          <NavLink className="btn ghost" to="/random">
+            Try random question
+          </NavLink>
+
+          <button className="mark reference-mark" onClick={() => handleToggle(entry.question.id)}>
+            {completed[entry.question.id] ? '✓ Completed' : 'Mark done'}
+          </button>
+        </div>
       </section>
 
       <FocusedProblemWorkspace
@@ -208,16 +218,6 @@ export default function ProblemPage() {
         onToggle={handleToggle}
         hideTopline
       />
-
-      <section className="focused-problem-actions" aria-label="Focused problem actions">
-        <NavLink className="btn ghost" to={categoryBackPath}>
-          Back to category
-        </NavLink>
-
-        <NavLink className="btn ghost" to="/random">
-          Try random question
-        </NavLink>
-      </section>
     </main>
   );
 }

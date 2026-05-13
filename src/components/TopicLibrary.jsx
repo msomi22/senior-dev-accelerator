@@ -6,13 +6,17 @@ import { getQuestionSetProgress } from '../services/topicFilterService.js';
 
 const ALL = 'all';
 
+function pluralize(count, singular, plural = `${singular}s`) {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
 function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
   if (completionFilter === 'completed') {
-    return `${visibleTopicCount} topics are complete.`;
+    return `${pluralize(visibleTopicCount, 'topic')} contain completed questions.`;
   }
 
   if (completionFilter === 'incomplete') {
-    return `${visibleTopicCount} topics contain incomplete questions.`;
+    return `${pluralize(visibleTopicCount, 'topic')} contain incomplete questions.`;
   }
 
   return `${visibleTopicCount} of ${allTopicsCount} topics match the current filters.`;
@@ -27,6 +31,10 @@ function getVisibleTopicProgress(topic, completed = {}) {
     { ...topic, count: topic.filteredCount ?? topic.count },
     completed
   );
+}
+
+function getFullTopicProgress(topic, completed = {}) {
+  return topicProgress(topic, completed);
 }
 
 function getCountLabel(count, completionFilter) {
@@ -186,9 +194,10 @@ export default function TopicLibrary({
           const count = topic.filteredCount ?? topic.count ?? 0;
 
           const progress = getVisibleTopicProgress(topic, completed);
+          const fullProgress = getFullTopicProgress(topic, completed);
 
           const fullyCompleted =
-            count > 0 && progress.done === count;
+            fullProgress.total > 0 && fullProgress.done === fullProgress.total;
 
           return (
             <button
@@ -206,8 +215,14 @@ export default function TopicLibrary({
               <strong>{topic.name}</strong>
 
               <small>
-                {progress.done}/{progress.total || count} complete
+                {progress.done}/{progress.total || count} visible complete
               </small>
+
+              {completionFilter !== 'all' ? (
+                <small>
+                  Topic total: {fullProgress.done}/{fullProgress.total || topic.count || 0} complete
+                </small>
+              ) : null}
 
               {difficulty !== ALL ? (
                 <small>Difficulty: {difficulty}</small>
@@ -217,8 +232,8 @@ export default function TopicLibrary({
                 <small>
                   Status:{' '}
                   {completionFilter === 'completed'
-                    ? 'Completed only'
-                    : 'Incomplete only'}
+                    ? 'Completed questions only'
+                    : 'Incomplete questions only'}
                 </small>
               ) : null}
 
