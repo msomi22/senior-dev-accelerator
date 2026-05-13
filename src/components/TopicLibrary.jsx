@@ -12,11 +12,11 @@ function pluralize(count, singular, plural = `${singular}s`) {
 
 function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
   if (completionFilter === 'completed') {
-    return `${pluralize(visibleTopicCount, 'topic')} fully complete.`;
+    return `${pluralize(visibleTopicCount, 'topic')} contain completed questions.`;
   }
 
   if (completionFilter === 'incomplete') {
-    return `${pluralize(visibleTopicCount, 'topic')} still have incomplete questions.`;
+    return `${pluralize(visibleTopicCount, 'topic')} contain incomplete questions.`;
   }
 
   return `${visibleTopicCount} of ${allTopicsCount} topics match the current filters.`;
@@ -39,7 +39,7 @@ function getFullTopicProgress(topic, completed = {}) {
 
 function getCountLabel(count, completionFilter) {
   if (completionFilter === 'completed') {
-    return 'Fully complete';
+    return `${count} completed`;
   }
 
   if (completionFilter === 'incomplete') {
@@ -168,9 +168,9 @@ export default function TopicLibrary({
               onCompletionFilterChange(event.target.value)
             }
           >
-            <option value="all">All topics</option>
-            <option value="completed">Fully completed topics</option>
-            <option value="incomplete">Topics with incomplete questions</option>
+            <option value="all">All questions</option>
+            <option value="completed">Completed only</option>
+            <option value="incomplete">Incomplete only</option>
           </select>
         </label>
 
@@ -232,8 +232,8 @@ export default function TopicLibrary({
                 <small>
                   Status:{' '}
                   {completionFilter === 'completed'
-                    ? 'Fully completed topic'
-                    : 'Has incomplete questions'}
+                    ? 'Completed questions only'
+                    : 'Incomplete questions only'}
                 </small>
               ) : null}
 
