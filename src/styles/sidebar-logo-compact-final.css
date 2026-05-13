@@ -9,6 +9,8 @@
   --sidebar-logo-title: #f8fafc;
   --sidebar-logo-subtitle: #94a3b8;
   --sidebar-logo-shadow: 0 10px 26px rgba(45, 212, 191, 0.22);
+  --sidebar-logo-divider-light: rgba(120, 113, 108, 0.20);
+  --sidebar-logo-divider-dark: rgba(148, 163, 184, 0.14);
 }
 
 html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
@@ -32,7 +34,6 @@ html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a
   border: 0 !important;
   border-top: 0 !important;
   border-right: 0 !important;
-  border-bottom: 0 !important;
   border-left: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -40,6 +41,16 @@ html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a
   outline: 0 !important;
   text-decoration: none !important;
   transform: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo {
+  border-bottom: 1px solid var(--sidebar-logo-divider-light) !important;
+}
+
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+  border-bottom: 1px solid var(--sidebar-logo-divider-dark) !important;
 }
 
 html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::before,
