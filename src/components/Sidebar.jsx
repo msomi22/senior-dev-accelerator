@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import BuyCoffeeButton from './BuyCoffeeButton.jsx';
 import { categories } from '../services/questionBankService.js';
 
@@ -14,14 +14,6 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar app-sidebar">
-      <Link to="/" className="sidebar-logo" aria-label="Senior Dev Accelerator dashboard">
-        <span className="logo-mark">S</span>
-        <span className="logo-text">
-          Senior Dev
-          <span>Accelerator</span>
-        </span>
-      </Link>
-
       <div className="nav-section">
         <p className="nav-label">Learn</p>
         <NavLink to="/" className={navClass}>Dashboard</NavLink>
