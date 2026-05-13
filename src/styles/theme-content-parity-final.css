@@ -1,0 +1,491 @@
+/* ==========================================================================
+   FINAL CONTENT PARITY LAYER
+   --------------------------------------------------------------------------
+   Loaded after the shell parity layer.
+
+   Goal: light and dark must use the same dashboard/problem-page geometry.
+   Themes may only differ by colors, borders, and shadows.
+   ========================================================================== */
+
+:root {
+  --content-max-width: none;
+  --content-section-gap: 22px;
+  --content-card-radius: 14px;
+  --content-card-padding: 24px;
+  --content-card-min-height: 150px;
+  --content-hero-padding: 28px;
+  --content-hero-min-height: 285px;
+  --content-hero-title-size: clamp(42px, 4.25vw, 68px);
+  --content-hero-title-line: 1.03;
+  --content-body-size: 17px;
+  --content-body-line: 1.55;
+  --content-eyebrow-size: 14px;
+  --content-eyebrow-line: 1.15;
+  --content-button-height: 40px;
+  --content-button-radius: 8px;
+  --content-button-x: 14px;
+}
+
+/* One page rhythm for every theme. */
+.app-shell .learning-dashboard-page,
+.app-shell.light .learning-dashboard-page,
+.app-shell.dark .learning-dashboard-page,
+.app-shell .problem-detail-page,
+.app-shell.light .problem-detail-page,
+.app-shell.dark .problem-detail-page,
+.app-shell .focused-problem-page,
+.app-shell.light .focused-problem-page,
+.app-shell.dark .focused-problem-page,
+.app-shell .category-page,
+.app-shell.light .category-page,
+.app-shell.dark .category-page,
+.app-shell .progress-page,
+.app-shell.light .progress-page,
+.app-shell.dark .progress-page {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: var(--content-max-width) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--content-section-gap) !important;
+  transform: none !important;
+}
+
+/* Dashboard hero must be identical in both themes. */
+.app-shell .learning-hero,
+.app-shell.light .learning-hero,
+.app-shell.dark .learning-hero,
+.app-shell .hero-card.learning-hero,
+.app-shell.light .hero-card.learning-hero,
+.app-shell.dark .hero-card.learning-hero {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: var(--content-hero-min-height) !important;
+  margin: 0 !important;
+  padding: var(--content-hero-padding) !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  align-items: center !important;
+  gap: 24px !important;
+  border-radius: var(--content-card-radius) !important;
+  overflow: hidden !important;
+  transform: none !important;
+}
+
+.app-shell .learning-hero > div:first-child,
+.app-shell.light .learning-hero > div:first-child,
+.app-shell.dark .learning-hero > div:first-child {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.app-shell .learning-hero .eyebrow,
+.app-shell.light .learning-hero .eyebrow,
+.app-shell.dark .learning-hero .eyebrow,
+.app-shell .eyebrow,
+.app-shell.light .eyebrow,
+.app-shell.dark .eyebrow {
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+  display: block !important;
+  font-size: var(--content-eyebrow-size) !important;
+  font-weight: 800 !important;
+  line-height: var(--content-eyebrow-line) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.app-shell .learning-hero h1,
+.app-shell.light .learning-hero h1,
+.app-shell.dark .learning-hero h1,
+.app-shell .hero-card.learning-hero h1,
+.app-shell.light .hero-card.learning-hero h1,
+.app-shell.dark .hero-card.learning-hero h1 {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 1040px !important;
+  margin: 0 0 18px !important;
+  padding: 0 !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-size: var(--content-hero-title-size) !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  line-height: var(--content-hero-title-line) !important;
+  letter-spacing: -0.04em !important;
+  text-wrap: balance !important;
+  transform: none !important;
+}
+
+.app-shell .learning-hero p,
+.app-shell.light .learning-hero p,
+.app-shell.dark .learning-hero p {
+  max-width: 1000px !important;
+  margin: 0 0 18px !important;
+  padding: 0 !important;
+  font-size: var(--content-body-size) !important;
+  line-height: var(--content-body-line) !important;
+}
+
+.app-shell .hero-actions,
+.app-shell.light .hero-actions,
+.app-shell.dark .hero-actions {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.app-shell .btn,
+.app-shell.light .btn,
+.app-shell.dark .btn,
+.app-shell button.btn,
+.app-shell.light button.btn,
+.app-shell.dark button.btn,
+.app-shell a.btn,
+.app-shell.light a.btn,
+.app-shell.dark a.btn {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: var(--content-button-height) !important;
+  height: var(--content-button-height) !important;
+  padding: 0 var(--content-button-x) !important;
+  border-radius: var(--content-button-radius) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+}
+
+.app-shell .learning-hero-panel,
+.app-shell.light .learning-hero-panel,
+.app-shell.dark .learning-hero-panel {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 205px !important;
+  margin: 0 !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  transform: none !important;
+}
+
+.app-shell .learning-hero-panel span,
+.app-shell.light .learning-hero-panel span,
+.app-shell.dark .learning-hero-panel span {
+  display: block !important;
+  margin: 0 0 14px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+.app-shell .learning-hero-panel strong,
+.app-shell.light .learning-hero-panel strong,
+.app-shell.dark .learning-hero-panel strong {
+  display: block !important;
+  margin: 0 0 12px !important;
+  font-size: 30px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.app-shell .learning-hero-panel p,
+.app-shell.light .learning-hero-panel p,
+.app-shell.dark .learning-hero-panel p {
+  margin: 0 !important;
+  font-size: 16px !important;
+  line-height: 1.55 !important;
+}
+
+/* Dashboard stats: same columns, same card height, same spacing. */
+.app-shell .dashboard-grid.learning-stats-grid,
+.app-shell.light .dashboard-grid.learning-stats-grid,
+.app-shell.dark .dashboard-grid.learning-stats-grid,
+.app-shell .learning-stats-grid,
+.app-shell.light .learning-stats-grid,
+.app-shell.dark .learning-stats-grid {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(360px, 1.55fr) repeat(3, minmax(180px, 1fr)) !important;
+  gap: 14px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.app-shell .learning-stats-grid > *,
+.app-shell.light .learning-stats-grid > *,
+.app-shell.dark .learning-stats-grid > *,
+.app-shell .learning-stats-grid .glass,
+.app-shell.light .learning-stats-grid .glass,
+.app-shell.dark .learning-stats-grid .glass,
+.app-shell .stat,
+.app-shell.light .stat,
+.app-shell.dark .stat {
+  box-sizing: border-box !important;
+  min-height: var(--content-card-min-height) !important;
+  margin: 0 !important;
+  padding: 24px !important;
+  border-radius: var(--content-card-radius) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.app-shell .learning-stats-grid .stat h2,
+.app-shell.light .learning-stats-grid .stat h2,
+.app-shell.dark .learning-stats-grid .stat h2,
+.app-shell .stat h2,
+.app-shell.light .stat h2,
+.app-shell.dark .stat h2 {
+  margin: 0 0 6px !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-size: 30px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+}
+
+.app-shell .learning-stats-grid .stat p,
+.app-shell.light .learning-stats-grid .stat p,
+.app-shell.dark .learning-stats-grid .stat p,
+.app-shell .stat p,
+.app-shell.light .stat p,
+.app-shell.dark .stat p {
+  margin: 0 !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+/* Main dashboard cards: same geometry. */
+.app-shell .learning-dashboard-grid,
+.app-shell.light .learning-dashboard-grid,
+.app-shell.dark .learning-dashboard-grid {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.app-shell .learning-dashboard-card,
+.app-shell.light .learning-dashboard-card,
+.app-shell.dark .learning-dashboard-card {
+  box-sizing: border-box !important;
+  min-height: 305px !important;
+  margin: 0 !important;
+  padding: var(--content-card-padding) !important;
+  border-radius: var(--content-card-radius) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.app-shell .learning-dashboard-card h2,
+.app-shell.light .learning-dashboard-card h2,
+.app-shell.dark .learning-dashboard-card h2 {
+  margin: 0 !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-size: 24px !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+}
+
+.app-shell .learning-dashboard-card p,
+.app-shell.light .learning-dashboard-card p,
+.app-shell.dark .learning-dashboard-card p,
+.app-shell .learning-dashboard-card li,
+.app-shell.light .learning-dashboard-card li,
+.app-shell.dark .learning-dashboard-card li {
+  font-size: 16px !important;
+  line-height: 1.55 !important;
+}
+
+.app-shell .dashboard-card-action,
+.app-shell.light .dashboard-card-action,
+.app-shell.dark .dashboard-card-action {
+  margin-top: auto !important;
+}
+
+.app-shell .weak-area-list,
+.app-shell.light .weak-area-list,
+.app-shell.dark .weak-area-list {
+  display: grid !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.app-shell .weak-area-row,
+.app-shell.light .weak-area-row,
+.app-shell.dark .weak-area-row {
+  box-sizing: border-box !important;
+  min-height: 50px !important;
+  padding: 12px 14px !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+}
+
+/* Category library and learning map: same geometry. */
+.app-shell .category-library,
+.app-shell.light .category-library,
+.app-shell.dark .category-library,
+.app-shell .learning-map,
+.app-shell.light .learning-map,
+.app-shell.dark .learning-map {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 24px !important;
+  border-radius: var(--content-card-radius) !important;
+}
+
+/* Problem/detail page: same header geometry and readable compact pills. */
+.app-shell .problem-detail-page,
+.app-shell.light .problem-detail-page,
+.app-shell.dark .problem-detail-page,
+.app-shell .focused-problem-page,
+.app-shell.light .focused-problem-page,
+.app-shell.dark .focused-problem-page {
+  gap: 20px !important;
+}
+
+.app-shell .problem-detail-page h1,
+.app-shell.light .problem-detail-page h1,
+.app-shell.dark .problem-detail-page h1,
+.app-shell .focused-problem-page h1,
+.app-shell.light .focused-problem-page h1,
+.app-shell.dark .focused-problem-page h1 {
+  max-width: 1200px !important;
+  margin: 0 !important;
+  font-size: clamp(40px, 4.4vw, 68px) !important;
+  line-height: 1.03 !important;
+  letter-spacing: -0.04em !important;
+}
+
+.app-shell .problem-meta,
+.app-shell.light .problem-meta,
+.app-shell.dark .problem-meta,
+.app-shell .problem-tags,
+.app-shell.light .problem-tags,
+.app-shell.dark .problem-tags,
+.app-shell .pill-row,
+.app-shell.light .pill-row,
+.app-shell.dark .pill-row {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin: 10px 0 16px !important;
+  padding: 0 !important;
+}
+
+.app-shell .problem-meta span,
+.app-shell.light .problem-meta span,
+.app-shell.dark .problem-meta span,
+.app-shell .problem-tags span,
+.app-shell.light .problem-tags span,
+.app-shell.dark .problem-tags span,
+.app-shell .pill,
+.app-shell.light .pill,
+.app-shell.dark .pill {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 24px !important;
+  max-height: 28px !important;
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* The visual learning panel should not change dimensions between themes. */
+.app-shell .visual-learning,
+.app-shell.light .visual-learning,
+.app-shell.dark .visual-learning,
+.app-shell .problem-tabs,
+.app-shell.light .problem-tabs,
+.app-shell.dark .problem-tabs,
+.app-shell .visual-walkthrough,
+.app-shell.light .visual-walkthrough,
+.app-shell.dark .visual-walkthrough {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  margin: 0 !important;
+  border-radius: var(--content-card-radius) !important;
+}
+
+@media (max-width: 1200px) {
+  .app-shell .learning-hero,
+  .app-shell.light .learning-hero,
+  .app-shell.dark .learning-hero,
+  .app-shell .hero-card.learning-hero,
+  .app-shell.light .hero-card.learning-hero,
+  .app-shell.dark .hero-card.learning-hero {
+    grid-template-columns: 1fr !important;
+  }
+
+  .app-shell .learning-hero-panel,
+  .app-shell.light .learning-hero-panel,
+  .app-shell.dark .learning-hero-panel {
+    min-height: 150px !important;
+  }
+
+  .app-shell .dashboard-grid.learning-stats-grid,
+  .app-shell.light .dashboard-grid.learning-stats-grid,
+  .app-shell.dark .dashboard-grid.learning-stats-grid,
+  .app-shell .learning-stats-grid,
+  .app-shell.light .learning-stats-grid,
+  .app-shell.dark .learning-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .app-shell .learning-dashboard-grid,
+  .app-shell.light .learning-dashboard-grid,
+  .app-shell.dark .learning-dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 700px) {
+  :root {
+    --content-hero-title-size: clamp(34px, 12vw, 52px);
+    --content-hero-padding: 20px;
+  }
+
+  .app-shell .dashboard-grid.learning-stats-grid,
+  .app-shell.light .dashboard-grid.learning-stats-grid,
+  .app-shell.dark .dashboard-grid.learning-stats-grid,
+  .app-shell .learning-stats-grid,
+  .app-shell.light .learning-stats-grid,
+  .app-shell.dark .learning-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

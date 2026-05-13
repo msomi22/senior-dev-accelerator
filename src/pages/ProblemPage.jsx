@@ -5,11 +5,49 @@ import {
   useParams
 } from 'react-router-dom';
 
+import FocusedProblemWorkspace from '../components/FocusedProblemWorkspace.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
-import QuestionCard from '../components/QuestionCard.jsx';
 
 import { findQuestionById } from '../services/questionBankService.js';
 import { storageService } from '../services/storageService.js';
+
+function uniqueItems(items = []) {
+  const seen = new Set();
+
+  return items.filter((item) => {
+    if (!item?.label) return false;
+
+    const key = item.label.toLowerCase();
+    if (seen.has(key)) return false;
+
+    seen.add(key);
+    return true;
+  });
+}
+
+function categoryPath(categoryId) {
+  if (categoryId === 'dsa') return '/dsa';
+  if (categoryId === 'system') return '/system-design';
+  return categoryId ? `/category/${categoryId}` : '/';
+}
+
+function pillClass(type, label, difficulty) {
+  const normalizedLabel = String(label || '').toLowerCase();
+  const normalizedDifficulty = String(difficulty || '').toLowerCase();
+
+  if (type === 'difficulty' || normalizedLabel === normalizedDifficulty) {
+    if (normalizedLabel === 'easy') return 'difficulty-pill difficulty-easy';
+    if (normalizedLabel === 'medium') return 'difficulty-pill difficulty-medium';
+    if (normalizedLabel === 'hard') return 'difficulty-pill difficulty-hard';
+    return 'difficulty-pill';
+  }
+
+  if (type === 'topic') {
+    return 'topic-pill';
+  }
+
+  return 'meta-pill';
+}
 
 export default function ProblemPage() {
   const { questionId } = useParams();
@@ -111,55 +149,75 @@ export default function ProblemPage() {
     );
   }
 
+  const categoryId = entry.topic?.category || entry.category?.id;
+  const categoryBackPath = categoryPath(categoryId);
+
+  const problemTags = uniqueItems([
+    { label: entry.question.difficulty, type: 'difficulty' },
+    { label: entry.topic?.name, type: 'topic' },
+    ...(entry.question.relatedConcepts || []).slice(0, 2).map((label) => ({ label, type: 'meta' })),
+    ...(entry.question.tags || []).slice(0, 2).map((label) => ({ label, type: 'meta' }))
+  ]);
+
   return (
-    <main className="page problem-detail-shell">
-      <div className="problem-breadcrumb glass-lite">
-        <NavLink to="/">Dashboard</NavLink>
+    <main className="page problem-detail-shell focused-problem-page">
+      <div className="problem-breadcrumb compact-problem-breadcrumb">
+        <NavLink to="/">‹ Dashboard</NavLink>
 
-        <span>›</span>
+        <span>/</span>
 
-        {entry.topic?.category ? (
-          <NavLink to={`/category/${entry.topic.category}`}>
-            {entry.categoryName || entry.topic.category}
-          </NavLink>
+        {entry.topic?.name ? (
+          <span>{entry.topic.name}</span>
         ) : (
-          <span>{entry.categoryName || 'Category'}</span>
+          <span>{entry.categoryName || 'Topic'}</span>
         )}
 
-        <span>›</span>
+        <span>/</span>
 
-        <span>{entry.topic?.name || 'Topic'}</span>
+        <span>{entry.question.title}</span>
       </div>
 
-      <div className="problem-detail-header hero-card">
-        <p className="eyebrow">Focused problem workspace</p>
+      <section className="reference-problem-intro">
+        <div>
+          <h1>{entry.question.title}</h1>
 
-        <h1>{entry.question.title}</h1>
+          <div className="problem-meta-pills" aria-label="Problem metadata">
+            {problemTags.map(({ label, type }) => (
+              <span
+                key={label}
+                className={pillClass(type, label, entry.question.difficulty)}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
 
-        <p>{entry.topic?.description}</p>
-
-        <div className="hero-actions">
-          {entry.topic?.category ? (
-            <NavLink
-              className="btn ghost"
-              to={`/category/${entry.topic.category}`}
-            >
-              Back to category
-            </NavLink>
-          ) : null}
-
-          <NavLink className="btn ghost" to="/random">
-            Try random question
-          </NavLink>
+          <p>
+            {entry.question.question || entry.topic?.description || entry.question.scenario}
+          </p>
         </div>
-      </div>
 
-      <QuestionCard
+        <button className="mark reference-mark" onClick={() => handleToggle(entry.question.id)}>
+          {completed[entry.question.id] ? '✓ Completed' : 'Mark done'}
+        </button>
+      </section>
+
+      <FocusedProblemWorkspace
         question={entry.question}
         completed={!!completed[entry.question.id]}
         onToggle={handleToggle}
-        disableCardNavigation
+        hideTopline
       />
+
+      <section className="focused-problem-actions" aria-label="Focused problem actions">
+        <NavLink className="btn ghost" to={categoryBackPath}>
+          Back to category
+        </NavLink>
+
+        <NavLink className="btn ghost" to="/random">
+          Try random question
+        </NavLink>
+      </section>
     </main>
   );
 }

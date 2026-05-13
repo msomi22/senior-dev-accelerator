@@ -1,0 +1,172 @@
+/* Final compact sidebar logo contract.
+   Loaded last so light and dark use the same logo geometry while keeping text readable. */
+
+:root {
+  --sidebar-logo-height: 82px;
+  --sidebar-logo-size: 36px;
+  --sidebar-logo-bg: linear-gradient(135deg, #2dd4bf 0%, #34d399 100%);
+  --sidebar-logo-icon: #061414;
+  --sidebar-logo-divider-light: rgba(120, 113, 108, 0.20);
+  --sidebar-logo-divider-dark: rgba(148, 163, 184, 0.14);
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  width: 230px !important;
+  height: 82px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  min-height: 82px !important;
+  max-height: 82px !important;
+  padding: 22px 18px 20px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  text-decoration: none !important;
+  transform: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo {
+  border-bottom: 1px solid var(--sidebar-logo-divider-light) !important;
+}
+
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+  border-bottom: 1px solid var(--sidebar-logo-divider-dark) !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type {
+  margin-top: 0 !important;
+  border-top: 0 !important;
+  box-shadow: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  flex: 0 0 36px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: var(--sidebar-logo-bg) !important;
+  color: var(--sidebar-logo-icon) !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-size: 19px !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  transform: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark {
+  box-shadow: 0 10px 26px rgba(45, 212, 191, 0.18) !important;
+}
+
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark {
+  box-shadow: 0 10px 26px rgba(45, 212, 191, 0.22) !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  box-sizing: border-box !important;
+  display: grid !important;
+  gap: 2px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-size: 13px !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.01em !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  transform: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  color: #1c1917 !important;
+}
+
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  color: #f8fafc !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-size: 13px !important;
+  font-style: normal !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  transform: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span {
+  color: #64748b !important;
+}
+
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span {
+  color: #94a3b8 !important;
+}

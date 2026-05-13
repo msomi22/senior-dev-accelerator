@@ -1,0 +1,16 @@
+/* Theme-agnostic sidebar spacing contract.
+   Light and dark must share the same sidebar geometry; only color tokens should differ. */
+
+:root {
+  --sidebar-logo-section-gap: 34px;
+}
+
+html body #root aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html body #root .app-shell.light aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type {
+  margin-top: var(--sidebar-logo-section-gap) !important;
+  border-top: 0 !important;
+  box-shadow: none !important;
+}

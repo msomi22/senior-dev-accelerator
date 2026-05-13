@@ -1,0 +1,86 @@
+/* Final problem metadata pill normalization.
+   Difficulty, topic, and neutral tags have distinct visual hierarchy. */
+
+.problem-meta-pills .meta-pill,
+.problem-meta-pills span.meta-pill,
+.reference-problem-intro .problem-meta-pills .meta-pill,
+.reference-problem-intro .problem-meta-pills span.meta-pill {
+  background: rgba(148, 163, 184, 0.10) !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  color: var(--muted) !important;
+}
+
+.problem-meta-pills .topic-pill,
+.problem-meta-pills span.topic-pill,
+.reference-problem-intro .problem-meta-pills .topic-pill,
+.reference-problem-intro .problem-meta-pills span.topic-pill {
+  background: rgba(45, 212, 191, 0.12) !important;
+  border-color: rgba(45, 212, 191, 0.36) !important;
+  color: #2dd4bf !important;
+  font-weight: 900 !important;
+}
+
+.problem-meta-pills .difficulty-pill,
+.reference-problem-intro .problem-meta-pills .difficulty-pill {
+  font-weight: 900 !important;
+}
+
+.problem-meta-pills .difficulty-easy,
+.reference-problem-intro .problem-meta-pills .difficulty-easy {
+  background: rgba(34, 197, 94, 0.18) !important;
+  border-color: rgba(34, 197, 94, 0.34) !important;
+  color: #4ade80 !important;
+}
+
+.problem-meta-pills .difficulty-medium,
+.reference-problem-intro .problem-meta-pills .difficulty-medium {
+  background: rgba(249, 115, 22, 0.18) !important;
+  border-color: rgba(249, 115, 22, 0.34) !important;
+  color: #fb923c !important;
+}
+
+.problem-meta-pills .difficulty-hard,
+.reference-problem-intro .problem-meta-pills .difficulty-hard {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: rgba(239, 68, 68, 0.36) !important;
+  color: #f87171 !important;
+}
+
+:root[data-theme="light"] .problem-meta-pills .meta-pill,
+:root[data-theme="light"] .problem-meta-pills span.meta-pill,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills .meta-pill,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills span.meta-pill {
+  background: rgba(120, 113, 108, 0.08) !important;
+  border-color: rgba(120, 113, 108, 0.20) !important;
+  color: var(--muted) !important;
+}
+
+:root[data-theme="light"] .problem-meta-pills .topic-pill,
+:root[data-theme="light"] .problem-meta-pills span.topic-pill,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills .topic-pill,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills span.topic-pill {
+  background: #ccfbf1 !important;
+  border-color: #5eead4 !important;
+  color: #0f766e !important;
+}
+
+:root[data-theme="light"] .problem-meta-pills .difficulty-easy,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills .difficulty-easy {
+  background: #dcfce7 !important;
+  border-color: #86efac !important;
+  color: #166534 !important;
+}
+
+:root[data-theme="light"] .problem-meta-pills .difficulty-medium,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills .difficulty-medium {
+  background: #ffedd5 !important;
+  border-color: #fdba74 !important;
+  color: #9a3412 !important;
+}
+
+:root[data-theme="light"] .problem-meta-pills .difficulty-hard,
+:root[data-theme="light"] .reference-problem-intro .problem-meta-pills .difficulty-hard {
+  background: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+}

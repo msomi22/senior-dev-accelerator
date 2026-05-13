@@ -18,7 +18,7 @@ const RandomQuestionPage = lazy(() => import('./pages/RandomQuestionPage.jsx'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage.jsx'));
 const ProblemPage = lazy(() => import('./pages/ProblemPage.jsx'));
 
-function RouteScrollReset() {
+function RouteScrollReset({ theme }) {
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -27,8 +27,12 @@ function RouteScrollReset() {
     }
 
     const reset = () => {
-      document.querySelector('.page-wrap')?.scrollTo({ top: 0, left: 0 });
-      window.scrollTo({ top: 0, left: 0 });
+      const pageWrap = document.querySelector('.page-wrap');
+      const mainContent = document.querySelector('.main-content');
+
+      pageWrap?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      mainContent?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     };
 
     reset();
@@ -39,7 +43,7 @@ function RouteScrollReset() {
       window.cancelAnimationFrame(frameId);
       window.clearTimeout(timeoutId);
     };
-  }, [pathname]);
+  }, [pathname, theme]);
 
   return null;
 }
@@ -49,7 +53,7 @@ export default function App() {
   const { theme } = usePreferences();
   return (
     <div className={`app-shell ${theme}`}>
-      <RouteScrollReset />
+      <RouteScrollReset theme={theme} />
       <Navbar />
       <div className="layout">
         <Sidebar />

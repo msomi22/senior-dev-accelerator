@@ -1,0 +1,408 @@
+/* ========================================================================== 
+   THEME PARITY CONTRACT
+   --------------------------------------------------------------------------
+   This file is intentionally conservative.
+
+   Rule:
+   - Shared shell geometry lives here: sidebar, topbar, main scroll area, logo.
+   - Theme classes only provide values/tokens.
+   - Page internals must NOT be globally rewritten here. Dashboard, DSA,
+     progress, and problem pages keep their own component CSS.
+
+   This prevents light and dark from rendering different structures while also
+   avoiding the previous issue where generic selectors broke page content.
+   ========================================================================== */
+
+.app-shell {
+  --sidebar-width: 280px;
+  --topbar-height: 72px;
+  --content-max-width: 1500px;
+  --content-pad-x: 28px;
+  --content-pad-y: 28px;
+
+  --brand-logo-size: 42px;
+  --brand-row-height: 96px;
+  --brand-gap: 12px;
+  --brand-pad-x: 20px;
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+}
+
+.app-shell.light {
+  --theme-bg: #f3f0ea;
+  --theme-bg-soft: #fbfaf7;
+  --theme-surface: #ffffff;
+  --theme-surface-soft: #f8f4ec;
+  --theme-border: #ded7cb;
+  --theme-border-strong: #cfbe98;
+  --theme-text: #1b1a17;
+  --theme-text-soft: #625e59;
+  --theme-muted: #526176;
+  --theme-accent: #c6a765;
+  --theme-accent-strong: #9a6b19;
+  --theme-accent-soft: #f3e7cf;
+  --theme-active-bg: #f3e7cf;
+  --theme-shadow: 0 12px 30px rgba(36, 27, 15, 0.10);
+}
+
+.app-shell.dark {
+  --theme-bg: #0b0f14;
+  --theme-bg-soft: #111822;
+  --theme-surface: #151a24;
+  --theme-surface-soft: #121923;
+  --theme-border: #2a3342;
+  --theme-border-strong: #3a4658;
+  --theme-text: #f4f5fb;
+  --theme-text-soft: #a9b2c5;
+  --theme-muted: #7d8aa2;
+  --theme-accent: #35e0c8;
+  --theme-accent-strong: #35e0c8;
+  --theme-accent-soft: rgba(53, 224, 200, 0.13);
+  --theme-active-bg: rgba(53, 224, 200, 0.13);
+  --theme-shadow: 0 14px 34px rgba(0, 0, 0, 0.36);
+}
+
+.app-shell,
+.app-shell * {
+  box-sizing: border-box;
+}
+
+.app-shell {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--theme-bg);
+  color: var(--theme-text-soft);
+  font-family: var(--font-body);
+}
+
+/* --------------------------------------------------------------------------
+   Root shell layout
+   -------------------------------------------------------------------------- */
+
+.app-shell .layout {
+  width: 100%;
+  height: 100vh;
+  padding-top: var(--topbar-height);
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--theme-bg);
+}
+
+.app-shell .page-wrap {
+  grid-column: 2;
+  width: 100%;
+  height: calc(100vh - var(--topbar-height));
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--content-pad-y) var(--content-pad-x) 80px;
+  background: var(--theme-bg);
+}
+
+.app-shell .page {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Header / top navigation
+   -------------------------------------------------------------------------- */
+
+.app-shell .nav,
+.app-shell .navbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1000;
+  height: var(--topbar-height);
+  min-height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px 0 calc(var(--sidebar-width) + 28px);
+  background: var(--theme-bg-soft);
+  color: var(--theme-text);
+  border-bottom: 1px solid var(--theme-border);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.app-shell .nav nav,
+.app-shell .navbar nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.app-shell .nav a,
+.app-shell .navbar a {
+  color: var(--theme-text-soft);
+  font-weight: 800;
+}
+
+.app-shell .nav a.active,
+.app-shell .navbar a.active {
+  color: var(--theme-accent-strong);
+}
+
+.app-shell .icon-btn {
+  min-width: 74px;
+  width: auto;
+  height: 42px;
+  border-radius: 999px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--theme-accent-strong);
+  background: transparent;
+  color: var(--theme-accent-strong);
+  font-weight: 900;
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar
+   -------------------------------------------------------------------------- */
+
+.app-shell .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
+  height: 100vh;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--theme-border);
+  border-radius: 0;
+  background: var(--theme-bg-soft);
+  box-shadow: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.app-shell .brand,
+.app-shell .sidebar .brand {
+  height: var(--brand-row-height);
+  min-height: var(--brand-row-height);
+  max-height: var(--brand-row-height);
+  padding: 0 var(--brand-pad-x);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--brand-gap);
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.app-shell .logo,
+.app-shell .brand .logo {
+  width: var(--brand-logo-size);
+  height: var(--brand-logo-size);
+  min-width: var(--brand-logo-size);
+  min-height: var(--brand-logo-size);
+  max-width: var(--brand-logo-size);
+  max-height: var(--brand-logo-size);
+  flex: 0 0 var(--brand-logo-size);
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 12px;
+  background: var(--theme-accent);
+  color: #081015;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 400;
+  box-shadow: none;
+}
+
+.app-shell .brand strong,
+.app-shell .brand h1,
+.app-shell .brand-title {
+  margin: 0;
+  color: var(--theme-text);
+  font-size: 15px;
+  line-height: 1.12;
+  font-weight: 900;
+}
+
+.app-shell .brand small,
+.app-shell .brand p,
+.app-shell .brand-subtitle {
+  display: block;
+  margin: 2px 0 0;
+  color: var(--theme-muted);
+  font-size: 14px;
+  line-height: 1.12;
+  font-weight: 650;
+}
+
+.app-shell .sidebar nav {
+  padding: 18px 14px;
+}
+
+.app-shell .sidebar a {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  color: var(--theme-text-soft);
+  text-decoration: none;
+  font-weight: 750;
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.app-shell .sidebar a:hover {
+  background: var(--theme-accent-soft);
+  color: var(--theme-accent-strong);
+}
+
+.app-shell .sidebar a.active {
+  background: var(--theme-active-bg);
+  color: var(--theme-accent-strong);
+  border-color: var(--theme-accent);
+}
+
+.app-shell .coffee {
+  margin: auto 14px 16px;
+  min-height: 38px;
+  background: transparent;
+  color: var(--theme-text-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Theme token bridge for existing component CSS
+   -------------------------------------------------------------------------- */
+
+.app-shell.light,
+.app-shell.dark {
+  --bg: var(--theme-bg);
+  --bg-soft: var(--theme-bg-soft);
+  --text: var(--theme-text);
+  --muted: var(--theme-text-soft);
+  --card: var(--theme-surface);
+  --line: var(--theme-border);
+  --accent: var(--theme-accent);
+  --accent2: var(--theme-accent);
+  --shadow: var(--theme-shadow);
+}
+
+.app-shell .glass,
+.app-shell .glass-lite,
+.app-shell .hero-card,
+.app-shell .page-title,
+.app-shell .topic-section,
+.app-shell .learning-map,
+.app-shell .search-panel,
+.app-shell .topic-library,
+.app-shell .category-library,
+.app-shell .progress-card,
+.app-shell .question-card,
+.app-shell .workspace-block,
+.app-shell .scenario-box,
+.app-shell .question-prompt,
+.app-shell .learning-panel {
+  border-color: var(--theme-border);
+}
+
+/* --------------------------------------------------------------------------
+   Compact problem metadata: category differs from normal tags
+   -------------------------------------------------------------------------- */
+
+.app-shell .problem-tags,
+.app-shell .problem-meta,
+.app-shell .tag-list,
+.app-shell .pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-shell .pill,
+.app-shell .tags span,
+.app-shell .tag,
+.app-shell .badge,
+.app-shell .time-pill,
+.app-shell .type-pill,
+.app-shell .concept-row span {
+  min-height: 24px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.app-shell .framework-pill,
+.app-shell .pill.category,
+.app-shell .tag.category,
+.app-shell .category-pill {
+  color: var(--theme-accent-strong);
+  border: 1px solid var(--theme-accent);
+  background: var(--theme-accent-soft);
+}
+
+.app-shell .difficulty-medium,
+.app-shell .pill.difficulty-medium {
+  color: #ff8a2a;
+  border: 1px solid rgba(255, 138, 42, 0.70);
+  background: rgba(255, 138, 42, 0.16);
+}
+
+.app-shell .difficulty-easy,
+.app-shell .pill.difficulty-easy {
+  color: #2ed596;
+  border: 1px solid rgba(46, 213, 150, 0.70);
+  background: rgba(46, 213, 150, 0.16);
+}
+
+.app-shell .difficulty-hard,
+.app-shell .pill.difficulty-hard {
+  color: #ff5d73;
+  border: 1px solid rgba(255, 93, 115, 0.75);
+  background: rgba(255, 93, 115, 0.16);
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    --sidebar-width: 0px;
+    --content-pad-x: 18px;
+    --content-pad-y: 24px;
+  }
+
+  .app-shell .nav,
+  .app-shell .navbar {
+    padding-left: 18px;
+  }
+
+  .app-shell .sidebar {
+    display: none;
+  }
+
+  .app-shell .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell .page-wrap {
+    grid-column: 1;
+  }
+}
