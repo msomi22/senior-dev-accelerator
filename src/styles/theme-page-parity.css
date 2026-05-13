@@ -1,0 +1,336 @@
+/* Loaded last: keep light/dark geometry identical; colors only change by theme. */
+:root {
+  --parity-sidebar-width: 260px;
+  --parity-topbar-height: 72px;
+  --parity-page-x: 40px;
+  --parity-page-y: 52px;
+  --parity-card-radius: 14px;
+  --parity-card-pad: 24px;
+  --parity-hero-title: clamp(34px, 2.85vw, 48px);
+  --parity-page-title: clamp(36px, 3.25vw, 54px);
+}
+
+.app-shell.light {
+  --parity-bg: #f3f0ea;
+  --parity-panel: #ffffff;
+  --parity-border: #ded7cb;
+  --parity-text: #191816;
+  --parity-muted: #625e59;
+  --parity-accent: #c6a765;
+  --parity-accent-text: #9a6b19;
+  --parity-shadow: 0 12px 30px rgba(36, 27, 15, .10);
+}
+
+.app-shell.dark {
+  --parity-bg: #0b0f14;
+  --parity-panel: #151a24;
+  --parity-border: #2a3342;
+  --parity-text: #f4f5fb;
+  --parity-muted: #a9b2c5;
+  --parity-accent: #35e0c8;
+  --parity-accent-text: #35e0c8;
+  --parity-shadow: 0 14px 34px rgba(0,0,0,.36);
+}
+
+.app-shell.light,
+.app-shell.dark { background: var(--parity-bg) !important; color: var(--parity-muted) !important; }
+
+.app-shell.light .app-main,
+.app-shell.dark .app-main,
+.app-shell.light main,
+.app-shell.dark main,
+.app-shell.light .content-area,
+.app-shell.dark .content-area,
+.app-shell.light .page-content,
+.app-shell.dark .page-content {
+  margin-left: var(--parity-sidebar-width) !important;
+  width: calc(100vw - var(--parity-sidebar-width)) !important;
+  max-width: none !important;
+  padding: var(--parity-page-y) var(--parity-page-x) 80px !important;
+  background: var(--parity-bg) !important;
+  overflow-x: hidden !important;
+}
+
+.app-shell.light .sidebar,
+.app-shell.dark .sidebar,
+.app-shell.light .app-sidebar,
+.app-shell.dark .app-sidebar,
+.app-shell.light aside,
+.app-shell.dark aside {
+  width: var(--parity-sidebar-width) !important;
+  min-width: var(--parity-sidebar-width) !important;
+  max-width: var(--parity-sidebar-width) !important;
+  background: var(--parity-panel) !important;
+  border-right: 1px solid var(--parity-border) !important;
+}
+
+.app-shell.light .topbar,
+.app-shell.dark .topbar,
+.app-shell.light .app-header,
+.app-shell.dark .app-header,
+.app-shell.light header.site-header,
+.app-shell.dark header.site-header {
+  height: var(--parity-topbar-height) !important;
+  min-height: var(--parity-topbar-height) !important;
+  padding: 0 32px !important;
+  background: var(--parity-panel) !important;
+  border-bottom: 1px solid var(--parity-border) !important;
+}
+
+.app-shell.light .brand,
+.app-shell.dark .brand,
+.app-shell.light .sidebar-brand,
+.app-shell.dark .sidebar-brand,
+.app-shell.light .logo-row,
+.app-shell.dark .logo-row {
+  height: 96px !important;
+  min-height: 96px !important;
+  max-height: 96px !important;
+  padding: 20px !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  border-bottom: 1px solid var(--parity-border) !important;
+}
+
+.app-shell.light .brand img,
+.app-shell.dark .brand img,
+.app-shell.light .sidebar-brand img,
+.app-shell.dark .sidebar-brand img,
+.app-shell.light .logo-row img,
+.app-shell.dark .logo-row img,
+.app-shell.light .brand-mark,
+.app-shell.dark .brand-mark,
+.app-shell.light .logo-mark,
+.app-shell.dark .logo-mark {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  max-width: 42px !important;
+  max-height: 42px !important;
+  flex: 0 0 42px !important;
+  border-radius: 12px !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: contain !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.app-shell.light .brand h1,
+.app-shell.dark .brand h1,
+.app-shell.light .brand-title,
+.app-shell.dark .brand-title { font-size: 15px !important; line-height: 1.12 !important; margin: 0 !important; color: var(--parity-text) !important; }
+.app-shell.light .brand p,
+.app-shell.dark .brand p,
+.app-shell.light .brand-subtitle,
+.app-shell.dark .brand-subtitle { font-size: 14px !important; line-height: 1.12 !important; margin: 2px 0 0 !important; color: var(--parity-muted) !important; }
+
+.app-shell.light .learning-dashboard-page,
+.app-shell.dark .learning-dashboard-page,
+.app-shell.light .problem-detail-page,
+.app-shell.dark .problem-detail-page,
+.app-shell.light .focused-problem-page,
+.app-shell.dark .focused-problem-page,
+.app-shell.light .category-page,
+.app-shell.dark .category-page,
+.app-shell.light .progress-page,
+.app-shell.dark .progress-page,
+.app-shell.light .random-page,
+.app-shell.dark .random-page,
+.app-shell.light .system-design-page,
+.app-shell.dark .system-design-page,
+.app-shell.light .dsa-page,
+.app-shell.dark .dsa-page {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 22px !important;
+}
+
+.app-shell.light .glass,
+.app-shell.dark .glass,
+.app-shell.light .card,
+.app-shell.dark .card,
+.app-shell.light .panel,
+.app-shell.dark .panel,
+.app-shell.light .topic-card,
+.app-shell.dark .topic-card,
+.app-shell.light .learning-dashboard-card,
+.app-shell.dark .learning-dashboard-card,
+.app-shell.light .visual-learning,
+.app-shell.dark .visual-learning,
+.app-shell.light .problem-tabs,
+.app-shell.dark .problem-tabs {
+  background: var(--parity-panel) !important;
+  border: 1px solid var(--parity-border) !important;
+  box-shadow: var(--parity-shadow) !important;
+  border-radius: var(--parity-card-radius) !important;
+  color: var(--parity-muted) !important;
+}
+
+.app-shell.light .learning-hero,
+.app-shell.dark .learning-hero,
+.app-shell.light .hero-card.learning-hero,
+.app-shell.dark .hero-card.learning-hero {
+  min-height: 270px !important;
+  padding: 28px !important;
+  margin: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) 360px !important;
+  gap: 24px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.app-shell.light .learning-hero h1,
+.app-shell.dark .learning-hero h1 {
+  font-size: var(--parity-hero-title) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.035em !important;
+  margin: 0 0 16px !important;
+  color: var(--parity-text) !important;
+}
+
+.app-shell.light .problem-detail-page h1,
+.app-shell.dark .problem-detail-page h1,
+.app-shell.light .focused-problem-page h1,
+.app-shell.dark .focused-problem-page h1,
+.app-shell.light .category-page h1,
+.app-shell.dark .category-page h1,
+.app-shell.light .progress-page h1,
+.app-shell.dark .progress-page h1,
+.app-shell.light .random-page h1,
+.app-shell.dark .random-page h1,
+.app-shell.light .system-design-page h1,
+.app-shell.dark .system-design-page h1,
+.app-shell.light .dsa-page h1,
+.app-shell.dark .dsa-page h1 {
+  font-size: var(--parity-page-title) !important;
+  line-height: 1.05 !important;
+  margin: 0 !important;
+  color: var(--parity-text) !important;
+}
+
+.app-shell.light .learning-hero p,
+.app-shell.dark .learning-hero p,
+.app-shell.light .problem-detail-page p,
+.app-shell.dark .problem-detail-page p,
+.app-shell.light .focused-problem-page p,
+.app-shell.dark .focused-problem-page p,
+.app-shell.light .category-page p,
+.app-shell.dark .category-page p,
+.app-shell.light .progress-page p,
+.app-shell.dark .progress-page p {
+  font-size: 17px !important;
+  line-height: 1.52 !important;
+  color: var(--parity-muted) !important;
+}
+
+.app-shell.light .learning-stats-grid,
+.app-shell.dark .learning-stats-grid,
+.app-shell.light .dashboard-grid.learning-stats-grid,
+.app-shell.dark .dashboard-grid.learning-stats-grid {
+  display: grid !important;
+  grid-template-columns: minmax(360px,1.55fr) repeat(3,minmax(180px,1fr)) !important;
+  gap: 14px !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.app-shell.light .learning-stats-grid > *,
+.app-shell.dark .learning-stats-grid > *,
+.app-shell.light .stat,
+.app-shell.dark .stat {
+  min-height: 148px !important;
+  padding: 24px !important;
+}
+
+.app-shell.light .learning-dashboard-grid,
+.app-shell.dark .learning-dashboard-grid { display: grid !important; grid-template-columns: repeat(3,minmax(0,1fr)) !important; gap: 18px !important; }
+.app-shell.light .learning-dashboard-card,
+.app-shell.dark .learning-dashboard-card { min-height: 305px !important; padding: 24px !important; }
+
+.app-shell.light .eyebrow,
+.app-shell.dark .eyebrow,
+.app-shell.light [class*='eyebrow'],
+.app-shell.dark [class*='eyebrow'] {
+  font-size: 13px !important;
+  line-height: 1.15 !important;
+  font-weight: 850 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  color: var(--parity-accent-text) !important;
+}
+
+.app-shell.light .pill,
+.app-shell.dark .pill,
+.app-shell.light .tag,
+.app-shell.dark .tag,
+.app-shell.light .badge,
+.app-shell.dark .badge,
+.app-shell.light .problem-tags span,
+.app-shell.dark .problem-tags span,
+.app-shell.light .problem-meta span,
+.app-shell.dark .problem-meta span {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 24px !important;
+  max-height: 28px !important;
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  font-weight: 850 !important;
+  white-space: nowrap !important;
+}
+
+.app-shell.light .difficulty-medium,
+.app-shell.dark .difficulty-medium { color: #ff8a2a !important; border-color: rgba(255,138,42,.7) !important; background: rgba(255,138,42,.16) !important; }
+.app-shell.light .difficulty-easy,
+.app-shell.dark .difficulty-easy { color: #2ed596 !important; border-color: rgba(46,213,150,.7) !important; background: rgba(46,213,150,.16) !important; }
+.app-shell.light .difficulty-hard,
+.app-shell.dark .difficulty-hard { color: #ff5d73 !important; border-color: rgba(255,93,115,.75) !important; background: rgba(255,93,115,.16) !important; }
+.app-shell.light .framework-pill,
+.app-shell.dark .framework-pill { color: var(--parity-accent-text) !important; border-color: var(--parity-accent) !important; background: color-mix(in srgb, var(--parity-accent) 16%, transparent) !important; }
+
+.app-shell.light button,
+.app-shell.dark button,
+.app-shell.light .btn,
+.app-shell.dark .btn,
+.app-shell.light a.btn,
+.app-shell.dark a.btn { min-height: 40px !important; height: 40px !important; padding: 0 14px !important; border-radius: 8px !important; font-size: 14px !important; font-weight: 850 !important; }
+
+.app-shell.light input,
+.app-shell.dark input,
+.app-shell.light select,
+.app-shell.dark select,
+.app-shell.light textarea,
+.app-shell.dark textarea { min-height: 40px !important; font-size: 15px !important; border-radius: 8px !important; background: var(--parity-panel) !important; color: var(--parity-text) !important; border: 1px solid var(--parity-border) !important; }
+
+@media (max-width: 1200px) {
+  .app-shell.light .learning-hero,
+  .app-shell.dark .learning-hero { grid-template-columns: 1fr !important; }
+  .app-shell.light .learning-stats-grid,
+  .app-shell.dark .learning-stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  .app-shell.light .learning-dashboard-grid,
+  .app-shell.dark .learning-dashboard-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 760px) {
+  :root { --parity-page-x: 18px; --parity-page-y: 28px; --parity-hero-title: clamp(32px,10vw,44px); --parity-page-title: clamp(34px,10vw,48px); }
+  .app-shell.light .app-main,
+  .app-shell.dark .app-main,
+  .app-shell.light main,
+  .app-shell.dark main,
+  .app-shell.light .content-area,
+  .app-shell.dark .content-area,
+  .app-shell.light .page-content,
+  .app-shell.dark .page-content { margin-left: 0 !important; width: 100vw !important; }
+  .app-shell.light .learning-stats-grid,
+  .app-shell.dark .learning-stats-grid { grid-template-columns: 1fr !important; }
+}
