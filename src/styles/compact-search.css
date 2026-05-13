@@ -54,6 +54,28 @@
   color: var(--accent-dark);
 }
 
+.reference-action-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reference-action-group .btn,
+.reference-action-group .mark {
+  white-space: nowrap;
+}
+
+.focused-problem-actions {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0;
+}
+
 @media (min-width: 980px) {
   .category-page .page-title {
     padding-right: 560px;
