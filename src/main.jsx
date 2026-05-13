@@ -14,6 +14,7 @@ import './styles/shared-theme-geometry.css';
 import './styles/sidebar-logo-compact-final.css';
 import './styles/theme-parity-final.css';
 import './styles/theme-content-parity-final.css';
+import './styles/theme-typography-trim-final.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
