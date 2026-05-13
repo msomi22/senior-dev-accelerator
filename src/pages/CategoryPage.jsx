@@ -239,12 +239,7 @@ export default function CategoryPage({ fixedCategoryId }) {
               onToggle={toggle}
               activeDifficulty={topicDifficulty}
             />
-          ) : (
-            <div className="empty-state glass-lite">
-              <h3>No questions found</h3>
-              <p>Try another difficulty or status filter.</p>
-            </div>
-          )}
+          ) : null}
 
         </>
       )}
