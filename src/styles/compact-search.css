@@ -3,8 +3,12 @@
 }
 
 .category-page .header-search {
+  position: sticky;
+  top: 72px;
+  z-index: 90;
   width: min(100%, 520px);
   margin-top: 18px;
+  pointer-events: auto;
 }
 
 .category-page .header-search .search-panel {
@@ -102,9 +106,9 @@
 @media (min-width: 1100px) {
   .category-page .header-search {
     position: fixed;
-    top: 9px;
+    top: 8px;
     left: calc(var(--sidebar-width) + 250px);
-    z-index: 1005;
+    z-index: 5000;
     width: clamp(280px, 25vw, 420px);
     margin-top: 0;
   }
