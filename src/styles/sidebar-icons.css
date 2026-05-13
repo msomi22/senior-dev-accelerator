@@ -1,0 +1,37 @@
+.app-sidebar .nav-item {
+  display: grid !important;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+}
+
+.app-sidebar .nav-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  justify-self: center;
+  color: currentColor;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.82;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.app-sidebar .nav-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-sidebar .nav-item:hover .nav-icon,
+.app-sidebar .nav-item.active .nav-icon {
+  opacity: 1;
+}
+
+.app-sidebar .nav-item.active .nav-icon {
+  transform: translateX(1px);
+}
