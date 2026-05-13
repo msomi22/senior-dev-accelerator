@@ -8,6 +8,10 @@ import SearchPanel from '../components/SearchPanel.jsx';
 import SearchResultsSection from '../components/SearchResultsSection.jsx';
 
 import { storageService } from '../services/storageService.js';
+import {
+  ALL_FILTER,
+  getFilteredTopicQuestions
+} from '../services/topicFilterService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { useQuestionSearch } from '../hooks/useQuestionSearch.js';
 
@@ -16,22 +20,6 @@ import {
   getTopicsForCategory,
   loadTopicBank
 } from '../services/questionBankService.js';
-
-const ALL = 'all';
-
-function matchesDifficulty(question, difficulty) {
-  if (difficulty === ALL) return true;
-  return question.difficulty === difficulty;
-}
-
-function matchesCompletion(question, completed, completionFilter) {
-  const isCompleted = !!completed[question.id];
-
-  if (completionFilter === 'completed') return isCompleted;
-  if (completionFilter === 'incomplete') return !isCompleted;
-
-  return true;
-}
 
 export default function CategoryPage({ fixedCategoryId }) {
   const params = useParams();
@@ -48,7 +36,7 @@ export default function CategoryPage({ fixedCategoryId }) {
     pref.selectedTopics?.[categoryId] || ''
   );
 
-  const [topicDifficulty, setTopicDifficulty] = useState(ALL);
+  const [topicDifficulty, setTopicDifficulty] = useState(ALL_FILTER);
   const [completionFilter, setCompletionFilter] = useState('all');
 
   const [loadingTopics, setLoadingTopics] = useState(true);
@@ -143,12 +131,12 @@ export default function CategoryPage({ fixedCategoryId }) {
   const filteredTopics = useMemo(() => {
     return topicsWithBanks
       .map((topic) => {
-        const filteredQuestions = topic.questions.filter((question) => {
-          return (
-            matchesDifficulty(question, topicDifficulty) &&
-            matchesCompletion(question, completed, completionFilter)
-          );
-        });
+        const filteredQuestions = getFilteredTopicQuestions(
+          topic,
+          completed,
+          topicDifficulty,
+          completionFilter
+        );
 
         return {
           ...topic,

@@ -2,12 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { topicLibraryConfig } from '../config/topicLibraryConfig.js';
 import { topicProgress } from '../services/questionBankService.js';
+import { getQuestionSetProgress } from '../services/topicFilterService.js';
 
 const ALL = 'all';
 
 function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
   if (completionFilter === 'completed') {
-    return `${visibleTopicCount} topics contain completed questions.`;
+    return `${visibleTopicCount} topics are complete.`;
   }
 
   if (completionFilter === 'incomplete') {
@@ -15,6 +16,17 @@ function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
   }
 
   return `${visibleTopicCount} of ${allTopicsCount} topics match the current filters.`;
+}
+
+function getVisibleTopicProgress(topic, completed = {}) {
+  if (Array.isArray(topic.filteredQuestions)) {
+    return getQuestionSetProgress(topic.filteredQuestions, completed);
+  }
+
+  return topicProgress(
+    { ...topic, count: topic.filteredCount ?? topic.count },
+    completed
+  );
 }
 
 function getCountLabel(count, completionFilter) {
@@ -51,15 +63,8 @@ export default function TopicLibrary({
       }
 
       if (sortBy === 'progress') {
-        const ap = topicProgress(
-          { ...a, count: a.filteredCount ?? a.count },
-          completed
-        ).percent;
-
-        const bp = topicProgress(
-          { ...b, count: b.filteredCount ?? b.count },
-          completed
-        ).percent;
+        const ap = getVisibleTopicProgress(a, completed).percent;
+        const bp = getVisibleTopicProgress(b, completed).percent;
 
         return bp - ap;
       }
@@ -180,10 +185,7 @@ export default function TopicLibrary({
         {visibleTopics.map((topic) => {
           const count = topic.filteredCount ?? topic.count ?? 0;
 
-          const progress = topicProgress(
-            { ...topic, count },
-            completed
-          );
+          const progress = getVisibleTopicProgress(topic, completed);
 
           const fullyCompleted =
             count > 0 && progress.done === count;

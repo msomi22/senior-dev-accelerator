@@ -1,0 +1,48 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import {
+  getFilteredTopicQuestions,
+  getQuestionSetProgress
+} from './topicFilterService.js';
+
+const topic = {
+  questions: [
+    { id: 'trie-001', difficulty: 'Hard' },
+    { id: 'trie-002', difficulty: 'Medium' }
+  ]
+};
+
+test('completed topic filter excludes partially completed topics', () => {
+  const filtered = getFilteredTopicQuestions(
+    topic,
+    { 'trie-001': true },
+    'all',
+    'completed'
+  );
+
+  assert.deepEqual(filtered, []);
+});
+
+test('completed topic filter includes topics complete within difficulty scope', () => {
+  const filtered = getFilteredTopicQuestions(
+    topic,
+    { 'trie-001': true },
+    'Hard',
+    'completed'
+  );
+
+  assert.deepEqual(filtered.map((question) => question.id), ['trie-001']);
+});
+
+test('question set progress counts only visible filtered questions', () => {
+  const progress = getQuestionSetProgress(
+    [{ id: 'sliding-window-001' }],
+    {
+      'sliding-window-001': true,
+      'trie-001': true
+    }
+  );
+
+  assert.deepEqual(progress, { done: 1, total: 1, percent: 100 });
+});
