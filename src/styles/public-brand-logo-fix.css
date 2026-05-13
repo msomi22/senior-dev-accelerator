@@ -2,24 +2,34 @@
 
 :root {
   --sidebar-logo-height: 96px;
-  --sidebar-logo-section-gap: 34px;
+  --sidebar-logo-section-gap: 24px;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo {
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-start !important;
   justify-content: flex-start !important;
   width: 100% !important;
   height: var(--sidebar-logo-height) !important;
   min-height: var(--sidebar-logo-height) !important;
   max-height: var(--sidebar-logo-height) !important;
-  padding: 14px 20px 16px !important;
+  padding: 0 20px 14px !important;
   margin: 0 !important;
-  border-bottom: 1px solid var(--border) !important;
+  border-bottom: 1px solid var(--border-strong, var(--border)) !important;
   border-radius: 0 !important;
   background: transparent !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 0 rgba(148, 163, 184, 0.14) !important;
   overflow: visible !important;
+}
+
+.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo {
+  border-bottom-color: rgba(120, 113, 108, 0.26) !important;
+  box-shadow: 0 1px 0 rgba(120, 113, 108, 0.14) !important;
+}
+
+.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+  border-bottom-color: rgba(148, 163, 184, 0.22) !important;
+  box-shadow: 0 1px 0 rgba(148, 163, 184, 0.12) !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo::before,
@@ -29,12 +39,14 @@ aside.sidebar.app-sidebar > a.sidebar-logo::after {
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
+  display: block !important;
   width: auto !important;
-  max-width: 188px !important;
+  max-width: 196px !important;
   height: auto !important;
-  max-height: 62px !important;
+  max-height: 72px !important;
   object-fit: contain !important;
-  object-position: left center !important;
+  object-position: left top !important;
+  margin-top: -2px !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
@@ -66,8 +78,6 @@ aside.sidebar.app-sidebar > .nav-section:first-of-type {
   margin-top: var(--sidebar-logo-section-gap) !important;
 }
 
-/* Keep the desktop sidebar/header relationship until the screen is genuinely mobile.
-   The earlier 900px breakpoint made the topbar cover the sidebar/logo on normal narrow desktop windows. */
 @media (min-width: 641px) and (max-width: 900px) {
   .app-shell .layout,
   .app-shell.light .layout,
