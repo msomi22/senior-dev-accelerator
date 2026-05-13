@@ -1,3 +1,9 @@
+.app-shell .topbar,
+.app-shell.light .topbar,
+.app-shell.dark .topbar {
+  overflow: visible !important;
+}
+
 .topbar .global-search {
   position: relative;
   flex: 1 1 360px;
@@ -56,14 +62,17 @@
 
 .global-search-panel {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   left: 0;
   right: 0;
-  z-index: 6001;
+  z-index: 7000;
   padding: 12px;
   border-radius: 18px;
   max-height: min(70vh, 520px);
   overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-strong, var(--shadow-soft));
 }
 
 .global-search-head {
@@ -98,7 +107,7 @@
   padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: var(--panel);
+  background: var(--surface, var(--panel));
   color: var(--text-primary);
   text-decoration: none;
 }
