@@ -38,8 +38,19 @@
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: calc(var(--nav-height) + 32px) 36px calc(60px + var(--footer-height));
+  padding: calc(var(--nav-height) + 54px) 36px calc(60px + var(--footer-height));
   background: var(--bg);
+  scroll-padding-top: calc(var(--nav-height) + 54px);
+}
+
+/* Hard guard: first page block must never sit under the fixed topbar. */
+.app-shell.dark .page > :first-child,
+.app-shell.dark .learning-dashboard-page > :first-child,
+.app-shell.dark .category-page > :first-child,
+.app-shell.dark .practice-page > :first-child,
+.app-shell.dark .problem-detail-page > :first-child,
+.app-shell.dark .progress-page > :first-child {
+  margin-top: 0 !important;
 }
 
 /* The reference mockup uses the full main canvas, not a centered narrow page. */
@@ -209,7 +220,7 @@
     grid-column: 1;
     height: auto;
     min-height: 100vh;
-    padding: calc(var(--nav-height) + 18px) 18px calc(60px + var(--footer-height));
+    padding: calc(var(--nav-height) + 34px) 18px calc(60px + var(--footer-height));
   }
 
   .app-shell.dark .page {
