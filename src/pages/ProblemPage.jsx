@@ -12,18 +12,32 @@ import { findQuestionById } from '../services/questionBankService.js';
 import { storageService } from '../services/storageService.js';
 
 function uniqueItems(items = []) {
-  return [...new Set(items.filter(Boolean))];
+  const seen = new Set();
+
+  return items.filter((item) => {
+    if (!item?.label) return false;
+
+    const key = item.label.toLowerCase();
+    if (seen.has(key)) return false;
+
+    seen.add(key);
+    return true;
+  });
 }
 
-function pillClass(tag, difficulty) {
-  const normalizedTag = String(tag || '').toLowerCase();
+function pillClass(type, label, difficulty) {
+  const normalizedLabel = String(label || '').toLowerCase();
   const normalizedDifficulty = String(difficulty || '').toLowerCase();
 
-  if (normalizedTag === normalizedDifficulty) {
-    if (normalizedTag === 'easy') return 'difficulty-pill difficulty-easy';
-    if (normalizedTag === 'medium') return 'difficulty-pill difficulty-medium';
-    if (normalizedTag === 'hard') return 'difficulty-pill difficulty-hard';
+  if (type === 'difficulty' || normalizedLabel === normalizedDifficulty) {
+    if (normalizedLabel === 'easy') return 'difficulty-pill difficulty-easy';
+    if (normalizedLabel === 'medium') return 'difficulty-pill difficulty-medium';
+    if (normalizedLabel === 'hard') return 'difficulty-pill difficulty-hard';
     return 'difficulty-pill';
+  }
+
+  if (type === 'topic') {
+    return 'topic-pill';
   }
 
   return 'meta-pill';
@@ -130,10 +144,10 @@ export default function ProblemPage() {
   }
 
   const problemTags = uniqueItems([
-    entry.question.difficulty,
-    entry.topic?.name,
-    ...(entry.question.relatedConcepts || []).slice(0, 2),
-    ...(entry.question.tags || []).slice(0, 2)
+    { label: entry.question.difficulty, type: 'difficulty' },
+    { label: entry.topic?.name, type: 'topic' },
+    ...(entry.question.relatedConcepts || []).slice(0, 2).map((label) => ({ label, type: 'meta' })),
+    ...(entry.question.tags || []).slice(0, 2).map((label) => ({ label, type: 'meta' }))
   ]);
 
   return (
@@ -159,12 +173,12 @@ export default function ProblemPage() {
           <h1>{entry.question.title}</h1>
 
           <div className="problem-meta-pills" aria-label="Problem metadata">
-            {problemTags.map((tag) => (
+            {problemTags.map(({ label, type }) => (
               <span
-                key={tag}
-                className={pillClass(tag, entry.question.difficulty)}
+                key={label}
+                className={pillClass(type, label, entry.question.difficulty)}
               >
-                {tag}
+                {label}
               </span>
             ))}
           </div>
