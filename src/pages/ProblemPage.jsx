@@ -15,6 +15,20 @@ function uniqueItems(items = []) {
   return [...new Set(items.filter(Boolean))];
 }
 
+function pillClass(tag, difficulty) {
+  const normalizedTag = String(tag || '').toLowerCase();
+  const normalizedDifficulty = String(difficulty || '').toLowerCase();
+
+  if (normalizedTag === normalizedDifficulty) {
+    if (normalizedTag === 'easy') return 'difficulty-pill difficulty-easy';
+    if (normalizedTag === 'medium') return 'difficulty-pill difficulty-medium';
+    if (normalizedTag === 'hard') return 'difficulty-pill difficulty-hard';
+    return 'difficulty-pill';
+  }
+
+  return 'meta-pill';
+}
+
 export default function ProblemPage() {
   const { questionId } = useParams();
   const location = useLocation();
@@ -118,8 +132,8 @@ export default function ProblemPage() {
   const problemTags = uniqueItems([
     entry.question.difficulty,
     entry.topic?.name,
-    ...(entry.question.relatedConcepts || []),
-    ...(entry.question.tags || [])
+    ...(entry.question.relatedConcepts || []).slice(0, 2),
+    ...(entry.question.tags || []).slice(0, 2)
   ]);
 
   return (
@@ -146,7 +160,12 @@ export default function ProblemPage() {
 
           <div className="problem-meta-pills" aria-label="Problem metadata">
             {problemTags.map((tag) => (
-              <span key={tag}>{tag}</span>
+              <span
+                key={tag}
+                className={pillClass(tag, entry.question.difficulty)}
+              >
+                {tag}
+              </span>
             ))}
           </div>
 
