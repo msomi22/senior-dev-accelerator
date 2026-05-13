@@ -262,6 +262,186 @@
   font-weight: 700;
 }
 
+/* Reference-style focused problem detail page */
+.focused-problem-page {
+  gap: 18px;
+  padding-top: 18px;
+}
+
+.focused-problem-page .problem-breadcrumb {
+  margin-bottom: 0;
+}
+
+.focused-problem-page .compact-problem-header {
+  margin-bottom: 0;
+  padding: 20px 24px;
+}
+
+.focused-problem-page .compact-problem-header h1 {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.02;
+  margin-bottom: 10px;
+}
+
+.focused-problem-workspace {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+
+.focused-problem-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.focused-tabs {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 58px;
+  padding: 0 16px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,255,255,0.015);
+}
+
+.focused-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 58px;
+  padding: 0 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.focused-tab-btn span {
+  font-weight: 900;
+}
+
+.focused-tab-btn:hover {
+  color: var(--text);
+}
+
+.focused-tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.focused-tab-content {
+  padding: 22px 26px 26px;
+}
+
+.focused-panel-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.focused-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.focused-problem-workspace .workspace-block,
+.focused-problem-workspace .learning-panel {
+  margin: 0;
+}
+
+.focused-problem-workspace .visual-walkthrough-panel.reference-visual-panel {
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.focused-problem-workspace .visual-summary {
+  margin: 0;
+}
+
+.focused-problem-workspace .visual-diagram {
+  gap: 12px;
+}
+
+.focused-problem-workspace .visual-diagram-frames {
+  gap: 14px;
+  padding-bottom: 6px;
+}
+
+.focused-problem-workspace .visual-frame {
+  padding: 14px;
+  border-radius: 14px;
+}
+
+.focused-problem-workspace .visual-frame-button {
+  flex-basis: min(680px, 92vw);
+}
+
+.focused-problem-workspace .visual-step-list {
+  display: grid;
+  gap: 8px;
+}
+
+.focused-problem-workspace .visual-step-list li {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+}
+
+.focused-problem-workspace .visual-step-list li > span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #0d0f14;
+  font-weight: 900;
+}
+
+.focused-problem-workspace .visual-step-list p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.focused-code-block pre {
+  overflow-x: auto;
+  margin: 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(2, 6, 23, 0.62);
+  border: 1px solid var(--line);
+}
+
+.focused-code-block code {
+  white-space: pre;
+  color: var(--text);
+}
+
+.focused-concepts,
+.focused-tags {
+  padding: 0 26px 22px;
+}
+
 :root[data-theme="light"] .visual-walkthrough-panel {
   background:
     radial-gradient(circle at top left, rgba(56,189,248,0.08), transparent 32%),
@@ -317,6 +497,18 @@
   color: #075985;
 }
 
+:root[data-theme="light"] .focused-problem-workspace {
+  background: var(--card);
+}
+
+:root[data-theme="light"] .focused-tabs {
+  background: rgba(255,255,255,0.4);
+}
+
+:root[data-theme="light"] .focused-code-block pre {
+  background: #f8fafc;
+}
+
 @media (max-width: 920px) {
   .visual-frame {
     grid-template-columns: 1fr;
@@ -324,5 +516,13 @@
 
   .visual-frame-button {
     flex-basis: 95vw;
+  }
+
+  .focused-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .focused-tab-content {
+    padding: 18px;
   }
 }
