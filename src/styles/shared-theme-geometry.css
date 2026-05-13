@@ -14,8 +14,8 @@
   --page-x: 36px;
   --page-top-gap: 54px;
   --page-bottom-gap: 60px;
-  --sidebar-logo-height: 82px;
-  --sidebar-logo-size: 36px;
+  --sidebar-logo-height: 104px;
+  --sidebar-logo-size: 56px;
 }
 
 html,
@@ -44,7 +44,6 @@ body,
   overflow: hidden;
 }
 
-/* Top bar: same position and size in both themes. */
 .app-shell .nav,
 .app-shell .navbar,
 .app-shell .topbar,
@@ -92,7 +91,6 @@ body,
   border-radius: 999px !important;
 }
 
-/* Sidebar: same fixed width, height, and logo geometry in both themes. */
 .app-shell .sidebar,
 .app-shell .app-sidebar,
 .app-shell.light .sidebar,
@@ -123,12 +121,12 @@ body,
   flex-direction: row !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 12px !important;
+  gap: 14px !important;
   width: 100% !important;
   height: var(--sidebar-logo-height) !important;
   min-height: var(--sidebar-logo-height) !important;
   max-height: var(--sidebar-logo-height) !important;
-  padding: 22px 18px 20px !important;
+  padding: 20px !important;
   margin: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -145,8 +143,8 @@ body,
   height: var(--sidebar-logo-size) !important;
   min-width: var(--sidebar-logo-size) !important;
   flex: 0 0 var(--sidebar-logo-size) !important;
-  border-radius: 10px !important;
-  font-size: 19px !important;
+  border-radius: 14px !important;
+  font-size: 28px !important;
   line-height: 1 !important;
 }
 
@@ -154,11 +152,11 @@ body,
 .app-shell.light .logo-text,
 .app-shell.dark .logo-text {
   display: grid !important;
-  gap: 2px !important;
+  gap: 3px !important;
   margin: 0 !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
   letter-spacing: -0.01em !important;
 }
 
@@ -167,9 +165,9 @@ body,
 .app-shell.dark .logo-text span {
   display: block !important;
   margin: 0 !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  line-height: 1.1 !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
 }
 
 .app-shell .nav-section,
@@ -206,7 +204,6 @@ body,
   margin: auto 10px 14px !important;
 }
 
-/* Main scroll container: same position and available canvas in both themes. */
 .app-shell .page-wrap,
 .app-shell .main-content,
 .app-shell.light .page-wrap,
@@ -223,7 +220,6 @@ body,
   scroll-padding-top: calc(var(--nav-height) + var(--page-top-gap)) !important;
 }
 
-/* Pages must use the full main canvas in both themes. */
 .app-shell .page,
 .app-shell.light .page,
 .app-shell.dark .page,
@@ -257,7 +253,6 @@ body,
   gap: 28px !important;
 }
 
-/* Problem intro: title and Mark done use the same row geometry. */
 .app-shell .reference-problem-intro,
 .app-shell.light .reference-problem-intro,
 .app-shell.dark .reference-problem-intro {
@@ -292,12 +287,89 @@ body,
   flex: 0 0 auto !important;
 }
 
-/* Footer/status bar follows the same sidebar offset. */
 .app-shell .status-bar,
 .app-shell.light .status-bar,
 .app-shell.dark .status-bar {
   left: var(--sidebar-width) !important;
   height: var(--footer-height) !important;
+}
+
+/* Absolute final logo contract.
+   These selectors intentionally out-specific earlier light/dark theme fixes.
+   Both themes use identical sizing, positioning, display, and spacing here. */
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  width: 230px !important;
+  height: 104px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  min-height: 104px !important;
+  max-height: 104px !important;
+  padding: 20px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  max-width: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  flex: 0 0 56px !important;
+  border-radius: 14px !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  box-sizing: border-box !important;
+  display: grid !important;
+  gap: 3px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.01em !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
 }
 
 @media (max-width: 900px) {
