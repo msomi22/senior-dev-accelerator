@@ -1,0 +1,82 @@
+/* Final compact sidebar logo sizing.
+   Loaded last so light and dark use the same compact logo geometry. */
+
+:root {
+  --sidebar-logo-height: 82px;
+  --sidebar-logo-size: 36px;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  width: 230px !important;
+  height: 82px !important;
+  min-width: 230px !important;
+  max-width: 230px !important;
+  min-height: 82px !important;
+  max-height: 82px !important;
+  padding: 22px 18px 20px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark {
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  flex: 0 0 36px !important;
+  border-radius: 10px !important;
+  font-size: 19px !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  box-sizing: border-box !important;
+  display: grid !important;
+  gap: 2px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.01em !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text > span {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.1 !important;
+}
