@@ -11,6 +11,7 @@ import './styles/theme-page-parity.css';
 import './styles/theme-dark-palette-fix.css';
 import './styles/sidebar-spacing-fix.css';
 import './styles/sidebar-icons.css';
+import './styles/compact-search.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
