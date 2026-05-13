@@ -6,13 +6,16 @@ export default function SearchPanel({
     <section className="search-panel compact-search-panel search-only-panel" aria-label="Search questions">
       <label className="search-field search-input-wrap">
         <span>Search</span>
-        <textarea
-          value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
-          placeholder="Search problems..."
-          autoComplete="off"
-          rows={2}
-        />
+        <div className="compact-search-control">
+          <span className="compact-search-icon" aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder="Search problems..."
+            autoComplete="off"
+          />
+        </div>
       </label>
     </section>
   );
