@@ -76,6 +76,29 @@
   margin-top: 0;
 }
 
+.category-page .topic-tab:hover,
+.category-page .topic-tab.active,
+.category-page .topic-tab.active:hover {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.category-page .topic-tab.done::before,
+.category-page .topic-tab.done::after {
+  display: none !important;
+  content: none !important;
+}
+
+.category-page .topic-tab.done {
+  overflow: hidden;
+}
+
+.category-page .topic-tab.done .eyebrow {
+  position: relative;
+  z-index: 1;
+}
+
 @media (min-width: 980px) {
   .category-page .page-title {
     padding-right: 560px;
