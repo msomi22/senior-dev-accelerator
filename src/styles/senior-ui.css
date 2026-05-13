@@ -24,12 +24,12 @@
   --sidebar-active-text: #8a6318;
   --sidebar-coffee-bg: #f5ead6;
   --sidebar-logo-ink: #1a1814;
-  --button-bg: #1a1814;
-  --button-border: #1a1814;
-  --button-text: #ffffff;
-  --button-hover-bg: #2e2a24;
-  --button-hover-border: #2e2a24;
-  --button-hover-text: #ffffff;
+  --button-bg: #f5ead6;
+  --button-border: #d8bd80;
+  --button-text: #1a1814;
+  --button-hover-bg: #ead8af;
+  --button-hover-border: #c8a96e;
+  --button-hover-text: #1a1814;
   --button-secondary-bg: #ffffff;
   --button-secondary-border: #e8e3da;
   --button-secondary-text: #1a1814;
