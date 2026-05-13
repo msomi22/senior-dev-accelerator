@@ -268,8 +268,71 @@
   padding-top: 18px;
 }
 
-.focused-problem-page .problem-breadcrumb {
+.focused-problem-page .problem-breadcrumb,
+.compact-problem-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
   margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.compact-problem-breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.compact-problem-breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.reference-problem-intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.reference-problem-intro h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 3vw, 3.4rem);
+  line-height: 1.05;
+}
+
+.reference-problem-intro p {
+  max-width: 920px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
+  line-height: 1.55;
+}
+
+.problem-meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.problem-meta-pills span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.04);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.reference-mark {
+  flex: 0 0 auto;
 }
 
 .focused-problem-page .compact-problem-header {
@@ -509,6 +572,11 @@
   background: #f8fafc;
 }
 
+:root[data-theme="light"] .problem-meta-pills span {
+  background: #fff7e8;
+  color: #9f6f1d;
+}
+
 @media (max-width: 920px) {
   .visual-frame {
     grid-template-columns: 1fr;
@@ -518,8 +586,13 @@
     flex-basis: 95vw;
   }
 
-  .focused-two-col {
+  .focused-two-col,
+  .reference-problem-intro {
     grid-template-columns: 1fr;
+  }
+
+  .reference-problem-intro {
+    display: grid;
   }
 
   .focused-tab-content {
