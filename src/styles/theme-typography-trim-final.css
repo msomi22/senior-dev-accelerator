@@ -1,0 +1,152 @@
+/* ==========================================================================
+   FINAL TYPOGRAPHY TRIM
+   --------------------------------------------------------------------------
+   Loaded after theme parity files.
+   Keeps light/dark geometry identical, but brings oversized typography back to
+   a calmer dashboard scale.
+   ========================================================================== */
+
+:root {
+  --content-hero-title-size: clamp(34px, 3.35vw, 54px);
+  --content-hero-title-line: 1.08;
+  --content-body-size: 15px;
+  --content-body-line: 1.5;
+  --content-eyebrow-size: 12px;
+  --content-hero-min-height: 240px;
+  --content-hero-padding: 26px;
+  --content-card-min-height: 130px;
+}
+
+/* Dashboard hero: same layout in both themes, less shouty typography. */
+.app-shell .learning-hero h1,
+.app-shell.light .learning-hero h1,
+.app-shell.dark .learning-hero h1,
+.app-shell .hero-card.learning-hero h1,
+.app-shell.light .hero-card.learning-hero h1,
+.app-shell.dark .hero-card.learning-hero h1 {
+  max-width: 960px !important;
+  margin-bottom: 14px !important;
+  font-size: var(--content-hero-title-size) !important;
+  line-height: var(--content-hero-title-line) !important;
+  letter-spacing: -0.035em !important;
+}
+
+.app-shell .learning-hero p,
+.app-shell.light .learning-hero p,
+.app-shell.dark .learning-hero p {
+  max-width: 980px !important;
+  margin-bottom: 16px !important;
+  font-size: var(--content-body-size) !important;
+  line-height: var(--content-body-line) !important;
+}
+
+.app-shell .learning-hero .eyebrow,
+.app-shell.light .learning-hero .eyebrow,
+.app-shell.dark .learning-hero .eyebrow,
+.app-shell .eyebrow,
+.app-shell.light .eyebrow,
+.app-shell.dark .eyebrow {
+  font-size: var(--content-eyebrow-size) !important;
+  letter-spacing: 0.14em !important;
+}
+
+/* Stage card: compact and consistent. */
+.app-shell .learning-hero-panel,
+.app-shell.light .learning-hero-panel,
+.app-shell.dark .learning-hero-panel {
+  min-height: 170px !important;
+  padding: 22px !important;
+}
+
+.app-shell .learning-hero-panel strong,
+.app-shell.light .learning-hero-panel strong,
+.app-shell.dark .learning-hero-panel strong {
+  font-size: 26px !important;
+  line-height: 1.15 !important;
+}
+
+.app-shell .learning-hero-panel p,
+.app-shell.light .learning-hero-panel p,
+.app-shell.dark .learning-hero-panel p {
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+/* Stat cards: restore readable compact balance. */
+.app-shell .learning-stats-grid > *,
+.app-shell.light .learning-stats-grid > *,
+.app-shell.dark .learning-stats-grid > *,
+.app-shell .learning-stats-grid .glass,
+.app-shell.light .learning-stats-grid .glass,
+.app-shell.dark .learning-stats-grid .glass,
+.app-shell .stat,
+.app-shell.light .stat,
+.app-shell.dark .stat {
+  min-height: 130px !important;
+  padding: 22px !important;
+}
+
+.app-shell .stat h2,
+.app-shell.light .stat h2,
+.app-shell.dark .stat h2,
+.app-shell .learning-stats-grid .stat h2,
+.app-shell.light .learning-stats-grid .stat h2,
+.app-shell.dark .learning-stats-grid .stat h2 {
+  font-size: 26px !important;
+  margin-bottom: 6px !important;
+}
+
+.app-shell .stat p,
+.app-shell.light .stat p,
+.app-shell.dark .stat p,
+.app-shell .learning-stats-grid .stat p,
+.app-shell.light .learning-stats-grid .stat p,
+.app-shell.dark .learning-stats-grid .stat p {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+/* Main dashboard cards: reduce oversized secondary text. */
+.app-shell .learning-dashboard-card,
+.app-shell.light .learning-dashboard-card,
+.app-shell.dark .learning-dashboard-card {
+  min-height: 275px !important;
+  padding: 22px !important;
+  gap: 14px !important;
+}
+
+.app-shell .learning-dashboard-card h2,
+.app-shell.light .learning-dashboard-card h2,
+.app-shell.dark .learning-dashboard-card h2 {
+  font-size: 22px !important;
+  line-height: 1.2 !important;
+}
+
+.app-shell .learning-dashboard-card p,
+.app-shell.light .learning-dashboard-card p,
+.app-shell.dark .learning-dashboard-card p,
+.app-shell .learning-dashboard-card li,
+.app-shell.light .learning-dashboard-card li,
+.app-shell.dark .learning-dashboard-card li {
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+}
+
+/* Problem page title should be strong, not gigantic. */
+.app-shell .problem-detail-page h1,
+.app-shell.light .problem-detail-page h1,
+.app-shell.dark .problem-detail-page h1,
+.app-shell .focused-problem-page h1,
+.app-shell.light .focused-problem-page h1,
+.app-shell.dark .focused-problem-page h1 {
+  font-size: clamp(34px, 3.4vw, 56px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.035em !important;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --content-hero-title-size: clamp(30px, 10vw, 44px);
+    --content-hero-padding: 20px;
+  }
+}
