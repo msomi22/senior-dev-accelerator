@@ -1,0 +1,53 @@
+/* Use the existing public logo assets for the sidebar brand. */
+
+aside.sidebar.app-sidebar > a.sidebar-logo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  height: var(--sidebar-logo-height) !important;
+  min-height: var(--sidebar-logo-height) !important;
+  max-height: var(--sidebar-logo-height) !important;
+  padding: 18px 20px 22px !important;
+  overflow: visible !important;
+}
+
+aside.sidebar.app-sidebar > a.sidebar-logo::before,
+aside.sidebar.app-sidebar > a.sidebar-logo::after {
+  content: none !important;
+  display: none !important;
+}
+
+aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
+  width: 100% !important;
+  max-width: 260px !important;
+  height: auto !important;
+  max-height: calc(var(--sidebar-logo-height) - 28px) !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+
+aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
+aside.sidebar.app-sidebar > a.sidebar-logo > .logo-text {
+  display: none !important;
+}
+
+.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light,
+html[data-theme='light'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light {
+  display: block !important;
+}
+
+.app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark,
+html[data-theme='light'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark {
+  display: none !important;
+}
+
+.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light,
+html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-light {
+  display: none !important;
+}
+
+.app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark,
+html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark {
+  display: block !important;
+}
