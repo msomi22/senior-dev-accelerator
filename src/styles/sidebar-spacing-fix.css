@@ -1,0 +1,7 @@
+/* Restores the comfortable gap between the brand block and the first sidebar section.
+   This is intentionally narrow so it does not disturb the improved theme styling. */
+
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type {
+  margin-top: 34px !important;
+}
