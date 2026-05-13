@@ -10,6 +10,10 @@ const TABS = [
   ['complexity', '⌁', 'Complexity']
 ];
 
+function optionLetter(index) {
+  return String.fromCharCode(65 + index);
+}
+
 function TextBlock({ title, children, className = '' }) {
   if (!children) return null;
   return (
@@ -29,6 +33,53 @@ function ListBlock({ title, items, ordered = false }) {
       <Tag>
         {items.map((item) => <li key={item}>{item}</li>)}
       </Tag>
+    </section>
+  );
+}
+
+function McqBlock({ question, selected, setSelected }) {
+  if (question.type !== 'mcq' || !question.options?.length) return null;
+
+  const answered = selected !== null;
+  const isCorrect = selected === question.correctAnswer;
+  const correctLabel = question.options?.[question.correctAnswer]
+    ? `${optionLetter(question.correctAnswer)}. ${question.options[question.correctAnswer]}`
+    : 'Not configured';
+
+  return (
+    <section className="focused-mcq-panel">
+      <span className="mini-label">Choose your answer</span>
+
+      <div className="option-list" role="radiogroup" aria-label={question.title}>
+        {question.options.map((option, index) => {
+          const chosen = selected === index;
+          const correct = question.correctAnswer === index;
+          const className = [
+            'option-btn',
+            chosen ? 'selected' : '',
+            answered && correct ? 'correct' : '',
+            answered && chosen && !correct ? 'wrong' : ''
+          ].filter(Boolean).join(' ');
+
+          return (
+            <button
+              key={option}
+              type="button"
+              className={className}
+              onClick={() => setSelected(index)}
+            >
+              <strong>{optionLetter(index)}</strong>
+              <span>{option}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {answered ? (
+        <div className={`answer-banner ${isCorrect ? 'correct' : 'wrong'}`}>
+          {isCorrect ? 'Correct.' : 'Not quite.'} Best answer: <strong>{correctLabel}</strong>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -96,6 +147,7 @@ function VisualBlock({ question }) {
 
 export default function FocusedProblemWorkspace({ question, completed, onToggle, hideTopline = false }) {
   const [activeTab, setActiveTab] = useState('walkthrough');
+  const [selected, setSelected] = useState(null);
   const codeContent = question.solutionCode || question.code || question.pseudocode || question.approachPseudocode;
 
   return (
@@ -136,6 +188,7 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
               <TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>
               <TextBlock title="Problem" className="question-prompt">{question.question}</TextBlock>
             </div>
+            <McqBlock question={question} selected={selected} setSelected={setSelected} />
             <VisualBlock question={question} />
           </div>
         ) : null}
