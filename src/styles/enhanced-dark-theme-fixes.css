@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Enhanced Dark Theme Fixes
+   Loaded after enhanced-dark-theme.css. Dark mode only.
+   ========================================================================== */
+
+:root[data-theme="dark"] {
+  --bg-sidebar: var(--bg-mid);
+  --text-sidebar: var(--text-primary);
+  --text-sidebar-muted: var(--text-secondary);
+  --sidebar-border: var(--line);
+  --sidebar-hover: var(--surface);
+  --sidebar-active-bg: var(--accent-dim);
+  --sidebar-active-border: rgba(56, 232, 200, 0.25);
+  --sidebar-active-text: var(--accent);
+  --sidebar-coffee-bg: rgba(56, 232, 200, 0.08);
+  --sidebar-logo-ink: var(--bg);
+}
+
+.app-shell.dark .layout {
+  padding-top: 0;
+  background: var(--bg);
+}
+
+.app-shell.dark .page-wrap,
+.app-shell.dark .main-content {
+  grid-column: 2;
+  height: 100vh;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: calc(var(--nav-height) + 32px) 36px calc(60px + var(--footer-height, 36px));
+  background: var(--bg);
+}
+
+.app-shell.dark .nav,
+.app-shell.dark .navbar,
+.app-shell.dark .topbar {
+  inset: 0 0 auto var(--sidebar-width);
+  height: var(--nav-height);
+  background: var(--bg-mid);
+  border-bottom: 1px solid var(--line);
+}
+
+.app-shell.dark .sidebar,
+.app-shell.dark .app-sidebar {
+  top: 0;
+  height: 100vh;
+  padding: 24px 0;
+  gap: 16px;
+  background: var(--bg-mid);
+  border-right: 1px solid var(--line);
+  color: var(--text-primary);
+}
+
+.app-shell.dark .sidebar-logo {
+  border-bottom-color: var(--line);
+  color: var(--text-primary);
+}
+
+.app-shell.dark .logo-mark {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: var(--bg);
+  box-shadow: 0 0 16px rgba(56, 232, 200, 0.28);
+}
+
+.app-shell.dark .logo-text {
+  color: var(--text-primary);
+}
+
+.app-shell.dark .logo-text span,
+.app-shell.dark .nav-label {
+  color: var(--text-secondary);
+}
+
+.app-shell.dark .nav-item,
+.app-shell.dark .sidebar a {
+  color: var(--text-secondary);
+}
+
+.app-shell.dark .nav-item:hover,
+.app-shell.dark .sidebar a:hover {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.app-shell.dark .nav-item.active,
+.app-shell.dark .sidebar a.active {
+  border-color: var(--sidebar-active-border);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.app-shell.dark .coffee-link {
+  background: var(--sidebar-coffee-bg);
+  color: var(--text-secondary);
+}
+
+.app-shell.dark .status-bar {
+  left: var(--sidebar-width);
+  background: var(--bg-mid);
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 900px) {
+  .app-shell.dark .nav,
+  .app-shell.dark .navbar,
+  .app-shell.dark .topbar {
+    inset: 0 0 auto 0;
+  }
+
+  .app-shell.dark .page-wrap,
+  .app-shell.dark .main-content {
+    grid-column: 1;
+    height: auto;
+    min-height: 100vh;
+    padding: calc(var(--nav-height) + 18px) 18px calc(60px + var(--footer-height, 36px));
+  }
+
+  .app-shell.dark .sidebar,
+  .app-shell.dark .app-sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .app-shell.dark .status-bar {
+    left: 0;
+  }
+}
