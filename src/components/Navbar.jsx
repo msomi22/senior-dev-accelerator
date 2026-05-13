@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { categories } from '../services/questionBankService.js';
+import '../styles/brand.css';
 
 function pageTitle(pathname) {
   if (pathname === '/') return 'Learning Dashboard';
@@ -32,8 +33,23 @@ export default function Navbar() {
     .filter((category) => category.featured !== false)
     .slice(0, 2);
 
+  const logoSrc = theme === 'dark'
+    ? '/brand-logo-dark.svg'
+    : '/brand-logo-light.svg';
+
   return (
     <header className="nav topbar">
+      <NavLink to="/" className="brand topbar-brand" aria-label="Senior Dev Accelerator dashboard">
+        <img
+          src={logoSrc}
+          alt="Senior Dev Accelerator"
+          className="brand-logo"
+        />
+        <span className="brand-text-fallback">
+          Senior Dev Accelerator
+        </span>
+      </NavLink>
+
       <span className="topbar-title">{pageTitle(location.pathname)}</span>
 
       <nav className="topbar-links" aria-label="Primary">
