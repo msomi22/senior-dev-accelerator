@@ -148,6 +148,14 @@ export default function CategoryPage({ fixedCategoryId }) {
     return filteredTopics.find((topic) => topic.id === selectedId);
   }, [filteredTopics, selectedId]);
 
+  const visibleLibraryTopics = useMemo(() => {
+    if (completionFilter === 'all') {
+      return filteredTopics;
+    }
+
+    return selectedTopic ? [selectedTopic] : filteredTopics.slice(0, 1);
+  }, [completionFilter, filteredTopics, selectedTopic]);
+
   useEffect(() => {
     if (!filteredTopics.length) return;
 
@@ -192,7 +200,7 @@ export default function CategoryPage({ fixedCategoryId }) {
       ) : (
         <>
           <TopicLibrary
-            topics={filteredTopics}
+            topics={visibleLibraryTopics}
             allTopicsCount={topics.length}
             selectedId={selectedId}
             completed={completed}
