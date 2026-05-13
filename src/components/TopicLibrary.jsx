@@ -2,30 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { topicLibraryConfig } from '../config/topicLibraryConfig.js';
 import { topicProgress } from '../services/questionBankService.js';
-import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
+import { getQuestionSetProgress } from '../services/topicFilterService.js';
 
 const ALL = 'all';
 
-function normalize(value) {
-  return String(value || '').toLowerCase().trim();
-}
-
-function topicHaystack(topic) {
-  return [
-    topic.id,
-    topic.name,
-    topic.description,
-    topic.category,
-    topic.domain,
-    ...(topic.tags || [])
-  ]
-    .join(' ')
-    .toLowerCase();
-}
-
 function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
   if (completionFilter === 'completed') {
-    return `${visibleTopicCount} topics contain completed questions.`;
+    return `${visibleTopicCount} topics are complete.`;
   }
 
   if (completionFilter === 'incomplete') {
@@ -33,6 +16,17 @@ function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
   }
 
   return `${visibleTopicCount} of ${allTopicsCount} topics match the current filters.`;
+}
+
+function getVisibleTopicProgress(topic, completed = {}) {
+  if (Array.isArray(topic.filteredQuestions)) {
+    return getQuestionSetProgress(topic.filteredQuestions, completed);
+  }
+
+  return topicProgress(
+    { ...topic, count: topic.filteredCount ?? topic.count },
+    completed
+  );
 }
 
 function getCountLabel(count, completionFilter) {
@@ -59,38 +53,18 @@ export default function TopicLibrary({
   completionFilter,
   onCompletionFilterChange
 }) {
-  const [query, setQuery] = useState('');
   const [sortBy, setSortBy] = useState('recommended');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const debouncedQuery = useDebouncedValue(
-    query,
-    topicLibraryConfig.topicSearchDebounceMs
-  );
-
   const filteredTopics = useMemo(() => {
-    const q = normalize(debouncedQuery);
-
-    let next = topics.filter((topic) => {
-      if (!q) return true;
-      return topicHaystack(topic).includes(q);
-    });
-
-    next = [...next].sort((a, b) => {
+    return [...topics].sort((a, b) => {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name);
       }
 
       if (sortBy === 'progress') {
-        const ap = topicProgress(
-          { ...a, count: a.filteredCount ?? a.count },
-          completed
-        ).percent;
-
-        const bp = topicProgress(
-          { ...b, count: b.filteredCount ?? b.count },
-          completed
-        ).percent;
+        const ap = getVisibleTopicProgress(a, completed).percent;
+        const bp = getVisibleTopicProgress(b, completed).percent;
 
         return bp - ap;
       }
@@ -108,9 +82,7 @@ export default function TopicLibrary({
         a.name.localeCompare(b.name)
       );
     });
-
-    return next;
-  }, [topics, debouncedQuery, sortBy, completed]);
+  }, [topics, sortBy, completed]);
 
   const totalPages = Math.max(
     1,
@@ -132,7 +104,7 @@ export default function TopicLibrary({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedQuery, difficulty, completionFilter, sortBy]);
+  }, [difficulty, completionFilter, sortBy]);
 
   function goToPage(page) {
     setCurrentPage(Math.min(Math.max(page, 1), totalPages));
@@ -161,17 +133,7 @@ export default function TopicLibrary({
         </div>
       </div>
 
-      <div className="topic-library-controls topic-library-controls-4">
-        <label>
-          <span>Search topics</span>
-
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search title, tags, description..."
-          />
-        </label>
-
+      <div className="topic-library-controls">
         <label>
           <span>Difficulty</span>
 
@@ -223,10 +185,7 @@ export default function TopicLibrary({
         {visibleTopics.map((topic) => {
           const count = topic.filteredCount ?? topic.count ?? 0;
 
-          const progress = topicProgress(
-            { ...topic, count },
-            completed
-          );
+          const progress = getVisibleTopicProgress(topic, completed);
 
           const fullyCompleted =
             count > 0 && progress.done === count;
@@ -272,7 +231,7 @@ export default function TopicLibrary({
       {filteredTopics.length === 0 ? (
         <div className="empty-state glass-lite">
           <h3>No topics found</h3>
-          <p>Try a broader search or clear the filters.</p>
+          <p>Try clearing the difficulty or status filters.</p>
         </div>
       ) : null}
 

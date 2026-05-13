@@ -8,6 +8,10 @@ import SearchPanel from '../components/SearchPanel.jsx';
 import SearchResultsSection from '../components/SearchResultsSection.jsx';
 
 import { storageService } from '../services/storageService.js';
+import {
+  ALL_FILTER,
+  getFilteredTopicQuestions
+} from '../services/topicFilterService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { useQuestionSearch } from '../hooks/useQuestionSearch.js';
 
@@ -16,22 +20,6 @@ import {
   getTopicsForCategory,
   loadTopicBank
 } from '../services/questionBankService.js';
-
-const ALL = 'all';
-
-function matchesDifficulty(question, difficulty) {
-  if (difficulty === ALL) return true;
-  return question.difficulty === difficulty;
-}
-
-function matchesCompletion(question, completed, completionFilter) {
-  const isCompleted = !!completed[question.id];
-
-  if (completionFilter === 'completed') return isCompleted;
-  if (completionFilter === 'incomplete') return !isCompleted;
-
-  return true;
-}
 
 export default function CategoryPage({ fixedCategoryId }) {
   const params = useParams();
@@ -48,7 +36,7 @@ export default function CategoryPage({ fixedCategoryId }) {
     pref.selectedTopics?.[categoryId] || ''
   );
 
-  const [topicDifficulty, setTopicDifficulty] = useState(ALL);
+  const [topicDifficulty, setTopicDifficulty] = useState(ALL_FILTER);
   const [completionFilter, setCompletionFilter] = useState('all');
 
   const [loadingTopics, setLoadingTopics] = useState(true);
@@ -143,12 +131,12 @@ export default function CategoryPage({ fixedCategoryId }) {
   const filteredTopics = useMemo(() => {
     return topicsWithBanks
       .map((topic) => {
-        const filteredQuestions = topic.questions.filter((question) => {
-          return (
-            matchesDifficulty(question, topicDifficulty) &&
-            matchesCompletion(question, completed, completionFilter)
-          );
-        });
+        const filteredQuestions = getFilteredTopicQuestions(
+          topic,
+          completed,
+          topicDifficulty,
+          completionFilter
+        );
 
         return {
           ...topic,
@@ -203,7 +191,28 @@ export default function CategoryPage({ fixedCategoryId }) {
         <p className="eyebrow">{category.shortName || category.name}</p>
         <h1>{category.name}</h1>
         <p>{category.description}</p>
+
+        {!loadingTopics && !loadingBanks ? (
+          <div className="header-search">
+            <SearchPanel
+              query={search.query}
+              onQueryChange={search.setQuery}
+            />
+          </div>
+        ) : null}
       </section>
+
+      {!loadingTopics && !loadingBanks && search.isActive ? (
+        search.isIndexing ? (
+          <LoadingCard label="Building search index…" />
+        ) : (
+          <SearchResultsSection
+            results={search.results}
+            completed={completed}
+            onToggle={toggle}
+          />
+        )
+      ) : null}
 
       {loadingTopics || loadingBanks ? (
         <LoadingCard label="Loading category topics…" />
@@ -237,46 +246,6 @@ export default function CategoryPage({ fixedCategoryId }) {
             </div>
           )}
 
-          <details
-            className="advanced-search-panel glass-lite"
-            open={search.isActive}
-          >
-            <summary>
-              <span>Advanced problem search</span>
-              <small>
-                Search across titles, scenarios, tags, explanations, and
-                production notes.
-              </small>
-            </summary>
-
-            <SearchPanel
-              topics={topics}
-              query={search.query}
-              topicId={search.topicId}
-              difficulty={search.difficulty}
-              type={search.type}
-              onQueryChange={search.setQuery}
-              onTopicChange={search.setTopicId}
-              onDifficultyChange={search.setDifficulty}
-              onTypeChange={search.setType}
-              onClear={search.clearSearch}
-              isActive={search.isActive}
-              isIndexing={search.isIndexing}
-              resultCount={search.results.length}
-            />
-
-            {search.isActive ? (
-              search.isIndexing ? (
-                <LoadingCard label="Building search index…" />
-              ) : (
-                <SearchResultsSection
-                  results={search.results}
-                  completed={completed}
-                  onToggle={toggle}
-                />
-              )
-            ) : null}
-          </details>
         </>
       )}
     </main>

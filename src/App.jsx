@@ -1,10 +1,11 @@
 /*
 DECISION: Vite + React + React Router remains the best fit for this version because the product is a fast, static, highly interactive learning platform. This refactor uses route-level lazy loading and topic-level lazy quiz banks, so the dashboard no longer downloads or parses every question upfront. Next.js would be useful later for SSR, auth, payments, or a database-backed CMS; Angular would be stronger for a large enterprise team but heavier for this content-first product.
 */
-import { Suspense, lazy } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { Suspense, lazy, useEffect } from 'react';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
+import StatusBar from './components/StatusBar.jsx';
 import LoadingCard from './components/LoadingCard.jsx';
 import { useContentProtection } from './hooks/useContentProtection.js';
 import { usePreferences } from './hooks/usePreferences.js';
@@ -17,11 +18,38 @@ const RandomQuestionPage = lazy(() => import('./pages/RandomQuestionPage.jsx'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage.jsx'));
 const ProblemPage = lazy(() => import('./pages/ProblemPage.jsx'));
 
+function RouteScrollReset() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
+    const reset = () => {
+      document.querySelector('.page-wrap')?.scrollTo({ top: 0, left: 0 });
+      window.scrollTo({ top: 0, left: 0 });
+    };
+
+    reset();
+    const frameId = window.requestAnimationFrame(reset);
+    const timeoutId = window.setTimeout(reset, 250);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearTimeout(timeoutId);
+    };
+  }, [pathname]);
+
+  return null;
+}
+
 export default function App() {
   useContentProtection();
   const { theme } = usePreferences();
   return (
     <div className={`app-shell ${theme}`}>
+      <RouteScrollReset />
       <Navbar />
       <div className="layout">
         <Sidebar />
@@ -40,6 +68,7 @@ export default function App() {
           </Suspense>
         </main>
       </div>
+      <StatusBar />
     </div>
   );
 }

@@ -110,7 +110,7 @@ export default function Home() {
     .sort((a, b) => (b.progressPercent || 0) - (a.progressPercent || 0))[0], [countedCategories]);
 
   return (
-    <>
+    <div className="learning-dashboard-page">
       <section className="hero-card glass learning-hero">
         <div>
           <p className="eyebrow">Engineering mastery command center</p>
@@ -192,6 +192,6 @@ export default function Home() {
           <span>Review progress</span>
         </div>
       </section>
-    </>
+    </div>
   );
 }
