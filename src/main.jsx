@@ -11,6 +11,7 @@ import './styles/enhanced-dark-theme.css';
 import './styles/enhanced-dark-theme-fixes.css';
 import './styles/problem-pill-fixes.css';
 import './styles/shared-theme-geometry.css';
+import './styles/sidebar-logo-compact-final.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
