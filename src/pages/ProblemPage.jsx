@@ -218,16 +218,6 @@ export default function ProblemPage() {
         onToggle={handleToggle}
         hideTopline
       />
-
-      <section className="focused-problem-actions" aria-label="Focused problem actions bottom">
-        <NavLink className="btn ghost" to={categoryBackPath}>
-          Back to category
-        </NavLink>
-
-        <NavLink className="btn ghost" to="/random">
-          Try random question
-        </NavLink>
-      </section>
     </main>
   );
 }
