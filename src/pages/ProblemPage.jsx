@@ -25,6 +25,12 @@ function uniqueItems(items = []) {
   });
 }
 
+function categoryPath(categoryId) {
+  if (categoryId === 'dsa') return '/dsa';
+  if (categoryId === 'system') return '/system-design';
+  return categoryId ? `/category/${categoryId}` : '/';
+}
+
 function pillClass(type, label, difficulty) {
   const normalizedLabel = String(label || '').toLowerCase();
   const normalizedDifficulty = String(difficulty || '').toLowerCase();
@@ -143,6 +149,9 @@ export default function ProblemPage() {
     );
   }
 
+  const categoryId = entry.topic?.category || entry.category?.id;
+  const categoryBackPath = categoryPath(categoryId);
+
   const problemTags = uniqueItems([
     { label: entry.question.difficulty, type: 'difficulty' },
     { label: entry.topic?.name, type: 'topic' },
@@ -199,6 +208,16 @@ export default function ProblemPage() {
         onToggle={handleToggle}
         hideTopline
       />
+
+      <section className="focused-problem-actions" aria-label="Focused problem actions">
+        <NavLink className="btn ghost" to={categoryBackPath}>
+          Back to category
+        </NavLink>
+
+        <NavLink className="btn ghost" to="/random">
+          Try random question
+        </NavLink>
+      </section>
     </main>
   );
 }
