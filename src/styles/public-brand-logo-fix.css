@@ -1,5 +1,10 @@
 /* Use the existing public logo assets for the sidebar brand. */
 
+:root {
+  --sidebar-logo-height: 96px;
+  --sidebar-logo-section-gap: 34px;
+}
+
 aside.sidebar.app-sidebar > a.sidebar-logo {
   display: flex !important;
   align-items: center !important;
@@ -8,7 +13,12 @@ aside.sidebar.app-sidebar > a.sidebar-logo {
   height: var(--sidebar-logo-height) !important;
   min-height: var(--sidebar-logo-height) !important;
   max-height: var(--sidebar-logo-height) !important;
-  padding: 18px 20px 22px !important;
+  padding: 14px 20px 16px !important;
+  margin: 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
   overflow: visible !important;
 }
 
@@ -19,10 +29,10 @@ aside.sidebar.app-sidebar > a.sidebar-logo::after {
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
-  width: 100% !important;
-  max-width: 260px !important;
+  width: auto !important;
+  max-width: 188px !important;
   height: auto !important;
-  max-height: calc(var(--sidebar-logo-height) - 28px) !important;
+  max-height: 62px !important;
   object-fit: contain !important;
   object-position: left center !important;
 }
@@ -50,4 +60,70 @@ html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo
 .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark,
 html[data-theme='dark'] aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo-dark {
   display: block !important;
+}
+
+aside.sidebar.app-sidebar > .nav-section:first-of-type {
+  margin-top: var(--sidebar-logo-section-gap) !important;
+}
+
+/* Keep the desktop sidebar/header relationship until the screen is genuinely mobile.
+   The earlier 900px breakpoint made the topbar cover the sidebar/logo on normal narrow desktop windows. */
+@media (min-width: 641px) and (max-width: 900px) {
+  .app-shell .layout,
+  .app-shell.light .layout,
+  .app-shell.dark .layout {
+    width: 100% !important;
+    height: 100vh !important;
+    display: grid !important;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr) !important;
+    overflow: hidden !important;
+  }
+
+  .app-shell .topbar,
+  .app-shell.light .topbar,
+  .app-shell.dark .topbar,
+  .app-shell .nav,
+  .app-shell.light .nav,
+  .app-shell.dark .nav,
+  .app-shell .navbar,
+  .app-shell.light .navbar,
+  .app-shell.dark .navbar {
+    inset: 0 0 auto var(--sidebar-width) !important;
+  }
+
+  .app-shell .sidebar,
+  .app-shell .app-sidebar,
+  .app-shell.light .sidebar,
+  .app-shell.light .app-sidebar,
+  .app-shell.dark .sidebar,
+  .app-shell.dark .app-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: var(--sidebar-width) !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .app-shell .page-wrap,
+  .app-shell .main-content,
+  .app-shell.light .page-wrap,
+  .app-shell.light .main-content,
+  .app-shell.dark .page-wrap,
+  .app-shell.dark .main-content {
+    grid-column: 2 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    padding: calc(var(--nav-height) + var(--page-top-gap)) var(--page-x) calc(var(--page-bottom-gap) + var(--footer-height)) !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .app-shell .status-bar,
+  .app-shell.light .status-bar,
+  .app-shell.dark .status-bar {
+    left: var(--sidebar-width) !important;
+  }
 }
