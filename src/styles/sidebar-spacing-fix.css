@@ -5,6 +5,36 @@
   --sidebar-logo-section-gap: 34px;
 }
 
+html body #root aside.sidebar.app-sidebar > .sidebar-logo,
+html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo {
+  display: flex !important;
+  align-items: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: 72px !important;
+  padding: 24px 20px 28px !important;
+  margin: 0 !important;
+  color: var(--text-sidebar) !important;
+}
+
+html body #root aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
+html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-mark,
+html body #root aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
+html body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .sidebar-logo .logo-text,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .sidebar-logo .logo-text {
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
 html body #root aside.sidebar.app-sidebar > .nav-section:first-of-type,
 html body #root .app-shell.light aside.sidebar.app-sidebar > .nav-section:first-of-type,
 html body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type,
