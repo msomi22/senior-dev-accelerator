@@ -1,0 +1,33 @@
+/* ==========================================================================
+   Light Theme Fixes
+   Scoped to light mode only. Dark theme remains controlled by enhanced files.
+   ========================================================================== */
+
+:root[data-theme="light"] .progress-card svg {
+  width: 96px;
+  height: 96px;
+  flex: 0 0 96px;
+  overflow: visible;
+}
+
+:root[data-theme="light"] .track {
+  fill: none;
+  stroke: #e4ded4;
+  stroke-width: 13;
+}
+
+:root[data-theme="light"] .meter {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 13;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.4s ease;
+}
+
+:root[data-theme="light"] .progress-card text {
+  fill: var(--text-primary);
+  font-size: 16px;
+  font-weight: 800;
+}
