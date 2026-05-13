@@ -13,7 +13,7 @@ const topic = {
   ]
 };
 
-test('completed topic filter excludes partially completed topics', () => {
+test('completed status filter returns completed questions from partially completed topics', () => {
   const filtered = getFilteredTopicQuestions(
     topic,
     { 'trie-001': true },
@@ -21,10 +21,10 @@ test('completed topic filter excludes partially completed topics', () => {
     'completed'
   );
 
-  assert.deepEqual(filtered, []);
+  assert.deepEqual(filtered.map((question) => question.id), ['trie-001']);
 });
 
-test('completed topic filter includes topics complete within difficulty scope', () => {
+test('completed status filter respects difficulty scope', () => {
   const filtered = getFilteredTopicQuestions(
     topic,
     { 'trie-001': true },
