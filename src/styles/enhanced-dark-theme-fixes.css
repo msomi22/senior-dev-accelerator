@@ -4,6 +4,10 @@
    ========================================================================== */
 
 :root[data-theme="dark"] {
+  --sidebar-width: 230px;
+  --nav-height: 58px;
+  --footer-height: 34px;
+
   --bg-sidebar: var(--bg-mid);
   --text-sidebar: var(--text-primary);
   --text-sidebar-muted: var(--text-secondary);
@@ -16,20 +20,44 @@
   --sidebar-logo-ink: var(--bg);
 }
 
+.app-shell.dark,
 .app-shell.dark .layout {
-  padding-top: 0;
   background: var(--bg);
+}
+
+.app-shell.dark .layout {
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  padding-top: 0;
 }
 
 .app-shell.dark .page-wrap,
 .app-shell.dark .main-content {
   grid-column: 2;
+  width: 100%;
   height: 100vh;
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: calc(var(--nav-height) + 32px) 36px calc(60px + var(--footer-height, 36px));
+  padding: calc(var(--nav-height) + 32px) 36px calc(60px + var(--footer-height));
   background: var(--bg);
+}
+
+/* The reference mockup uses the full main canvas, not a centered narrow page. */
+.app-shell.dark .page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  gap: 28px;
+}
+
+.app-shell.dark .learning-dashboard-page,
+.app-shell.dark .category-page,
+.app-shell.dark .practice-page,
+.app-shell.dark .problem-detail-page,
+.app-shell.dark .progress-page {
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .app-shell.dark .nav,
@@ -49,40 +77,85 @@
   white-space: nowrap;
 }
 
+.app-shell.dark .topbar-links a:hover,
+.app-shell.dark .nav nav a:hover {
+  background: var(--surface);
+}
+
+.app-shell.dark .topbar-links a.active,
+.app-shell.dark .nav nav a.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
 .app-shell.dark .sidebar,
 .app-shell.dark .app-sidebar {
-  top: 0;
+  inset: 0 auto 0 0;
+  width: var(--sidebar-width);
   height: 100vh;
-  padding: 24px 0;
-  gap: 16px;
+  padding: 0;
+  gap: 0;
   background: var(--bg-mid);
   border-right: 1px solid var(--line);
   color: var(--text-primary);
 }
 
+.app-shell.dark .sidebar::after,
+.app-shell.dark .app-sidebar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(56, 232, 200, 0.02) 0%, transparent 40%);
+}
+
 .app-shell.dark .sidebar-logo {
-  border-bottom-color: var(--line);
+  padding: 22px 18px 20px;
+  border-bottom: 1px solid var(--line);
   color: var(--text-primary);
 }
 
 .app-shell.dark .logo-mark {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 10px;
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: var(--bg);
-  box-shadow: 0 0 16px rgba(56, 232, 200, 0.28);
+  box-shadow: 0 0 16px rgba(56, 232, 200, 0.35);
 }
 
 .app-shell.dark .logo-text {
   color: var(--text-primary);
+  font-size: 13px;
+  letter-spacing: -0.01em;
 }
 
-.app-shell.dark .logo-text span,
+.app-shell.dark .logo-text span {
+  color: var(--text-muted);
+}
+
+.app-shell.dark .nav-section {
+  padding: 14px 10px 6px;
+}
+
 .app-shell.dark .nav-label {
-  color: var(--text-secondary);
+  color: var(--text-muted);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
 }
 
 .app-shell.dark .nav-item,
 .app-shell.dark .sidebar a {
+  min-height: unset;
+  position: relative;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
   color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
 }
 
 .app-shell.dark .nav-item:hover,
@@ -93,18 +166,33 @@
 
 .app-shell.dark .nav-item.active,
 .app-shell.dark .sidebar a.active {
-  border-color: var(--sidebar-active-border);
+  border: 0;
   background: var(--accent-dim);
   color: var(--accent);
+  font-weight: 600;
+}
+
+.app-shell.dark .nav-item.active::before,
+.app-shell.dark .sidebar a.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
 }
 
 .app-shell.dark .coffee-link {
+  margin: 0 10px 14px;
   background: var(--sidebar-coffee-bg);
   color: var(--text-secondary);
 }
 
 .app-shell.dark .status-bar {
   left: var(--sidebar-width);
+  height: var(--footer-height);
   background: var(--bg-mid);
   border-top: 1px solid var(--line);
 }
@@ -121,7 +209,11 @@
     grid-column: 1;
     height: auto;
     min-height: 100vh;
-    padding: calc(var(--nav-height) + 18px) 18px calc(60px + var(--footer-height, 36px));
+    padding: calc(var(--nav-height) + 18px) 18px calc(60px + var(--footer-height));
+  }
+
+  .app-shell.dark .page {
+    max-width: none;
   }
 
   .app-shell.dark .sidebar,
