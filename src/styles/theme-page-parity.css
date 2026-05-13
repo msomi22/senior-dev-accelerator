@@ -1,29 +1,29 @@
 /* ========================================================================== 
    THEME PARITY CONTRACT
    --------------------------------------------------------------------------
-   Layout, spacing, sizing and typography are defined ONCE under .app-shell.
-   Light and dark themes only provide token values: color, background, border,
-   shadow and accent values. Do not put geometry inside .light or .dark blocks.
+   All layout, sizing, spacing and typography live in shared .app-shell rules.
+   Theme classes only provide values/tokens. This prevents light and dark from
+   rendering different UIs.
    ========================================================================== */
 
 .app-shell {
   /* Shared geometry */
   --sidebar-width: 260px;
   --topbar-height: 72px;
-  --page-x: 40px;
-  --page-y: 52px;
-  --section-gap: 22px;
+  --page-x: 36px;
+  --page-y: 48px;
+  --section-gap: 20px;
   --card-radius: 14px;
-  --card-pad: 24px;
-  --card-min: 148px;
+  --card-pad: 22px;
+  --card-min: 138px;
   --hero-pad: 28px;
-  --hero-min: 270px;
+  --hero-min: 250px;
   --hero-side-width: 360px;
-  --hero-title-size: clamp(34px, 2.85vw, 48px);
-  --hero-title-line: 1.08;
-  --page-title-size: clamp(36px, 3.25vw, 54px);
-  --page-title-line: 1.05;
-  --body-size: 17px;
+  --hero-title-size: clamp(34px, 2.7vw, 48px);
+  --hero-title-line: 1.1;
+  --page-title-size: clamp(34px, 3vw, 52px);
+  --page-title-line: 1.08;
+  --body-size: 16px;
   --body-line: 1.52;
   --eyebrow-size: 13px;
   --button-height: 40px;
@@ -32,10 +32,12 @@
   --logo-gap: 14px;
 }
 
-/* Theme values only */
+/* Theme values only: colors, surfaces, borders, shadows */
 .app-shell.light {
   --page-bg: #f3f0ea;
   --panel-bg: #ffffff;
+  --sidebar-bg: #fbfaf7;
+  --topbar-bg: #ffffff;
   --panel-border: #ded7cb;
   --text-strong: #191816;
   --text-body: #625e59;
@@ -43,12 +45,15 @@
   --accent: #c6a765;
   --accent-text: #9a6b19;
   --accent-soft: #f5ead5;
+  --nav-active-bg: #f3e7cf;
   --card-shadow: 0 12px 30px rgba(36, 27, 15, .10);
 }
 
 .app-shell.dark {
   --page-bg: #0b0f14;
   --panel-bg: #151a24;
+  --sidebar-bg: #111822;
+  --topbar-bg: #111822;
   --panel-border: #2a3342;
   --text-strong: #f4f5fb;
   --text-body: #a9b2c5;
@@ -56,6 +61,7 @@
   --accent: #35e0c8;
   --accent-text: #35e0c8;
   --accent-soft: rgba(53, 224, 200, .13);
+  --nav-active-bg: rgba(53, 224, 200, .13);
   --card-shadow: 0 14px 34px rgba(0, 0, 0, .36);
 }
 
@@ -69,7 +75,7 @@
   color: var(--text-body) !important;
 }
 
-/* Shell */
+/* Shell: same dimensions in every theme */
 .app-shell .app-main,
 .app-shell main,
 .app-shell .content-area,
@@ -86,17 +92,24 @@
 .app-shell .sidebar,
 .app-shell .app-sidebar,
 .app-shell aside {
+  position: fixed !important;
+  inset: 0 auto 0 0 !important;
   width: var(--sidebar-width) !important;
   min-width: var(--sidebar-width) !important;
   max-width: var(--sidebar-width) !important;
-  background: var(--panel-bg) !important;
+  height: 100vh !important;
+  background: var(--sidebar-bg) !important;
   color: var(--text-body) !important;
   border-right: 1px solid var(--panel-border) !important;
+  overflow-y: auto !important;
 }
 
 .app-shell .topbar,
 .app-shell .app-header,
 .app-shell header.site-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
   height: var(--topbar-height) !important;
   min-height: var(--topbar-height) !important;
   padding: 0 32px !important;
@@ -104,12 +117,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  background: var(--panel-bg) !important;
+  background: var(--topbar-bg) !important;
   color: var(--text-strong) !important;
   border-bottom: 1px solid var(--panel-border) !important;
 }
 
-/* Brand/logo: exact same geometry in every theme */
+/* Brand/logo: exact geometry in every theme */
 .app-shell .brand,
 .app-shell .sidebar-brand,
 .app-shell .logo-row {
@@ -162,7 +175,37 @@
   color: var(--text-muted) !important;
 }
 
-/* Every page uses the same outer geometry */
+/* Navigation: same structure, token colors */
+.app-shell .sidebar nav,
+.app-shell .app-sidebar nav,
+.app-shell aside nav {
+  padding: 18px 14px !important;
+}
+
+.app-shell .sidebar a,
+.app-shell .app-sidebar a,
+.app-shell aside a {
+  min-height: 40px !important;
+  padding: 0 12px !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  color: var(--text-body) !important;
+  text-decoration: none !important;
+}
+
+.app-shell .sidebar a.active,
+.app-shell .app-sidebar a.active,
+.app-shell aside a.active,
+.app-shell .sidebar .active,
+.app-shell .app-sidebar .active,
+.app-shell aside .active {
+  background: var(--nav-active-bg) !important;
+  color: var(--accent-text) !important;
+  border: 1px solid var(--accent) !important;
+}
+
+/* Every page uses same outer geometry */
 .app-shell .learning-dashboard-page,
 .app-shell .problem-detail-page,
 .app-shell .focused-problem-page,
@@ -188,9 +231,11 @@
 .app-shell .panel,
 .app-shell .topic-card,
 .app-shell .learning-dashboard-card,
+.app-shell .learning-hero,
 .app-shell .visual-learning,
 .app-shell .problem-tabs,
-.app-shell .visual-walkthrough {
+.app-shell .visual-walkthrough,
+.app-shell .learning-hero-panel {
   background: var(--panel-bg) !important;
   border: 1px solid var(--panel-border) !important;
   box-shadow: var(--card-shadow) !important;
@@ -214,7 +259,7 @@
 
 .app-shell .learning-hero h1 {
   max-width: 1050px !important;
-  margin: 0 0 16px !important;
+  margin: 0 0 14px !important;
   font-size: var(--hero-title-size) !important;
   line-height: var(--hero-title-line) !important;
   font-family: Georgia, 'Times New Roman', serif !important;
@@ -225,14 +270,16 @@
 }
 
 .app-shell .learning-hero-panel {
-  min-height: 200px !important;
+  min-height: 190px !important;
   padding: 24px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
 }
 
-.app-shell .learning-hero-panel strong {
+.app-shell .learning-hero-panel strong,
+.app-shell .learning-hero-panel h2,
+.app-shell .stage-card h2 {
   font-size: 30px !important;
   line-height: 1.15 !important;
   color: var(--text-strong) !important;
@@ -254,7 +301,7 @@
 
 .app-shell .eyebrow,
 .app-shell [class*='eyebrow'] {
-  margin: 0 0 14px !important;
+  margin: 0 0 12px !important;
   font-size: var(--eyebrow-size) !important;
   line-height: 1.15 !important;
   font-weight: 850 !important;
@@ -294,7 +341,7 @@
 .app-shell .learning-stats-grid,
 .app-shell .dashboard-grid.learning-stats-grid {
   display: grid !important;
-  grid-template-columns: minmax(360px, 1.55fr) repeat(3, minmax(180px, 1fr)) !important;
+  grid-template-columns: minmax(320px, 1.55fr) repeat(3, minmax(170px, 1fr)) !important;
   gap: 14px !important;
   width: 100% !important;
   margin: 0 !important;
@@ -324,7 +371,7 @@
 }
 
 .app-shell .learning-dashboard-card {
-  min-height: 305px !important;
+  min-height: 285px !important;
   padding: var(--card-pad) !important;
   display: flex !important;
   flex-direction: column !important;
@@ -359,6 +406,9 @@
   line-height: 1 !important;
   font-weight: 850 !important;
   white-space: nowrap !important;
+  background: transparent !important;
+  border: 1px solid var(--panel-border) !important;
+  color: var(--text-muted) !important;
 }
 
 .app-shell .pill.category,
