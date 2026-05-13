@@ -595,6 +595,25 @@ body {
   font-weight: 700;
 }
 
+.learning-dashboard-page {
+  width: 100%;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.learning-dashboard-page .learning-hero {
+  margin-bottom: 2px;
+}
+
+.learning-dashboard-page .category-library {
+  margin-top: 4px;
+}
+
+.learning-dashboard-page .category-library-controls {
+  margin: 20px 0 14px;
+}
+
 .learning-dashboard-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
@@ -656,6 +675,38 @@ body {
   color: var(--text-primary);
 }
 
+.category-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 12px;
+}
+
+.category-card-top,
+.category-stats-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.category-card-top {
+  justify-content: flex-start;
+}
+
+.category-stats-row {
+  margin-top: auto;
+  color: var(--text-secondary);
+}
+
+.category-card p {
+  margin: 0;
+}
+
+.category-card .eyebrow,
+.category-card .featured-badge {
+  margin: 0;
+}
+
 .topic-tab:hover,
 .category-card:hover,
 .search-preview-card:hover {
@@ -678,6 +729,27 @@ body {
   color: var(--text-primary);
   font-size: 1rem;
   font-weight: 700;
+}
+
+.road {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin-top: 10px;
+}
+
+.road span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-weight: 600;
 }
 
 .library-count-pill,
@@ -1419,6 +1491,18 @@ meter {
   .page {
     max-width: none;
     gap: 14px;
+  }
+
+  .learning-dashboard-page {
+    gap: 14px;
+  }
+
+  .learning-dashboard-page .category-library-controls {
+    margin: 14px 0 12px;
+  }
+
+  .category-card {
+    gap: 10px;
   }
 
   .hero-card,
