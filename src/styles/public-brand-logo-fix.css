@@ -1,8 +1,8 @@
 /* Use the existing public logo assets for the sidebar brand. */
 
 :root {
-  --sidebar-logo-height: 96px;
-  --sidebar-logo-section-gap: 24px;
+  --sidebar-logo-height: var(--nav-height);
+  --sidebar-logo-section-gap: 34px;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo {
@@ -10,26 +10,24 @@ aside.sidebar.app-sidebar > a.sidebar-logo {
   align-items: flex-start !important;
   justify-content: flex-start !important;
   width: 100% !important;
-  height: var(--sidebar-logo-height) !important;
-  min-height: var(--sidebar-logo-height) !important;
-  max-height: var(--sidebar-logo-height) !important;
-  padding: 0 20px 14px !important;
+  height: var(--nav-height) !important;
+  min-height: var(--nav-height) !important;
+  max-height: var(--nav-height) !important;
+  padding: 0 20px !important;
   margin: 0 !important;
   border-bottom: 1px solid var(--border-strong, var(--border)) !important;
   border-radius: 0 !important;
   background: transparent !important;
-  box-shadow: 0 1px 0 rgba(148, 163, 184, 0.14) !important;
+  box-shadow: none !important;
   overflow: visible !important;
 }
 
 .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo {
-  border-bottom-color: rgba(120, 113, 108, 0.26) !important;
-  box-shadow: 0 1px 0 rgba(120, 113, 108, 0.14) !important;
+  border-bottom-color: rgba(120, 113, 108, 0.28) !important;
 }
 
 .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
-  border-bottom-color: rgba(148, 163, 184, 0.22) !important;
-  box-shadow: 0 1px 0 rgba(148, 163, 184, 0.12) !important;
+  border-bottom-color: rgba(148, 163, 184, 0.24) !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo::before,
@@ -41,12 +39,12 @@ aside.sidebar.app-sidebar > a.sidebar-logo::after {
 aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
   display: block !important;
   width: auto !important;
-  max-width: 196px !important;
+  max-width: 178px !important;
   height: auto !important;
-  max-height: 72px !important;
+  max-height: calc(var(--nav-height) - 6px) !important;
   object-fit: contain !important;
   object-position: left top !important;
-  margin-top: -2px !important;
+  margin-top: 0 !important;
 }
 
 aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
