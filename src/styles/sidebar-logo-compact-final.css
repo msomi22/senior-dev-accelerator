@@ -30,12 +30,37 @@ html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a
   padding: 22px 18px 20px !important;
   margin: 0 !important;
   border: 0 !important;
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
   outline: 0 !important;
   text-decoration: none !important;
   transform: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo::after,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::before,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo::after {
+  display: none !important;
+  content: none !important;
+}
+
+html body #root .app-shell.light aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html[data-theme="light"] body #root .app-shell.light aside.sidebar.app-sidebar > .nav-section:first-of-type,
+html[data-theme="dark"] body #root .app-shell.dark aside.sidebar.app-sidebar > .nav-section:first-of-type {
+  margin-top: 0 !important;
+  border-top: 0 !important;
+  box-shadow: none !important;
 }
 
 html body #root .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .logo-mark,
