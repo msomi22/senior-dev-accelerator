@@ -1,4 +1,4 @@
-.app-sidebar .nav-item {
+.app-sidebar .nav-section .nav-item {
   display: grid !important;
   grid-template-columns: 24px minmax(0, 1fr);
   align-items: center;
@@ -27,11 +27,19 @@
   white-space: nowrap;
 }
 
-.app-sidebar .nav-item:hover .nav-icon,
-.app-sidebar .nav-item.active .nav-icon {
+.app-sidebar .nav-section .nav-item:hover .nav-icon,
+.app-sidebar .nav-section .nav-item.active .nav-icon {
   opacity: 1;
 }
 
-.app-sidebar .nav-item.active .nav-icon {
+.app-sidebar .nav-section .nav-item.active .nav-icon {
   transform: translateX(1px);
+}
+
+.app-sidebar .coffee-link {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
 }
