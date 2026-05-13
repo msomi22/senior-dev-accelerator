@@ -1,0 +1,516 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ==========================================================================
+   Enhanced Dark Theme
+   Scoped to dark mode only. Light theme remains controlled by existing styles.
+   ========================================================================== */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0d0f14;
+  --bg-soft: #131720;
+  --bg-mid: #131720;
+  --bg-card: #181d28;
+  --bg-card-hover: #1e2433;
+  --bg-glass: rgba(24, 29, 40, 0.72);
+  --surface: #232b3e;
+  --surface-hover: #2a3348;
+
+  --text: #eef0f5;
+  --text-primary: #eef0f5;
+  --muted: #9aa3b5;
+  --text-secondary: #9aa3b5;
+  --text-muted: #5c677d;
+
+  --card: #181d28;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.13);
+
+  --accent: #38e8c8;
+  --accent2: #5a9ef5;
+  --accent-dim: rgba(56, 232, 200, 0.12);
+  --accent-glow: rgba(56, 232, 200, 0.30);
+  --accent-dark: #1dbfa3;
+
+  --ok: #3ecf8e;
+  --ok-dim: rgba(62, 207, 142, 0.12);
+  --warning: #f0c040;
+  --warning-dim: rgba(240, 192, 64, 0.10);
+  --danger: #f46060;
+  --danger-dim: rgba(244, 96, 96, 0.12);
+  --orange: #f97316;
+  --orange-dim: rgba(249, 115, 22, 0.12);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167, 139, 250, 0.12);
+
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.42), 0 1px 2px rgba(0, 0, 0, 0.52);
+  --shadow-glow: 0 0 28px rgba(56, 232, 200, 0.18);
+
+  --nav-height: 58px;
+  --sidebar-width: 230px;
+  --page-padding: 32px 36px 60px;
+}
+
+:root[data-theme="dark"] body {
+  background: var(--bg);
+}
+
+.app-shell.dark {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Sora', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.app-shell.dark ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.app-shell.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-shell.dark ::-webkit-scrollbar-thumb {
+  background: var(--surface);
+  border-radius: 999px;
+}
+
+.app-shell.dark .navbar,
+.app-shell.dark .nav {
+  height: var(--nav-height);
+  padding: 0 28px;
+  background: var(--bg-mid);
+  border-bottom: 1px solid var(--line);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.app-shell.dark .brand {
+  gap: 11px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.app-shell.dark .logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: var(--bg);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 19px;
+  font-style: italic;
+  font-weight: 500;
+  box-shadow: 0 0 16px rgba(56, 232, 200, 0.35);
+}
+
+.app-shell.dark .nav a,
+.app-shell.dark .sidebar a {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.app-shell.dark .nav a.active,
+.app-shell.dark .sidebar a.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.app-shell.dark .layout {
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  padding-top: var(--nav-height);
+  background: var(--bg);
+}
+
+.app-shell.dark .sidebar {
+  top: var(--nav-height);
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--nav-height));
+  padding: 14px 10px;
+  gap: 6px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--bg-mid);
+  box-shadow: none;
+}
+
+.app-shell.dark .sidebar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(56, 232, 200, 0.025) 0%, transparent 42%);
+}
+
+.app-shell.dark .sidebar a {
+  position: relative;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+}
+
+.app-shell.dark .sidebar a:hover {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.app-shell.dark .sidebar a.active {
+  background: var(--accent-dim);
+  border: 0;
+  outline: 0;
+}
+
+.app-shell.dark .sidebar a.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+}
+
+.app-shell.dark .page-wrap,
+.app-shell.dark .main-content {
+  height: calc(100vh - var(--nav-height));
+  padding: var(--page-padding);
+  background: var(--bg);
+}
+
+.app-shell.dark .page {
+  max-width: 1500px;
+  gap: 24px;
+}
+
+.app-shell.dark .hero-card,
+.app-shell.dark .page-title,
+.app-shell.dark .topic-section,
+.app-shell.dark .learning-map,
+.app-shell.dark .search-panel,
+.app-shell.dark .topic-library,
+.app-shell.dark .category-library,
+.app-shell.dark .progress-card,
+.app-shell.dark .question-card,
+.app-shell.dark .workspace-block,
+.app-shell.dark .scenario-box,
+.app-shell.dark .question-prompt,
+.app-shell.dark .learning-panel,
+.app-shell.dark .advanced-search-panel,
+.app-shell.dark .topic-tab,
+.app-shell.dark .category-card,
+.app-shell.dark .progress-row,
+.app-shell.dark .option-btn,
+.app-shell.dark .answer-banner,
+.app-shell.dark .insight-grid div,
+.app-shell.dark .visual-walkthrough,
+.app-shell.dark .visual-walkthrough-panel,
+.app-shell.dark .walkthrough-card,
+.app-shell.dark .code-block,
+.app-shell.dark pre {
+  border-color: var(--line);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.app-shell.dark .hero-card,
+.app-shell.dark .page-title,
+.app-shell.dark .topic-section,
+.app-shell.dark .learning-map,
+.app-shell.dark .search-panel,
+.app-shell.dark .topic-library,
+.app-shell.dark .category-library,
+.app-shell.dark .progress-card {
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.app-shell.dark .question-card,
+.app-shell.dark .workspace-block,
+.app-shell.dark .scenario-box,
+.app-shell.dark .question-prompt,
+.app-shell.dark .learning-panel {
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.app-shell.dark .question-card:hover,
+.app-shell.dark .clickable-problem-card:hover,
+.app-shell.dark .topic-tab:hover,
+.app-shell.dark .category-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 232, 200, 0.25);
+  background: var(--bg-card-hover);
+  box-shadow: var(--shadow), var(--shadow-glow);
+}
+
+.app-shell.dark .hero-card h1,
+.app-shell.dark .page-title h1,
+.app-shell.dark .section-head h2,
+.app-shell.dark .library-head h2,
+.app-shell.dark .search-header h2,
+.app-shell.dark .question-card h3,
+.app-shell.dark .problem-workspace h3 {
+  color: var(--text-primary);
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.app-shell.dark .hero-card h1,
+.app-shell.dark .page-title h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.12;
+}
+
+.app-shell.dark .hero-card p,
+.app-shell.dark .page-title p,
+.app-shell.dark .section-head p,
+.app-shell.dark .question-text,
+.app-shell.dark .explain,
+.app-shell.dark .scenario-box p,
+.app-shell.dark .learning-panel p,
+.app-shell.dark .workspace-block p,
+.app-shell.dark .workspace-block li,
+.app-shell.dark .topic-tab small,
+.app-shell.dark .category-card p,
+.app-shell.dark .category-card span,
+.app-shell.dark .category-card em,
+.app-shell.dark .search-status,
+.app-shell.dark .pagination-summary,
+.app-shell.dark .pagination-status {
+  color: var(--text-secondary);
+}
+
+.app-shell.dark .eyebrow,
+.app-shell.dark .mini-label,
+.app-shell.dark .library-count-pill,
+.app-shell.dark .featured-badge,
+.app-shell.dark .pill,
+.app-shell.dark .tags span,
+.app-shell.dark .time-pill,
+.app-shell.dark .type-pill,
+.app-shell.dark .concept-row span {
+  color: var(--accent) !important;
+  background: var(--accent-dim);
+}
+
+.app-shell.dark .btn,
+.app-shell.dark .page-btn.active,
+.app-shell.dark .clear-search:not(.ghost),
+.app-shell.dark .icon-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: var(--bg);
+  box-shadow: 0 0 18px rgba(56, 232, 200, 0.20);
+}
+
+.app-shell.dark .btn.ghost,
+.app-shell.dark .mark,
+.app-shell.dark .page-btn,
+.app-shell.dark .clear-search {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: none;
+}
+
+.app-shell.dark .btn.ghost:hover,
+.app-shell.dark .mark:hover,
+.app-shell.dark .page-btn:hover:not(.active),
+.app-shell.dark .clear-search:hover {
+  border-color: rgba(56, 232, 200, 0.25);
+  background: var(--surface-hover);
+  color: var(--accent);
+}
+
+.app-shell.dark input,
+.app-shell.dark select,
+.app-shell.dark textarea {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.app-shell.dark input::placeholder,
+.app-shell.dark textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.app-shell.dark input:focus,
+.app-shell.dark select:focus,
+.app-shell.dark textarea:focus {
+  border-color: rgba(56, 232, 200, 0.25);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.app-shell.dark .stat {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.app-shell.dark .stat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0%, transparent 60%);
+}
+
+.app-shell.dark .stat h2 {
+  color: var(--accent);
+}
+
+.app-shell.dark .topic-tab,
+.app-shell.dark .category-card {
+  min-height: 156px;
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+
+.app-shell.dark .topic-tab.active {
+  border-color: var(--accent);
+  outline: 0;
+  background: var(--accent-dim);
+  box-shadow: var(--shadow-glow);
+}
+
+.app-shell.dark .advanced-search-panel > summary::after {
+  border-color: var(--line);
+  color: var(--accent);
+  background: var(--surface);
+}
+
+.app-shell.dark .advanced-search-panel .search-panel {
+  border-top-color: var(--line);
+  background: var(--bg-card);
+}
+
+.app-shell.dark .option-btn {
+  background: var(--surface);
+}
+
+.app-shell.dark .option-btn strong {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.app-shell.dark .option-btn.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.app-shell.dark .option-btn.correct,
+.app-shell.dark .answer-banner.correct,
+.app-shell.dark .type-coding,
+.app-shell.dark .solution-header strong {
+  border-color: rgba(62, 207, 142, 0.28);
+  background: var(--ok-dim);
+  color: var(--ok);
+}
+
+.app-shell.dark .option-btn.wrong,
+.app-shell.dark .answer-banner.wrong {
+  border-color: rgba(244, 96, 96, 0.30);
+  background: var(--danger-dim);
+  color: var(--danger);
+}
+
+.app-shell.dark .type-optimization {
+  background: var(--purple-dim);
+  color: var(--purple);
+}
+
+.app-shell.dark .type-debugging {
+  background: var(--orange-dim);
+  color: var(--orange);
+}
+
+.app-shell.dark .type-mcq {
+  background: rgba(167, 139, 250, 0.16);
+  color: var(--purple);
+}
+
+.app-shell.dark .think-box,
+.app-shell.dark .practice-mode-banner {
+  border-color: rgba(56, 232, 200, 0.25);
+  background: linear-gradient(135deg, var(--accent-dim) 0%, rgba(56, 232, 200, 0.04) 100%);
+}
+
+.app-shell.dark .visual-model p,
+.app-shell.dark .code-block,
+.app-shell.dark pre,
+.app-shell.dark code {
+  background: #0a0c10;
+  color: #c8d0e0;
+  border-color: var(--line);
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.app-shell.dark .track {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+
+.app-shell.dark .meter {
+  stroke: var(--accent);
+}
+
+.app-shell.dark .progress-card text {
+  fill: var(--text-primary);
+}
+
+.app-shell.dark .coffee {
+  border: 1px solid rgba(56, 232, 200, 0.25);
+  background: linear-gradient(135deg, rgba(56, 232, 200, 0.08), rgba(56, 232, 200, 0.04));
+}
+
+.app-shell.dark .visual-walkthrough,
+.app-shell.dark .walkthrough-card {
+  border-radius: 14px;
+}
+
+.app-shell.dark .visual-walkthrough .active,
+.app-shell.dark .walkthrough-card .active,
+.app-shell.dark .active-step {
+  border-color: rgba(56, 232, 200, 0.25);
+  background: var(--accent-dim);
+}
+
+@media (max-width: 900px) {
+  :root[data-theme="dark"] {
+    --sidebar-width: 100%;
+    --page-padding: 18px;
+  }
+
+  .app-shell.dark .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell.dark .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .app-shell.dark .page-wrap,
+  .app-shell.dark .main-content {
+    grid-column: 1;
+  }
+}
