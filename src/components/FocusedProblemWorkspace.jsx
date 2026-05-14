@@ -1,45 +1,61 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import VisualRail from './visuals/VisualRail.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
-
-const TABS = [
-  ['walkthrough', '⊞', 'Visual Walkthrough'],
-  ['intuition', 'ϟ', 'Intuition'],
-  ['approach', '↗', 'Approach'],
-  ['code', '⌘', 'Code'],
-  ['complexity', '⌁', 'Complexity']
-];
 
 function optionLetter(index) {
   return String.fromCharCode(65 + index);
 }
 
+function list(value) {
+  if (!value) return [];
+  return Array.isArray(value) ? value.filter(Boolean) : [value];
+}
+
+function text(value) {
+  if (value === null || value === undefined) return '';
+  if (Array.isArray(value)) return value.map(text).filter(Boolean).join(' ');
+  if (typeof value === 'object') return Object.values(value).map(text).filter(Boolean).join(' | ');
+  return String(value);
+}
+
+function has(value) {
+  return text(value).trim().length > 0;
+}
+
 function TextBlock({ title, children, className = '' }) {
-  if (!children) return null;
+  const value = text(children);
+  if (!value) return null;
   return (
     <section className={`workspace-block ${className}`}>
+      <span className="mini-label">{title}</span>
+      <p>{value}</p>
+    </section>
+  );
+}
+
+function ListBlock({ title, items, ordered = false }) {
+  const rows = list(items);
+  if (!rows.length) return null;
+  const Tag = ordered ? 'ol' : 'ul';
+  return (
+    <section className="workspace-block">
+      <span className="mini-label">{title}</span>
+      <Tag>{rows.map((row, index) => <li key={`${text(row)}-${index}`}>{text(row)}</li>)}</Tag>
+    </section>
+  );
+}
+
+function EmptyState({ title, children }) {
+  return (
+    <section className="workspace-empty-state">
       <span className="mini-label">{title}</span>
       <p>{children}</p>
     </section>
   );
 }
 
-function ListBlock({ title, items, ordered = false }) {
-  if (!items?.length) return null;
-  const Tag = ordered ? 'ol' : 'ul';
-  return (
-    <section className="workspace-block">
-      <span className="mini-label">{title}</span>
-      <Tag>
-        {items.map((item) => <li key={item}>{item}</li>)}
-      </Tag>
-    </section>
-  );
-}
-
 function McqBlock({ question, selected, setSelected }) {
   if (question.type !== 'mcq' || !question.options?.length) return null;
-
   const answered = selected !== null;
   const isCorrect = selected === question.correctAnswer;
   const correctLabel = question.options?.[question.correctAnswer]
@@ -49,34 +65,23 @@ function McqBlock({ question, selected, setSelected }) {
   return (
     <section className="focused-mcq-panel">
       <span className="mini-label">Choose your answer</span>
-
       <div className="option-list" role="radiogroup" aria-label={question.title}>
         {question.options.map((option, index) => {
           const chosen = selected === index;
           const correct = question.correctAnswer === index;
-          const className = [
-            'option-btn',
-            chosen ? 'selected' : '',
-            answered && correct ? 'correct' : '',
-            answered && chosen && !correct ? 'wrong' : ''
-          ].filter(Boolean).join(' ');
-
+          const className = ['option-btn', chosen ? 'selected' : '', answered && correct ? 'correct' : '', answered && chosen && !correct ? 'wrong' : ''].filter(Boolean).join(' ');
           return (
-            <button
-              key={option}
-              type="button"
-              className={className}
-              onClick={() => setSelected(index)}
-            >
+            <button key={`${option}-${index}`} type="button" className={className} aria-pressed={chosen} onClick={() => setSelected(index)}>
               <strong>{optionLetter(index)}</strong>
               <span>{option}</span>
+              {answered && correct ? <em>Correct</em> : null}
+              {answered && chosen && !correct ? <em>Selected</em> : null}
             </button>
           );
         })}
       </div>
-
       {answered ? (
-        <div className={`answer-banner ${isCorrect ? 'correct' : 'wrong'}`}>
+        <div className={`answer-banner ${isCorrect ? 'correct' : 'wrong'}`} role="status">
           {isCorrect ? 'Correct.' : 'Not quite.'} Best answer: <strong>{correctLabel}</strong>
         </div>
       ) : null}
@@ -84,39 +89,22 @@ function McqBlock({ question, selected, setSelected }) {
   );
 }
 
-function CodeBlock({ children }) {
-  return (
-    <section className="workspace-block focused-code-block">
-      <span className="mini-label">Implementation notes</span>
-      <pre><code>{children || 'No code sample is configured yet. Use the approach tab as the implementation blueprint.'}</code></pre>
-    </section>
-  );
-}
-
-function VisualBlock({ question }) {
+function VisualBlock({ question, showFallback = false }) {
   const [loadedVisual, setLoadedVisual] = useState(null);
-
   useEffect(() => {
     let active = true;
     setLoadedVisual(question.visualWalkthrough || null);
-
     if (!question.visualWalkthrough && question?.id) {
       loadVisualWalkthrough(question.id).then((visual) => {
         if (active) setLoadedVisual(visual);
       });
     }
-
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [question.id, question.visualWalkthrough]);
 
   const visual = question.visualWalkthrough || loadedVisual;
-  const hasVisual = Boolean(
-    visual?.summary || visual?.steps?.length || visual?.diagram?.frames?.length
-  );
-
-  if (!hasVisual) return null;
+  const hasVisual = Boolean(visual?.summary || visual?.steps?.length || visual?.diagram?.frames?.length || visual?.image);
+  if (!hasVisual) return showFallback ? <EmptyState title="Visual walkthrough">Visual walkthrough is not available for this problem yet.</EmptyState> : null;
 
   return (
     <section className="learning-panel visual-walkthrough-panel reference-visual-panel">
@@ -124,20 +112,13 @@ function VisualBlock({ question }) {
         <span className="mini-label">Visual clarity</span>
         <strong>{visual?.title || 'Mental model walkthrough'}</strong>
       </div>
-
       {visual?.summary ? <p className="visual-summary">{visual.summary}</p> : null}
+      {visual?.image ? <img className="visual-image-panel" src={visual.image} alt={visual.imageAlt || visual.title || 'Problem visual walkthrough'} loading="lazy" /> : null}
       <VisualRail diagram={visual?.diagram} />
-
       {visual?.steps?.length ? (
         <ol className="visual-step-list">
           {visual.steps.map((step, index) => (
-            <li key={`${step.title || step.body}-${index}`}>
-              <span>{index + 1}</span>
-              <div>
-                {step.title ? <strong>{step.title}</strong> : null}
-                {step.body ? <p>{step.body}</p> : null}
-              </div>
-            </li>
+            <li key={`${step.title || step.body}-${index}`}><span>{index + 1}</span><div>{step.title ? <strong>{step.title}</strong> : null}{step.body ? <p>{step.body}</p> : null}</div></li>
           ))}
         </ol>
       ) : null}
@@ -145,91 +126,72 @@ function VisualBlock({ question }) {
   );
 }
 
+function SupportPanel({ question }) {
+  const concepts = list(question.relatedConcepts).slice(0, 4);
+  const tags = list(question.tags).slice(0, 3);
+  const summary = question.patternSummary || question.intuition || question.visualExplanation;
+  if (!summary && !concepts.length && !tags.length) return null;
+  return (
+    <aside className="problem-support-panel" aria-label="Problem support details">
+      <TextBlock title="Pattern summary">{summary}</TextBlock>
+      {concepts.length ? <section><span className="mini-label">Concepts</span><div className="compact-chip-row">{concepts.map((concept) => <span key={text(concept)}>{text(concept)}</span>)}</div></section> : null}
+      {tags.length ? <section><span className="mini-label">Tags</span><div className="compact-chip-row muted">{tags.map((tag) => <span key={text(tag)}>#{text(tag)}</span>)}</div></section> : null}
+    </aside>
+  );
+}
+
+function ReinforcementCards({ question }) {
+  const cards = [
+    ['Key takeaway', question.keyTakeaway || question.takeaway || question.engineeringInsight],
+    ['Common mistake', question.commonMistake],
+    ['Production reality', question.productionReality]
+  ].filter(([, value]) => has(value));
+  if (!cards.length) return null;
+  return <aside className="learning-reinforcement-grid">{cards.map(([title, value]) => <TextBlock key={title} title={title}>{value}</TextBlock>)}</aside>;
+}
+
 export default function FocusedProblemWorkspace({ question, completed, onToggle, hideTopline = false }) {
-  const [activeTab, setActiveTab] = useState('walkthrough');
+  const [activeTab, setActiveTab] = useState('overview');
   const [selected, setSelected] = useState(null);
+  const [focusMode, setFocusMode] = useState(false);
   const codeContent = question.solutionCode || question.code || question.pseudocode || question.approachPseudocode;
+  const explanation = question.explanation || question.solutionExplanation || question.answerExplanation || question.finalReasoning;
+  const hasMcq = question.type === 'mcq' && question.options?.length;
+
+  const tabs = useMemo(() => [
+    ['overview', 'Overview', true],
+    ['visual', 'Visual Walkthrough', true],
+    ['intuition', 'Intuition', has(question.intuition) || has(question.starterThought) || has(question.visualExplanation)],
+    ['approach', 'Approach', list(question.stepByStepBreakdown).length || has(question.bruteForceThought) || has(question.optimizationJourney)],
+    [hasMcq ? 'answer' : 'solution', hasMcq ? 'Answer' : 'Solution', hasMcq || has(codeContent) || has(explanation)],
+    ['complexity', 'Complexity', has(question.complexityAnalysis) || has(question.productionReality)]
+  ].filter(([, , available]) => available), [codeContent, explanation, hasMcq, question]);
+
+  useEffect(() => {
+    if (!tabs.some(([id]) => id === activeTab)) setActiveTab(tabs[0]?.[0] || 'overview');
+  }, [activeTab, tabs]);
 
   return (
-    <article className={`focused-problem-workspace glass-lite ${completed ? 'done' : ''}`}>
-      {!hideTopline ? (
-        <div className="focused-problem-topline">
-          <div className="meta-strip">
-            <span className="pill">{question.difficulty}</span>
-            <span className="time-pill">⏱ {question.estimatedTime || '10 min'}</span>
-          </div>
-
-          <button className="mark" onClick={() => onToggle?.(question.id)}>
-            {completed ? '✓ Completed' : 'Mark done'}
-          </button>
-        </div>
-      ) : null}
-
-      <div className="focused-tabs" role="tablist" aria-label="Problem learning sections">
-        {TABS.map(([id, icon, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={`focused-tab-btn ${activeTab === id ? 'active' : ''}`}
-            role="tab"
-            aria-selected={activeTab === id}
-            onClick={() => setActiveTab(id)}
-          >
-            <span aria-hidden="true">{icon}</span>
-            {label}
-          </button>
-        ))}
+    <article className={`focused-problem-workspace glass-lite ${completed ? 'done' : ''} ${focusMode ? 'focus-mode' : ''}`}>
+      {!hideTopline ? <div className="focused-problem-topline"><div className="meta-strip"><span className="pill">{question.difficulty}</span><span className="time-pill">Time: {question.estimatedTime || '10 min'}</span></div><button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Completed' : 'Mark done'}</button></div> : null}
+      <div className="focused-tabs-wrap">
+        <div className="focused-tabs" role="tablist" aria-label="Problem learning sections">{tabs.map(([id, label]) => <button key={id} type="button" className={`focused-tab-btn ${activeTab === id ? 'active' : ''}`} role="tab" aria-selected={activeTab === id} onClick={() => setActiveTab(id)}>{label}</button>)}</div>
+        <button type="button" className={`focus-mode-toggle ${focusMode ? 'active' : ''}`} aria-pressed={focusMode} onClick={() => setFocusMode((current) => !current)}>{focusMode ? 'Exit focus' : 'Focus mode'}</button>
       </div>
 
-      <div className="focused-tab-content">
-        {activeTab === 'walkthrough' ? (
-          <div className="focused-panel-stack">
-            <div className="focused-two-col">
-              <TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>
-              <TextBlock title="Problem" className="question-prompt">{question.question}</TextBlock>
-            </div>
-            <McqBlock question={question} selected={selected} setSelected={setSelected} />
-            <VisualBlock question={question} />
-          </div>
-        ) : null}
-
-        {activeTab === 'intuition' ? (
-          <div className="focused-two-col">
-            <TextBlock title="Think first" className="think-box">{question.starterThought}</TextBlock>
-            <TextBlock title="Intuition">{question.intuition || question.visualExplanation}</TextBlock>
-            <TextBlock title="Visual mental model" className="visual-model">{question.visualExplanation}</TextBlock>
-          </div>
-        ) : null}
-
-        {activeTab === 'approach' ? (
-          <div className="focused-panel-stack">
-            <ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered />
-            <div className="focused-two-col">
-              <TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock>
-              <TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock>
-            </div>
-          </div>
-        ) : null}
-
-        {activeTab === 'code' ? <CodeBlock>{codeContent}</CodeBlock> : null}
-
-        {activeTab === 'complexity' ? (
-          <div className="focused-two-col">
-            <TextBlock title="Complexity / trade-off analysis">{question.complexityAnalysis}</TextBlock>
-            <TextBlock title="Engineering insight">{question.engineeringInsight}</TextBlock>
-            <TextBlock title="Production reality">{question.productionReality}</TextBlock>
-            <TextBlock title="Common mistake">{question.commonMistake}</TextBlock>
-          </div>
-        ) : null}
-      </div>
-
-      {question.relatedConcepts?.length ? (
-        <div className="concept-row focused-concepts">
-          {question.relatedConcepts.map(concept => <span key={concept}>{concept}</span>)}
+      <div className="focused-workspace-layout">
+        <div className="focused-tab-content">
+          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock><TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock></div>{hasMcq ? <McqBlock question={question} selected={selected} setSelected={setSelected} /> : null}<ListBlock title="Examples" items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
+          {activeTab === 'visual' ? <VisualBlock question={question} showFallback /> : null}
+          {activeTab === 'intuition' ? <div className="focused-two-col"><TextBlock title="Think first" className="think-box">{question.starterThought}</TextBlock><TextBlock title="Why this pattern fits">{question.intuition || question.visualExplanation}</TextBlock><TextBlock title="Recognition signal">{question.patternSignal}</TextBlock><TextBlock title="Invariant to maintain">{question.invariant}</TextBlock></div> : null}
+          {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="focused-two-col"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><TextBlock title="Edge cases">{question.edgeCases}</TextBlock></div></div> : null}
+          {activeTab === 'solution' ? <div className="focused-panel-stack"><TextBlock title="Solution explanation">{explanation}</TextBlock><section className="workspace-block focused-code-block"><span className="mini-label">Implementation notes</span><pre><code>{codeContent || 'No code sample is configured yet.'}</code></pre></section></div> : null}
+          {activeTab === 'answer' ? <div className="focused-panel-stack"><McqBlock question={question} selected={selected} setSelected={setSelected} /><TextBlock title="Explanation">{explanation || question.intuition}</TextBlock><ListBlock title="Why other options are wrong" items={question.optionExplanations || question.wrongOptionExplanations} /></div> : null}
+          {activeTab === 'complexity' ? <div className="focused-two-col"><TextBlock title="Complexity / trade-off analysis">{question.complexityAnalysis}</TextBlock><TextBlock title="Production reality">{question.productionReality}</TextBlock></div> : null}
+          <ReinforcementCards question={question} />
         </div>
-      ) : null}
-
-      <div className="tags focused-tags">{question.tags?.map(t => <span key={t}>#{t}</span>)}</div>
+        {!focusMode ? <SupportPanel question={question} /> : null}
+      </div>
     </article>
   );
 }
