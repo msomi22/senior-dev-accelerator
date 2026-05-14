@@ -11,7 +11,7 @@ function VisualLegend({ legend = [] }) {
   return (
     <div className="config-visual-legend" aria-label="Visual legend">
       {legend.map((item) => (
-        <span className="config-visual-legend-item" key={`${item.role}-${item.label}`}>
+        <span className={`config-visual-legend-item ${getSemanticRoleClass(item.role)}`} key={`${item.role}-${item.label}`}>
           <span aria-hidden="true">{item.marker || item.label}</span>
           {item.label}
         </span>
@@ -50,14 +50,19 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
         .config-visual-state-value.infinite { color: #8c392c; font-weight: 900; }
         .config-visual-list { display: grid; gap: 0.6rem; }
         .config-visual-node { border: 1px solid rgba(86, 67, 42, 0.13); border-radius: 18px; background: rgba(255, 255, 255, 0.5); padding: 0.7rem; color: var(--text-strong, #2f261b); }
-        .config-visual-role-active, .config-visual-role-window, .config-visual-role-current, .config-visual-role-add { background: rgba(82, 116, 76, 0.16); border-color: rgba(82, 116, 76, 0.35); }
-        .config-visual-role-muted, .config-visual-role-visited, .config-visual-role-remove { opacity: 0.72; }
+        .config-visual-role-active, .config-visual-role-current { background: rgba(82, 116, 76, 0.16); border-color: rgba(82, 116, 76, 0.35); }
+        .config-visual-role-window { background: rgba(37, 99, 235, 0.12); border-color: rgba(37, 99, 235, 0.42); color: #1d4ed8; box-shadow: inset 0 -3px 0 rgba(37, 99, 235, 0.18); }
+        .config-visual-role-remove { background: rgba(220, 38, 38, 0.1); border-color: rgba(220, 38, 38, 0.42); color: #b91c1c; }
+        .config-visual-role-add { background: rgba(22, 163, 74, 0.12); border-color: rgba(22, 163, 74, 0.42); color: #15803d; }
+        .config-visual-role-best { background: rgba(245, 158, 11, 0.18); border-color: rgba(217, 119, 6, 0.5); color: #92400e; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.12); }
+        .config-visual-role-muted, .config-visual-role-visited { opacity: 0.72; }
         .config-visual-role-blocked, .config-visual-role-error, .config-visual-role-infinite { background: rgba(140, 57, 44, 0.1); border-color: rgba(140, 57, 44, 0.22); color: #8c392c; }
-        .config-visual-role-goal, .config-visual-role-answer, .config-visual-role-success, .config-visual-role-best { background: rgba(82, 116, 76, 0.12); border-color: rgba(82, 116, 76, 0.26); }
+        .config-visual-role-goal, .config-visual-role-answer, .config-visual-role-success { background: rgba(82, 116, 76, 0.12); border-color: rgba(82, 116, 76, 0.26); }
         .config-visual-array { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
         .config-visual-array-cell { display: grid; justify-items: center; gap: 0.25rem; }
         .config-visual-array-index { color: var(--text-muted, #756a5a); font-size: 0.74rem; font-weight: 800; }
-        .config-visual-array-item { min-width: 44px; min-height: 44px; display: grid; place-items: center; border-radius: 15px; border: 1px solid rgba(86, 67, 42, 0.14); background: rgba(255,255,255,0.54); font-weight: 900; }
+        .config-visual-array-item { min-width: 44px; min-height: 44px; display: grid; place-items: center; border-radius: 15px; border: 1px solid rgba(86, 67, 42, 0.14); background: rgba(255,255,255,0.54); font-weight: 900; transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease; }
+        .config-visual-array-item.config-visual-role-window, .config-visual-array-item.config-visual-role-add, .config-visual-array-item.config-visual-role-remove, .config-visual-array-item.config-visual-role-best { transform: translateY(-1px); }
         .config-visual-array-caption { min-height: 1rem; color: var(--text-muted, #756a5a); font-size: 0.72rem; font-weight: 800; }
         .config-visual-table { width: 100%; border-collapse: separate; border-spacing: 0.35rem; }
         .config-visual-table th, .config-visual-table td { border: 1px solid rgba(86, 67, 42, 0.12); background: rgba(255,255,255,0.48); border-radius: 12px; padding: 0.55rem; text-align: left; }
