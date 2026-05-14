@@ -1,0 +1,86 @@
+/* Keep the Problem Focus page typography aligned with the active app theme. */
+
+.focused-problem-page,
+.focused-problem-workspace,
+.focused-problem-workspace p,
+.focused-problem-workspace li,
+.problem-support-panel p,
+.reinforcement-card p,
+.workspace-empty-state p,
+.focused-tab-btn,
+.focus-mode-toggle,
+.reference-action-group .btn,
+.reference-action-group .mark,
+.problem-meta-pills span,
+.compact-chip-row span,
+.option-btn,
+.answer-banner,
+.mini-label {
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+
+.focused-problem-page .reference-problem-intro h1 {
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.focused-problem-workspace h2,
+.focused-problem-workspace h3,
+.focused-problem-workspace strong,
+.problem-support-panel strong {
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.focused-problem-page p,
+.focused-problem-page li,
+.focused-problem-workspace p,
+.focused-problem-workspace li,
+.problem-support-panel p,
+.reinforcement-card p,
+.workspace-empty-state p {
+  font-size: 0.94rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+.focused-tab-btn,
+.focus-mode-toggle,
+.reference-action-group .btn,
+.reference-action-group .mark,
+.problem-meta-pills span,
+.compact-chip-row span,
+.answer-banner {
+  font-weight: 700;
+}
+
+.mini-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.option-btn span {
+  font-weight: 500;
+}
+
+.option-btn strong {
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.option-btn em {
+  font-weight: 700;
+}
+
+.focused-code-block code,
+.focused-code-block pre,
+.visual-model p {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+}

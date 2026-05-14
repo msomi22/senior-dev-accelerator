@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  NavLink,
-  useLocation,
-  useParams
-} from 'react-router-dom';
+import { NavLink, useLocation, useParams } from 'react-router-dom';
 
 import FocusedProblemWorkspace from '../components/FocusedProblemWorkspace.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
@@ -42,9 +38,7 @@ function pillClass(type, label, difficulty) {
     return 'difficulty-pill';
   }
 
-  if (type === 'topic') {
-    return 'topic-pill';
-  }
+  if (type === 'topic') return 'topic-pill';
 
   return 'meta-pill';
 }
@@ -59,7 +53,7 @@ export default function ProblemPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    let cancelled = false;
+    let active = true;
 
     async function loadProblem() {
       setLoading(true);
@@ -81,7 +75,7 @@ export default function ProblemPage() {
             categoryName: searchEntry.category
           };
 
-          if (!cancelled) {
+          if (active) {
             setEntry(stateEntry);
             setLoading(false);
           }
@@ -91,23 +85,17 @@ export default function ProblemPage() {
 
         const result = await findQuestionById(decodedQuestionId);
 
-        if (!cancelled) {
+        if (active) {
           setEntry(result);
 
-          if (!result) {
-            setError('Problem not found.');
-          }
+          if (!result) setError('Problem not found.');
         }
       } catch (err) {
         console.error(err);
 
-        if (!cancelled) {
-          setError('Could not load this problem.');
-        }
+        if (active) setError('Could not load this problem.');
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
     }
 
@@ -115,7 +103,7 @@ export default function ProblemPage() {
     loadProblem();
 
     return () => {
-      cancelled = true;
+      active = false;
     };
   }, [questionId, location.state]);
 
@@ -124,26 +112,16 @@ export default function ProblemPage() {
     setCompleted(updated);
   }
 
-  if (loading) {
-    return <LoadingCard label="Loading problem workspace…" />;
-  }
+  if (loading) return <LoadingCard label="Loading problem workspace..." />;
 
   if (error || !entry) {
     return (
       <main className="page">
         <section className="hero-card problem-detail-shell">
           <p className="eyebrow">Problem workspace</p>
-
           <h1>{error || 'Problem not found.'}</h1>
-
-          <p>
-            The selected question may have moved or the bank may have
-            been renamed.
-          </p>
-
-          <NavLink className="btn" to="/">
-            Back to dashboard
-          </NavLink>
+          <p>The selected question may have moved or the bank may have been renamed.</p>
+          <NavLink className="btn" to="/">Back to dashboard</NavLink>
         </section>
       </main>
     );
@@ -151,29 +129,21 @@ export default function ProblemPage() {
 
   const categoryId = entry.topic?.category || entry.category?.id;
   const categoryBackPath = categoryPath(categoryId);
+  const primaryPattern = entry.question.finalPattern || entry.topic?.name;
 
   const problemTags = uniqueItems([
     { label: entry.question.difficulty, type: 'difficulty' },
-    { label: entry.topic?.name, type: 'topic' },
-    ...(entry.question.relatedConcepts || []).slice(0, 2).map((label) => ({ label, type: 'meta' })),
-    ...(entry.question.tags || []).slice(0, 2).map((label) => ({ label, type: 'meta' }))
+    { label: primaryPattern, type: 'topic' },
+    { label: entry.question.type, type: 'meta' }
   ]);
 
   return (
     <main className="page problem-detail-shell focused-problem-page">
       <div className="problem-breadcrumb compact-problem-breadcrumb">
-        <NavLink to="/">‹ Dashboard</NavLink>
-
+        <NavLink to="/">Back to Dashboard</NavLink>
         <span>/</span>
-
-        {entry.topic?.name ? (
-          <span>{entry.topic.name}</span>
-        ) : (
-          <span>{entry.categoryName || 'Topic'}</span>
-        )}
-
+        <NavLink to={categoryBackPath}>{entry.topic?.name || entry.categoryName || 'Topic'}</NavLink>
         <span>/</span>
-
         <span>{entry.question.title}</span>
       </div>
 
@@ -183,31 +153,20 @@ export default function ProblemPage() {
 
           <div className="problem-meta-pills" aria-label="Problem metadata">
             {problemTags.map(({ label, type }) => (
-              <span
-                key={label}
-                className={pillClass(type, label, entry.question.difficulty)}
-              >
+              <span key={label} className={pillClass(type, label, entry.question.difficulty)}>
                 {label}
               </span>
             ))}
           </div>
 
-          <p>
-            {entry.question.question || entry.topic?.description || entry.question.scenario}
-          </p>
+          <p>{entry.question.question || entry.topic?.description || entry.question.scenario}</p>
         </div>
 
         <div className="reference-action-group" aria-label="Focused problem actions">
-          <NavLink className="btn ghost" to={categoryBackPath}>
-            Back to category
-          </NavLink>
-
-          <NavLink className="btn ghost" to="/random">
-            Try random question
-          </NavLink>
+          <NavLink className="btn ghost" to={categoryBackPath}>Back to category</NavLink>
 
           <button className="mark reference-mark" onClick={() => handleToggle(entry.question.id)}>
-            {completed[entry.question.id] ? '✓ Completed' : 'Mark done'}
+            {completed[entry.question.id] ? 'Completed' : 'Mark complete'}
           </button>
         </div>
       </section>
