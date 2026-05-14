@@ -1,93 +1,13 @@
 /*
-  Theme-aware overrides for config-driven algorithm visuals.
+  Dark-theme overrides for config-driven algorithm visuals.
 
-  The visual renderers still own their layout locally, while this file owns
-  cross-theme contrast, semantic state colors, and shared surface treatment.
+  Important:
+  - Light theme is intentionally left to the component's existing warm styles.
+  - Dark styling is applied only when the app explicitly renders inside a dark
+    theme container/class/attribute.
+  - Do not use prefers-color-scheme here, because the app can be in light mode
+    even when the OS/browser preference is dark.
 */
-
-.grid-visualizer,
-.config-visual {
-  --visual-surface: rgba(255, 252, 244, 0.86);
-  --visual-surface-strong: rgba(255, 255, 255, 0.72);
-  --visual-surface-soft: rgba(255, 255, 255, 0.56);
-  --visual-border: rgba(86, 67, 42, 0.16);
-  --visual-border-strong: rgba(86, 67, 42, 0.24);
-  --visual-text: var(--text-strong, #2f261b);
-  --visual-muted: var(--text-muted, #756a5a);
-  --visual-shadow: 0 18px 45px rgba(74, 53, 27, 0.08);
-
-  --visual-active-bg: rgba(82, 116, 76, 0.16);
-  --visual-active-border: rgba(82, 116, 76, 0.35);
-  --visual-active-text: #2f4f2b;
-
-  --visual-window-bg: rgba(37, 99, 235, 0.12);
-  --visual-window-border: rgba(37, 99, 235, 0.42);
-  --visual-window-text: #1d4ed8;
-
-  --visual-remove-bg: rgba(220, 38, 38, 0.1);
-  --visual-remove-border: rgba(220, 38, 38, 0.42);
-  --visual-remove-text: #b91c1c;
-
-  --visual-add-bg: rgba(22, 163, 74, 0.12);
-  --visual-add-border: rgba(22, 163, 74, 0.42);
-  --visual-add-text: #15803d;
-
-  --visual-best-bg: rgba(245, 158, 11, 0.18);
-  --visual-best-border: rgba(217, 119, 6, 0.5);
-  --visual-best-text: #92400e;
-
-  --visual-blocked-bg: rgba(140, 57, 44, 0.12);
-  --visual-blocked-border: rgba(140, 57, 44, 0.24);
-  --visual-blocked-text: #8c392c;
-
-  --visual-goal-bg: rgba(154, 104, 34, 0.14);
-  --visual-goal-border: rgba(154, 104, 34, 0.28);
-  --visual-success-bg: rgba(82, 116, 76, 0.12);
-  --visual-success-border: rgba(82, 116, 76, 0.26);
-}
-
-@media (prefers-color-scheme: dark) {
-  .grid-visualizer,
-  .config-visual {
-    --visual-surface: rgba(17, 24, 39, 0.92);
-    --visual-surface-strong: rgba(31, 41, 55, 0.9);
-    --visual-surface-soft: rgba(15, 23, 42, 0.72);
-    --visual-border: rgba(148, 163, 184, 0.18);
-    --visual-border-strong: rgba(148, 163, 184, 0.28);
-    --visual-text: rgba(248, 250, 252, 0.96);
-    --visual-muted: rgba(203, 213, 225, 0.84);
-    --visual-shadow: 0 18px 45px rgba(0, 0, 0, 0.34);
-
-    --visual-active-bg: rgba(45, 212, 191, 0.14);
-    --visual-active-border: rgba(45, 212, 191, 0.42);
-    --visual-active-text: #99f6e4;
-
-    --visual-window-bg: rgba(96, 165, 250, 0.16);
-    --visual-window-border: rgba(96, 165, 250, 0.46);
-    --visual-window-text: #bfdbfe;
-
-    --visual-remove-bg: rgba(248, 113, 113, 0.14);
-    --visual-remove-border: rgba(248, 113, 113, 0.44);
-    --visual-remove-text: #fecaca;
-
-    --visual-add-bg: rgba(74, 222, 128, 0.14);
-    --visual-add-border: rgba(74, 222, 128, 0.44);
-    --visual-add-text: #bbf7d0;
-
-    --visual-best-bg: rgba(251, 191, 36, 0.18);
-    --visual-best-border: rgba(251, 191, 36, 0.52);
-    --visual-best-text: #fde68a;
-
-    --visual-blocked-bg: rgba(248, 113, 113, 0.13);
-    --visual-blocked-border: rgba(248, 113, 113, 0.34);
-    --visual-blocked-text: #fecaca;
-
-    --visual-goal-bg: rgba(251, 191, 36, 0.14);
-    --visual-goal-border: rgba(251, 191, 36, 0.34);
-    --visual-success-bg: rgba(45, 212, 191, 0.12);
-    --visual-success-border: rgba(45, 212, 191, 0.32);
-  }
-}
 
 html[data-theme='dark'] .grid-visualizer,
 html[data-theme='dark'] .config-visual,
@@ -96,7 +16,11 @@ body[data-theme='dark'] .config-visual,
 .dark .grid-visualizer,
 .dark .config-visual,
 [data-theme='dark'] .grid-visualizer,
-[data-theme='dark'] .config-visual {
+[data-theme='dark'] .config-visual,
+[data-color-mode='dark'] .grid-visualizer,
+[data-color-mode='dark'] .config-visual,
+[data-appearance='dark'] .grid-visualizer,
+[data-appearance='dark'] .config-visual {
   --visual-surface: rgba(17, 24, 39, 0.92);
   --visual-surface-strong: rgba(31, 41, 55, 0.9);
   --visual-surface-soft: rgba(15, 23, 42, 0.72);
@@ -109,165 +33,474 @@ body[data-theme='dark'] .config-visual,
   --visual-active-bg: rgba(45, 212, 191, 0.14);
   --visual-active-border: rgba(45, 212, 191, 0.42);
   --visual-active-text: #99f6e4;
+
   --visual-window-bg: rgba(96, 165, 250, 0.16);
   --visual-window-border: rgba(96, 165, 250, 0.46);
   --visual-window-text: #bfdbfe;
+
   --visual-remove-bg: rgba(248, 113, 113, 0.14);
   --visual-remove-border: rgba(248, 113, 113, 0.44);
   --visual-remove-text: #fecaca;
+
   --visual-add-bg: rgba(74, 222, 128, 0.14);
   --visual-add-border: rgba(74, 222, 128, 0.44);
   --visual-add-text: #bbf7d0;
+
   --visual-best-bg: rgba(251, 191, 36, 0.18);
   --visual-best-border: rgba(251, 191, 36, 0.52);
   --visual-best-text: #fde68a;
+
   --visual-blocked-bg: rgba(248, 113, 113, 0.13);
   --visual-blocked-border: rgba(248, 113, 113, 0.34);
   --visual-blocked-text: #fecaca;
+
   --visual-goal-bg: rgba(251, 191, 36, 0.14);
   --visual-goal-border: rgba(251, 191, 36, 0.34);
+
   --visual-success-bg: rgba(45, 212, 191, 0.12);
   --visual-success-border: rgba(45, 212, 191, 0.32);
 }
 
-.grid-visualizer-card,
-.config-visual-card {
+html[data-theme='dark'] .grid-visualizer-card,
+html[data-theme='dark'] .config-visual-card,
+body[data-theme='dark'] .grid-visualizer-card,
+body[data-theme='dark'] .config-visual-card,
+.dark .grid-visualizer-card,
+.dark .config-visual-card,
+[data-theme='dark'] .grid-visualizer-card,
+[data-theme='dark'] .config-visual-card,
+[data-color-mode='dark'] .grid-visualizer-card,
+[data-color-mode='dark'] .config-visual-card,
+[data-appearance='dark'] .grid-visualizer-card,
+[data-appearance='dark'] .config-visual-card {
   background: var(--visual-surface) !important;
   border-color: var(--visual-border) !important;
   box-shadow: var(--visual-shadow) !important;
   color: var(--visual-text) !important;
 }
 
-.grid-visualizer-card h3,
-.config-visual-card h3,
-.grid-visualizer-explanation strong,
-.config-visual-explanation strong,
-.grid-visualizer-final strong,
-.config-visual-final strong,
-.grid-visualizer-state-label,
-.config-visual-state-row strong {
+html[data-theme='dark'] .grid-visualizer-card h3,
+html[data-theme='dark'] .config-visual-card h3,
+html[data-theme='dark'] .grid-visualizer-explanation strong,
+html[data-theme='dark'] .config-visual-explanation strong,
+html[data-theme='dark'] .grid-visualizer-final strong,
+html[data-theme='dark'] .config-visual-final strong,
+html[data-theme='dark'] .grid-visualizer-state-label,
+html[data-theme='dark'] .config-visual-state-row strong,
+body[data-theme='dark'] .grid-visualizer-card h3,
+body[data-theme='dark'] .config-visual-card h3,
+body[data-theme='dark'] .grid-visualizer-explanation strong,
+body[data-theme='dark'] .config-visual-explanation strong,
+body[data-theme='dark'] .grid-visualizer-final strong,
+body[data-theme='dark'] .config-visual-final strong,
+body[data-theme='dark'] .grid-visualizer-state-label,
+body[data-theme='dark'] .config-visual-state-row strong,
+.dark .grid-visualizer-card h3,
+.dark .config-visual-card h3,
+.dark .grid-visualizer-explanation strong,
+.dark .config-visual-explanation strong,
+.dark .grid-visualizer-final strong,
+.dark .config-visual-final strong,
+.dark .grid-visualizer-state-label,
+.dark .config-visual-state-row strong,
+[data-theme='dark'] .grid-visualizer-card h3,
+[data-theme='dark'] .config-visual-card h3,
+[data-theme='dark'] .grid-visualizer-explanation strong,
+[data-theme='dark'] .config-visual-explanation strong,
+[data-theme='dark'] .grid-visualizer-final strong,
+[data-theme='dark'] .config-visual-final strong,
+[data-theme='dark'] .grid-visualizer-state-label,
+[data-theme='dark'] .config-visual-state-row strong,
+[data-color-mode='dark'] .grid-visualizer-card h3,
+[data-color-mode='dark'] .config-visual-card h3,
+[data-color-mode='dark'] .grid-visualizer-explanation strong,
+[data-color-mode='dark'] .config-visual-explanation strong,
+[data-color-mode='dark'] .grid-visualizer-final strong,
+[data-color-mode='dark'] .config-visual-final strong,
+[data-color-mode='dark'] .grid-visualizer-state-label,
+[data-color-mode='dark'] .config-visual-state-row strong,
+[data-appearance='dark'] .grid-visualizer-card h3,
+[data-appearance='dark'] .config-visual-card h3,
+[data-appearance='dark'] .grid-visualizer-explanation strong,
+[data-appearance='dark'] .config-visual-explanation strong,
+[data-appearance='dark'] .grid-visualizer-final strong,
+[data-appearance='dark'] .config-visual-final strong,
+[data-appearance='dark'] .grid-visualizer-state-label,
+[data-appearance='dark'] .config-visual-state-row strong {
   color: var(--visual-text) !important;
 }
 
-.grid-visualizer-muted,
-.config-visual-muted,
-.grid-visualizer-column-label,
-.grid-visualizer-row-label,
-.grid-visualizer-controls span,
-.config-visual-controls span,
-.grid-visualizer-explanation p,
-.config-visual-explanation p,
-.grid-visualizer-final p,
-.config-visual-final p,
-.grid-visualizer-state-row p,
-.config-visual-state-row p,
-.config-visual-array-index,
-.config-visual-array-caption {
+html[data-theme='dark'] .grid-visualizer-muted,
+html[data-theme='dark'] .config-visual-muted,
+html[data-theme='dark'] .grid-visualizer-column-label,
+html[data-theme='dark'] .grid-visualizer-row-label,
+html[data-theme='dark'] .grid-visualizer-controls span,
+html[data-theme='dark'] .config-visual-controls span,
+html[data-theme='dark'] .grid-visualizer-explanation p,
+html[data-theme='dark'] .config-visual-explanation p,
+html[data-theme='dark'] .grid-visualizer-final p,
+html[data-theme='dark'] .config-visual-final p,
+html[data-theme='dark'] .grid-visualizer-state-row p,
+html[data-theme='dark'] .config-visual-state-row p,
+html[data-theme='dark'] .config-visual-array-index,
+html[data-theme='dark'] .config-visual-array-caption,
+body[data-theme='dark'] .grid-visualizer-muted,
+body[data-theme='dark'] .config-visual-muted,
+body[data-theme='dark'] .grid-visualizer-column-label,
+body[data-theme='dark'] .grid-visualizer-row-label,
+body[data-theme='dark'] .grid-visualizer-controls span,
+body[data-theme='dark'] .config-visual-controls span,
+body[data-theme='dark'] .grid-visualizer-explanation p,
+body[data-theme='dark'] .config-visual-explanation p,
+body[data-theme='dark'] .grid-visualizer-final p,
+body[data-theme='dark'] .config-visual-final p,
+body[data-theme='dark'] .grid-visualizer-state-row p,
+body[data-theme='dark'] .config-visual-state-row p,
+body[data-theme='dark'] .config-visual-array-index,
+body[data-theme='dark'] .config-visual-array-caption,
+.dark .grid-visualizer-muted,
+.dark .config-visual-muted,
+.dark .grid-visualizer-column-label,
+.dark .grid-visualizer-row-label,
+.dark .grid-visualizer-controls span,
+.dark .config-visual-controls span,
+.dark .grid-visualizer-explanation p,
+.dark .config-visual-explanation p,
+.dark .grid-visualizer-final p,
+.dark .config-visual-final p,
+.dark .grid-visualizer-state-row p,
+.dark .config-visual-state-row p,
+.dark .config-visual-array-index,
+.dark .config-visual-array-caption,
+[data-theme='dark'] .grid-visualizer-muted,
+[data-theme='dark'] .config-visual-muted,
+[data-theme='dark'] .grid-visualizer-column-label,
+[data-theme='dark'] .grid-visualizer-row-label,
+[data-theme='dark'] .grid-visualizer-controls span,
+[data-theme='dark'] .config-visual-controls span,
+[data-theme='dark'] .grid-visualizer-explanation p,
+[data-theme='dark'] .config-visual-explanation p,
+[data-theme='dark'] .grid-visualizer-final p,
+[data-theme='dark'] .config-visual-final p,
+[data-theme='dark'] .grid-visualizer-state-row p,
+[data-theme='dark'] .config-visual-state-row p,
+[data-theme='dark'] .config-visual-array-index,
+[data-theme='dark'] .config-visual-array-caption,
+[data-color-mode='dark'] .grid-visualizer-muted,
+[data-color-mode='dark'] .config-visual-muted,
+[data-color-mode='dark'] .grid-visualizer-column-label,
+[data-color-mode='dark'] .grid-visualizer-row-label,
+[data-color-mode='dark'] .grid-visualizer-controls span,
+[data-color-mode='dark'] .config-visual-controls span,
+[data-color-mode='dark'] .grid-visualizer-explanation p,
+[data-color-mode='dark'] .config-visual-explanation p,
+[data-color-mode='dark'] .grid-visualizer-final p,
+[data-color-mode='dark'] .config-visual-final p,
+[data-color-mode='dark'] .grid-visualizer-state-row p,
+[data-color-mode='dark'] .config-visual-state-row p,
+[data-color-mode='dark'] .config-visual-array-index,
+[data-color-mode='dark'] .config-visual-array-caption,
+[data-appearance='dark'] .grid-visualizer-muted,
+[data-appearance='dark'] .config-visual-muted,
+[data-appearance='dark'] .grid-visualizer-column-label,
+[data-appearance='dark'] .grid-visualizer-row-label,
+[data-appearance='dark'] .grid-visualizer-controls span,
+[data-appearance='dark'] .config-visual-controls span,
+[data-appearance='dark'] .grid-visualizer-explanation p,
+[data-appearance='dark'] .config-visual-explanation p,
+[data-appearance='dark'] .grid-visualizer-final p,
+[data-appearance='dark'] .config-visual-final p,
+[data-appearance='dark'] .grid-visualizer-state-row p,
+[data-appearance='dark'] .config-visual-state-row p,
+[data-appearance='dark'] .config-visual-array-index,
+[data-appearance='dark'] .config-visual-array-caption {
   color: var(--visual-muted) !important;
 }
 
-.grid-visualizer-cell,
-.config-visual-array-item,
-.config-visual-node,
-.config-visual-pill,
-.config-visual-table th,
-.config-visual-table td,
-.grid-visualizer-state-row,
-.config-visual-state-row,
-.grid-visualizer-explanation,
-.config-visual-explanation,
-.grid-visualizer-legend-item,
-.config-visual-legend-item {
+html[data-theme='dark'] .grid-visualizer-cell,
+html[data-theme='dark'] .config-visual-array-item,
+html[data-theme='dark'] .config-visual-node,
+html[data-theme='dark'] .config-visual-pill,
+html[data-theme='dark'] .config-visual-table th,
+html[data-theme='dark'] .config-visual-table td,
+html[data-theme='dark'] .grid-visualizer-state-row,
+html[data-theme='dark'] .config-visual-state-row,
+html[data-theme='dark'] .grid-visualizer-explanation,
+html[data-theme='dark'] .config-visual-explanation,
+html[data-theme='dark'] .grid-visualizer-legend-item,
+html[data-theme='dark'] .config-visual-legend-item,
+body[data-theme='dark'] .grid-visualizer-cell,
+body[data-theme='dark'] .config-visual-array-item,
+body[data-theme='dark'] .config-visual-node,
+body[data-theme='dark'] .config-visual-pill,
+body[data-theme='dark'] .config-visual-table th,
+body[data-theme='dark'] .config-visual-table td,
+body[data-theme='dark'] .grid-visualizer-state-row,
+body[data-theme='dark'] .config-visual-state-row,
+body[data-theme='dark'] .grid-visualizer-explanation,
+body[data-theme='dark'] .config-visual-explanation,
+body[data-theme='dark'] .grid-visualizer-legend-item,
+body[data-theme='dark'] .config-visual-legend-item,
+.dark .grid-visualizer-cell,
+.dark .config-visual-array-item,
+.dark .config-visual-node,
+.dark .config-visual-pill,
+.dark .config-visual-table th,
+.dark .config-visual-table td,
+.dark .grid-visualizer-state-row,
+.dark .config-visual-state-row,
+.dark .grid-visualizer-explanation,
+.dark .config-visual-explanation,
+.dark .grid-visualizer-legend-item,
+.dark .config-visual-legend-item,
+[data-theme='dark'] .grid-visualizer-cell,
+[data-theme='dark'] .config-visual-array-item,
+[data-theme='dark'] .config-visual-node,
+[data-theme='dark'] .config-visual-pill,
+[data-theme='dark'] .config-visual-table th,
+[data-theme='dark'] .config-visual-table td,
+[data-theme='dark'] .grid-visualizer-state-row,
+[data-theme='dark'] .config-visual-state-row,
+[data-theme='dark'] .grid-visualizer-explanation,
+[data-theme='dark'] .config-visual-explanation,
+[data-theme='dark'] .grid-visualizer-legend-item,
+[data-theme='dark'] .config-visual-legend-item,
+[data-color-mode='dark'] .grid-visualizer-cell,
+[data-color-mode='dark'] .config-visual-array-item,
+[data-color-mode='dark'] .config-visual-node,
+[data-color-mode='dark'] .config-visual-pill,
+[data-color-mode='dark'] .config-visual-table th,
+[data-color-mode='dark'] .config-visual-table td,
+[data-color-mode='dark'] .grid-visualizer-state-row,
+[data-color-mode='dark'] .config-visual-state-row,
+[data-color-mode='dark'] .grid-visualizer-explanation,
+[data-color-mode='dark'] .config-visual-explanation,
+[data-color-mode='dark'] .grid-visualizer-legend-item,
+[data-color-mode='dark'] .config-visual-legend-item,
+[data-appearance='dark'] .grid-visualizer-cell,
+[data-appearance='dark'] .config-visual-array-item,
+[data-appearance='dark'] .config-visual-node,
+[data-appearance='dark'] .config-visual-pill,
+[data-appearance='dark'] .config-visual-table th,
+[data-appearance='dark'] .config-visual-table td,
+[data-appearance='dark'] .grid-visualizer-state-row,
+[data-appearance='dark'] .config-visual-state-row,
+[data-appearance='dark'] .grid-visualizer-explanation,
+[data-appearance='dark'] .config-visual-explanation,
+[data-appearance='dark'] .grid-visualizer-legend-item,
+[data-appearance='dark'] .config-visual-legend-item {
   background: var(--visual-surface-strong) !important;
   border-color: var(--visual-border) !important;
   color: var(--visual-text) !important;
 }
 
-.grid-visualizer-state-value,
-.config-visual-state-value {
+html[data-theme='dark'] .grid-visualizer-state-value,
+html[data-theme='dark'] .config-visual-state-value,
+body[data-theme='dark'] .grid-visualizer-state-value,
+body[data-theme='dark'] .config-visual-state-value,
+.dark .grid-visualizer-state-value,
+.dark .config-visual-state-value,
+[data-theme='dark'] .grid-visualizer-state-value,
+[data-theme='dark'] .config-visual-state-value,
+[data-color-mode='dark'] .grid-visualizer-state-value,
+[data-color-mode='dark'] .config-visual-state-value,
+[data-appearance='dark'] .grid-visualizer-state-value,
+[data-appearance='dark'] .config-visual-state-value {
   background: var(--visual-surface-soft) !important;
   border-color: var(--visual-border) !important;
   color: var(--visual-text) !important;
 }
 
-.grid-visualizer-controls button,
-.config-visual-controls button {
+html[data-theme='dark'] .grid-visualizer-controls button,
+html[data-theme='dark'] .config-visual-controls button,
+body[data-theme='dark'] .grid-visualizer-controls button,
+body[data-theme='dark'] .config-visual-controls button,
+.dark .grid-visualizer-controls button,
+.dark .config-visual-controls button,
+[data-theme='dark'] .grid-visualizer-controls button,
+[data-theme='dark'] .config-visual-controls button,
+[data-color-mode='dark'] .grid-visualizer-controls button,
+[data-color-mode='dark'] .config-visual-controls button,
+[data-appearance='dark'] .grid-visualizer-controls button,
+[data-appearance='dark'] .config-visual-controls button {
   background: var(--visual-surface-strong) !important;
   border-color: var(--visual-border-strong) !important;
   color: var(--visual-text) !important;
 }
 
-.grid-visualizer-controls button:disabled,
-.config-visual-controls button:disabled {
-  opacity: 0.42 !important;
-}
-
-.grid-visualizer-cell.role-active,
-.grid-visualizer-cell.role-frog,
-.config-visual-role-active,
-.config-visual-role-current {
+html[data-theme='dark'] .grid-visualizer-cell.role-active,
+html[data-theme='dark'] .grid-visualizer-cell.role-frog,
+html[data-theme='dark'] .config-visual-role-active,
+html[data-theme='dark'] .config-visual-role-current,
+body[data-theme='dark'] .grid-visualizer-cell.role-active,
+body[data-theme='dark'] .grid-visualizer-cell.role-frog,
+body[data-theme='dark'] .config-visual-role-active,
+body[data-theme='dark'] .config-visual-role-current,
+.dark .grid-visualizer-cell.role-active,
+.dark .grid-visualizer-cell.role-frog,
+.dark .config-visual-role-active,
+.dark .config-visual-role-current,
+[data-theme='dark'] .grid-visualizer-cell.role-active,
+[data-theme='dark'] .grid-visualizer-cell.role-frog,
+[data-theme='dark'] .config-visual-role-active,
+[data-theme='dark'] .config-visual-role-current,
+[data-color-mode='dark'] .grid-visualizer-cell.role-active,
+[data-color-mode='dark'] .grid-visualizer-cell.role-frog,
+[data-color-mode='dark'] .config-visual-role-active,
+[data-color-mode='dark'] .config-visual-role-current,
+[data-appearance='dark'] .grid-visualizer-cell.role-active,
+[data-appearance='dark'] .grid-visualizer-cell.role-frog,
+[data-appearance='dark'] .config-visual-role-active,
+[data-appearance='dark'] .config-visual-role-current {
   background: var(--visual-active-bg) !important;
   border-color: var(--visual-active-border) !important;
   color: var(--visual-active-text) !important;
 }
 
-.grid-visualizer-cell.role-open {
-  color: var(--visual-muted) !important;
-}
-
-.grid-visualizer-cell.role-blocked,
-.config-visual-role-blocked,
-.config-visual-role-error,
-.config-visual-role-infinite,
-.grid-visualizer-state-value.infinite,
-.config-visual-state-value.infinite {
-  background: var(--visual-blocked-bg) !important;
-  border-color: var(--visual-blocked-border) !important;
-  color: var(--visual-blocked-text) !important;
-}
-
-.grid-visualizer-cell.role-goal,
-.config-visual-role-goal,
-.config-visual-role-answer,
-.config-visual-role-success {
-  background: var(--visual-goal-bg) !important;
-  border-color: var(--visual-goal-border) !important;
-  color: var(--visual-text) !important;
-}
-
-.grid-visualizer-cell.is-active-column,
-.grid-visualizer-state-row.active,
-.config-visual-state-row.active {
-  background: var(--visual-best-bg) !important;
-  border-color: var(--visual-best-border) !important;
-}
-
-.config-visual-role-window {
+html[data-theme='dark'] .config-visual-role-window,
+body[data-theme='dark'] .config-visual-role-window,
+.dark .config-visual-role-window,
+[data-theme='dark'] .config-visual-role-window,
+[data-color-mode='dark'] .config-visual-role-window,
+[data-appearance='dark'] .config-visual-role-window {
   background: var(--visual-window-bg) !important;
   border-color: var(--visual-window-border) !important;
   color: var(--visual-window-text) !important;
 }
 
-.config-visual-role-remove {
+html[data-theme='dark'] .config-visual-role-remove,
+body[data-theme='dark'] .config-visual-role-remove,
+.dark .config-visual-role-remove,
+[data-theme='dark'] .config-visual-role-remove,
+[data-color-mode='dark'] .config-visual-role-remove,
+[data-appearance='dark'] .config-visual-role-remove {
   background: var(--visual-remove-bg) !important;
   border-color: var(--visual-remove-border) !important;
   color: var(--visual-remove-text) !important;
 }
 
-.config-visual-role-add {
+html[data-theme='dark'] .config-visual-role-add,
+body[data-theme='dark'] .config-visual-role-add,
+.dark .config-visual-role-add,
+[data-theme='dark'] .config-visual-role-add,
+[data-color-mode='dark'] .config-visual-role-add,
+[data-appearance='dark'] .config-visual-role-add {
   background: var(--visual-add-bg) !important;
   border-color: var(--visual-add-border) !important;
   color: var(--visual-add-text) !important;
 }
 
-.config-visual-role-best {
+html[data-theme='dark'] .grid-visualizer-cell.is-active-column,
+html[data-theme='dark'] .grid-visualizer-state-row.active,
+html[data-theme='dark'] .config-visual-state-row.active,
+html[data-theme='dark'] .config-visual-role-best,
+body[data-theme='dark'] .grid-visualizer-cell.is-active-column,
+body[data-theme='dark'] .grid-visualizer-state-row.active,
+body[data-theme='dark'] .config-visual-state-row.active,
+body[data-theme='dark'] .config-visual-role-best,
+.dark .grid-visualizer-cell.is-active-column,
+.dark .grid-visualizer-state-row.active,
+.dark .config-visual-state-row.active,
+.dark .config-visual-role-best,
+[data-theme='dark'] .grid-visualizer-cell.is-active-column,
+[data-theme='dark'] .grid-visualizer-state-row.active,
+[data-theme='dark'] .config-visual-state-row.active,
+[data-theme='dark'] .config-visual-role-best,
+[data-color-mode='dark'] .grid-visualizer-cell.is-active-column,
+[data-color-mode='dark'] .grid-visualizer-state-row.active,
+[data-color-mode='dark'] .config-visual-state-row.active,
+[data-color-mode='dark'] .config-visual-role-best,
+[data-appearance='dark'] .grid-visualizer-cell.is-active-column,
+[data-appearance='dark'] .grid-visualizer-state-row.active,
+[data-appearance='dark'] .config-visual-state-row.active,
+[data-appearance='dark'] .config-visual-role-best {
   background: var(--visual-best-bg) !important;
   border-color: var(--visual-best-border) !important;
   color: var(--visual-best-text) !important;
 }
 
-.grid-visualizer-final,
-.config-visual-final {
+html[data-theme='dark'] .grid-visualizer-cell.role-blocked,
+html[data-theme='dark'] .config-visual-role-blocked,
+html[data-theme='dark'] .config-visual-role-error,
+html[data-theme='dark'] .config-visual-role-infinite,
+html[data-theme='dark'] .grid-visualizer-state-value.infinite,
+html[data-theme='dark'] .config-visual-state-value.infinite,
+body[data-theme='dark'] .grid-visualizer-cell.role-blocked,
+body[data-theme='dark'] .config-visual-role-blocked,
+body[data-theme='dark'] .config-visual-role-error,
+body[data-theme='dark'] .config-visual-role-infinite,
+body[data-theme='dark'] .grid-visualizer-state-value.infinite,
+body[data-theme='dark'] .config-visual-state-value.infinite,
+.dark .grid-visualizer-cell.role-blocked,
+.dark .config-visual-role-blocked,
+.dark .config-visual-role-error,
+.dark .config-visual-role-infinite,
+.dark .grid-visualizer-state-value.infinite,
+.dark .config-visual-state-value.infinite,
+[data-theme='dark'] .grid-visualizer-cell.role-blocked,
+[data-theme='dark'] .config-visual-role-blocked,
+[data-theme='dark'] .config-visual-role-error,
+[data-theme='dark'] .config-visual-role-infinite,
+[data-theme='dark'] .grid-visualizer-state-value.infinite,
+[data-theme='dark'] .config-visual-state-value.infinite,
+[data-color-mode='dark'] .grid-visualizer-cell.role-blocked,
+[data-color-mode='dark'] .config-visual-role-blocked,
+[data-color-mode='dark'] .config-visual-role-error,
+[data-color-mode='dark'] .config-visual-role-infinite,
+[data-color-mode='dark'] .grid-visualizer-state-value.infinite,
+[data-color-mode='dark'] .config-visual-state-value.infinite,
+[data-appearance='dark'] .grid-visualizer-cell.role-blocked,
+[data-appearance='dark'] .config-visual-role-blocked,
+[data-appearance='dark'] .config-visual-role-error,
+[data-appearance='dark'] .config-visual-role-infinite,
+[data-appearance='dark'] .grid-visualizer-state-value.infinite,
+[data-appearance='dark'] .config-visual-state-value.infinite {
+  background: var(--visual-blocked-bg) !important;
+  border-color: var(--visual-blocked-border) !important;
+  color: var(--visual-blocked-text) !important;
+}
+
+html[data-theme='dark'] .grid-visualizer-cell.role-goal,
+html[data-theme='dark'] .config-visual-role-goal,
+html[data-theme='dark'] .config-visual-role-answer,
+html[data-theme='dark'] .config-visual-role-success,
+body[data-theme='dark'] .grid-visualizer-cell.role-goal,
+body[data-theme='dark'] .config-visual-role-goal,
+body[data-theme='dark'] .config-visual-role-answer,
+body[data-theme='dark'] .config-visual-role-success,
+.dark .grid-visualizer-cell.role-goal,
+.dark .config-visual-role-goal,
+.dark .config-visual-role-answer,
+.dark .config-visual-role-success,
+[data-theme='dark'] .grid-visualizer-cell.role-goal,
+[data-theme='dark'] .config-visual-role-goal,
+[data-theme='dark'] .config-visual-role-answer,
+[data-theme='dark'] .config-visual-role-success,
+[data-color-mode='dark'] .grid-visualizer-cell.role-goal,
+[data-color-mode='dark'] .config-visual-role-goal,
+[data-color-mode='dark'] .config-visual-role-answer,
+[data-color-mode='dark'] .config-visual-role-success,
+[data-appearance='dark'] .grid-visualizer-cell.role-goal,
+[data-appearance='dark'] .config-visual-role-goal,
+[data-appearance='dark'] .config-visual-role-answer,
+[data-appearance='dark'] .config-visual-role-success {
+  background: var(--visual-goal-bg) !important;
+  border-color: var(--visual-goal-border) !important;
+  color: var(--visual-text) !important;
+}
+
+html[data-theme='dark'] .grid-visualizer-final,
+html[data-theme='dark'] .config-visual-final,
+body[data-theme='dark'] .grid-visualizer-final,
+body[data-theme='dark'] .config-visual-final,
+.dark .grid-visualizer-final,
+.dark .config-visual-final,
+[data-theme='dark'] .grid-visualizer-final,
+[data-theme='dark'] .config-visual-final,
+[data-color-mode='dark'] .grid-visualizer-final,
+[data-color-mode='dark'] .config-visual-final,
+[data-appearance='dark'] .grid-visualizer-final,
+[data-appearance='dark'] .config-visual-final {
   background: var(--visual-success-bg) !important;
   border-color: var(--visual-success-border) !important;
 }
