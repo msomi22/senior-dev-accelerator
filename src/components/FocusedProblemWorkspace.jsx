@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import VisualRail from './visuals/VisualRail.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
+import { storageService } from '../services/storageService.js';
 
 function optionLetter(index) {
   return String.fromCharCode(65 + index);
@@ -54,7 +55,7 @@ function EmptyState({ title, children }) {
   );
 }
 
-function McqBlock({ question, selected, setSelected }) {
+function McqBlock({ question, selected, onSelect }) {
   if (question.type !== 'mcq' || !question.options?.length) return null;
   const answered = selected !== null;
   const isCorrect = selected === question.correctAnswer;
@@ -71,7 +72,7 @@ function McqBlock({ question, selected, setSelected }) {
           const correct = question.correctAnswer === index;
           const className = ['option-btn', chosen ? 'selected' : '', answered && correct ? 'correct' : '', answered && chosen && !correct ? 'wrong' : ''].filter(Boolean).join(' ');
           return (
-            <button key={`${option}-${index}`} type="button" className={className} aria-pressed={chosen} onClick={() => setSelected(index)}>
+            <button key={`${option}-${index}`} type="button" className={className} aria-pressed={chosen} onClick={() => onSelect(index)}>
               <strong>{optionLetter(index)}</strong>
               <span>{option}</span>
               {answered && correct ? <em>Correct</em> : null}
@@ -152,8 +153,9 @@ function ReinforcementCards({ question }) {
 
 export default function FocusedProblemWorkspace({ question, completed, onToggle, hideTopline = false }) {
   const [activeTab, setActiveTab] = useState('overview');
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(() => storageService.getSelectedAnswer(question.id));
   const [focusMode, setFocusMode] = useState(false);
+  const lastCompletedQuestionId = useRef('');
   const codeContent = question.solutionCode || question.code || question.pseudocode || question.approachPseudocode;
   const explanation = question.explanation || question.solutionExplanation || question.answerExplanation || question.finalReasoning;
   const hasMcq = question.type === 'mcq' && question.options?.length;
@@ -171,6 +173,21 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
     if (!tabs.some(([id]) => id === activeTab)) setActiveTab(tabs[0]?.[0] || 'overview');
   }, [activeTab, tabs]);
 
+  useEffect(() => {
+    setSelected(storageService.getSelectedAnswer(question.id));
+    lastCompletedQuestionId.current = completed ? question.id : '';
+  }, [completed, question.id]);
+
+  function handleMcqSelect(answerIndex) {
+    setSelected(answerIndex);
+    storageService.setSelectedAnswer(question.id, answerIndex);
+
+    if (!completed && lastCompletedQuestionId.current !== question.id) {
+      lastCompletedQuestionId.current = question.id;
+      onToggle?.(question.id);
+    }
+  }
+
   return (
     <article className={`focused-problem-workspace glass-lite ${completed ? 'done' : ''} ${focusMode ? 'focus-mode' : ''}`}>
       {!hideTopline ? <div className="focused-problem-topline"><div className="meta-strip"><span className="pill">{question.difficulty}</span><span className="time-pill">Time: {question.estimatedTime || '10 min'}</span></div><button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Completed' : 'Mark done'}</button></div> : null}
@@ -181,12 +198,12 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
 
       <div className="focused-workspace-layout">
         <div className="focused-tab-content">
-          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock><TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock></div>{hasMcq ? <McqBlock question={question} selected={selected} setSelected={setSelected} /> : null}<ListBlock title="Examples" items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
+          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock><TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock></div>{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ListBlock title="Examples" items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
           {activeTab === 'visual' ? <VisualBlock question={question} showFallback /> : null}
           {activeTab === 'intuition' ? <div className="focused-two-col"><TextBlock title="Think first" className="think-box">{question.starterThought}</TextBlock><TextBlock title="Why this pattern fits">{question.intuition || question.visualExplanation}</TextBlock><TextBlock title="Recognition signal">{question.patternSignal}</TextBlock><TextBlock title="Invariant to maintain">{question.invariant}</TextBlock></div> : null}
           {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="focused-two-col"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><TextBlock title="Edge cases">{question.edgeCases}</TextBlock></div></div> : null}
           {activeTab === 'solution' ? <div className="focused-panel-stack"><TextBlock title="Solution explanation">{explanation}</TextBlock><section className="workspace-block focused-code-block"><span className="mini-label">Implementation notes</span><pre><code>{codeContent || 'No code sample is configured yet.'}</code></pre></section></div> : null}
-          {activeTab === 'answer' ? <div className="focused-panel-stack"><McqBlock question={question} selected={selected} setSelected={setSelected} /><TextBlock title="Explanation">{explanation || question.intuition}</TextBlock><ListBlock title="Why other options are wrong" items={question.optionExplanations || question.wrongOptionExplanations} /></div> : null}
+          {activeTab === 'answer' ? <div className="focused-panel-stack"><McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /><TextBlock title="Explanation">{explanation || question.intuition}</TextBlock><ListBlock title="Why other options are wrong" items={question.optionExplanations || question.wrongOptionExplanations} /></div> : null}
           {activeTab === 'complexity' ? <div className="focused-two-col"><TextBlock title="Complexity / trade-off analysis">{question.complexityAnalysis}</TextBlock><TextBlock title="Production reality">{question.productionReality}</TextBlock></div> : null}
           <ReinforcementCards question={question} />
         </div>
