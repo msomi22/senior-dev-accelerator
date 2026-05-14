@@ -1,5 +1,5 @@
 const minimumSidewayJumps = {
-  id: 'dynamic-programming-009',
+  id: 'dynamic-programming-020',
   type: 'coding',
   topicId: 'dynamic-programming',
   title: 'Minimum Sideway Jumps',
