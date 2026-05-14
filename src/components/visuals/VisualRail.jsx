@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ConfigVisualizer from './ConfigVisualizer.jsx';
 import GridVisualizer from './GridVisualizer.jsx';
+import './visualTheme.css';
 import { isGenericVisual, isGridVisual } from './visualTypes.js';
 
 function formatMetricLabel(key) {
