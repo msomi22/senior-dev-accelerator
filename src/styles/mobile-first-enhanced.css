@@ -23,26 +23,36 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    position: relative;
+    padding-left: 56px;
   }
 
   .mobile-nav-toggle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex !important;
     width: 44px;
     height: 44px;
-    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 5px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: var(--button-secondary-bg);
+    background: rgba(15, 23, 42, 0.92);
+    z-index: 2500;
     flex: 0 0 auto;
   }
 
   .mobile-nav-toggle span {
+    display: block;
     width: 18px;
     height: 2px;
-    background: var(--text-primary);
+    background: #ffffff;
     border-radius: 999px;
   }
 
@@ -127,7 +137,7 @@
 
 @media (min-width: 981px) {
   .mobile-nav-toggle {
-    display: none;
+    display: none !important;
   }
 
   .topbar-expandable {
