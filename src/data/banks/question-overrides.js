@@ -1,3 +1,5 @@
+import minimumSidewayJumps from './dsa/minimum-sideway-jumps.js';
+
 const questionOverrides = {
   'sliding-window-001': {
     id: 'sliding-window-001',
@@ -91,13 +93,22 @@ const questionOverrides = {
   }
 };
 
+const additionalQuestionsByTopic = {
+  'dynamic-programming': [minimumSidewayJumps]
+};
+
 export function applyQuestionOverrides(bank) {
+  const additions = additionalQuestionsByTopic[bank.id] || [];
+
   return {
     ...bank,
-    questions: bank.questions.map((question) => ({
-      ...question,
-      ...(questionOverrides[question.id] || {})
-    }))
+    questions: [
+      ...bank.questions.map((question) => ({
+        ...question,
+        ...(questionOverrides[question.id] || {})
+      })),
+      ...additions
+    ]
   };
 }
 
