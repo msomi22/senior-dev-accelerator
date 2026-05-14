@@ -11,6 +11,7 @@ import { useContentProtection } from './hooks/useContentProtection.js';
 import { usePreferences } from './hooks/usePreferences.js';
 
 const Home = lazy(() => import('./pages/Home.jsx'));
+const CategoriesPage = lazy(() => import('./pages/CategoriesPage.jsx'));
 const DSAPage = lazy(() => import('./pages/DSAPage.jsx'));
 const SystemDesignPage = lazy(() => import('./pages/SystemDesignPage.jsx'));
 const CategoryPage = lazy(() => import('./pages/CategoryPage.jsx'));
@@ -63,6 +64,7 @@ export default function App() {
           <Suspense fallback={<LoadingCard label="Loading page…" />}>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/dsa" element={<DSAPage />} />
               <Route path="/system-design" element={<SystemDesignPage />} />
               <Route path="/category/:categoryId" element={<CategoryPage />} />
