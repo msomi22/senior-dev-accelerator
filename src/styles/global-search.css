@@ -212,19 +212,101 @@
 }
 
 @media (max-width: 760px) {
-  .topbar .global-search {
-    order: initial;
-    width: 100%;
-    max-width: none;
-    min-width: 0;
+  .app-shell .nav.topbar,
+  .app-shell .navbar.topbar,
+  .app-shell .topbar {
+    --nav-height: 126px;
+    position: fixed !important;
+    inset: 0 0 auto 0 !important;
+    z-index: 5000 !important;
+    height: var(--nav-height) !important;
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) auto !important;
+    grid-template-rows: 40px 1fr !important;
+    grid-template-areas:
+      "menu spacer theme"
+      "search search search" !important;
+    align-items: center !important;
+    gap: 10px 8px !important;
+    padding: 8px 12px 14px !important;
+    overflow: visible !important;
+  }
+
+  .app-shell .topbar-title {
+    display: none !important;
+  }
+
+  .app-shell .topbar .mobile-menu-toggle {
+    grid-area: menu !important;
+    justify-self: start !important;
+    align-self: center !important;
+  }
+
+  .app-shell .topbar .icon-btn {
+    grid-area: theme !important;
+    justify-self: end !important;
+    align-self: center !important;
+    position: static !important;
+    transform: none !important;
+    margin: 0 !important;
+    width: auto !important;
+    min-width: 72px !important;
+    height: 38px !important;
+    padding: 0 14px !important;
+  }
+
+  .app-shell .topbar .global-search {
+    grid-area: search !important;
+    order: initial !important;
+    justify-self: center !important;
+    align-self: center !important;
+    width: min(100%, 680px) !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .app-shell .topbar.is-menu-open .global-search {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .app-shell .layout {
+    padding-top: var(--nav-height) !important;
+  }
+
+  .app-shell .page-wrap,
+  .app-shell .main-content {
+    padding-top: 12px !important;
+  }
+
+  .global-search-control input {
+    height: 46px;
+    min-height: 46px;
+    font-size: 0.95rem;
   }
 
   .global-search-panel,
   .global-search.global-search .global-search-panel.glass-lite {
     position: fixed;
-    top: calc(var(--nav-height, 58px) + 8px);
+    top: calc(var(--nav-height, 126px) + 8px);
     left: 12px;
     right: 12px;
     max-height: min(70vh, 520px);
+  }
+}
+
+@media (max-width: 420px) {
+  .app-shell .nav.topbar,
+  .app-shell .navbar.topbar,
+  .app-shell .topbar {
+    grid-template-columns: 44px minmax(0, 1fr) auto !important;
+    padding-inline: 10px !important;
+  }
+
+  .app-shell .topbar .icon-btn {
+    min-width: 64px !important;
+    padding-inline: 10px !important;
+    font-size: 0.72rem !important;
   }
 }
