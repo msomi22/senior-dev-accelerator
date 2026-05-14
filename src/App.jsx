@@ -1,8 +1,8 @@
 /*
 DECISION: Vite + React + React Router remains the best fit for this version because the product is a fast, static, highly interactive learning platform. This refactor uses route-level lazy loading and topic-level lazy quiz banks, so the dashboard no longer downloads or parses every question upfront. Next.js would be useful later for SSR, auth, payments, or a database-backed CMS; Angular would be stronger for a large enterprise team but heavier for this content-first product.
 */
-import { Suspense, lazy } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { Suspense, lazy, useState } from 'react';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import LoadingCard from './components/LoadingCard.jsx';
@@ -20,12 +20,23 @@ const ProblemPage = lazy(() => import('./pages/ProblemPage.jsx'));
 export default function App() {
   useContentProtection();
   const { theme } = usePreferences();
+  const location = useLocation();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  function closeMobileNav() {
+    setMobileNavOpen(false);
+  }
+
   return (
-    <div className={`app-shell ${theme}`}>
-      <Navbar />
+    <div className={`app-shell ${theme} ${mobileNavOpen ? 'mobile-nav-open' : 'mobile-nav-closed'}`}>
+      <Navbar
+        mobileNavOpen={mobileNavOpen}
+        onToggleMobileNav={() => setMobileNavOpen((open) => !open)}
+        onCloseMobileNav={closeMobileNav}
+      />
       <div className="layout">
-        <Sidebar />
-        <main className="page-wrap protect-content">
+        <Sidebar onNavigate={closeMobileNav} />
+        <main className="page-wrap protect-content" key={location.pathname}>
           <Suspense fallback={<LoadingCard label="Loading page…" />}>
             <Routes>
               <Route path="/" element={<Home />} />
