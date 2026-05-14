@@ -26,6 +26,12 @@ function applyContentProfileToBank(bank) {
   };
 }
 
+function isAvailableRecommendation(question, currentQuestionId, completed = {}) {
+  if (!question?.id) return false;
+  if (question.id === currentQuestionId) return false;
+  return !completed[question.id];
+}
+
 const bankCache = new Map();
 const countCache = new Map();
 
@@ -143,6 +149,50 @@ export async function findQuestionById(questionId) {
         bank,
         category,
         categoryName: category?.name || topic.category
+      };
+    }
+  }
+
+  return null;
+}
+
+export async function findNextRecommendedQuestion(currentQuestionId, completed = {}) {
+  const currentEntry = await findQuestionById(currentQuestionId);
+  if (!currentEntry) return null;
+
+  const currentTopicId = currentEntry.topic?.id;
+  const currentCategoryId = currentEntry.topic?.category || currentEntry.category?.id;
+
+  if (currentTopicId) {
+    const sameTopicBank = await loadTopicBank(currentTopicId);
+    const sameTopicQuestion = sameTopicBank.questions.find((question) =>
+      isAvailableRecommendation(question, currentQuestionId, completed)
+    );
+
+    if (sameTopicQuestion) {
+      return {
+        question: sameTopicQuestion,
+        topic: currentEntry.topic,
+        category: currentEntry.category,
+        reason: 'same-topic'
+      };
+    }
+  }
+
+  const categoryTopics = allTopics.filter((topic) => topic.category === currentCategoryId && topic.id !== currentTopicId);
+
+  for (const topic of categoryTopics) {
+    const bank = await loadTopicBank(topic.id);
+    const question = bank.questions.find((item) =>
+      isAvailableRecommendation(item, currentQuestionId, completed)
+    );
+
+    if (question) {
+      return {
+        question,
+        topic: { ...topic, count: bank.questions.length },
+        category: getCategory(topic.category),
+        reason: 'same-category'
       };
     }
   }
