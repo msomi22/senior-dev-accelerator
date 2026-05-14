@@ -11,7 +11,13 @@ const CONTENT_PROFILE = readContentProfile();
 
 const APPROVED_PROD_QUESTION_IDS = new Set([
   'sliding-window-001',
-  'dynamic-programming-020'
+  'dynamic-programming-020',
+  'api-design-rate-limiting-001',
+  'caching-product-details-001',
+  'messaging-queues-email-notification-001',
+  'api-design-payment-idempotency-001',
+  'scalability-realtime-updates-001',
+  'databases-multi-region-consistency-001'
 ]);
 
 export function getContentProfile() {
