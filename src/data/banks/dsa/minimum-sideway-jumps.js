@@ -99,52 +99,99 @@ const minimumSidewayJumps = {
     title: 'Three-lane road',
     summary: 'Walk through the obstacle positions while tracking the compressed DP state [lane 1, lane 2, lane 3].',
     diagram: {
-      type: 'road-dp',
+      type: 'grid',
+      variant: 'road',
       title: 'Three-lane road',
-      obstacles: [0, 1, 2, 3, 0, 0],
-      steps: [
+      description: 'Move forward for free when the lane is open, or side-jump once when an obstacle blocks the path.',
+      rows: ['Lane 1', 'Lane 2', 'Lane 3'],
+      columns: ['0', '1', '2', '3', '4', '5'],
+      defaultCellLabel: '→',
+      stateTitle: 'DP States Evolution',
+      stateDescription: 'Each row stores the best known cost as [lane 1, lane 2, lane 3].',
+      legend: [
+        { role: 'active', marker: '🐸', label: 'Frog' },
+        { role: 'open', marker: '→', label: 'Move forward free' },
+        { role: 'blocked', marker: 'X', label: 'Blocked' },
+        { role: 'goal', marker: '🏁', label: 'Goal' }
+      ],
+      baseCells: [
+        { row: 0, col: 1, role: 'blocked', label: 'X' },
+        { row: 1, col: 2, role: 'blocked', label: 'X' },
+        { row: 2, col: 3, role: 'blocked', label: 'X' },
+        { row: 0, col: 5, role: 'goal', label: '🏁' },
+        { row: 1, col: 5, role: 'goal', label: '🏁' },
+        { row: 2, col: 5, role: 'goal', label: '🏁' }
+      ],
+      frames: [
         {
+          title: 'Start',
           position: 0,
-          frogLane: 2,
-          dp: [1, 0, 1],
-          helper: 'Start: frog in lane 2.',
+          cells: [{ row: 1, col: 0, role: 'active', label: '🐸' }],
+          state: {
+            label: 'P0',
+            values: [1, 0, 1],
+            helper: 'Start: frog in lane 2.'
+          },
           description: 'The frog starts in lane 2 at position 0. Initial costs: lane 1 = 1, lane 2 = 0, lane 3 = 1.'
         },
         {
+          title: 'Block lane 1',
           position: 1,
-          frogLane: 2,
-          dp: ['∞', 0, 1],
-          helper: 'Lane 1 blocked — ∞.',
+          cells: [{ row: 1, col: 1, role: 'active', label: '🐸' }],
+          state: {
+            label: 'P1',
+            values: ['∞', 0, 1],
+            helper: 'Lane 1 blocked — ∞.'
+          },
           description: 'Position 1 blocks lane 1. Lane 1 becomes unreachable, but the frog can still continue in lane 2.'
         },
         {
+          title: 'Block lane 2',
           position: 2,
-          frogLane: 1,
-          dp: [2, '∞', 1],
-          helper: 'Lane 2 blocked — from lane 1 or lane 3.',
+          cells: [{ row: 0, col: 2, role: 'active', label: '🐸' }],
+          state: {
+            label: 'P2',
+            values: [2, '∞', 1],
+            helper: 'Lane 2 blocked — jump before the obstacle.'
+          },
           description: 'Position 2 blocks lane 2. The frog must side-jump from lane 2 before this obstacle. Lane 1 becomes reachable at cost 2.'
         },
         {
+          title: 'Block lane 3',
           position: 3,
-          frogLane: 1,
-          dp: [2, 3, '∞'],
-          helper: 'Lane 3 blocked — cost propagates.',
+          cells: [{ row: 0, col: 3, role: 'active', label: '🐸' }],
+          state: {
+            label: 'P3',
+            values: [2, 3, '∞'],
+            helper: 'Lane 3 blocked — cost propagates.'
+          },
           description: 'Position 3 blocks lane 3. Lane 1 remains the cheapest valid lane.'
         },
         {
+          title: 'Relax open lanes',
           position: 4,
-          frogLane: 1,
-          dp: [2, 3, 3],
-          helper: 'No blocks — relax jumps.',
-          description: 'Position 4: no blocks. Costs are relaxed — lane 3 can now be reached at cost 3 via a side jump.'
+          cells: [{ row: 0, col: 4, role: 'active', label: '🐸' }],
+          state: {
+            label: 'P4',
+            values: [2, 3, 3],
+            helper: 'No blocks — relax side jumps.'
+          },
+          description: 'Position 4 has no blocks. Costs are relaxed, so lane 3 can now be reached at cost 3 via a side jump.'
         },
         {
+          title: 'End reached',
           position: 5,
-          frogLane: 1,
-          dp: [2, 3, 3],
-          helper: 'End reached.',
-          final: true,
-          description: 'Position 5: end reached. Final answer = min(2,3,3) = 2 sideway jumps.'
+          cells: [{ row: 0, col: 5, role: 'active', label: '🐸' }],
+          state: {
+            label: 'P5',
+            values: [2, 3, 3],
+            helper: 'End reached.'
+          },
+          description: 'Position 5 is the end. Final answer = min(2, 3, 3) = 2 sideway jumps.',
+          finalResult: {
+            title: 'Final answer',
+            body: 'Minimum sideway jumps = min(2, 3, 3) = 2.'
+          }
         }
       ]
     }
