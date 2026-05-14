@@ -1,6 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
 import BuyCoffeeButton from './BuyCoffeeButton.jsx';
-import { categories } from '../services/questionBankService.js';
 
 const ICON_PATHS = {
   dashboard: (
@@ -11,31 +10,18 @@ const ICON_PATHS = {
       <path d="M14 14h6v6h-6z" />
     </>
   ),
-  dsa: (
+  categories: (
     <>
-      <path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z" />
-      <path d="M8 8h8" />
-      <path d="M8 12h6" />
-      <path d="M7 20V6a2 2 0 0 1 2-2" />
+      <path d="M4 6h16" />
+      <path d="M7 12h10" />
+      <path d="M10 18h4" />
     </>
   ),
-  system: (
+  recent: (
     <>
-      <circle cx="12" cy="5" r="3" />
-      <circle cx="6" cy="18" r="3" />
-      <circle cx="18" cy="18" r="3" />
-      <path d="M10.7 7.7 7.3 15.3" />
-      <path d="M13.3 7.7 16.7 15.3" />
-      <path d="M9 18h6" />
-    </>
-  ),
-  random: (
-    <>
-      <path d="M16 3h5v5" />
-      <path d="M4 20 21 3" />
-      <path d="M21 16v5h-5" />
-      <path d="M15 15 21 21" />
-      <path d="M4 4l5 5" />
+      <path d="M12 8v5l3 2" />
+      <path d="M3.05 11a9 9 0 1 1 2.64 6.36" />
+      <path d="M3 17h4v-4" />
     </>
   ),
   progress: (
@@ -46,14 +32,21 @@ const ICON_PATHS = {
       <path d="M17 6h2v2" />
     </>
   ),
-  category: (
+  settings: (
     <>
-      <path d="M4 6h16" />
-      <path d="M7 12h10" />
-      <path d="M10 18h4" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8.92 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
     </>
   )
 };
+
+const NAV_ITEMS = [
+  { to: '/', icon: 'dashboard', label: 'Dashboard', end: true },
+  { to: '/dsa', icon: 'categories', label: 'Categories' },
+  { to: '/recent', icon: 'recent', label: 'Recent' },
+  { to: '/progress', icon: 'progress', label: 'Progress' },
+  { to: '/settings', icon: 'settings', label: 'Settings' }
+];
 
 function NavIcon({ name }) {
   return (
@@ -63,28 +56,16 @@ function NavIcon({ name }) {
       aria-hidden="true"
       focusable="false"
     >
-      {ICON_PATHS[name] || ICON_PATHS.category}
+      {ICON_PATHS[name] || ICON_PATHS.categories}
     </svg>
   );
 }
 
-function categoryPath(category) {
-  if (category.id === 'dsa') return '/dsa';
-  if (category.id === 'system') return '/system-design';
-  return category.route || `/category/${category.id}`;
-}
-
-function categoryIcon(category) {
-  if (category.id === 'dsa') return 'dsa';
-  if (category.id === 'system') return 'system';
-  return 'category';
-}
-
-function NavItem({ to, icon, children }) {
+function NavItem({ to, icon, end, children }) {
   const navClass = ({ isActive }) => `nav-item ${isActive ? 'active' : ''}`.trim();
 
   return (
-    <NavLink to={to} className={navClass}>
+    <NavLink to={to} end={end} className={navClass}>
       <NavIcon name={icon} />
       <span className="nav-text">{children}</span>
     </NavLink>
@@ -92,8 +73,6 @@ function NavItem({ to, icon, children }) {
 }
 
 export default function Sidebar() {
-  const featured = categories.filter((category) => category.featured !== false).slice(0, 6);
-
   return (
     <aside className="sidebar app-sidebar">
       <Link to="/" className="sidebar-logo" aria-label="Senior Dev Accelerator dashboard">
@@ -111,23 +90,17 @@ export default function Sidebar() {
       </Link>
 
       <div className="nav-section">
-        <p className="nav-label">Learn</p>
-        <NavItem to="/" icon="dashboard">Dashboard</NavItem>
-        {featured.map((category) => (
+        <p className="nav-label">Workspace</p>
+        {NAV_ITEMS.map((item) => (
           <NavItem
-            key={category.id}
-            to={categoryPath(category)}
-            icon={categoryIcon(category)}
+            key={item.to}
+            to={item.to}
+            icon={item.icon}
+            end={item.end}
           >
-            {category.shortName || category.name}
+            {item.label}
           </NavItem>
         ))}
-      </div>
-
-      <div className="nav-section">
-        <p className="nav-label">Practice</p>
-        <NavItem to="/random" icon="random">Random Question</NavItem>
-        <NavItem to="/progress" icon="progress">Progress</NavItem>
       </div>
 
       <div className="sidebar-spacer" />
