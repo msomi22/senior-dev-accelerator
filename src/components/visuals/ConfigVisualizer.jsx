@@ -42,6 +42,8 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
         .config-visual-pill-list, .config-visual-state-values { display: flex; flex-wrap: wrap; gap: 0.45rem; }
         .config-visual-pill { border-radius: 999px; background: rgba(255, 255, 255, 0.58); border: 1px solid rgba(86, 67, 42, 0.12); padding: 0.4rem 0.62rem; font-weight: 800; color: var(--text-strong, #2f261b); }
         .config-visual-state-list { display: grid; gap: 0.45rem; }
+        .config-visual-state-list.is-scrollable { max-height: 29rem; overflow-y: auto; overscroll-behavior: contain; padding-right: 0.35rem; scrollbar-gutter: stable; }
+        .config-visual-state-list.is-scrollable::after { content: ''; position: sticky; bottom: -0.45rem; display: block; height: 1.1rem; margin-top: -1.1rem; pointer-events: none; background: linear-gradient(180deg, rgba(255, 252, 244, 0), rgba(255, 252, 244, 0.92)); }
         .config-visual-state-row { border: 1px solid rgba(86, 67, 42, 0.12); border-radius: 16px; background: rgba(255,255,255,0.48); padding: 0.6rem; }
         .config-visual-state-row.active { background: rgba(234, 190, 117, 0.2); border-color: rgba(154, 104, 34, 0.28); }
         .config-visual-state-row strong { display: block; margin-bottom: 0.45rem; color: var(--text-strong, #2f261b); }
@@ -71,7 +73,7 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
         .config-visual-timeline-dot { width: 1.25rem; height: 1.25rem; border-radius: 999px; border: 2px solid rgba(86, 67, 42, 0.18); background: rgba(255,255,255,0.7); margin-top: 0.25rem; }
         .config-visual-timeline-step.is-active .config-visual-timeline-dot { background: rgba(82, 116, 76, 0.35); border-color: rgba(82, 116, 76, 0.45); }
         .config-visual-edge-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
-        @media (max-width: 860px) { .config-visual-layout { grid-template-columns: 1fr; } .config-visual-controls span { width: 100%; margin-left: 0; } }
+        @media (max-width: 860px) { .config-visual-layout { grid-template-columns: 1fr; } .config-visual-controls span { width: 100%; margin-left: 0; } .config-visual-state-list.is-scrollable { max-height: 22rem; } }
       `}</style>
 
       <div className="config-visual-layout">
@@ -115,11 +117,13 @@ function StatePanel({ diagram, frames, activeIndex }) {
 
   if (!rows.length) return null;
 
+  const stateListClass = `config-visual-state-list ${rows.length > 3 ? 'is-scrollable' : ''}`.trim();
+
   return (
     <aside className="config-visual-card">
       <h3>{diagram.stateTitle || 'State evolution'}</h3>
       {diagram.stateDescription ? <p className="config-visual-muted">{diagram.stateDescription}</p> : null}
-      <div className="config-visual-state-list">
+      <div className={stateListClass}>
         {rows.map((frame, index) => {
           const state = frame.state || frame.metrics || {};
           const entries = Array.isArray(state.values)
