@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import RoadDpWalkthrough from './RoadDpWalkthrough.jsx';
+import GridVisualizer from './GridVisualizer.jsx';
 
 function formatMetricLabel(key) {
   return key
@@ -101,10 +101,14 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
 }
 
 function VisualRail({ diagram }) {
-  if (diagram?.type === 'road-dp') {
-    return <RoadDpWalkthrough visual={diagram} />;
+  if (diagram?.type === 'grid') {
+    return <GridVisualizer diagram={diagram} />;
   }
 
+  return <FrameVisualRail diagram={diagram} />;
+}
+
+function FrameVisualRail({ diagram }) {
   const frames = diagram?.frames || [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
