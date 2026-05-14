@@ -9,7 +9,6 @@ import {
 } from '../services/questionBankService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 import ProgressChart from '../components/ProgressChart.jsx';
-import BuyCoffeeButton from '../components/BuyCoffeeButton.jsx';
 import CategoryLibrary from '../components/CategoryLibrary.jsx';
 
 const emptySummary = { total: 0, done: 0, percent: 0 };
@@ -18,27 +17,27 @@ function buildLearningStage(percent) {
   if (percent >= 80) {
     return {
       label: 'Senior interview polish',
-      description: 'You are now in refinement mode: revisit weak topics, explain trade-offs aloud, and practice mixed questions.'
+      description: 'Revisit weak topics and practice mixed problems.'
     };
   }
 
   if (percent >= 50) {
     return {
       label: 'Depth and consistency',
-      description: 'Keep building breadth, but start comparing patterns and explaining why one approach beats another.'
+      description: 'Compare patterns and explain trade-offs clearly.'
     };
   }
 
   if (percent >= 20) {
     return {
       label: 'Pattern recognition sprint',
-      description: 'Focus on recognizing the shape of each problem before jumping into implementation details.'
+      description: 'Recognize problem shapes before implementation.'
     };
   }
 
   return {
     label: 'Foundation builder',
-    description: 'Start with high-signal fundamentals and build a steady habit before increasing difficulty.'
+    description: 'Build strong fundamentals with steady practice.'
   };
 }
 
@@ -110,38 +109,36 @@ export default function Home() {
     .sort((a, b) => (b.progressPercent || 0) - (a.progressPercent || 0))[0], [countedCategories]);
 
   return (
-    <>
-      <section className="hero-card glass learning-hero">
+    <div className="learning-dashboard-page phase-one-dashboard">
+      <section className="hero-card glass learning-hero phase-one-hero">
         <div>
-          <p className="eyebrow">Engineering mastery command center</p>
-          <h1>Build senior-level instincts one learning path at a time.</h1>
-          <p>
-            Use the dashboard to decide what to study next, track real completion,
-            and keep DSA plus system design practice moving with purpose.
-          </p>
+          <p className="eyebrow">Senior Dev Accelerator</p>
+          <h1>Find the right problem, practice deeply, and track real progress.</h1>
           <div className="hero-actions">
             <Link className="btn" to={nextTopic ? `/category/${nextTopic.category}` : '/random'}>
-              Continue recommended path
+              Continue learning
             </Link>
-            <Link className="btn ghost" to="/random">Start random practice</Link>
-            <BuyCoffeeButton className="btn coffee-btn" />
+            <Link className="btn ghost" to="/random">Random practice</Link>
           </div>
         </div>
-        <div className="learning-hero-panel glass-lite">
+
+        <div className="learning-hero-panel glass-lite phase-one-hero-panel">
           <span>Current stage</span>
           <strong>{learningStage.label}</strong>
           <p>{learningStage.description}</p>
         </div>
       </section>
 
-      <section className="dashboard-grid learning-stats-grid">
+      <CategoryLibrary categories={categories} completed={completed} title="Browse by category" />
+
+      <section className="dashboard-grid learning-stats-grid phase-one-stats">
         <ProgressChart {...summary} />
         <div className="glass stat"><h2>{categories.length}</h2><p>categories</p></div>
         <div className="glass stat"><h2>{topicCount}</h2><p>topic banks</p></div>
         <div className="glass stat"><h2>{loadingStats ? '…' : summary.total}</h2><p>real questions</p></div>
       </section>
 
-      <section className="learning-dashboard-grid">
+      <section className="learning-dashboard-grid phase-one-support-grid">
         <DashboardCard
           eyebrow="Next best action"
           title={nextTopic ? nextTopic.name : 'All topics complete'}
@@ -149,8 +146,8 @@ export default function Home() {
         >
           <p>
             {nextTopic
-              ? nextTopic.description
-              : 'Excellent work. Move into review mode and revisit older questions until your explanations feel automatic.'}
+              ? 'Continue from the least-complete high-value topic.'
+              : 'Review older questions until explanations feel automatic.'}
           </p>
           {nextTopic ? (
             <div className="dashboard-mini-progress">
@@ -167,7 +164,7 @@ export default function Home() {
                 <span>{topic.name}</span>
                 <strong>{topic.progress.percent}%</strong>
               </Link>
-            )) : <p>No weak areas yet. Start solving questions to unlock useful recommendations.</p>}
+            )) : <p>No weak areas yet. Start solving questions to unlock recommendations.</p>}
           </div>
         </DashboardCard>
 
@@ -180,9 +177,7 @@ export default function Home() {
         </DashboardCard>
       </section>
 
-      <CategoryLibrary categories={categories} completed={completed} />
-
-      <section className="learning-map glass">
+      <section className="learning-map glass phase-one-thinking-loop">
         <h2>Senior thinking loop</h2>
         <div className="road">
           <span>Recognize pattern</span>
@@ -192,6 +187,6 @@ export default function Home() {
           <span>Review progress</span>
         </div>
       </section>
-    </>
+    </div>
   );
 }
