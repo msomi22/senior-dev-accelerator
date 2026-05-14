@@ -6,10 +6,35 @@
   isolation: isolate;
 }
 
+@media (min-width: 761px) {
+  .nav.topbar,
+  .navbar.topbar,
+  .topbar {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(320px, 700px) minmax(90px, 1fr);
+    align-items: center;
+    gap: 18px;
+  }
+
+  .topbar-title {
+    min-width: 0;
+    margin-right: 0;
+    justify-self: start;
+  }
+
+  .topbar .global-search {
+    justify-self: center;
+  }
+
+  .topbar .icon-btn {
+    justify-self: end;
+  }
+}
+
 .topbar .global-search {
   position: relative;
-  flex: 1 1 360px;
-  max-width: 520px;
+  width: min(100%, 700px);
+  max-width: 700px;
   min-width: 220px;
   z-index: 1001;
 }
@@ -172,10 +197,139 @@
   border: 0;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 980px) and (min-width: 761px) {
+  .nav.topbar,
+  .navbar.topbar,
+  .topbar {
+    grid-template-columns: minmax(140px, 0.85fr) minmax(260px, 1.5fr) minmax(74px, 0.85fr);
+    gap: 12px;
+  }
+
   .topbar .global-search {
-    order: 3;
-    flex-basis: 100%;
-    max-width: none;
+    width: min(100%, 560px);
+    min-width: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  :root,
+  .app-shell {
+    --nav-height: 126px;
+  }
+
+  .app-shell {
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .app-shell .nav.topbar,
+  .app-shell .navbar.topbar,
+  .app-shell .topbar {
+    position: sticky !important;
+    top: 0 !important;
+    left: auto !important;
+    right: auto !important;
+    inset: auto !important;
+    z-index: 5000 !important;
+    width: 100% !important;
+    height: var(--nav-height) !important;
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) auto !important;
+    grid-template-rows: 40px 1fr !important;
+    grid-template-areas:
+      "menu spacer theme"
+      "search search search" !important;
+    align-items: center !important;
+    gap: 10px 8px !important;
+    padding: 8px 12px 14px !important;
+    overflow: visible !important;
+  }
+
+  .app-shell .topbar-title {
+    display: none !important;
+  }
+
+  .app-shell .topbar .mobile-menu-toggle {
+    grid-area: menu !important;
+    justify-self: start !important;
+    align-self: center !important;
+  }
+
+  .app-shell .topbar .icon-btn {
+    grid-area: theme !important;
+    justify-self: end !important;
+    align-self: center !important;
+    position: static !important;
+    transform: none !important;
+    margin: 0 !important;
+    width: auto !important;
+    min-width: 72px !important;
+    height: 38px !important;
+    padding: 0 14px !important;
+  }
+
+  .app-shell .topbar .global-search {
+    grid-area: search !important;
+    order: initial !important;
+    justify-self: center !important;
+    align-self: center !important;
+    width: min(100%, 680px) !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  .app-shell .topbar.is-menu-open .global-search {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .app-shell .layout {
+    display: block !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding-top: 0 !important;
+    overflow: visible !important;
+  }
+
+  .app-shell .page-wrap,
+  .app-shell .main-content {
+    grid-column: auto !important;
+    height: auto !important;
+    min-height: calc(100vh - var(--nav-height)) !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    padding: 24px 12px 80px !important;
+  }
+
+  .global-search-control input {
+    height: 46px;
+    min-height: 46px;
+    font-size: 0.95rem;
+  }
+
+  .global-search-panel,
+  .global-search.global-search .global-search-panel.glass-lite {
+    position: fixed;
+    top: calc(var(--nav-height, 126px) + 8px);
+    left: 12px;
+    right: 12px;
+    max-height: min(70vh, 520px);
+  }
+}
+
+@media (max-width: 420px) {
+  .app-shell .nav.topbar,
+  .app-shell .navbar.topbar,
+  .app-shell .topbar {
+    grid-template-columns: 44px minmax(0, 1fr) auto !important;
+    padding-inline: 10px !important;
+  }
+
+  .app-shell .topbar .icon-btn {
+    min-width: 64px !important;
+    padding-inline: 10px !important;
+    font-size: 0.72rem !important;
   }
 }

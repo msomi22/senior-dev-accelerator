@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import { usePreferences } from '../hooks/usePreferences.js';
@@ -35,24 +36,68 @@ export default function GlobalSearch() {
   const location = useLocation();
   const { completed } = usePreferences();
   const search = useQuestionSearch(allTopics);
+  const rootRef = useRef(null);
+  const inputRef = useRef(null);
+  const [panelOpen, setPanelOpen] = useState(false);
   const query = search.query.trim();
   const hasQuery = query.length > 0;
-  const showPanel = hasQuery && search.isActive;
+  const showPanel = hasQuery && search.isActive && panelOpen;
   const visibleResults = search.results.slice(0, 6);
+
+  useEffect(() => {
+    setPanelOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!panelOpen) return undefined;
+
+    function handlePointerDown(event) {
+      if (!rootRef.current?.contains(event.target)) {
+        setPanelOpen(false);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setPanelOpen(false);
+        inputRef.current?.blur();
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [panelOpen]);
 
   function clearSearch() {
     search.clearSearch();
+    setPanelOpen(false);
+  }
+
+  function closeSearchPanel() {
+    setPanelOpen(false);
   }
 
   return (
-    <div className="global-search" role="search">
+    <div className="global-search" role="search" ref={rootRef}>
       <label className="global-search-control">
         <span className="sr-only">Search problems</span>
         <SearchIcon />
         <input
+          ref={inputRef}
           type="search"
           value={search.query}
-          onChange={(event) => search.setQuery(event.target.value)}
+          onChange={(event) => {
+            search.setQuery(event.target.value);
+            setPanelOpen(true);
+          }}
+          onFocus={() => {
+            if (hasQuery) setPanelOpen(true);
+          }}
           placeholder="Search problems..."
           autoComplete="off"
         />
@@ -75,7 +120,7 @@ export default function GlobalSearch() {
                     key={entry.id}
                     entry={entry}
                     completed={!!completed[entry.question.id || entry.id]}
-                    onSelect={clearSearch}
+                    onSelect={closeSearchPanel}
                   />
                 ))}
               </div>
