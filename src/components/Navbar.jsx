@@ -21,30 +21,42 @@ function categoryPath(category) {
   return category.route || `/category/${category.id}`;
 }
 
-export default function Navbar(props) {
-  const { mobileNavOpen, onToggleMobileNav, onCloseMobileNav } = props;
+function NavLinks({ featured }) {
+  return (
+    <>
+      {featured.map((category) => (
+        <NavLink key={category.id} to={categoryPath(category)}>
+          {category.shortName || category.name}
+        </NavLink>
+      ))}
+
+      <NavLink to="/random">Random</NavLink>
+      <NavLink to="/progress">Progress</NavLink>
+    </>
+  );
+}
+
+export default function Navbar() {
   const { theme, setTheme } = usePreferences();
   const location = useLocation();
-
   const featured = categories.filter((category) => category.featured !== false).slice(0, 2);
-  const headerClassName = `nav topbar glass ${mobileNavOpen ? 'mobile-menu-open' : 'mobile-menu-closed'}`;
 
   return (
-    <header className={headerClassName}>
+    <header className="nav topbar glass">
       <div className="topbar-primary-row">
-        <button
-          type="button"
-          className="mobile-nav-toggle"
-          onClick={onToggleMobileNav}
-          aria-label={mobileNavOpen ? 'Close navigation' : 'Open navigation'}
-          aria-expanded={mobileNavOpen}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        <details className="mobile-menu-details">
+          <summary className="mobile-nav-toggle" aria-label="Open navigation">
+            <span />
+            <span />
+            <span />
+          </summary>
 
-        <NavLink to="/" className="brand" onClick={onCloseMobileNav}>
+          <nav className="mobile-menu-links" aria-label="Mobile navigation">
+            <NavLinks featured={featured} />
+          </nav>
+        </details>
+
+        <NavLink to="/" className="brand">
           <img
             src={theme === 'dark' ? '/brand-logo-dark.svg' : '/brand-logo-light.svg'}
             alt="Senior Dev Accelerator"
@@ -68,22 +80,9 @@ export default function Navbar(props) {
         <GlobalSearch />
       </div>
 
-      <div className="topbar-expandable">
-        <nav className="topbar-links">
-          {featured.map((category) => (
-            <NavLink
-              key={category.id}
-              to={categoryPath(category)}
-              onClick={onCloseMobileNav}
-            >
-              {category.shortName || category.name}
-            </NavLink>
-          ))}
-
-          <NavLink to="/random" onClick={onCloseMobileNav}>Random</NavLink>
-          <NavLink to="/progress" onClick={onCloseMobileNav}>Progress</NavLink>
-        </nav>
-      </div>
+      <nav className="topbar-links desktop-topbar-links" aria-label="Primary">
+        <NavLinks featured={featured} />
+      </nav>
     </header>
   );
 }
