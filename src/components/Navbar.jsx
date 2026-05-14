@@ -12,12 +12,6 @@ function pageTitle(pathname) {
   if (pathname === '/progress') return 'Progress';
   if (pathname.startsWith('/problem/')) return 'Focused Problem';
 
-  const categoryMatch = pathname.match(/^\/category\/([^/]+)/);
-  if (categoryMatch) {
-    const category = categories.find((item) => item.id === categoryMatch[1]);
-    return category?.name || 'Category Practice';
-  }
-
   return 'Senior Dev Accelerator';
 }
 
@@ -27,50 +21,63 @@ function categoryPath(category) {
   return category.route || `/category/${category.id}`;
 }
 
-export default function Navbar() {
+export default function Navbar(props) {
+  const { mobileNavOpen, onToggleMobileNav, onCloseMobileNav } = props;
   const { theme, setTheme } = usePreferences();
   const location = useLocation();
-  const featured = categories
-    .filter((category) => category.featured !== false)
-    .slice(0, 2);
+
+  const featured = categories.filter((category) => category.featured !== false).slice(0, 2);
 
   return (
     <header className="nav topbar glass">
-      <NavLink to="/" className="brand" aria-label="Senior Dev Accelerator home">
-        <img
-          src={theme === 'dark' ? '/brand-logo-dark.svg' : '/brand-logo-light.svg'}
-          alt="Senior Dev Accelerator"
-          className="brand-logo"
-        />
-        <span className="brand-text-fallback">Senior Dev Accelerator</span>
-      </NavLink>
+      <div className="topbar-primary-row">
+        <button
+          type="button"
+          className="mobile-nav-toggle"
+          onClick={onToggleMobileNav}
+          aria-expanded={mobileNavOpen}
+        >
+          {mobileNavOpen ? 'Close' : 'Menu'}
+        </button>
 
-      <span className="topbar-title">{pageTitle(location.pathname)}</span>
+        <NavLink to="/" className="brand" onClick={onCloseMobileNav}>
+          <img
+            src={theme === 'dark' ? '/brand-logo-dark.svg' : '/brand-logo-light.svg'}
+            alt="Senior Dev Accelerator"
+            className="brand-logo"
+          />
+          <span className="brand-text-fallback">Senior Dev Accelerator</span>
+        </NavLink>
 
-      <GlobalSearch />
+        <span className="topbar-title">{pageTitle(location.pathname)}</span>
 
-      <nav className="topbar-links" aria-label="Primary">
-        {featured.map((category) => (
-          <NavLink
-            key={category.id}
-            to={categoryPath(category)}
-          >
-            {category.shortName || category.name}
-          </NavLink>
-        ))}
+        <button
+          type="button"
+          className="icon-btn"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        >
+          {theme === 'dark' ? 'Light' : 'Dark'}
+        </button>
+      </div>
 
-        <NavLink to="/random">Random</NavLink>
-        <NavLink to="/progress">Progress</NavLink>
-      </nav>
+      <div className={`topbar-expandable ${mobileNavOpen ? 'open' : ''}`}>
+        <GlobalSearch />
 
-      <button
-        type="button"
-        className="icon-btn"
-        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      >
-        {theme === 'dark' ? 'Light' : 'Dark'}
-      </button>
+        <nav className="topbar-links">
+          {featured.map((category) => (
+            <NavLink
+              key={category.id}
+              to={categoryPath(category)}
+              onClick={onCloseMobileNav}
+            >
+              {category.shortName || category.name}
+            </NavLink>
+          ))}
+
+          <NavLink to="/random" onClick={onCloseMobileNav}>Random</NavLink>
+          <NavLink to="/progress" onClick={onCloseMobileNav}>Progress</NavLink>
+        </nav>
+      </div>
     </header>
   );
 }
