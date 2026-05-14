@@ -15,7 +15,9 @@ const DSAPage = lazy(() => import('./pages/DSAPage.jsx'));
 const SystemDesignPage = lazy(() => import('./pages/SystemDesignPage.jsx'));
 const CategoryPage = lazy(() => import('./pages/CategoryPage.jsx'));
 const RandomQuestionPage = lazy(() => import('./pages/RandomQuestionPage.jsx'));
+const RecentPage = lazy(() => import('./pages/RecentPage.jsx'));
 const ProgressPage = lazy(() => import('./pages/ProgressPage.jsx'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage.jsx'));
 const ProblemPage = lazy(() => import('./pages/ProblemPage.jsx'));
 
 function RouteScrollReset({ theme }) {
@@ -65,7 +67,9 @@ export default function App() {
               <Route path="/system-design" element={<SystemDesignPage />} />
               <Route path="/category/:categoryId" element={<CategoryPage />} />
               <Route path="/random" element={<RandomQuestionPage />} />
+              <Route path="/recent" element={<RecentPage />} />
               <Route path="/progress" element={<ProgressPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/problem/:questionId" element={<ProblemPage />} />
               <Route path="*" element={<section className="hero-card"><h1>Page not found</h1><p>Use the navigation to continue learning.</p><NavLink className="btn" to="/">Go home</NavLink></section>} />
             </Routes>
