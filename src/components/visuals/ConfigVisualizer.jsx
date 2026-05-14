@@ -1,8 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatVisualValue, getSemanticRoleClass, getVisualFrames } from './visualTypes.js';
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
+}
+
+function VisualLegend({ legend = [] }) {
+  if (!legend.length) return null;
+
+  return (
+    <div className="config-visual-legend" aria-label="Visual legend">
+      {legend.map((item) => (
+        <span className="config-visual-legend-item" key={`${item.role}-${item.label}`}>
+          <span aria-hidden="true">{item.marker || item.label}</span>
+          {item.label}
+        </span>
+      ))}
+    </div>
+  );
 }
 
 function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, onPrevious, onNext, onTogglePlay, children }) {
@@ -18,9 +33,12 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
         .config-visual-controls button { border: 1px solid rgba(86, 67, 42, 0.16); border-radius: 999px; background: rgba(255, 255, 255, 0.68); color: var(--text-strong, #2f261b); padding: 0.45rem 0.7rem; font: inherit; font-weight: 800; cursor: pointer; }
         .config-visual-controls button:disabled { cursor: not-allowed; opacity: 0.48; }
         .config-visual-controls span { margin-left: auto; color: var(--text-muted, #756a5a); font-size: 0.84rem; font-weight: 800; }
-        .config-visual-explanation { margin-top: 0.85rem; border-radius: 18px; background: rgba(255, 255, 255, 0.58); border: 1px solid rgba(86, 67, 42, 0.12); padding: 0.85rem; }
-        .config-visual-explanation strong { display: block; margin-bottom: 0.25rem; color: var(--text-strong, #2f261b); }
-        .config-visual-explanation p { margin: 0; color: var(--text-muted, #756a5a); line-height: 1.55; }
+        .config-visual-explanation, .config-visual-final { margin-top: 0.85rem; border-radius: 18px; background: rgba(255, 255, 255, 0.58); border: 1px solid rgba(86, 67, 42, 0.12); padding: 0.85rem; }
+        .config-visual-final { border-color: rgba(82, 116, 76, 0.24); background: rgba(82, 116, 76, 0.12); }
+        .config-visual-explanation strong, .config-visual-final strong { display: block; margin-bottom: 0.25rem; color: var(--text-strong, #2f261b); }
+        .config-visual-explanation p, .config-visual-final p { margin: 0; color: var(--text-muted, #756a5a); line-height: 1.55; }
+        .config-visual-legend { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.9rem 0; }
+        .config-visual-legend-item { display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid rgba(86, 67, 42, 0.12); background: rgba(255,255,255,0.5); border-radius: 999px; padding: 0.35rem 0.55rem; font-size: 0.8rem; color: var(--text-muted, #756a5a); }
         .config-visual-pill-list, .config-visual-state-values { display: flex; flex-wrap: wrap; gap: 0.45rem; }
         .config-visual-pill { border-radius: 999px; background: rgba(255, 255, 255, 0.58); border: 1px solid rgba(86, 67, 42, 0.12); padding: 0.4rem 0.62rem; font-weight: 800; color: var(--text-strong, #2f261b); }
         .config-visual-state-list { display: grid; gap: 0.45rem; }
@@ -32,12 +50,15 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
         .config-visual-state-value.infinite { color: #8c392c; font-weight: 900; }
         .config-visual-list { display: grid; gap: 0.6rem; }
         .config-visual-node { border: 1px solid rgba(86, 67, 42, 0.13); border-radius: 18px; background: rgba(255, 255, 255, 0.5); padding: 0.7rem; color: var(--text-strong, #2f261b); }
-        .config-visual-node.is-active, .config-visual-role-active, .config-visual-role-window, .config-visual-role-current { background: rgba(82, 116, 76, 0.16); border-color: rgba(82, 116, 76, 0.35); }
-        .config-visual-role-muted, .config-visual-role-visited { opacity: 0.72; }
+        .config-visual-role-active, .config-visual-role-window, .config-visual-role-current, .config-visual-role-add { background: rgba(82, 116, 76, 0.16); border-color: rgba(82, 116, 76, 0.35); }
+        .config-visual-role-muted, .config-visual-role-visited, .config-visual-role-remove { opacity: 0.72; }
         .config-visual-role-blocked, .config-visual-role-error, .config-visual-role-infinite { background: rgba(140, 57, 44, 0.1); border-color: rgba(140, 57, 44, 0.22); color: #8c392c; }
-        .config-visual-role-goal, .config-visual-role-answer, .config-visual-role-success { background: rgba(82, 116, 76, 0.12); border-color: rgba(82, 116, 76, 0.26); }
+        .config-visual-role-goal, .config-visual-role-answer, .config-visual-role-success, .config-visual-role-best { background: rgba(82, 116, 76, 0.12); border-color: rgba(82, 116, 76, 0.26); }
         .config-visual-array { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+        .config-visual-array-cell { display: grid; justify-items: center; gap: 0.25rem; }
+        .config-visual-array-index { color: var(--text-muted, #756a5a); font-size: 0.74rem; font-weight: 800; }
         .config-visual-array-item { min-width: 44px; min-height: 44px; display: grid; place-items: center; border-radius: 15px; border: 1px solid rgba(86, 67, 42, 0.14); background: rgba(255,255,255,0.54); font-weight: 900; }
+        .config-visual-array-caption { min-height: 1rem; color: var(--text-muted, #756a5a); font-size: 0.72rem; font-weight: 800; }
         .config-visual-table { width: 100%; border-collapse: separate; border-spacing: 0.35rem; }
         .config-visual-table th, .config-visual-table td { border: 1px solid rgba(86, 67, 42, 0.12); background: rgba(255,255,255,0.48); border-radius: 12px; padding: 0.55rem; text-align: left; }
         .config-visual-timeline { display: grid; gap: 0.65rem; }
@@ -54,6 +75,7 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
           {diagram.description ? <p className="config-visual-muted">{diagram.description}</p> : null}
 
           {children}
+          <VisualLegend legend={diagram.legend} />
 
           {frameCount > 1 ? (
             <div className="config-visual-controls" data-no-card-nav>
@@ -68,6 +90,13 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
             <strong>{activeFrame?.title || 'Current step'}</strong>
             <p>{activeFrame?.description || diagram.summary}</p>
           </div>
+
+          {activeFrame?.finalResult ? (
+            <div className="config-visual-final" role="status">
+              <strong>{activeFrame.finalResult.title || 'Final answer'}</strong>
+              <p>{activeFrame.finalResult.body}</p>
+            </div>
+          ) : null}
         </div>
 
         <StatePanel diagram={diagram} frames={getVisualFrames(diagram)} activeIndex={activeIndex} />
@@ -123,8 +152,10 @@ function ArrayView({ diagram, frame }) {
         const inRange = Array.isArray(activeRange) && index >= activeRange[0] && index <= activeRange[1];
         const role = override.role || (inRange ? 'window' : 'neutral');
         return (
-          <span className={`config-visual-array-item ${getSemanticRoleClass(role)}`} key={`${value}-${index}`}>
-            {override.label || formatVisualValue(value)}
+          <span className="config-visual-array-cell" key={`${value}-${index}`}>
+            <span className="config-visual-array-index">{index}</span>
+            <span className={`config-visual-array-item ${getSemanticRoleClass(role)}`}>{override.label || formatVisualValue(value)}</span>
+            <span className="config-visual-array-caption">{override.caption || (inRange ? 'window' : '')}</span>
           </span>
         );
       })}
@@ -159,11 +190,7 @@ function TableView({ diagram, frame }) {
 
   return (
     <table className="config-visual-table">
-      <thead>
-        <tr>
-          {columns.map((column) => <th key={column}>{column}</th>)}
-        </tr>
-      </thead>
+      <thead><tr>{columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
       <tbody>
         {rows.map((row, rowIndex) => (
           <tr key={`row-${rowIndex}`}>
@@ -205,21 +232,12 @@ function GraphLikeView({ diagram, frame }) {
         {nodes.map((node) => {
           const id = node.id || node.label;
           const role = activeIds.has(id) ? 'active' : visitedIds.has(id) ? 'visited' : node.role;
-          return (
-            <span className={`config-visual-pill ${getSemanticRoleClass(role)}`} key={id}>
-              {node.label || id}
-            </span>
-          );
+          return <span className={`config-visual-pill ${getSemanticRoleClass(role)}`} key={id}>{node.label || id}</span>;
         })}
       </div>
-
       {edges.length ? (
         <div className="config-visual-edge-list">
-          {edges.map((edge, index) => (
-            <span className="config-visual-state-value" key={`edge-${index}`}>
-              {edge.from} → {edge.to}{edge.weight !== undefined ? ` (${edge.weight})` : ''}
-            </span>
-          ))}
+          {edges.map((edge, index) => <span className="config-visual-state-value" key={`edge-${index}`}>{edge.from} → {edge.to}{edge.weight !== undefined ? ` (${edge.weight})` : ''}</span>)}
         </div>
       ) : null}
     </div>
@@ -239,7 +257,6 @@ export default function ConfigVisualizer({ diagram }) {
 
   useEffect(() => {
     if (!playing || frames.length <= 1) return undefined;
-
     const timer = window.setInterval(() => {
       setActiveIndex((current) => {
         if (current >= frames.length - 1) {
@@ -249,7 +266,6 @@ export default function ConfigVisualizer({ diagram }) {
         return current + 1;
       });
     }, diagram?.intervalMs || 1400);
-
     return () => window.clearInterval(timer);
   }, [diagram?.intervalMs, frames.length, playing]);
 
