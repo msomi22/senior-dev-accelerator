@@ -1,6 +1,12 @@
 import { siteConfig } from '../config/siteConfig.js';
 
-const defaults = { theme: 'light', completed: {}, randomCount: 0, selectedTopics: {} };
+const defaults = {
+  theme: 'light',
+  completed: {},
+  randomCount: 0,
+  selectedTopics: {},
+  selectedAnswers: {}
+};
 
 export const storageService = {
   read() {
@@ -13,6 +19,28 @@ export const storageService = {
     const completed = { ...state.completed, [id]: !state.completed[id] };
     this.write({ completed });
     return completed;
+  },
+  markComplete(id) {
+    const state = this.read();
+    if (state.completed[id]) return state.completed;
+
+    const completed = { ...state.completed, [id]: true };
+    this.write({ completed });
+    return completed;
+  },
+  setSelectedAnswer(questionId, answerIndex) {
+    const state = this.read();
+    const selectedAnswers = {
+      ...state.selectedAnswers,
+      [questionId]: answerIndex
+    };
+
+    this.write({ selectedAnswers });
+    return selectedAnswers;
+  },
+  getSelectedAnswer(questionId) {
+    const answer = this.read().selectedAnswers?.[questionId];
+    return Number.isInteger(answer) ? answer : null;
   },
   setTheme(theme) { this.write({ theme }); },
   setSelectedTopic(category, topicId) {
