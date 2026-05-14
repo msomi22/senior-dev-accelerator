@@ -42,7 +42,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="nav topbar">
+      <header className={`nav topbar ${mobileMenuOpen ? 'is-menu-open' : ''}`}>
         <button
           type="button"
           className="mobile-menu-toggle"
@@ -68,6 +68,14 @@ export default function Navbar() {
           {theme === 'dark' ? 'Light' : 'Dark'}
         </button>
       </header>
+
+      <button
+        type="button"
+        className={`mobile-nav-backdrop ${mobileMenuOpen ? 'is-open' : ''}`}
+        aria-hidden="true"
+        tabIndex={-1}
+        onClick={() => setMobileMenuOpen(false)}
+      />
 
       <nav
         id="mobile-nav-panel"
