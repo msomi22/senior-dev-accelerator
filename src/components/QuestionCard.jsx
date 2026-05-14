@@ -52,6 +52,16 @@ function getProblemSummary(question) {
   );
 }
 
+function getDifficultyClass(difficulty) {
+  const normalized = String(difficulty || '').toLowerCase();
+
+  if (normalized.includes('easy')) return 'difficulty-pill difficulty-easy';
+  if (normalized.includes('medium')) return 'difficulty-pill difficulty-medium';
+  if (normalized.includes('hard')) return 'difficulty-pill difficulty-hard';
+
+  return 'difficulty-pill';
+}
+
 function ListBlock({ title, items, ordered = false }) {
   if (!items?.length) return null;
   const Tag = ordered ? 'ol' : 'ul';
@@ -248,6 +258,7 @@ function QuestionCard({
   const isMcq = question.type === 'mcq' && question.options?.length;
   const typeLabel = TYPE_LABELS[question.type] || 'Problem';
   const typeClass = `type-${question.type || 'learning'}`;
+  const difficultyClass = getDifficultyClass(question.difficulty);
   const primaryPattern = getPrimaryPattern(question);
   const summary = getProblemSummary(question);
 
@@ -313,7 +324,7 @@ function QuestionCard({
       >
         <div className="q-top">
           <div className="meta-strip">
-            <span className="pill">{question.difficulty || 'Practice'}</span>
+            <span className={`pill ${difficultyClass}`}>{question.difficulty || 'Practice'}</span>
             <span className={`pill type-pill ${typeClass}`}>{primaryPattern}</span>
           </div>
 
@@ -347,7 +358,7 @@ function QuestionCard({
       <div className="q-top">
         <div className="meta-strip">
           <span className={`pill type-pill ${typeClass}`}>{typeLabel}</span>
-          <span className="pill">{question.difficulty}</span>
+          <span className={`pill ${difficultyClass}`}>{question.difficulty}</span>
           <span className="time-pill">⏱ {question.estimatedTime || '10 min'}</span>
         </div>
 
