@@ -1,7 +1,16 @@
-import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import GlobalSearch from './GlobalSearch.jsx';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { categories } from '../services/questionBankService.js';
+
+const MOBILE_NAV_ITEMS = [
+  { to: '/', label: 'Dashboard', end: true },
+  { to: '/dsa', label: 'Categories' },
+  { to: '/recent', label: 'Recent' },
+  { to: '/progress', label: 'Progress' },
+  { to: '/settings', label: 'Settings' }
+];
 
 function pageTitle(pathname) {
   if (pathname === '/') return 'Learning Dashboard';
@@ -25,20 +34,57 @@ function pageTitle(pathname) {
 export default function Navbar() {
   const { theme, setTheme } = usePreferences();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
-    <header className="nav topbar">
-      <span className="topbar-title">{pageTitle(location.pathname)}</span>
+    <>
+      <header className="nav topbar">
+        <button
+          type="button"
+          className="mobile-menu-toggle"
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-nav-panel"
+          onClick={() => setMobileMenuOpen((current) => !current)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
 
-      <GlobalSearch />
+        <span className="topbar-title">{pageTitle(location.pathname)}</span>
 
-      <button
-        className="icon-btn"
-        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        <GlobalSearch />
+
+        <button
+          className="icon-btn"
+          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        >
+          {theme === 'dark' ? 'Light' : 'Dark'}
+        </button>
+      </header>
+
+      <nav
+        id="mobile-nav-panel"
+        className={`mobile-nav-panel ${mobileMenuOpen ? 'is-open' : ''}`}
+        aria-label="Mobile navigation"
       >
-        {theme === 'dark' ? 'Light' : 'Dark'}
-      </button>
-    </header>
+        {MOBILE_NAV_ITEMS.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) => (isActive ? 'active' : '')}
+          >
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+    </>
   );
 }
