@@ -33,15 +33,6 @@
   --accent-glow: rgba(56, 232, 200, 0.30);
   --accent-dark: #1dbfa3;
 
-  --dark-cta-bg: rgba(20, 184, 166, 0.14);
-  --dark-cta-bg-hover: rgba(20, 184, 166, 0.22);
-  --dark-cta-surface: rgba(15, 23, 42, 0.78);
-  --dark-cta-surface-hover: rgba(15, 23, 42, 0.92);
-  --dark-cta-text: #99f6e4;
-  --dark-cta-border: rgba(94, 234, 212, 0.75);
-  --dark-cta-border-soft: rgba(94, 234, 212, 0.65);
-  --dark-cta-focus: rgba(94, 234, 212, 0.16);
-
   --ok: #3ecf8e;
   --ok-dim: rgba(62, 207, 142, 0.12);
   --warning: #f0c040;
@@ -258,7 +249,7 @@
 .app-shell.dark .topic-tab:hover,
 .app-shell.dark .category-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(94, 234, 212, 0.46);
+  border-color: rgba(56, 232, 200, 0.25);
   background: var(--bg-card-hover);
   box-shadow: var(--shadow), var(--shadow-glow);
 }
@@ -319,55 +310,28 @@
 .app-shell.dark .page-btn.active,
 .app-shell.dark .clear-search:not(.ghost),
 .app-shell.dark .icon-btn {
-  border: 1px solid var(--dark-cta-border);
-  background: var(--dark-cta-bg);
-  color: var(--dark-cta-text);
-  box-shadow: 0 0 0 1px rgba(94, 234, 212, 0.08), 0 0 18px rgba(94, 234, 212, 0.10);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: var(--bg);
+  box-shadow: 0 0 18px rgba(56, 232, 200, 0.20);
 }
 
 .app-shell.dark .btn.ghost,
 .app-shell.dark .mark,
 .app-shell.dark .page-btn,
 .app-shell.dark .clear-search {
-  border: 1px solid var(--dark-cta-border-soft);
-  background: var(--dark-cta-surface);
-  color: var(--dark-cta-text);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-primary);
   box-shadow: none;
 }
 
-.app-shell.dark .btn:hover,
 .app-shell.dark .btn.ghost:hover,
 .app-shell.dark .mark:hover,
-.app-shell.dark .page-btn:hover,
-.app-shell.dark .clear-search:hover,
-.app-shell.dark .icon-btn:hover {
-  border-color: var(--accent);
-  background: var(--dark-cta-bg-hover);
-  color: var(--dark-cta-text);
-  box-shadow: 0 0 0 3px var(--dark-cta-focus);
-}
-
-.app-shell.dark .btn:focus-visible,
-.app-shell.dark .btn.ghost:focus-visible,
-.app-shell.dark .mark:focus-visible,
-.app-shell.dark .page-btn:focus-visible,
-.app-shell.dark .clear-search:focus-visible,
-.app-shell.dark .icon-btn:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--dark-cta-focus);
-}
-
-.app-shell.dark .btn:disabled,
-.app-shell.dark .page-btn:disabled,
-.app-shell.dark .clear-search:disabled,
-.app-shell.dark .icon-btn:disabled {
-  border-color: rgba(148, 163, 184, 0.28);
-  background: rgba(15, 23, 42, 0.45);
-  color: rgba(148, 163, 184, 0.75);
-  box-shadow: none;
-  opacity: 1;
-  cursor: not-allowed;
+.app-shell.dark .page-btn:hover:not(.active),
+.app-shell.dark .clear-search:hover {
+  border-color: rgba(56, 232, 200, 0.25);
+  background: var(--surface-hover);
+  color: var(--accent);
 }
 
 .app-shell.dark input,
@@ -421,24 +385,14 @@
 .app-shell.dark .topic-tab.active {
   border-color: var(--accent);
   outline: 0;
-  background: var(--dark-cta-bg);
+  background: var(--accent-dim);
   box-shadow: var(--shadow-glow);
 }
 
-.app-shell.dark .topic-tab.active strong,
-.app-shell.dark .topic-tab.active em {
-  color: var(--dark-cta-text);
-}
-
 .app-shell.dark .advanced-search-panel > summary::after {
-  border-color: var(--dark-cta-border-soft);
-  color: var(--dark-cta-text);
-  background: var(--dark-cta-surface);
-}
-
-.app-shell.dark .advanced-search-panel > summary:hover::after {
-  border-color: var(--accent);
-  background: var(--dark-cta-bg-hover);
+  border-color: var(--line);
+  color: var(--accent);
+  background: var(--surface);
 }
 
 .app-shell.dark .advanced-search-panel .search-panel {
@@ -447,7 +401,7 @@
 }
 
 .app-shell.dark .option-btn {
-  background: var(--dark-cta-surface);
+  background: var(--surface);
 }
 
 .app-shell.dark .option-btn strong {
@@ -456,10 +410,8 @@
 }
 
 .app-shell.dark .option-btn.selected {
-  border-color: var(--dark-cta-border);
-  background: var(--dark-cta-bg);
-  color: var(--dark-cta-text);
-  box-shadow: 0 0 0 3px var(--dark-cta-focus);
+  border-color: var(--accent);
+  background: var(--accent-dim);
 }
 
 .app-shell.dark .option-btn.correct,
@@ -522,8 +474,8 @@
 }
 
 .app-shell.dark .coffee {
-  border: 1px solid var(--dark-cta-border-soft);
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.78), rgba(20, 184, 166, 0.10));
+  border: 1px solid rgba(56, 232, 200, 0.25);
+  background: linear-gradient(135deg, rgba(56, 232, 200, 0.08), rgba(56, 232, 200, 0.04));
 }
 
 .app-shell.dark .visual-walkthrough,
@@ -534,9 +486,8 @@
 .app-shell.dark .visual-walkthrough .active,
 .app-shell.dark .walkthrough-card .active,
 .app-shell.dark .active-step {
-  border-color: var(--dark-cta-border);
-  background: var(--dark-cta-bg);
-  color: var(--dark-cta-text);
+  border-color: rgba(56, 232, 200, 0.25);
+  background: var(--accent-dim);
 }
 
 @media (max-width: 900px) {
