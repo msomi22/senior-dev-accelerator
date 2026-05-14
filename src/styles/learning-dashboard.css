@@ -28,6 +28,9 @@
 }
 
 .learning-hero-panel strong {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
   font-size: 1.8rem;
   line-height: 1.2;
 }
