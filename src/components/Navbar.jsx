@@ -27,9 +27,10 @@ export default function Navbar(props) {
   const location = useLocation();
 
   const featured = categories.filter((category) => category.featured !== false).slice(0, 2);
+  const headerClassName = `nav topbar glass ${mobileNavOpen ? 'mobile-menu-open' : 'mobile-menu-closed'}`;
 
   return (
-    <header className="nav topbar glass">
+    <header className={headerClassName}>
       <div className="topbar-primary-row">
         <button
           type="button"
