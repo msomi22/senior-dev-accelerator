@@ -63,9 +63,11 @@ export default function Navbar(props) {
         </button>
       </div>
 
-      <div className="topbar-expandable">
+      <div className="topbar-search-row">
         <GlobalSearch />
+      </div>
 
+      <div className="topbar-expandable">
         <nav className="topbar-links">
           {featured.map((category) => (
             <NavLink
