@@ -143,13 +143,14 @@ export default function GridVisualizer({ diagram }) {
   return (
     <section className={`grid-visualizer grid-visualizer-${diagram.variant || 'default'}`} aria-label={diagram.title || 'Grid visual walkthrough'}>
       <style>{`
-        .grid-visualizer { display: grid; gap: 1rem; }
-        .grid-visualizer-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr); gap: 1rem; align-items: start; }
-        .grid-visualizer-card { border: 1px solid rgba(86, 67, 42, 0.16); border-radius: 24px; background: rgba(255, 252, 244, 0.78); box-shadow: 0 18px 45px rgba(74, 53, 27, 0.08); padding: 1rem; }
+        .grid-visualizer { display: grid; gap: 1rem; max-width: 100%; min-width: 0; overflow: hidden; }
+        .grid-visualizer * { box-sizing: border-box; }
+        .grid-visualizer-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr); gap: 1rem; align-items: start; max-width: 100%; min-width: 0; overflow: hidden; }
+        .grid-visualizer-card { min-width: 0; max-width: 100%; overflow: hidden; border: 1px solid rgba(86, 67, 42, 0.16); border-radius: 24px; background: rgba(255, 252, 244, 0.78); box-shadow: 0 18px 45px rgba(74, 53, 27, 0.08); padding: 1rem; }
         .grid-visualizer-card h3 { margin: 0 0 0.35rem; font-family: var(--font-serif); font-size: 1.1rem; color: var(--text-strong, #2f261b); }
         .grid-visualizer-muted { margin: 0 0 0.85rem; color: var(--text-muted, #756a5a); font-size: 0.92rem; line-height: 1.55; }
-        .grid-visualizer-board { display: grid; grid-template-columns: minmax(4.8rem, auto) repeat(var(--grid-columns), minmax(44px, 1fr)); gap: 0.45rem; overflow-x: auto; padding-bottom: 0.25rem; }
-        .grid-visualizer-column-label, .grid-visualizer-row-label { color: var(--text-muted, #756a5a); font-size: 0.78rem; font-weight: 800; text-align: center; }
+        .grid-visualizer-board { display: grid; grid-template-columns: minmax(4.8rem, auto) repeat(var(--grid-columns), minmax(44px, 1fr)); gap: 0.45rem; max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; padding-bottom: 0.25rem; -webkit-overflow-scrolling: touch; }
+        .grid-visualizer-column-label, .grid-visualizer-row-label { min-width: 0; color: var(--text-muted, #756a5a); font-size: 0.78rem; font-weight: 800; text-align: center; }
         .grid-visualizer-row-label { display: flex; align-items: center; justify-content: flex-start; text-align: left; }
         .grid-visualizer-cell { min-width: 44px; min-height: 44px; border: 1px solid rgba(86, 67, 42, 0.14); border-radius: 15px; background: rgba(255, 255, 255, 0.54); display: grid; place-items: center; font-weight: 900; transition: transform 160ms ease, background 160ms ease, border-color 160ms ease; }
         .grid-visualizer-cell.role-open { color: var(--text-muted, #756a5a); }
@@ -158,7 +159,7 @@ export default function GridVisualizer({ diagram }) {
         .grid-visualizer-cell.role-goal { box-shadow: inset 0 0 0 1px rgba(78, 116, 76, 0.22); }
         .grid-visualizer-cell.is-active-column { background: rgba(234, 190, 117, 0.18); border-color: rgba(154, 104, 34, 0.28); }
         .grid-visualizer-legend { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.9rem 0; }
-        .grid-visualizer-legend-item { display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid rgba(86, 67, 42, 0.12); background: rgba(255,255,255,0.5); border-radius: 999px; padding: 0.35rem 0.55rem; font-size: 0.8rem; color: var(--text-muted, #756a5a); }
+        .grid-visualizer-legend-item { display: inline-flex; align-items: center; gap: 0.35rem; max-width: 100%; border: 1px solid rgba(86, 67, 42, 0.12); background: rgba(255,255,255,0.5); border-radius: 999px; padding: 0.35rem 0.55rem; font-size: 0.8rem; color: var(--text-muted, #756a5a); }
         .grid-visualizer-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.9rem; }
         .grid-visualizer-controls button { border: 1px solid rgba(86, 67, 42, 0.16); border-radius: 999px; background: rgba(255, 255, 255, 0.68); color: var(--text-strong, #2f261b); padding: 0.45rem 0.7rem; font: inherit; font-weight: 800; cursor: pointer; }
         .grid-visualizer-controls button:disabled { cursor: not-allowed; opacity: 0.48; }
@@ -170,14 +171,23 @@ export default function GridVisualizer({ diagram }) {
         .grid-visualizer-state-row { display: grid; grid-template-columns: 3.2rem minmax(0, 1fr); gap: 0.5rem; align-items: center; border: 1px solid rgba(86, 67, 42, 0.12); border-radius: 16px; background: rgba(255,255,255,0.48); padding: 0.55rem; }
         .grid-visualizer-state-row.active { background: rgba(234, 190, 117, 0.2); border-color: rgba(154, 104, 34, 0.28); }
         .grid-visualizer-state-label { font-weight: 900; color: var(--text-strong, #2f261b); }
-        .grid-visualizer-state-values { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .grid-visualizer-state-values { display: flex; flex-wrap: wrap; gap: 0.4rem; min-width: 0; }
         .grid-visualizer-state-value { border-radius: 999px; background: rgba(255, 252, 244, 0.9); border: 1px solid rgba(86, 67, 42, 0.12); padding: 0.25rem 0.45rem; font-family: var(--font-mono); font-size: 0.8rem; }
         .grid-visualizer-state-value.infinite { color: #8c392c; font-weight: 900; }
         .grid-visualizer-state-row p { grid-column: 2; margin: -0.18rem 0 0; color: var(--text-muted, #756a5a); font-size: 0.78rem; }
         .grid-visualizer-final { border: 1px solid rgba(82, 116, 76, 0.24); background: rgba(82, 116, 76, 0.12); border-radius: 20px; padding: 0.9rem; margin-top: 1rem; }
         .grid-visualizer-final strong { display: block; margin-bottom: 0.25rem; color: var(--text-strong, #2f261b); }
         .grid-visualizer-final p { margin: 0; color: var(--text-muted, #756a5a); }
-        @media (max-width: 860px) { .grid-visualizer-layout { grid-template-columns: 1fr; } .grid-visualizer-controls span { width: 100%; margin-left: 0; } }
+        @media (max-width: 860px) {
+          .grid-visualizer { overflow: visible; }
+          .grid-visualizer-layout { grid-template-columns: minmax(0, 1fr); }
+          .grid-visualizer-card { border-radius: 18px; padding: 0.8rem; }
+          .grid-visualizer-board { grid-template-columns: minmax(3.4rem, auto) repeat(var(--grid-columns), minmax(36px, 1fr)); gap: 0.3rem; }
+          .grid-visualizer-cell { min-width: 36px; min-height: 36px; border-radius: 12px; }
+          .grid-visualizer-column-label, .grid-visualizer-row-label { font-size: 0.72rem; }
+          .grid-visualizer-legend { gap: 0.35rem; }
+          .grid-visualizer-controls span { width: 100%; margin-left: 0; }
+        }
       `}</style>
 
       <div className="grid-visualizer-layout">
