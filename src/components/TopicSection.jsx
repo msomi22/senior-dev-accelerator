@@ -89,7 +89,7 @@ function TopicSection({
       <div className="section-head">
         <div>
           <p className="eyebrow">
-            {totalQuestions} examples
+            {totalQuestions} problems
           </p>
 
           <h2>{topic.name}</h2>
@@ -100,10 +100,8 @@ function TopicSection({
             {activeDifficulty !== 'all'
               ? `Showing ${activeDifficulty} questions only. `
               : ''}
-            Showing questions{' '}
-            {totalQuestions ? pageStart + 1 : 0}-{pageEnd} of{' '}
-            {totalQuestions}. This topic is paginated so large banks
-            stay clean and fast.
+            Showing {totalQuestions ? pageStart + 1 : 0}-{pageEnd} of{' '}
+            {totalQuestions} problems.
           </p>
         </div>
 
@@ -122,13 +120,14 @@ function TopicSection({
           <p>Try another difficulty or clear the filter.</p>
         </div>
       ) : (
-        <div className="card-grid compact-grid">
+        <div className="card-grid compact-grid problem-list-grid">
           {visibleQuestions.map((question) => (
             <QuestionCard
               key={question.id}
               question={question}
               completed={!!completed[question.id]}
               onToggle={onToggle}
+              compact
             />
           ))}
         </div>
