@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import RoadDpWalkthrough from './RoadDpWalkthrough.jsx';
 
 function formatMetricLabel(key) {
   return key
@@ -100,6 +101,10 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
 }
 
 function VisualRail({ diagram }) {
+  if (diagram?.type === 'road-dp') {
+    return <RoadDpWalkthrough visual={diagram} />;
+  }
+
   const frames = diagram?.frames || [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
