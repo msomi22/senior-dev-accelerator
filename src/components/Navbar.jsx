@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import GlobalSearch from './GlobalSearch.jsx';
 import { usePreferences } from '../hooks/usePreferences.js';
@@ -21,17 +22,17 @@ function categoryPath(category) {
   return category.route || `/category/${category.id}`;
 }
 
-function NavLinks({ featured }) {
+function NavLinks({ featured, onNavigate }) {
   return (
     <>
       {featured.map((category) => (
-        <NavLink key={category.id} to={categoryPath(category)}>
+        <NavLink key={category.id} to={categoryPath(category)} onClick={onNavigate}>
           {category.shortName || category.name}
         </NavLink>
       ))}
 
-      <NavLink to="/random">Random</NavLink>
-      <NavLink to="/progress">Progress</NavLink>
+      <NavLink to="/random" onClick={onNavigate}>Random</NavLink>
+      <NavLink to="/progress" onClick={onNavigate}>Progress</NavLink>
     </>
   );
 }
@@ -39,24 +40,25 @@ function NavLinks({ featured }) {
 export default function Navbar() {
   const { theme, setTheme } = usePreferences();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const featured = categories.filter((category) => category.featured !== false).slice(0, 2);
 
   return (
     <header className="nav topbar glass">
       <div className="topbar-primary-row">
-        <details className="mobile-menu-details">
-          <summary className="mobile-nav-toggle" aria-label="Open navigation">
-            <span />
-            <span />
-            <span />
-          </summary>
+        <button
+          type="button"
+          className="mobile-nav-toggle"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          aria-label={mobileMenuOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={mobileMenuOpen}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
 
-          <nav className="mobile-menu-links" aria-label="Mobile navigation">
-            <NavLinks featured={featured} />
-          </nav>
-        </details>
-
-        <NavLink to="/" className="brand">
+        <NavLink to="/" className="brand" onClick={() => setMobileMenuOpen(false)}>
           <img
             src={theme === 'dark' ? '/brand-logo-dark.svg' : '/brand-logo-light.svg'}
             alt="Senior Dev Accelerator"
@@ -79,6 +81,14 @@ export default function Navbar() {
       <div className="topbar-search-row">
         <GlobalSearch />
       </div>
+
+      <nav
+        className="mobile-menu-links"
+        aria-label="Mobile navigation"
+        style={{ display: mobileMenuOpen ? 'flex' : 'none' }}
+      >
+        <NavLinks featured={featured} onNavigate={() => setMobileMenuOpen(false)} />
+      </nav>
 
       <nav className="topbar-links desktop-topbar-links" aria-label="Primary">
         <NavLinks featured={featured} />
