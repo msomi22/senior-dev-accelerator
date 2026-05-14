@@ -6,14 +6,13 @@ import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
 
 function CategoryCard({ category }) {
   return (
-    <Link className="category-card scalable-category-card" to={category.route || `/category/${category.id}`}>
+    <Link className="category-card scalable-category-card phase-one-category-card" to={category.route || `/category/${category.id}`}>
       <div className="category-card-top">
         <span className="eyebrow">{category.domain || 'Learning path'}</span>
         {category.featured ? <small className="featured-badge">Featured</small> : null}
       </div>
       <strong>{category.name}</strong>
-      <p>{category.description}</p>
-      <div className="category-stats-row">
+      <div className="category-stats-row" aria-label={`${category.name} metadata`}>
         <span>{category.topicCount ?? '…'} topics</span>
         <span>{category.quizCount ?? '…'} questions</span>
         <span>{category.progressPercent ?? 0}% done</span>
@@ -107,12 +106,12 @@ export default function CategoryLibrary({ categories = [], completed = {}, title
   }
 
   return (
-    <section className="category-library glass">
+    <section className="category-library glass phase-one-category-library">
       <div className="section-head compact-head">
         <div>
-          <p className="eyebrow">Scalable learning library</p>
+          <p className="eyebrow">Problem library</p>
           <h2>{title}</h2>
-          <p>Search, filter, sort, and paginate categories so the UI remains clean even with 50+ learning paths.</p>
+          <p>Pick a category, then go straight into focused practice.</p>
         </div>
         <div className="library-count-pill">{filtered.length} categories</div>
       </div>
@@ -156,7 +155,7 @@ export default function CategoryLibrary({ categories = [], completed = {}, title
       {!visibleCategories.length ? (
         <div className="empty-state glass-lite">
           <h2>No categories found</h2>
-          <p>Try a broader search or clear the domain filter.</p>
+          <p>Try a shorter term, switch the domain to All, or clear the search.</p>
         </div>
       ) : null}
 
