@@ -1,0 +1,129 @@
+.topbar .global-search {
+  position: relative;
+  flex: 1 1 340px;
+  min-width: 220px;
+  max-width: 520px;
+}
+
+.global-search-control {
+  position: relative;
+  display: block;
+}
+
+.global-search-control svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  color: var(--text-secondary);
+}
+
+.global-search-control input {
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  padding: 0 14px 0 42px;
+  border-radius: 999px;
+  background: var(--button-secondary-bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.global-search-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  max-height: min(65vh, 480px);
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.global-search-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.global-search-results {
+  display: grid;
+  gap: 8px;
+}
+
+.global-search-result {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.global-search-result span,
+.global-search-result small,
+.global-search-empty p {
+  color: var(--text-secondary);
+}
+
+.global-search-result strong {
+  font-size: 0.94rem;
+}
+
+.global-search-head button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--button-secondary-bg);
+  color: var(--text-primary);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 980px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1200;
+  }
+
+  .topbar .global-search {
+    order: 20;
+    flex: 1 0 100%;
+    width: 100%;
+    max-width: none;
+    margin-top: 8px;
+  }
+
+  .global-search-panel {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-top: 10px;
+  }
+}
