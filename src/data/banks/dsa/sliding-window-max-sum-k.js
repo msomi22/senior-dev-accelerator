@@ -12,91 +12,138 @@ const slidingWindowMaxSumK = {
     'fixed-size-window',
     'maximum-sum',
     'array',
-    'invariant'
+    'invariant',
+    'rolling-aggregate'
   ],
   scenario:
     'You are building a lightweight analytics feature for a payments dashboard. Given a stream of daily transaction volumes, the product team wants to know the highest total volume seen in any continuous K-day period. For example, if each number is one day of volume, the answer should come from one contiguous block of exactly K days.',
   question:
-    'Given an array nums and an integer k, find the maximum sum of any contiguous subarray of exactly size k. Example: nums = [2, 1, 5, 1, 3, 2], k = 3. The best window is [5, 1, 3], so the answer is 9.',
-  starterThought:
-    'This is a fixed-size sliding window problem. The invariant is: after the first full window is formed, windowSum always represents the sum of exactly k contiguous elements between left and right. Every move removes the element leaving the window and adds the new element entering the window.',
+    'Given nums = [2, 1, 5, 1, 3, 2] and k = 3, find the maximum sum of any contiguous subarray of exactly size k. Output: 9, because the best window is [5, 1, 3].',
+  examples: [
+    'Input: nums = [2, 1, 5, 1, 3, 2], k = 3 → Output: 9',
+    'Window sums: [2,1,5] = 8, [1,5,1] = 7, [5,1,3] = 9, [1,3,2] = 6'
+  ],
   constraints: [
     'The window must contain exactly k elements, not at most k elements.',
     'If k is larger than the array length, the problem input is invalid or should return a clear fallback depending on product requirements.',
     'Negative numbers are allowed, so do not initialize the answer to 0 unless the problem guarantees non-negative input.',
     'The target runtime should be O(n), because each element should enter and leave the active window at most once.'
   ],
+  starterThought:
+    'This is a fixed-size sliding window problem. The invariant is: after the first full window is formed, windowSum always represents the sum of exactly k contiguous elements between left and right. Every transition removes the value leaving the left side of the window and adds the value entering from the right.',
+  intuition:
+    'Key Insight — Reuse Overlap: neighboring fixed-size windows share k - 1 elements. Instead of recomputing the sum of every window from scratch, carry a rolling sum. The transition is always: newWindowSum = oldWindowSum - outgoingValue + incomingValue.',
+  visualExplanation:
+    'Build the first full window [2, 1, 5] with sum 8. Then slide by one position at a time: remove the leftmost value, add the new rightmost value, and update the best sum seen.',
+  patternSignal:
+    'The phrase “contiguous subarray of exactly size k” is the strongest signal for a fixed-size sliding window. The state is small: left, right, windowSum, and maxSum.',
+  invariant:
+    'At the end of each transition, windowSum equals the sum of exactly k elements from left to right, and maxSum equals the best valid window sum seen so far.',
   hints: [
     'Start by computing the sum of the first k elements.',
     'When the window moves one step right, only two values change: one leaves, one enters.',
     'Do not recompute the sum of every k-sized block from scratch.',
     'Update maxSum after each valid k-sized window is formed.'
   ],
-  intuition:
-    'The brute-force solution recalculates mostly the same numbers again and again. Sliding Window works because neighboring windows overlap heavily. If the previous window sum is known, the next window sum is obtained by subtracting the outgoing value and adding the incoming value.',
-  visualExplanation:
-    'Window [2, 1, 5] has sum 8. Slide right: remove 2, add 1 → [1, 5, 1] sum 7. Slide right: remove 1, add 3 → [5, 1, 3] sum 9. Keep the best sum seen.',
   visualWalkthrough: {
     title: 'Fixed-size sliding window',
-    summary: 'Track one rolling window of size 3. Each slide removes the left value, adds the new right value, and updates the best sum.',
+    summary: 'Track one rolling window of size 3. Each transition removes the outgoing value, adds the incoming value, and updates the best sum.',
     diagram: {
       type: 'array',
       variant: 'sliding-window',
       title: 'Maximum Sum Subarray of Size K',
-      description: 'The highlighted range is the current fixed-size window. State values show the rolling sum and best answer so far.',
+      description: 'The highlighted cells form the current fixed-size window. Captions show which value leaves, which value enters, and where the best answer is found.',
       values: [2, 1, 5, 1, 3, 2],
-      stateTitle: 'Window state evolution',
-      stateDescription: 'Each frame stores the current window, its sum, and the best sum found so far.',
+      stateTitle: 'Window transition evolution',
+      stateDescription: 'Each row captures the exact rolling transition: outgoing value, incoming value, windowSum, and maxSum.',
+      legend: [
+        { role: 'window', marker: '▣', label: 'Current window' },
+        { role: 'remove', marker: '−', label: 'Outgoing value' },
+        { role: 'add', marker: '+', label: 'Incoming value' },
+        { role: 'best', marker: '★', label: 'Best window' }
+      ],
       frames: [
         {
-          title: 'Build the first full window',
+          title: 'Initialize first full window',
           activeRange: [0, 2],
+          items: [
+            { index: 0, role: 'window', caption: 'left' },
+            { index: 1, role: 'window', caption: 'inside' },
+            { index: 2, role: 'window', caption: 'right' }
+          ],
           state: {
-            label: '[0..2]',
-            values: { windowSum: 8, maxSum: 8 },
-            helper: '2 + 1 + 5 = 8'
+            label: 'Window [0..2]',
+            values: { left: 0, right: 2, outgoing: '-', incoming: '-', windowSum: 8, maxSum: 8 },
+            helper: '2 + 1 + 5 = 8. First valid answer candidate is 8.'
           },
-          description: 'Start with the first valid window of size k = 3. This gives the first candidate answer: 8.'
+          description: 'Build the first valid window of exactly k = 3 elements. Since this is the first valid window, both windowSum and maxSum become 8.'
         },
         {
-          title: 'Slide right once',
+          title: 'Transition: slide to [1..3]',
           activeRange: [1, 3],
+          items: [
+            { index: 0, role: 'remove', caption: 'remove 2' },
+            { index: 1, role: 'window', caption: 'left' },
+            { index: 2, role: 'window', caption: 'inside' },
+            { index: 3, role: 'add', caption: 'add 1' }
+          ],
           state: {
-            label: '[1..3]',
-            values: { remove: 2, add: 1, windowSum: 7, maxSum: 8 },
-            helper: '8 - 2 + 1 = 7'
+            label: 'Window [1..3]',
+            values: { left: 1, right: 3, outgoing: 2, incoming: 1, windowSum: 7, maxSum: 8 },
+            helper: 'Previous sum 8 - outgoing 2 + incoming 1 = 7.'
           },
-          description: 'Move the window one step right. Remove the outgoing 2 and add the incoming 1. The best answer remains 8.'
+          description: 'Slide the window one step right. The old left value 2 exits, the new right value 1 enters, and maxSum remains 8 because 7 is smaller.'
         },
         {
-          title: 'Find the best window',
+          title: 'Transition: slide to [2..4]',
           activeRange: [2, 4],
+          items: [
+            { index: 1, role: 'remove', caption: 'remove 1' },
+            { index: 2, role: 'best', caption: 'left' },
+            { index: 3, role: 'best', caption: 'inside' },
+            { index: 4, role: 'add', caption: 'add 3' }
+          ],
           state: {
-            label: '[2..4]',
-            values: { remove: 1, add: 3, windowSum: 9, maxSum: 9 },
-            helper: '7 - 1 + 3 = 9'
+            label: 'Window [2..4]',
+            values: { left: 2, right: 4, outgoing: 1, incoming: 3, windowSum: 9, maxSum: 9 },
+            helper: 'Previous sum 7 - outgoing 1 + incoming 3 = 9.'
           },
-          description: 'Slide again. The window [5, 1, 3] has sum 9, so maxSum becomes 9.'
+          description: 'This transition finds the best window. The current window [5, 1, 3] sums to 9, so maxSum is updated from 8 to 9.'
         },
         {
-          title: 'Check the final window',
+          title: 'Transition: slide to [3..5]',
           activeRange: [3, 5],
+          items: [
+            { index: 2, role: 'remove', caption: 'remove 5' },
+            { index: 3, role: 'window', caption: 'left' },
+            { index: 4, role: 'window', caption: 'inside' },
+            { index: 5, role: 'add', caption: 'add 2' }
+          ],
           state: {
-            label: '[3..5]',
-            values: { remove: 5, add: 2, windowSum: 6, maxSum: 9 },
-            helper: '9 - 5 + 2 = 6'
+            label: 'Window [3..5]',
+            values: { left: 3, right: 5, outgoing: 5, incoming: 2, windowSum: 6, maxSum: 9 },
+            helper: 'Previous sum 9 - outgoing 5 + incoming 2 = 6.'
           },
-          description: 'The final window has sum 6, so the best answer stays 9.'
+          description: 'The final valid window sums to 6. It does not beat the best sum 9, so maxSum stays unchanged.'
         },
         {
-          title: 'Return the answer',
+          title: 'Return maxSum',
           activeRange: [2, 4],
+          items: [
+            { index: 2, role: 'best', caption: 'best' },
+            { index: 3, role: 'best', caption: 'best' },
+            { index: 4, role: 'best', caption: 'best' }
+          ],
           state: {
             label: 'Answer',
-            values: { maxSum: 9 },
-            helper: 'Best window is [5, 1, 3].'
+            values: { bestWindow: '[5,1,3]', maxSum: 9 },
+            helper: 'All valid windows have been checked exactly once.'
           },
-          description: 'After all valid windows are checked, return maxSum = 9.'
+          description: 'The maximum sum among all fixed-size windows is 9, produced by the window [5, 1, 3].',
+          finalResult: {
+            title: 'Final answer',
+            body: 'Maximum sum subarray of size 3 = 9.'
+          }
         }
       ]
     }
