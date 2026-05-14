@@ -110,7 +110,6 @@ export default function CategoryLibrary({ categories = [], completed = {}, title
     <section className="category-library glass">
       <div className="section-head compact-head">
         <div>
-          <p className="eyebrow">Scalable learning library</p>
           <h2>{title}</h2>
           <p>Search, filter, sort, and paginate categories so the UI remains clean even with 50+ learning paths.</p>
         </div>

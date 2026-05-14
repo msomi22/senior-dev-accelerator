@@ -10,7 +10,6 @@ import {
 import { usePreferences } from '../hooks/usePreferences.js';
 import ProgressChart from '../components/ProgressChart.jsx';
 import BuyCoffeeButton from '../components/BuyCoffeeButton.jsx';
-import CategoryLibrary from '../components/CategoryLibrary.jsx';
 
 const emptySummary = { total: 0, done: 0, percent: 0 };
 
@@ -179,8 +178,6 @@ export default function Home() {
           </ul>
         </DashboardCard>
       </section>
-
-      <CategoryLibrary categories={categories} completed={completed} />
 
       <section className="learning-map glass">
         <h2>Senior thinking loop</h2>
