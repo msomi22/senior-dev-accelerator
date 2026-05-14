@@ -26,17 +26,21 @@
 .progress-card-head h1 {
   margin: 0 0 6px;
 
-  font-size: clamp(1.9rem, 3.2vw, 2.7rem);
-  line-height: 0.95;
-  letter-spacing: -0.035em;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: 0;
 }
 
 .progress-card-head p:last-child {
   margin: 0;
 
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.35;
+  color: var(--text-secondary, var(--muted));
+  font-size: 0.94rem;
+  line-height: 1.6;
 }
 
 .progress-toolbar {
