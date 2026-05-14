@@ -4,12 +4,9 @@ import { Link, useParams } from 'react-router-dom';
 import TopicSection from '../components/TopicSection.jsx';
 import TopicLibrary from '../components/TopicLibrary.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
-import SearchPanel from '../components/SearchPanel.jsx';
-import SearchResultsSection from '../components/SearchResultsSection.jsx';
 
 import { storageService } from '../services/storageService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
-import { useQuestionSearch } from '../hooks/useQuestionSearch.js';
 
 import {
   getCategory,
@@ -175,9 +172,6 @@ export default function CategoryPage({ fixedCategoryId }) {
     }
   }, [filteredTopics, selectedId]);
 
-  const searchTopics = useMemo(() => topics, [topics]);
-  const search = useQuestionSearch(searchTopics);
-
   const toggle = (id) => {
     setCompleted(storageService.toggleComplete(id));
   };
@@ -236,47 +230,6 @@ export default function CategoryPage({ fixedCategoryId }) {
               <p>Try another difficulty or status filter.</p>
             </div>
           )}
-
-          <details
-            className="advanced-search-panel glass-lite"
-            open={search.isActive}
-          >
-            <summary>
-              <span>Advanced problem search</span>
-              <small>
-                Search across titles, scenarios, tags, explanations, and
-                production notes.
-              </small>
-            </summary>
-
-            <SearchPanel
-              topics={topics}
-              query={search.query}
-              topicId={search.topicId}
-              difficulty={search.difficulty}
-              type={search.type}
-              onQueryChange={search.setQuery}
-              onTopicChange={search.setTopicId}
-              onDifficultyChange={search.setDifficulty}
-              onTypeChange={search.setType}
-              onClear={search.clearSearch}
-              isActive={search.isActive}
-              isIndexing={search.isIndexing}
-              resultCount={search.results.length}
-            />
-
-            {search.isActive ? (
-              search.isIndexing ? (
-                <LoadingCard label="Building search index…" />
-              ) : (
-                <SearchResultsSection
-                  results={search.results}
-                  completed={completed}
-                  onToggle={toggle}
-                />
-              )
-            ) : null}
-          </details>
         </>
       )}
     </main>
