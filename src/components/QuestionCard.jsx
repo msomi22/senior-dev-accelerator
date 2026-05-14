@@ -5,17 +5,50 @@ import VisualRail from './visuals/VisualRail.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
 
 const TYPE_LABELS = {
-  coding: 'Coding reasoning',
+  coding: 'Coding',
   mcq: 'Quick check',
   debugging: 'Debugging',
-  trace: 'Trace walkthrough',
+  trace: 'Trace',
   optimization: 'Optimization',
   'system-design': 'System design',
-  'production-scenario': 'Production scenario'
+  'production-scenario': 'Production'
 };
+
+const SUMMARY_LIMIT = 128;
 
 function optionLetter(index) {
   return String.fromCharCode(65 + index);
+}
+
+function compactText(value, limit = SUMMARY_LIMIT) {
+  if (!value) return '';
+
+  const normalized = String(value).replace(/\s+/g, ' ').trim();
+
+  if (normalized.length <= limit) return normalized;
+
+  return `${normalized.slice(0, limit - 1).trim()}…`;
+}
+
+function getPrimaryPattern(question) {
+  return (
+    question.primaryPattern ||
+    question.finalPattern ||
+    question.pattern ||
+    question.category ||
+    question.tags?.[0] ||
+    'Practice'
+  );
+}
+
+function getProblemSummary(question) {
+  return compactText(
+    question.summary ||
+    question.shortSummary ||
+    question.scenario ||
+    question.question ||
+    question.starterThought
+  );
 }
 
 function ListBlock({ title, items, ordered = false }) {
@@ -187,7 +220,13 @@ function McqBlock({ question, selected, setSelected, showExplanation }) {
   );
 }
 
-function QuestionCard({ question, completed, onToggle, disableCardNavigation = false }) {
+function QuestionCard({
+  question,
+  completed,
+  onToggle,
+  disableCardNavigation = false,
+  compact = false
+}) {
   const [selected, setSelected] = useState(null);
   const [activePanel, setActivePanel] = useState(null);
 
@@ -204,8 +243,10 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
   const navigate = useNavigate();
 
   const isMcq = question.type === 'mcq' && question.options?.length;
-  const typeLabel = TYPE_LABELS[question.type] || 'Learning problem';
+  const typeLabel = TYPE_LABELS[question.type] || 'Problem';
   const typeClass = `type-${question.type || 'learning'}`;
+  const primaryPattern = getPrimaryPattern(question);
+  const summary = getProblemSummary(question);
 
   const openFocusedProblem = () => {
     if (!disableCardNavigation && question?.id) {
@@ -241,6 +282,40 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
     if (question.type === 'debugging') return 'Reveal debugging lens';
     return 'Reveal thinking';
   }, [question.type]);
+
+  if (compact) {
+    return (
+      <article
+        className={`question-card problem-workspace compact-problem-card glass-lite ${completed ? 'done' : ''} ${disableCardNavigation ? '' : 'clickable-problem-card'}`}
+        role={disableCardNavigation ? undefined : 'button'}
+        tabIndex={disableCardNavigation ? undefined : 0}
+        onClick={handleCardClick}
+        onKeyDown={handleCardKeyDown}
+        aria-label={disableCardNavigation ? undefined : `Open ${question.title} in focused workspace`}
+      >
+        <div className="q-top">
+          <div className="meta-strip">
+            <span className="pill">{question.difficulty || 'Practice'}</span>
+            <span className={`pill type-pill ${typeClass}`}>{primaryPattern}</span>
+          </div>
+
+          <button className="mark" onClick={() => onToggle?.(question.id)}>
+            {completed ? '✓ Done' : 'Mark done'}
+          </button>
+        </div>
+
+        <h3>{question.title}</h3>
+
+        {summary ? (
+          <p className="question-text">{summary}</p>
+        ) : null}
+
+        <div className="meta-strip" aria-label="Problem type">
+          <span className="time-pill">{typeLabel}</span>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article

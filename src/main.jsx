@@ -14,6 +14,7 @@ import './styles/sidebar-icons.css';
 import './styles/compact-search.css';
 import './styles/global-search.css';
 import './styles/public-brand-logo-fix.css';
+import './styles/simple-problem-list.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
