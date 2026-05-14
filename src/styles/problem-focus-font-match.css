@@ -1,0 +1,76 @@
+/* Keep the Problem Focus page typography aligned with the rest of the app. */
+
+.focused-problem-page,
+.focused-problem-page *,
+.focused-problem-workspace,
+.focused-problem-workspace * {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.focused-problem-page h1,
+.focused-problem-page h2,
+.focused-problem-page h3,
+.focused-problem-page strong,
+.focused-problem-workspace h1,
+.focused-problem-workspace h2,
+.focused-problem-workspace h3,
+.focused-problem-workspace strong {
+  font-weight: 850;
+  letter-spacing: -0.02em;
+}
+
+.focused-problem-page p,
+.focused-problem-page li,
+.focused-problem-workspace p,
+.focused-problem-workspace li,
+.problem-support-panel p,
+.reinforcement-card p,
+.workspace-empty-state p {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.focused-tab-btn,
+.focus-mode-toggle,
+.reference-action-group .btn,
+.reference-action-group .mark,
+.problem-meta-pills span,
+.compact-chip-row span,
+.option-btn,
+.answer-banner,
+.mini-label {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.focused-tab-btn,
+.focus-mode-toggle,
+.reference-action-group .btn,
+.reference-action-group .mark,
+.problem-meta-pills span,
+.compact-chip-row span,
+.answer-banner {
+  font-weight: 800;
+}
+
+.mini-label {
+  font-weight: 850;
+}
+
+.option-btn span {
+  font-weight: 500;
+}
+
+.option-btn strong {
+  font-weight: 850;
+  letter-spacing: 0;
+}
+
+.option-btn em {
+  font-weight: 800;
+}
+
+.focused-code-block code,
+.focused-code-block pre,
+.visual-model p {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
