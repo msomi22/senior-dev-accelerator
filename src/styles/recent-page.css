@@ -1,0 +1,72 @@
+.recent-table-card {
+  gap: 18px;
+}
+
+.recent-question-table {
+  min-width: 860px;
+}
+
+.recent-question-table td {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.recent-question-table .progress-topic-name span {
+  max-width: 420px;
+}
+
+.recent-difficulty.easy {
+  border-color: rgba(52, 211, 153, 0.42);
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--ok);
+}
+
+.recent-difficulty.medium {
+  border-color: rgba(251, 191, 36, 0.42);
+  background: rgba(251, 191, 36, 0.12);
+  color: var(--warning);
+}
+
+.recent-difficulty.hard {
+  border-color: rgba(248, 113, 113, 0.42);
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--danger);
+}
+
+.recent-date-cell,
+.recent-unavailable-action {
+  white-space: nowrap;
+}
+
+.recent-unavailable-action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.recent-empty-state {
+  display: grid;
+  gap: 6px;
+}
+
+.recent-empty-state strong {
+  color: var(--text);
+}
+
+.recent-empty-state span {
+  color: var(--muted);
+}
+
+@media (max-width: 720px) {
+  .recent-question-table {
+    min-width: 780px;
+  }
+}
