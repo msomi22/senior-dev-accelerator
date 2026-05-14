@@ -175,7 +175,7 @@ function VisualWalkthrough({ question }) {
   );
 }
 
-function McqBlock({ question, selected, setSelected, showExplanation }) {
+function McqBlock({ question, selected, onSelect, showExplanation }) {
   if (!question.options?.length) return null;
   const answered = selected !== null;
   const isCorrect = selected === question.correctAnswer;
@@ -202,7 +202,7 @@ function McqBlock({ question, selected, setSelected, showExplanation }) {
               key={option}
               type="button"
               className={className}
-              onClick={() => setSelected(index)}
+              onClick={() => onSelect(index)}
             >
               <strong>{optionLetter(index)}</strong>
               <span>{option}</span>
@@ -247,6 +247,14 @@ function QuestionCard({
   const typeClass = `type-${question.type || 'learning'}`;
   const primaryPattern = getPrimaryPattern(question);
   const summary = getProblemSummary(question);
+
+  function handleMcqSelect(index) {
+    setSelected(index);
+
+    if (!completed) {
+      onToggle?.(question.id);
+    }
+  }
 
   const openFocusedProblem = () => {
     if (!disableCardNavigation && question?.id) {
@@ -358,7 +366,7 @@ function QuestionCard({
         <McqBlock
           question={question}
           selected={selected}
-          setSelected={setSelected}
+          onSelect={handleMcqSelect}
           showExplanation={showSolution}
         />
       ) : (
