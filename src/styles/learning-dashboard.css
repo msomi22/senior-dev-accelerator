@@ -1,1 +1,154 @@
-/* ==========================================================================\n   Learning Path Dashboard\n   ========================================================================== */\n\n.learning-hero {\n  display: grid;\n  grid-template-columns: minmax(0, 2fr) minmax(280px, 0.9fr);\n  gap: 24px;\n  align-items: stretch;\n}\n\n.learning-hero-panel {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  gap: 12px;\n\n  border-radius: 28px;\n  padding: 24px;\n}\n\n.learning-hero-panel span {\n  color: var(--accent);\n  text-transform: uppercase;\n  letter-spacing: 0.12em;\n  font-size: 0.74rem;\n  font-weight: 900;\n}\n\n.learning-hero-panel strong {\n  color: var(--text-primary);\n  font-family: var(--font-serif);\n  font-size: 1.8rem;\n  font-style: italic;\n  font-weight: 400;\n  line-height: 1.08;\n}\n\n.learning-hero-panel p {\n  margin: 0;\n  color: var(--muted);\n  line-height: 1.7;\n}\n\n.learning-stats-grid {\n  align-items: stretch;\n}\n\n.learning-dashboard-grid {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 18px;\n}\n\n.learning-dashboard-card {\n  display: flex;\n  flex-direction: column;\n  gap: 16px;\n\n  min-height: 100%;\n\n  border-radius: 30px;\n  padding: 28px;\n}\n\n.learning-dashboard-card h2 {\n  margin: 0;\n  font-size: 1.4rem;\n}\n\n.learning-dashboard-card p {\n  color: var(--muted);\n  line-height: 1.7;\n}\n\n.dashboard-card-action {\n  margin-top: auto;\n}\n\n.dashboard-mini-progress {\n  display: grid;\n  gap: 10px;\n\n  margin-top: 14px;\n}\n\n.dashboard-mini-progress span {\n  color: var(--text);\n  font-size: 0.92rem;\n  font-weight: 800;\n}\n\n.weak-area-list {\n  display: grid;\n  gap: 10px;\n}\n\n.weak-area-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n\n  padding: 14px 16px;\n\n  border: 1px solid var(--line);\n  border-radius: 18px;\n\n  background: rgba(255,255,255,0.04);\n\n  transition: border-color 0.18s ease, transform 0.18s ease;\n}\n\n.weak-area-row:hover {\n  transform: translateY(-2px);\n  border-color: rgba(56, 189, 248, 0.6);\n}\n\n.weak-area-row span {\n  color: var(--text);\n  font-weight: 700;\n}\n\n.weak-area-row strong {\n  color: var(--accent);\n}\n\n.dashboard-checklist {\n  display: grid;\n  gap: 14px;\n\n  padding-left: 18px;\n\n  color: var(--muted);\n}\n\n.dashboard-checklist li {\n  line-height: 1.7;\n}\n\n.dashboard-checklist strong {\n  color: var(--text);\n}\n\n@media (max-width: 1200px) {\n  .learning-dashboard-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (max-width: 980px) {\n  .learning-hero {\n    grid-template-columns: 1fr;\n  }\n}\n
+/* ==========================================================================
+   Learning Path Dashboard
+   ========================================================================== */
+
+.learning-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 0.9fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.learning-hero-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+
+  border-radius: 28px;
+  padding: 24px;
+}
+
+.learning-hero-panel span {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.learning-hero-panel strong {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.8rem;
+  line-height: 1.2;
+}
+
+.learning-hero-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.learning-stats-grid {
+  align-items: stretch;
+}
+
+.learning-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.learning-dashboard-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  min-height: 100%;
+
+  border-radius: 30px;
+  padding: 28px;
+}
+
+.learning-dashboard-card h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.learning-dashboard-card p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.dashboard-card-action {
+  margin-top: auto;
+}
+
+.dashboard-mini-progress {
+  display: grid;
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+.dashboard-mini-progress span {
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.weak-area-list {
+  display: grid;
+  gap: 10px;
+}
+
+.weak-area-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  border: 1px solid var(--line);
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.04);
+
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.weak-area-row:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+.weak-area-row span {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.weak-area-row strong {
+  color: var(--accent);
+}
+
+.dashboard-checklist {
+  display: grid;
+  gap: 14px;
+
+  padding-left: 18px;
+
+  color: var(--muted);
+}
+
+.dashboard-checklist li {
+  line-height: 1.7;
+}
+
+.dashboard-checklist strong {
+  color: var(--text);
+}
+
+@media (max-width: 1200px) {
+  .learning-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .learning-hero {
+    grid-template-columns: 1fr;
+  }
+}
