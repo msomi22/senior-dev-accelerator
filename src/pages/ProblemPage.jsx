@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 
 import FocusedProblemWorkspace from '../components/FocusedProblemWorkspace.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
 
 import { findQuestionById } from '../services/questionBankService.js';
+import { recordQuestionOpen } from '../services/recentQuestionService.js';
 import { storageService } from '../services/storageService.js';
 
 function uniqueItems(items = []) {
@@ -46,6 +47,7 @@ function pillClass(type, label, difficulty) {
 export default function ProblemPage() {
   const { questionId } = useParams();
   const location = useLocation();
+  const lastRecordedQuestionId = useRef('');
 
   const [entry, setEntry] = useState(null);
   const [completed, setCompleted] = useState({});
@@ -106,6 +108,14 @@ export default function ProblemPage() {
       active = false;
     };
   }, [questionId, location.state]);
+
+  useEffect(() => {
+    const currentQuestionId = entry?.question?.id;
+    if (!currentQuestionId || lastRecordedQuestionId.current === currentQuestionId) return;
+
+    lastRecordedQuestionId.current = currentQuestionId;
+    recordQuestionOpen(entry.question);
+  }, [entry?.question?.id, entry?.question]);
 
   function handleToggle(id) {
     const updated = storageService.toggleComplete(id);
