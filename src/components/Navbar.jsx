@@ -6,7 +6,7 @@ import { categories } from '../services/questionBankService.js';
 
 const MOBILE_NAV_ITEMS = [
   { to: '/', label: 'Dashboard', end: true },
-  { to: '/dsa', label: 'Categories' },
+  { to: '/categories', label: 'Categories' },
   { to: '/recent', label: 'Recent' },
   { to: '/progress', label: 'Progress' },
   { to: '/settings', label: 'Settings' }
@@ -14,8 +14,8 @@ const MOBILE_NAV_ITEMS = [
 
 function pageTitle(pathname) {
   if (pathname === '/') return 'Learning Dashboard';
+  if (pathname === '/categories') return 'Categories';
   if (pathname === '/dsa') return 'DSA Practice';
-  if (pathname === '/system-design') return 'System Design';
   if (pathname === '/random') return 'Random Practice';
   if (pathname === '/recent') return 'Recent';
   if (pathname === '/progress') return 'Progress';

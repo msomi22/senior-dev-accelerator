@@ -1,8 +1,9 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button.jsx';
 import VisualRail from './visuals/VisualRail.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
+import { storageService } from '../services/storageService.js';
 
 const TYPE_LABELS = {
   coding: 'Coding',
@@ -49,6 +50,16 @@ function getProblemSummary(question) {
     question.question ||
     question.starterThought
   );
+}
+
+function getDifficultyClass(difficulty) {
+  const normalized = String(difficulty || '').toLowerCase();
+
+  if (normalized.includes('easy')) return 'difficulty-pill difficulty-easy';
+  if (normalized.includes('medium')) return 'difficulty-pill difficulty-medium';
+  if (normalized.includes('hard')) return 'difficulty-pill difficulty-hard';
+
+  return 'difficulty-pill';
 }
 
 function ListBlock({ title, items, ordered = false }) {
@@ -175,7 +186,7 @@ function VisualWalkthrough({ question }) {
   );
 }
 
-function McqBlock({ question, selected, setSelected, showExplanation }) {
+function McqBlock({ question, selected, onSelect, showExplanation }) {
   if (!question.options?.length) return null;
   const answered = selected !== null;
   const isCorrect = selected === question.correctAnswer;
@@ -202,7 +213,8 @@ function McqBlock({ question, selected, setSelected, showExplanation }) {
               key={option}
               type="button"
               className={className}
-              onClick={() => setSelected(index)}
+              aria-pressed={chosen}
+              onClick={() => onSelect(index)}
             >
               <strong>{optionLetter(index)}</strong>
               <span>{option}</span>
@@ -227,8 +239,9 @@ function QuestionCard({
   disableCardNavigation = false,
   compact = false
 }) {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(() => storageService.getSelectedAnswer(question.id));
   const [activePanel, setActivePanel] = useState(null);
+  const lastCompletedQuestionId = useRef(completed ? question.id : '');
 
   const showHints = activePanel === 'hints';
   const showThinking = activePanel === 'thinking';
@@ -245,8 +258,24 @@ function QuestionCard({
   const isMcq = question.type === 'mcq' && question.options?.length;
   const typeLabel = TYPE_LABELS[question.type] || 'Problem';
   const typeClass = `type-${question.type || 'learning'}`;
+  const difficultyClass = getDifficultyClass(question.difficulty);
   const primaryPattern = getPrimaryPattern(question);
   const summary = getProblemSummary(question);
+
+  useEffect(() => {
+    setSelected(storageService.getSelectedAnswer(question.id));
+    lastCompletedQuestionId.current = completed ? question.id : '';
+  }, [completed, question.id]);
+
+  function handleMcqSelect(index) {
+    setSelected(index);
+    storageService.setSelectedAnswer(question.id, index);
+
+    if (!completed && lastCompletedQuestionId.current !== question.id) {
+      lastCompletedQuestionId.current = question.id;
+      onToggle?.(question.id);
+    }
+  }
 
   const openFocusedProblem = () => {
     if (!disableCardNavigation && question?.id) {
@@ -295,7 +324,7 @@ function QuestionCard({
       >
         <div className="q-top">
           <div className="meta-strip">
-            <span className="pill">{question.difficulty || 'Practice'}</span>
+            <span className={`pill ${difficultyClass}`}>{question.difficulty || 'Practice'}</span>
             <span className={`pill type-pill ${typeClass}`}>{primaryPattern}</span>
           </div>
 
@@ -329,7 +358,7 @@ function QuestionCard({
       <div className="q-top">
         <div className="meta-strip">
           <span className={`pill type-pill ${typeClass}`}>{typeLabel}</span>
-          <span className="pill">{question.difficulty}</span>
+          <span className={`pill ${difficultyClass}`}>{question.difficulty}</span>
           <span className="time-pill">⏱ {question.estimatedTime || '10 min'}</span>
         </div>
 
@@ -358,7 +387,7 @@ function QuestionCard({
         <McqBlock
           question={question}
           selected={selected}
-          setSelected={setSelected}
+          onSelect={handleMcqSelect}
           showExplanation={showSolution}
         />
       ) : (
