@@ -11,7 +11,7 @@ const CONTENT_PROFILE = readContentProfile();
 
 const APPROVED_PROD_QUESTION_IDS = new Set([
   'sliding-window-001',
-  'dynamic-programming-009'
+  'dynamic-programming-020'
 ]);
 
 export function getContentProfile() {
