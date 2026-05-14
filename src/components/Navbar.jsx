@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import BuyCoffeeButton from './BuyCoffeeButton.jsx';
 import GlobalSearch from './GlobalSearch.jsx';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { categories } from '../services/questionBankService.js';
@@ -99,6 +100,7 @@ export default function Navbar() {
         aria-hidden={!mobileMenuOpen}
       >
         <FeaturedLinks onNavigate={() => setMobileMenuOpen(false)} />
+        <BuyCoffeeButton className="mobile-coffee-link" />
       </nav>
     </>
   );
