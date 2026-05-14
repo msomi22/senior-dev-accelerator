@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import ConfigVisualizer from './ConfigVisualizer.jsx';
 import GridVisualizer from './GridVisualizer.jsx';
+import { isGenericVisual, isGridVisual } from './visualTypes.js';
 
 function formatMetricLabel(key) {
   return key
@@ -101,8 +103,12 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
 }
 
 function VisualRail({ diagram }) {
-  if (diagram?.type === 'grid') {
+  if (isGridVisual(diagram?.type)) {
     return <GridVisualizer diagram={diagram} />;
+  }
+
+  if (isGenericVisual(diagram?.type)) {
+    return <ConfigVisualizer diagram={diagram} />;
   }
 
   return <FrameVisualRail diagram={diagram} />;
