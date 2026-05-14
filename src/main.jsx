@@ -4,6 +4,7 @@ import App from './App.jsx';
 import './styles/global.css';
 import './styles/ui-refresh.css';
 import './styles/visual-learning.css';
+import './styles/problem-focus-workspace.css';
 import './styles/learning-dashboard.css';
 import './styles/senior-ui.css';
 import './styles/problem-pill-fixes.css';
