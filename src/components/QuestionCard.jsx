@@ -1,8 +1,9 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button.jsx';
 import VisualRail from './visuals/VisualRail.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
+import { storageService } from '../services/storageService.js';
 
 const TYPE_LABELS = {
   coding: 'Coding',
@@ -202,6 +203,7 @@ function McqBlock({ question, selected, onSelect, showExplanation }) {
               key={option}
               type="button"
               className={className}
+              aria-pressed={chosen}
               onClick={() => onSelect(index)}
             >
               <strong>{optionLetter(index)}</strong>
@@ -227,8 +229,9 @@ function QuestionCard({
   disableCardNavigation = false,
   compact = false
 }) {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(() => storageService.getSelectedAnswer(question.id));
   const [activePanel, setActivePanel] = useState(null);
+  const lastCompletedQuestionId = useRef(completed ? question.id : '');
 
   const showHints = activePanel === 'hints';
   const showThinking = activePanel === 'thinking';
@@ -248,10 +251,17 @@ function QuestionCard({
   const primaryPattern = getPrimaryPattern(question);
   const summary = getProblemSummary(question);
 
+  useEffect(() => {
+    setSelected(storageService.getSelectedAnswer(question.id));
+    lastCompletedQuestionId.current = completed ? question.id : '';
+  }, [completed, question.id]);
+
   function handleMcqSelect(index) {
     setSelected(index);
+    storageService.setSelectedAnswer(question.id, index);
 
-    if (!completed) {
+    if (!completed && lastCompletedQuestionId.current !== question.id) {
+      lastCompletedQuestionId.current = question.id;
       onToggle?.(question.id);
     }
   }
