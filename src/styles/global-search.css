@@ -217,12 +217,22 @@
     --nav-height: 126px;
   }
 
+  .app-shell {
+    min-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
   .app-shell .nav.topbar,
   .app-shell .navbar.topbar,
   .app-shell .topbar {
-    position: fixed !important;
-    inset: 0 0 auto 0 !important;
+    position: sticky !important;
+    top: 0 !important;
+    left: auto !important;
+    right: auto !important;
+    inset: auto !important;
     z-index: 5000 !important;
+    width: 100% !important;
     height: var(--nav-height) !important;
     display: grid !important;
     grid-template-columns: 48px minmax(0, 1fr) auto !important;
@@ -276,12 +286,21 @@
   }
 
   .app-shell .layout {
-    padding-top: calc(var(--nav-height) + 24px) !important;
+    display: block !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding-top: 0 !important;
+    overflow: visible !important;
   }
 
   .app-shell .page-wrap,
   .app-shell .main-content {
-    padding-top: 16px !important;
+    grid-column: auto !important;
+    height: auto !important;
+    min-height: calc(100vh - var(--nav-height)) !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    padding: 24px 12px 80px !important;
   }
 
   .global-search-control input {
