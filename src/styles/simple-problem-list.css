@@ -1,0 +1,63 @@
+.problem-list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.compact-problem-card {
+  min-height: auto;
+  gap: 8px;
+  padding: 13px 14px;
+  box-shadow: var(--shadow-soft, none);
+}
+
+.compact-problem-card .q-top {
+  align-items: center;
+}
+
+.compact-problem-card h3 {
+  font-size: 1rem;
+  line-height: 1.28;
+}
+
+.compact-problem-card .question-text {
+  margin: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.compact-problem-card .meta-strip {
+  min-width: 0;
+}
+
+.compact-problem-card .pill,
+.compact-problem-card .time-pill,
+.compact-problem-card .type-pill {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compact-problem-card .mark {
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .compact-problem-card {
+    padding: 12px;
+  }
+
+  .compact-problem-card .q-top {
+    align-items: flex-start;
+  }
+
+  .compact-problem-card .mark {
+    margin-left: auto;
+  }
+}
