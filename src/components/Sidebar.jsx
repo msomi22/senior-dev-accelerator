@@ -42,7 +42,7 @@ const ICON_PATHS = {
 
 const NAV_ITEMS = [
   { to: '/', icon: 'dashboard', label: 'Dashboard', end: true },
-  { to: '/dsa', icon: 'categories', label: 'Categories' },
+  { to: '/categories', icon: 'categories', label: 'Categories' },
   { to: '/recent', icon: 'recent', label: 'Recent' },
   { to: '/progress', icon: 'progress', label: 'Progress' },
   { to: '/settings', icon: 'settings', label: 'Settings' }
