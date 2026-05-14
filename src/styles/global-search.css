@@ -212,10 +212,14 @@
 }
 
 @media (max-width: 760px) {
+  :root,
+  .app-shell {
+    --nav-height: 126px;
+  }
+
   .app-shell .nav.topbar,
   .app-shell .navbar.topbar,
   .app-shell .topbar {
-    --nav-height: 126px;
     position: fixed !important;
     inset: 0 0 auto 0 !important;
     z-index: 5000 !important;
@@ -272,12 +276,12 @@
   }
 
   .app-shell .layout {
-    padding-top: var(--nav-height) !important;
+    padding-top: calc(var(--nav-height) + 24px) !important;
   }
 
   .app-shell .page-wrap,
   .app-shell .main-content {
-    padding-top: 12px !important;
+    padding-top: 16px !important;
   }
 
   .global-search-control input {
