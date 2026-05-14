@@ -35,9 +35,12 @@ export default function Navbar(props) {
           type="button"
           className="mobile-nav-toggle"
           onClick={onToggleMobileNav}
+          aria-label={mobileNavOpen ? 'Close navigation' : 'Open navigation'}
           aria-expanded={mobileNavOpen}
         >
-          {mobileNavOpen ? 'Close' : 'Menu'}
+          <span />
+          <span />
+          <span />
         </button>
 
         <NavLink to="/" className="brand" onClick={onCloseMobileNav}>
@@ -60,7 +63,7 @@ export default function Navbar(props) {
         </button>
       </div>
 
-      <div className={`topbar-expandable ${mobileNavOpen ? 'open' : ''}`}>
+      <div className="topbar-expandable">
         <GlobalSearch />
 
         <nav className="topbar-links">
