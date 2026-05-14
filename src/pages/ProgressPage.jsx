@@ -161,8 +161,8 @@ export default function ProgressPage() {
           <div className="progress-card-head">
             <div>
               <p className="eyebrow">Progress</p>
-              <h1 id="progress-heading">Framework progress</h1>
-              <p>Track completion by topic.</p>
+              <h1 id="progress-heading">Learning progress</h1>
+              <p>Track completion across topics.</p>
             </div>
           </div>
 
