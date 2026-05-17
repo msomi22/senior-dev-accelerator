@@ -20,6 +20,14 @@ function getBankPath(topicId) {
   return path;
 }
 
+function normalizeSimpleSystemDesignTags(tags = []) {
+  const normalizedTags = tags.map((tag) => (
+    SIMPLE_SYSTEM_DESIGN_TYPES.has(tag) ? 'simple-system-design' : tag
+  ));
+
+  return [...new Set(normalizedTags)];
+}
+
 function normalizeQuestionTypes(bank) {
   if (bank.category !== 'system') return bank;
 
@@ -30,7 +38,8 @@ function normalizeQuestionTypes(bank) {
 
       return {
         ...question,
-        type: 'simple-system-design'
+        type: 'simple-system-design',
+        tags: normalizeSimpleSystemDesignTags(question.tags)
       };
     })
   };
