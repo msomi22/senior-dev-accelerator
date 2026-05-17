@@ -96,12 +96,6 @@ export const topicManifest = [
     "description": "Design systems that keep working as users, traffic, data, and teams grow."
   },
   {
-    "id": "complex-system-design",
-    "name": "Complex System Design",
-    "category": "system",
-    "description": "Practice full-system architecture prompts with rubric-based scoring and production trade-off feedback."
-  },
-  {
     "id": "databases",
     "name": "Databases",
     "category": "system",
