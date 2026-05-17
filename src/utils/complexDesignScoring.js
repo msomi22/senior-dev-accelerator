@@ -1,3 +1,5 @@
+export const SCORING_MODEL_LABEL = 'Hybrid deterministic scoring model';
+
 const REASONING_WORDS = [
   'because',
   'so that',
@@ -52,6 +54,16 @@ const OBSERVABILITY_WORDS = [
   'monitoring',
   'error rate',
   'latency'
+];
+
+const SCORING_SIGNALS = [
+  'rubric criteria',
+  'alias coverage',
+  'partial credit',
+  'reasoning signals',
+  'trade-off signals',
+  'failure-mode signals',
+  'observability signals'
 ];
 
 function normalize(value = '') {
@@ -121,13 +133,21 @@ function buildImprovement(section, missedCriteria) {
   return missed ? `Improve ${section.title.toLowerCase()}: add ${missed}.` : `Add more reasoning for ${section.title.toLowerCase()}.`;
 }
 
+function baseResult(overrides = {}) {
+  return {
+    scoringModel: SCORING_MODEL_LABEL,
+    scoringSignals: SCORING_SIGNALS,
+    ...overrides
+  };
+}
+
 export function scoreComplexDesignAnswer(question, answer) {
   const answerText = normalize(answer);
   const rubric = question?.scoringRubric || [];
   const maxScore = rubric.reduce((sum, section) => sum + Number(section.weight || 0), 0) || 100;
 
   if (!answerText) {
-    return {
+    return baseResult({
       totalScore: 0,
       maxScore,
       percentage: 0,
@@ -143,7 +163,7 @@ export function scoreComplexDesignAnswer(question, answer) {
       })),
       strengths: [],
       improvements: ['Write a complete design answer before evaluating.']
-    };
+    });
   }
 
   const sectionScores = rubric.map((section) => {
@@ -183,7 +203,7 @@ export function scoreComplexDesignAnswer(question, answer) {
   const strongSections = sectionScores.filter((section) => section.score >= section.maxScore * 0.7);
   const weakSections = sectionScores.filter((section) => section.score < section.maxScore * 0.7);
 
-  return {
+  return baseResult({
     totalScore,
     maxScore,
     percentage,
@@ -191,7 +211,7 @@ export function scoreComplexDesignAnswer(question, answer) {
     sectionScores,
     strengths: strongSections.slice(0, 4).map(buildStrength),
     improvements: weakSections.slice(0, 5).map((section) => buildImprovement(section, section.missedCriteria))
-  };
+  });
 }
 
 export default scoreComplexDesignAnswer;
