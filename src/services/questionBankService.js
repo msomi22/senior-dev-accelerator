@@ -6,6 +6,7 @@ import {
 } from '../config/contentProfile.js';
 
 const bankModules = import.meta.glob('../data/banks/**/*.js');
+const SIMPLE_SYSTEM_DESIGN_TYPES = new Set(['system-design', 'production-scenario']);
 
 function getBankPath(topicId) {
   const topic = topicManifest.find((item) => item.id === topicId);
@@ -17,6 +18,22 @@ function getBankPath(topicId) {
   }
 
   return path;
+}
+
+function normalizeQuestionTypes(bank) {
+  if (bank.category !== 'system') return bank;
+
+  return {
+    ...bank,
+    questions: (bank.questions || []).map((question) => {
+      if (!SIMPLE_SYSTEM_DESIGN_TYPES.has(question.type)) return question;
+
+      return {
+        ...question,
+        type: 'simple-system-design'
+      };
+    })
+  };
 }
 
 function applyContentProfileToBank(bank) {
@@ -50,7 +67,8 @@ export async function loadTopicBank(topicId) {
       topicId,
       bankModules[path]().then((module) => {
         const overridden = applyQuestionOverrides(module.default);
-        return applyContentProfileToBank(overridden);
+        const normalized = normalizeQuestionTypes(overridden);
+        return applyContentProfileToBank(normalized);
       })
     );
   }
