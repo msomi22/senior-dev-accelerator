@@ -34,13 +34,20 @@ function normalizeQuestionTypes(bank) {
   return {
     ...bank,
     questions: (bank.questions || []).map((question) => {
-      if (!SIMPLE_SYSTEM_DESIGN_TYPES.has(question.type)) return question;
+      if (question.type === 'complex-system-design') return question;
+
+      if (SIMPLE_SYSTEM_DESIGN_TYPES.has(question.type)) {
+        return {
+          ...question,
+          type: 'simple-system-design',
+          difficulty: 'Easy',
+          tags: normalizeSimpleSystemDesignTags(question.tags)
+        };
+      }
 
       return {
         ...question,
-        type: 'simple-system-design',
-        difficulty: 'Easy',
-        tags: normalizeSimpleSystemDesignTags(question.tags)
+        difficulty: 'Easy'
       };
     })
   };
