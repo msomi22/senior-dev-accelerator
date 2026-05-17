@@ -3,6 +3,7 @@ import { NavLink, useLocation, useParams } from 'react-router-dom';
 
 import FocusedProblemWorkspace from '../components/FocusedProblemWorkspace.jsx';
 import LoadingCard from '../components/LoadingCard.jsx';
+import ComplexSystemDesignProblem from '../components/problems/ComplexSystemDesignProblem.jsx';
 
 import { findQuestionById } from '../services/questionBankService.js';
 import { recordQuestionOpen } from '../services/recentQuestionService.js';
@@ -122,6 +123,11 @@ export default function ProblemPage() {
     setCompleted(updated);
   }
 
+  function handleMarkComplete(id) {
+    const updated = storageService.markComplete(id);
+    setCompleted(updated);
+  }
+
   if (loading) return <LoadingCard label="Loading problem workspace..." />;
 
   if (error || !entry) {
@@ -140,9 +146,11 @@ export default function ProblemPage() {
   const categoryId = entry.topic?.category || entry.category?.id;
   const categoryBackPath = categoryPath(categoryId);
   const primaryPattern = entry.question.finalPattern || entry.topic?.name;
+  const isComplexSystemDesign = entry.question.type === 'complex-system-design';
 
   const problemTags = uniqueItems([
     { label: entry.question.difficulty, type: 'difficulty' },
+    { label: entry.question.estimatedTime, type: 'meta' },
     { label: primaryPattern, type: 'topic' },
     { label: entry.question.type, type: 'meta' }
   ]);
@@ -175,18 +183,29 @@ export default function ProblemPage() {
         <div className="reference-action-group" aria-label="Focused problem actions">
           <NavLink className="btn ghost" to={categoryBackPath}>Back to category</NavLink>
 
-          <button className="mark reference-mark" onClick={() => handleToggle(entry.question.id)}>
-            {completed[entry.question.id] ? 'Completed' : 'Mark complete'}
-          </button>
+          {!isComplexSystemDesign ? (
+            <button className="mark reference-mark" onClick={() => handleToggle(entry.question.id)}>
+              {completed[entry.question.id] ? 'Completed' : 'Mark complete'}
+            </button>
+          ) : null}
         </div>
       </section>
 
-      <FocusedProblemWorkspace
-        question={entry.question}
-        completed={!!completed[entry.question.id]}
-        onToggle={handleToggle}
-        hideTopline
-      />
+      {isComplexSystemDesign ? (
+        <ComplexSystemDesignProblem
+          question={entry.question}
+          completed={!!completed[entry.question.id]}
+          onToggle={handleToggle}
+          onMarkComplete={handleMarkComplete}
+        />
+      ) : (
+        <FocusedProblemWorkspace
+          question={entry.question}
+          completed={!!completed[entry.question.id]}
+          onToggle={handleToggle}
+          hideTopline
+        />
+      )}
     </main>
   );
 }

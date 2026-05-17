@@ -6,6 +6,8 @@ import {
 } from '../config/contentProfile.js';
 
 const bankModules = import.meta.glob('../data/banks/**/*.js');
+const SIMPLE_SYSTEM_DESIGN_TYPES = new Set(['system-design', 'production-scenario']);
+const COMPLEX_SYSTEM_DESIGN_BANK_PATH = '../data/banks/system/complex-system-design.js';
 
 function getBankPath(topicId) {
   const topic = topicManifest.find((item) => item.id === topicId);
@@ -17,6 +19,62 @@ function getBankPath(topicId) {
   }
 
   return path;
+}
+
+function normalizeSimpleSystemDesignTags(tags = []) {
+  const normalizedTags = tags.map((tag) => (
+    SIMPLE_SYSTEM_DESIGN_TYPES.has(tag) ? 'simple-system-design' : tag
+  ));
+
+  return [...new Set(normalizedTags)];
+}
+
+function normalizeQuestionTypes(bank) {
+  if (bank.category !== 'system') return bank;
+
+  return {
+    ...bank,
+    questions: (bank.questions || []).map((question) => {
+      if (question.type === 'complex-system-design') return question;
+
+      if (SIMPLE_SYSTEM_DESIGN_TYPES.has(question.type)) {
+        return {
+          ...question,
+          type: 'simple-system-design',
+          difficulty: 'Easy',
+          tags: normalizeSimpleSystemDesignTags(question.tags)
+        };
+      }
+
+      return {
+        ...question,
+        difficulty: 'Easy'
+      };
+    })
+  };
+}
+
+async function mergeComplexDesignQuestions(bank) {
+  if (bank.id !== 'scalability') return bank;
+  if (!bankModules[COMPLEX_SYSTEM_DESIGN_BANK_PATH]) return bank;
+
+  const module = await bankModules[COMPLEX_SYSTEM_DESIGN_BANK_PATH]();
+  const complexBank = module.default;
+  const existingIds = new Set((bank.questions || []).map((question) => question.id));
+  const complexQuestions = (complexBank.questions || [])
+    .map((question) => ({
+      ...question,
+      id: question.id.replace(/^complex-system-design-/, 'scalability-'),
+      topicId: 'scalability',
+      finalPattern: 'Scalability',
+      tags: [...new Set([...(question.tags || []), 'scalability'])]
+    }))
+    .filter((question) => !existingIds.has(question.id));
+
+  return {
+    ...bank,
+    questions: [...(bank.questions || []), ...complexQuestions]
+  };
 }
 
 function applyContentProfileToBank(bank) {
@@ -48,9 +106,11 @@ export async function loadTopicBank(topicId) {
 
     bankCache.set(
       topicId,
-      bankModules[path]().then((module) => {
+      bankModules[path]().then(async (module) => {
         const overridden = applyQuestionOverrides(module.default);
-        return applyContentProfileToBank(overridden);
+        const merged = await mergeComplexDesignQuestions(overridden);
+        const normalized = normalizeQuestionTypes(merged);
+        return applyContentProfileToBank(normalized);
       })
     );
   }
