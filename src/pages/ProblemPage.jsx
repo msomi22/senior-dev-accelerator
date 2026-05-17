@@ -123,6 +123,11 @@ export default function ProblemPage() {
     setCompleted(updated);
   }
 
+  function handleMarkComplete(id) {
+    const updated = storageService.markComplete(id);
+    setCompleted(updated);
+  }
+
   if (loading) return <LoadingCard label="Loading problem workspace..." />;
 
   if (error || !entry) {
@@ -191,6 +196,7 @@ export default function ProblemPage() {
           question={entry.question}
           completed={!!completed[entry.question.id]}
           onToggle={handleToggle}
+          onMarkComplete={handleMarkComplete}
         />
       ) : (
         <FocusedProblemWorkspace
