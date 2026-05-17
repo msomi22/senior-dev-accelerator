@@ -22,6 +22,22 @@ function ListSection({ title, items }) {
   );
 }
 
+function OptionalListSection({ title, items }) {
+  const list = rows(items);
+  if (!list.length) return null;
+
+  return (
+    <details className="complex-design-reveal-card">
+      <summary>{title}</summary>
+      <ul>
+        {list.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
 function ScoreMeter({ result }) {
   if (!result) return null;
 
@@ -107,23 +123,29 @@ export default function ComplexSystemDesignProblem({ question, completed, onTogg
         </button>
       </header>
 
-      <section className="complex-design-prompt">
-        <span className="mini-label">Full design prompt</span>
+      <section className="complex-design-prompt compact-prompt">
+        <span className="mini-label">Design prompt</span>
         <p>{question.question}</p>
       </section>
 
-      <div className="complex-design-grid">
-        <ListSection title="Functional requirements" items={question.requirements?.functional} />
-        <ListSection title="Non-functional requirements" items={question.requirements?.nonFunctional} />
-        <ListSection title="Constraints" items={question.constraints} />
-        <ListSection title="Optional hints" items={question.hints} />
-      </div>
+      <section className="complex-design-reveal-panel">
+        <div>
+          <span className="mini-label">Optional guidance</span>
+          <p>Use these only if you are stuck. Hard prompts should be attempted from the main scenario first.</p>
+        </div>
+        <div className="complex-design-reveal-grid">
+          <OptionalListSection title="Functional requirements" items={question.requirements?.functional} />
+          <OptionalListSection title="Non-functional requirements" items={question.requirements?.nonFunctional} />
+          <OptionalListSection title="Constraints" items={question.constraints} />
+          <OptionalListSection title="Hints" items={question.hints} />
+        </div>
+      </section>
 
       <section className="complex-design-answer-panel">
         <div className="complex-design-section-heading">
           <div>
             <span className="mini-label">Your answer</span>
-            <p>Explain APIs, storage, flows, scaling, failure behavior, security, and observability.</p>
+            <p>Write your architecture, trade-offs, and production reasoning.</p>
           </div>
           <span>{wordCount} words</span>
         </div>
