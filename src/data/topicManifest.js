@@ -1,19 +1,19 @@
 export const topicManifest = [
   {
     "id": "sliding-window",
-    "name": "WIND \u2014 Sliding Window",
+    "name": "WIND — Sliding Window",
     "category": "dsa",
     "description": "Use moving contiguous windows for subarray and substring questions while maintaining a validity invariant."
   },
   {
     "id": "dynamic-programming",
-    "name": "STATE \u2014 Dynamic Programming",
+    "name": "STATE — Dynamic Programming",
     "category": "dsa",
     "description": "Define states, transitions, base cases, and computation order for overlapping subproblems."
   },
   {
     "id": "graphs",
-    "name": "NODES \u2014 Graph BFS / DFS",
+    "name": "NODES — Graph BFS / DFS",
     "category": "dsa",
     "description": "Model relationships as nodes and edges, then traverse for reachability, components, distance, or ordering."
   },
@@ -25,67 +25,67 @@ export const topicManifest = [
   },
   {
     "id": "two-pointers",
-    "name": "PAIR \u2014 Two Pointers",
+    "name": "PAIR — Two Pointers",
     "category": "dsa",
     "description": "Use two moving positions to reduce comparisons while preserving a search or partition invariant."
   },
   {
     "id": "binary-search",
-    "name": "SEAR \u2014 Binary Search",
+    "name": "SEAR — Binary Search",
     "category": "dsa",
     "description": "Search sorted or monotonic spaces by repeatedly preserving the half that can still contain the answer."
   },
   {
     "id": "prefix-sum-hashing",
-    "name": "PREF \u2014 Prefix Sum & Hashing",
+    "name": "PREF — Prefix Sum & Hashing",
     "category": "dsa",
     "description": "Store cumulative states so range answers become subtraction or hash lookup problems."
   },
   {
     "id": "greedy",
-    "name": "GREED \u2014 Greedy",
+    "name": "GREED — Greedy",
     "category": "dsa",
     "description": "Make a locally best choice only when an invariant or exchange argument proves it remains globally safe."
   },
   {
     "id": "heap-priority-queue",
-    "name": "HEAP \u2014 Heap / Priority Queue",
+    "name": "HEAP — Heap / Priority Queue",
     "category": "dsa",
     "description": "Keep candidates ordered by priority so the best next item is cheap to access."
   },
   {
     "id": "backtracking",
-    "name": "CHOOSE \u2014 Backtracking",
+    "name": "CHOOSE — Backtracking",
     "category": "dsa",
     "description": "Build a partial solution, test constraints, recurse deeper, then undo to try alternatives."
   },
   {
     "id": "union-find",
-    "name": "UNION \u2014 Union-Find / DSU",
+    "name": "UNION — Union-Find / DSU",
     "category": "dsa",
     "description": "Maintain connected groups with representatives for dynamic connectivity and undirected cycle checks."
   },
   {
     "id": "trie",
-    "name": "TRIE \u2014 Prefix Tree",
+    "name": "TRIE — Prefix Tree",
     "category": "dsa",
     "description": "Store words by shared prefixes for fast prefix lookup, autocomplete, and dictionary pruning."
   },
   {
     "id": "bit-manipulation",
-    "name": "BITS \u2014 Bit Manipulation",
+    "name": "BITS — Bit Manipulation",
     "category": "dsa",
     "description": "Represent flags, parity, subsets, and cancellation rules using binary operations and masks."
   },
   {
     "id": "divide-conquer",
-    "name": "SPLIT \u2014 Divide & Conquer",
+    "name": "SPLIT — Divide & Conquer",
     "category": "dsa",
     "description": "Split into smaller independent subproblems, solve them, then combine the results correctly."
   },
   {
     "id": "monotonic-stack-queue",
-    "name": "STACK \u2014 Monotonic Stack / Queue",
+    "name": "STACK — Monotonic Stack / Queue",
     "category": "dsa",
     "description": "Maintain increasing or decreasing candidates for next greater/smaller and sliding max/min questions."
   },
@@ -94,6 +94,12 @@ export const topicManifest = [
     "name": "Scalability",
     "category": "system",
     "description": "Design systems that keep working as users, traffic, data, and teams grow."
+  },
+  {
+    "id": "complex-system-design",
+    "name": "Complex System Design",
+    "category": "system",
+    "description": "Practice full-system architecture prompts with rubric-based scoring and production trade-off feedback."
   },
   {
     "id": "databases",
