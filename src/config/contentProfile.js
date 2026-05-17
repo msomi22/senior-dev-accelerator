@@ -18,7 +18,7 @@ const APPROVED_PROD_QUESTION_IDS = new Set([
   'api-design-payment-idempotency-001',
   'scalability-realtime-updates-001',
   'databases-multi-region-consistency-001',
-  'system-design-url-shortener-001'
+  'complex-system-design-url-shortener-001'
 ]);
 
 export function getContentProfile() {
