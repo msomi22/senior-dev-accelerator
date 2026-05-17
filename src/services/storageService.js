@@ -5,7 +5,8 @@ const defaults = {
   completed: {},
   randomCount: 0,
   selectedTopics: {},
-  selectedAnswers: {}
+  selectedAnswers: {},
+  complexDesignSubmissions: {}
 };
 
 export const storageService = {
@@ -41,6 +42,22 @@ export const storageService = {
   getSelectedAnswer(questionId) {
     const answer = this.read().selectedAnswers?.[questionId];
     return Number.isInteger(answer) ? answer : null;
+  },
+  setComplexDesignSubmission(questionId, submission) {
+    const state = this.read();
+    const complexDesignSubmissions = {
+      ...state.complexDesignSubmissions,
+      [questionId]: {
+        ...submission,
+        submittedAt: submission.submittedAt || new Date().toISOString()
+      }
+    };
+
+    this.write({ complexDesignSubmissions });
+    return complexDesignSubmissions[questionId];
+  },
+  getComplexDesignSubmission(questionId) {
+    return this.read().complexDesignSubmissions?.[questionId] || null;
   },
   setTheme(theme) { this.write({ theme }); },
   setSelectedTopic(category, topicId) {
