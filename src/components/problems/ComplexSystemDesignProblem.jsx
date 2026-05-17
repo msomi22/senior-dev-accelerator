@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
 
 import { storageService } from '../../services/storageService.js';
-import { scoreComplexDesignAnswer } from '../../utils/complexDesignScoring.js';
+import {
+  SCORING_MODEL_LABEL,
+  scoreComplexDesignAnswer
+} from '../../utils/complexDesignScoring.js';
 
 function rows(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
@@ -119,7 +122,7 @@ function ScoreMeter({ result }) {
   return (
     <section className="complex-design-score-card" aria-live="polite">
       <div>
-        <span className="mini-label">Evaluation result</span>
+        <span className="mini-label">{result.scoringModel || SCORING_MODEL_LABEL}</span>
         <strong>{result.totalScore}/{result.maxScore}</strong>
         <p>{result.percentage}% · {result.level}</p>
       </div>
@@ -149,12 +152,23 @@ function FeedbackList({ title, items }) {
 function SectionBreakdown({ result }) {
   if (!result?.sectionScores?.length) return null;
 
+  const signals = rows(result.scoringSignals);
+
   return (
     <section className="complex-design-breakdown">
       <div className="complex-design-section-heading">
-        <span className="mini-label">Score breakdown</span>
-        <p>Rubric-based deterministic scoring. Keyword-only answers receive partial credit; reasoned answers score higher.</p>
+        <span className="mini-label">{result.scoringModel || SCORING_MODEL_LABEL}</span>
+        <p>
+          Combines rubric criteria, partial credit, concept aliases, reasoning, trade-offs,
+          failure-mode coverage, and observability signals.
+        </p>
       </div>
+
+      {signals.length ? (
+        <div className="complex-design-signal-list" aria-label="Scoring signals">
+          {signals.map((signal) => <span key={signal}>{signal}</span>)}
+        </div>
+      ) : null}
 
       <div className="complex-design-section-list">
         {result.sectionScores.map((section) => (
