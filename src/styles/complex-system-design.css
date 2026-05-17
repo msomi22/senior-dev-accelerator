@@ -177,9 +177,29 @@
   background: linear-gradient(90deg, var(--accent), var(--accent2));
 }
 
+.complex-design-signal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.complex-design-signal-list span {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 .complex-design-section-list {
   display: grid;
   gap: 12px;
+  margin-top: 14px;
 }
 
 .complex-design-section-score {
