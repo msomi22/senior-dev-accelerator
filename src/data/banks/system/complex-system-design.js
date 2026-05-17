@@ -5,7 +5,7 @@ const topic = {
   description: 'Practice full-system architecture prompts with rubric-based scoring and production trade-off feedback.',
   questions: [
     {
-      id: 'system-design-url-shortener-001',
+      id: 'complex-system-design-url-shortener-001',
       type: 'complex-system-design',
       topicId: 'complex-system-design',
       title: 'Design a URL Shortener',
