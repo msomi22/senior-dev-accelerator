@@ -39,6 +39,7 @@ function normalizeQuestionTypes(bank) {
       return {
         ...question,
         type: 'simple-system-design',
+        difficulty: 'Easy',
         tags: normalizeSimpleSystemDesignTags(question.tags)
       };
     })
