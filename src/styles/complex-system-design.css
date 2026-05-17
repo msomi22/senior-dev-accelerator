@@ -25,7 +25,8 @@
 .complex-design-section-heading p,
 .complex-design-section-score p,
 .complex-design-score-card p,
-.complex-design-model-answer p {
+.complex-design-model-answer p,
+.complex-design-reveal-panel p {
   color: var(--text-secondary);
 }
 
@@ -34,7 +35,9 @@
 .complex-design-answer-panel,
 .complex-design-breakdown,
 .complex-design-score-card,
-.complex-design-model-answer {
+.complex-design-model-answer,
+.complex-design-reveal-panel,
+.complex-design-reveal-card {
   border: 1px solid var(--border);
   border-radius: 20px;
   background: var(--bg-card);
@@ -45,28 +48,57 @@
 .complex-design-card,
 .complex-design-answer-panel,
 .complex-design-breakdown,
-.complex-design-score-card {
+.complex-design-score-card,
+.complex-design-reveal-panel,
+.complex-design-reveal-card {
   padding: 18px;
 }
 
+.complex-design-prompt.compact-prompt {
+  padding-block: 16px;
+}
+
 .complex-design-grid,
-.complex-design-feedback-grid {
+.complex-design-feedback-grid,
+.complex-design-reveal-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
 .complex-design-card ul,
-.complex-design-section-list {
+.complex-design-section-list,
+.complex-design-reveal-card ul {
   margin: 12px 0 0;
 }
 
-.complex-design-card li + li {
+.complex-design-card li + li,
+.complex-design-reveal-card li + li {
   margin-top: 8px;
 }
 
 .complex-design-card.compact {
   min-height: 100%;
+}
+
+.complex-design-reveal-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.complex-design-reveal-panel > div:first-child p {
+  margin: 6px 0 0;
+}
+
+.complex-design-reveal-card {
+  box-shadow: none;
+  background: var(--surface-subtle);
+}
+
+.complex-design-reveal-card summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--text-primary);
 }
 
 .complex-design-answer-panel {
@@ -186,7 +218,8 @@
   }
 
   .complex-design-grid,
-  .complex-design-feedback-grid {
+  .complex-design-feedback-grid,
+  .complex-design-reveal-grid {
     grid-template-columns: 1fr;
   }
 
