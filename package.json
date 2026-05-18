@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
+    "compromise": "latest",
+    "fuzzball": "latest",
     "vite": "latest",
     "react": "latest",
     "react-dom": "latest",
