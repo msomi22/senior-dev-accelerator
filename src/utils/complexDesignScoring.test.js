@@ -25,16 +25,16 @@ const fiftyPercentAnswer = `
 
 - Short code generation
   - Generate a unique ID and encode it using Base62 because Base62 creates compact URL-safe codes.
-  - Enforce a unique index on shortCode.
-  - If a collision happens, retry generation.
 
 - Storage
-  - Store shortCode, longUrl, createdAt, expiresAt, status, and basic metadata.
-  - Use shortCode as the primary key for fast lookup.
+  - Store shortCode, longUrl, createdAt, expiresAt, and status.
+  - Use shortCode as the primary key.
 
 - Create flow
-  - Request goes through an API Gateway for validation and throttling.
-  - The service generates the shortCode, saves the mapping in the database, updates Redis, and returns the short URL.
+  - Validate the long URL.
+  - Generate the shortCode.
+  - Save the mapping in the database.
+  - Return the short URL.
 
 - Redirect flow
   - User opens the short URL.
@@ -108,6 +108,16 @@ queue lag, and database latency. Add structured logs with trace id and distribut
 SLOs, and alerts for high error rate, latency, cache failures, database down, and queue backlog.
 `;
 
+function sectionScore(result, id) {
+  return result.sectionScores.find((section) => section.id === id).score;
+}
+
+function scoreSummary(result) {
+  return result.sectionScores
+    .map((section) => `${section.id}: ${section.score}/${section.maxScore}`)
+    .join(', ');
+}
+
 test('returns zero score and helpful feedback for an empty answer', () => {
   const result = scoreComplexDesignAnswer(question, '');
 
@@ -122,24 +132,25 @@ test('scores a vague generic answer at zero', () => {
 
   assert.equal(result.totalScore, 0);
   assert.equal(result.percentage, 0);
-  assert.ok(result.sectionScores.every((section) => section.score === 0));
+  assert.ok(result.sectionScores.every((section) => section.score === 0), scoreSummary(result));
 });
 
 test('scores a realistic partial answer around 50 percent', () => {
   const result = scoreComplexDesignAnswer(question, fiftyPercentAnswer);
 
-  assert.ok(result.percentage >= 45, `Expected at least 45%, got ${result.percentage}%`);
-  assert.ok(result.percentage <= 55, `Expected at most 55%, got ${result.percentage}%`);
+  assert.ok(result.percentage >= 45, `Expected at least 45%, got ${result.percentage}% (${scoreSummary(result)})`);
+  assert.ok(result.percentage <= 55, `Expected at most 55%, got ${result.percentage}% (${scoreSummary(result)})`);
   assert.ok(['Needs work', 'Developing'].includes(result.level));
-  assert.equal(result.sectionScores.find((section) => section.id === 'observability').score, 0);
-  assert.ok(result.sectionScores.find((section) => section.id === 'reliability-consistency').score < 8);
+  assert.equal(sectionScore(result, 'observability'), 0);
+  assert.equal(sectionScore(result, 'security-abuse'), 0);
+  assert.ok(sectionScore(result, 'reliability-consistency') < 8, scoreSummary(result));
 });
 
 test('scores a complete rubric-covering answer as excellent near-perfect', () => {
   const result = scoreComplexDesignAnswer(question, completeAnswer);
 
   assert.equal(result.maxScore, 95);
-  assert.ok(result.percentage >= 98, `Expected at least 98%, got ${result.percentage}%`);
+  assert.ok(result.percentage >= 98, `Expected at least 98%, got ${result.percentage}% (${scoreSummary(result)})`);
   assert.equal(result.level, 'Excellent');
 });
 
