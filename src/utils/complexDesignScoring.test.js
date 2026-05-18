@@ -118,3 +118,46 @@ test('returns learner-friendly missed labels alongside stable criterion ids', ()
   assert.ok(storage.missedCriteria.includes('url-mapping'));
   assert.ok(storage.missedLabels.includes('URL mapping table'));
 });
+
+test('uses shared dictionary concepts without repeating aliases in every criterion', () => {
+  const testQuestion = {
+    scoringRubric: [
+      {
+        id: 'performance',
+        title: 'Performance',
+        weight: 10,
+        criteria: [
+          { id: 'cache', label: 'Cache usage', points: 10, concepts: ['cache'] }
+        ]
+      }
+    ]
+  };
+
+  const result = scoreComplexDesignAnswer(testQuestion, 'Use Redis and a CDN for cache hits on hot items because this keeps reads low latency.');
+
+  assert.equal(result.totalScore, 10);
+  assert.equal(result.percentage, 100);
+});
+
+test('uses question-specific dictionary concepts for domain wording', () => {
+  const testQuestion = {
+    scoringDictionary: {
+      domainEvents: ['seat reserved', 'ticket booked', 'booking confirmation']
+    },
+    scoringRubric: [
+      {
+        id: 'domain-flow',
+        title: 'Domain Flow',
+        weight: 10,
+        criteria: [
+          { id: 'booking-event', label: 'Booking event', points: 10, questionConcepts: ['domainEvents'] }
+        ]
+      }
+    ]
+  };
+
+  const result = scoreComplexDesignAnswer(testQuestion, 'After payment succeeds, publish a ticket booked event and send booking confirmation.');
+
+  assert.equal(result.totalScore, 10);
+  assert.equal(result.percentage, 100);
+});
