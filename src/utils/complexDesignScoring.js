@@ -96,11 +96,15 @@ const SCORING_SIGNALS = [
   'quality caps'
 ];
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function normalize(value = '') {
   let normalized = String(value).toLowerCase();
 
   TYPO_REPLACEMENTS.forEach(([from, to]) => {
-    normalized = normalized.replaceAll(from, to);
+    normalized = normalized.replace(new RegExp(`\\b${escapeRegExp(from)}\\b`, 'g'), to);
   });
 
   return normalized
