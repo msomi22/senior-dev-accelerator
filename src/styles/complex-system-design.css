@@ -62,10 +62,10 @@
 }
 
 .complex-design-score-card {
-  display: grid;
-  grid-template-columns: minmax(150px, auto) 1fr;
-  align-items: center;
-  gap: 16px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px 14px;
   padding: 10px 16px;
 }
 
@@ -171,35 +171,25 @@
   font-size: 0.92rem;
 }
 
+.complex-design-score-card .mini-label {
+  flex-basis: 100%;
+}
+
 .complex-design-score-card strong {
-  display: block;
-  margin-top: 1px;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  line-height: 0.95;
+  display: inline;
+  margin: 0;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  line-height: 1;
 }
 
 .complex-design-score-card p {
-  margin: 6px 0 0;
-  font-size: 0.9rem;
-  font-weight: 700;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
 .complex-design-score-bar {
-  width: 100%;
-  min-width: 180px;
-  height: 4px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--text-secondary), transparent 84%);
-  border: 0;
-  box-shadow: none;
-}
-
-.complex-design-score-bar span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  display: none;
 }
 
 .complex-design-signal-list {
@@ -338,17 +328,8 @@
     align-items: stretch;
   }
 
-  .complex-design-score-card {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
   .complex-design-grid,
   .complex-design-feedback-grid {
     grid-template-columns: 1fr;
-  }
-
-  .complex-design-score-bar {
-    width: 100%;
   }
 }
