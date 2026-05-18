@@ -1,4 +1,4 @@
-import fuzzball from 'fuzzball';
+import * as fuzzball from 'fuzzball';
 import nlp from 'compromise';
 import { COMMON_SYSTEM_DESIGN_DICTIONARY } from '../data/scoring/systemDesignDictionary.js';
 
