@@ -5,7 +5,6 @@
 }
 
 .complex-design-header,
-.complex-design-section-heading,
 .complex-design-actions,
 .complex-design-score-card,
 .complex-design-section-score > div {
@@ -13,6 +12,11 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+}
+
+.complex-design-section-heading {
+  display: grid;
+  gap: 6px;
 }
 
 .complex-design-header h2 {
@@ -28,6 +32,11 @@
 .complex-design-model-answer p,
 .complex-design-reveal-panel p {
   color: var(--text-secondary);
+}
+
+.complex-design-section-heading p {
+  margin: 0;
+  max-width: 980px;
 }
 
 .complex-design-prompt,
@@ -47,10 +56,13 @@
 .complex-design-prompt,
 .complex-design-card,
 .complex-design-answer-panel,
-.complex-design-breakdown,
 .complex-design-score-card,
 .complex-design-reveal-panel {
   padding: 18px;
+}
+
+.complex-design-breakdown {
+  padding: 14px 16px;
 }
 
 .complex-design-prompt.compact-prompt {
@@ -180,8 +192,8 @@
 .complex-design-signal-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .complex-design-signal-list span {
@@ -189,35 +201,52 @@
   align-items: center;
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 6px 10px;
+  padding: 4px 9px;
   background: var(--surface-subtle);
   color: var(--text-secondary);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .complex-design-section-list {
   display: grid;
-  gap: 12px;
-  margin-top: 14px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .complex-design-section-score {
-  padding: 14px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--surface-subtle);
+}
+
+.complex-design-section-score > div {
+  align-items: center;
+}
+
+.complex-design-section-score strong {
+  font-size: 0.96rem;
+}
+
+.complex-design-section-score p {
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 .complex-design-section-score span {
   color: var(--text-secondary);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .complex-design-section-score small {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .complex-design-model-answer {
