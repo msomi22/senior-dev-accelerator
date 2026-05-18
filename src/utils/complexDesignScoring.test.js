@@ -20,7 +20,6 @@ const zeroScoreAnswer = `
 const midpointAnswer = `
 - Assumptions
   - The system is read-heavy.
-  - Redirects should be low latency.
   - Users can create short URLs and later access them to reach the original long URL.
 
 - Short code generation
