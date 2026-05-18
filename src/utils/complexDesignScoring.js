@@ -155,9 +155,9 @@ export function fuzzyPhraseMatch(answerText, phrase, threshold = 85) {
     const windowText = answerWords.slice(index, index + windowSize).join(' ');
     const importantMatched = importantPhraseWords.filter((word) => words(windowText).some((answerWord) => tokenMatches(answerWord, word))).length;
     if (importantPhraseWords.length && importantMatched / importantPhraseWords.length >= 0.75) {
-      const weighted = fuzzball.weighted_ratio(windowText, normalize(phrase));
-      const tokenSet = fuzzball.token_set_ratio(windowText, normalize(phrase));
-      if (Math.max(weighted, tokenSet) >= threshold) return true;
+      const ratioScore = fuzzball.ratio(windowText, normalize(phrase));
+      const tokenSetScore = fuzzball.token_set_ratio(windowText, normalize(phrase));
+      if (Math.max(ratioScore, tokenSetScore) >= threshold) return true;
     }
   }
   return false;
