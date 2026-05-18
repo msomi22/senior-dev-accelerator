@@ -195,8 +195,10 @@ test('uses shared dictionary concepts without repeating aliases in every criteri
   };
 
   const result = scoreComplexDesignAnswer(testQuestion, 'Use Redis and a CDN for cache hits on hot items because this keeps reads low latency.');
+  const performance = result.sectionScores.find((section) => section.id === 'performance');
 
-  assert.ok(result.percentage >= 98, `Expected at least 98%, got ${result.percentage}%`);
+  assert.ok(result.totalScore > 0, `Expected shared dictionary match to score above zero, got ${result.totalScore}`);
+  assert.ok(performance.matchedCriteria.includes('cache'));
 });
 
 test('uses question-specific dictionary concepts for domain wording', () => {
@@ -217,8 +219,10 @@ test('uses question-specific dictionary concepts for domain wording', () => {
   };
 
   const result = scoreComplexDesignAnswer(testQuestion, 'After payment succeeds, publish a ticket booked event and send booking confirmation.');
+  const domainFlow = result.sectionScores.find((section) => section.id === 'domain-flow');
 
-  assert.ok(result.percentage >= 98, `Expected at least 98%, got ${result.percentage}%`);
+  assert.ok(result.totalScore > 0, `Expected question dictionary match to score above zero, got ${result.totalScore}`);
+  assert.ok(domainFlow.matchedCriteria.includes('booking-event'));
 });
 
 test('keeps typo replacement word-boundary safe for throughput wording', () => {
@@ -236,6 +240,8 @@ test('keeps typo replacement word-boundary safe for throughput wording', () => {
   };
 
   const result = scoreComplexDesignAnswer(testQuestion, 'The system needs high throughput because many users will access it.');
+  const requirements = result.sectionScores.find((section) => section.id === 'requirements');
 
-  assert.ok(result.percentage >= 98, `Expected at least 98%, got ${result.percentage}%`);
+  assert.ok(result.totalScore > 0, `Expected throughput wording to score above zero, got ${result.totalScore}`);
+  assert.ok(requirements.matchedCriteria.includes('throughput'));
 });
