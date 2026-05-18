@@ -1,3 +1,5 @@
+import { COMMON_SYSTEM_DESIGN_DICTIONARY } from '../data/scoring/systemDesignDictionary.js';
+
 export const SCORING_MODEL_LABEL = 'Hybrid deterministic scoring model';
 
 const REASONING_WORDS = [
@@ -82,6 +84,8 @@ const TYPO_REPLACEMENTS = [
 
 const SCORING_SIGNALS = [
   'rubric criteria',
+  'shared scoring dictionary',
+  'question-specific scoring dictionary',
   'natural wording aliases',
   'typo-tolerant matching',
   'partial credit',
@@ -115,10 +119,6 @@ function words(value = '') {
     .filter((word) => word.length > 2);
 }
 
-function includesAny(text, phrases = []) {
-  return phrases.some((phrase) => phraseMatches(text, phrase));
-}
-
 function phraseMatches(text, phrase) {
   const normalizedPhrase = normalize(phrase);
   if (!normalizedPhrase) return false;
@@ -134,8 +134,26 @@ function phraseMatches(text, phrase) {
   return matchedWords >= requiredWords;
 }
 
+function includesAny(text, phrases = []) {
+  return phrases.some((phrase) => phraseMatches(text, phrase));
+}
+
 function matchedAliases(text, phrases = []) {
   return phrases.filter((phrase) => phraseMatches(text, phrase));
+}
+
+function dictionaryTermsFor(concepts = [], dictionary = {}) {
+  return concepts.flatMap((concept) => dictionary[concept] || []);
+}
+
+function questionDictionaryFor(question) {
+  return question?.scoringDictionary || {};
+}
+
+function criterionPhrases(question, criterion) {
+  const sharedTerms = dictionaryTermsFor(criterion.concepts, COMMON_SYSTEM_DESIGN_DICTIONARY);
+  const questionTerms = dictionaryTermsFor(criterion.questionConcepts, questionDictionaryFor(question));
+  return [...sharedTerms, ...questionTerms, ...(criterion.aliases || [])];
 }
 
 function countSignalFamilies(answerText) {
@@ -151,9 +169,9 @@ function criterionLabel(criterion) {
   return criterion.label || criterion.id;
 }
 
-function scoreCriterion(answerText, criterion) {
-  const aliases = criterion.aliases || [];
-  const matches = matchedAliases(answerText, aliases);
+function scoreCriterion(answerText, criterion, question) {
+  const phrases = criterionPhrases(question, criterion);
+  const matches = matchedAliases(answerText, phrases);
 
   if (!matches.length) {
     return {
@@ -165,7 +183,7 @@ function scoreCriterion(answerText, criterion) {
   }
 
   const max = Number(criterion.points || 0);
-  const targetCoverage = Math.max(1, Math.min(aliases.length, Number(criterion.minimumMatches || 3)));
+  const targetCoverage = Math.max(1, Math.min(phrases.length, Number(criterion.minimumMatches || 3)));
   const aliasCoverage = Math.min(1, matches.length / targetCoverage);
   const signalFamilies = countSignalFamilies(answerText);
 
@@ -287,7 +305,7 @@ export function scoreComplexDesignAnswer(question, answer) {
     const missedLabels = [];
 
     (section.criteria || []).forEach((criterion) => {
-      const result = scoreCriterion(answerText, criterion);
+      const result = scoreCriterion(answerText, criterion, question);
       rawScore += result.score;
 
       if (result.matched) {
