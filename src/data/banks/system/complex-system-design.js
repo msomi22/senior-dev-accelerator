@@ -55,15 +55,25 @@ const topic = {
         'Discuss security and abuse prevention',
         'Add observability and metrics'
       ],
+      scoringDictionary: {
+        urlShortenerBasics: ['shorten request', 'short url', 'long url', 'short link', 'redirect', 'url shortener'],
+        base62Encoding: ['base62', 'base 62', '62 characters', 'url safe alphabet', 'digits and letters', 'short code'],
+        urlMapping: ['short code to long url', 'short url to long url', 'hashcode long url', 'lookup original url', 'save long url', 'save short url'],
+        redirect: ['accessing short url', 'user provides short url', 'redirect user', 'redirect to long url', '301', '302', 'return long url'],
+        urlMetadata: ['expiry', 'click count', 'owner', 'custom alias', 'created at', 'status', 'other metadata'],
+        customAlias: ['custom alias', 'reserved alias', 'namespace', 'ownership', 'alias ownership'],
+        urlAbuse: ['malicious url', 'spam', 'phishing', 'blocklist', 'safe browsing'],
+        clickAnalytics: ['analytics', 'click analytics', 'click events', 'queue clicks', 'async analytics', 'eventual analytics']
+      },
       scoringRubric: [
         {
           id: 'requirements',
           title: 'Requirements Clarification',
           weight: 10,
           criteria: [
-            { id: 'functional-requirements', label: 'Functional requirements', points: 4, aliases: ['create short url', 'shorten request', 'long url', 'short url', 'redirect', 'custom alias', 'expiry', 'analytics', 'click count'] },
-            { id: 'non-functional-requirements', label: 'Non-functional requirements', points: 4, aliases: ['latency', 'availability', 'scale', 'throughput', 'read heavy', 'load balancer', 'k8s', 'autoscaler', 'network traffic'] },
-            { id: 'assumptions', label: 'Assumptions and traffic estimates', points: 2, aliases: ['assume', 'traffic', 'qps', 'read write ratio', 'estimate'] }
+            { id: 'functional-requirements', label: 'Functional requirements', points: 4, concepts: ['requirements'], questionConcepts: ['urlShortenerBasics', 'customAlias', 'urlMetadata', 'clickAnalytics'], aliases: ['create short url', 'expiry', 'analytics', 'click count'] },
+            { id: 'non-functional-requirements', label: 'Non-functional requirements', points: 4, concepts: ['requirements', 'loadBalancing'], aliases: ['latency', 'availability', 'scale', 'throughput', 'read heavy', 'network traffic'] },
+            { id: 'assumptions', label: 'Assumptions and traffic estimates', points: 2, concepts: ['requirements'], aliases: ['assume', 'traffic', 'qps', 'read write ratio', 'estimate'] }
           ]
         },
         {
@@ -71,10 +81,10 @@ const topic = {
           title: 'Short Code Generation',
           weight: 15,
           criteria: [
-            { id: 'base62', label: 'Base62 or URL-safe encoding', points: 5, aliases: ['base62', 'base 62', '62 characters', 'url safe alphabet', 'digits and letters', 'shorten url'], requiresReasoning: true },
-            { id: 'unique-id-generation', label: 'Unique ID generation strategy', points: 4, aliases: ['sequence id', 'snowflake', 'distributed id', 'auto increment', 'random token', 'hashcode', 'hash code', 'generate hashcode', 'generate code'] },
-            { id: 'collision-handling', label: 'Collision handling', points: 4, aliases: ['collision', 'duplicate short code', 'unique constraint', 'retry', 'hash exists', 'hash existing', 'exists in database', 'already exists', 'return cached value'] },
-            { id: 'generation-tradeoffs', label: 'Generation trade-offs', points: 2, aliases: ['predictable', 'random', 'security', 'trade-off', 'guessable', 'hash', 'unique id'] }
+            { id: 'base62', label: 'Base62 or URL-safe encoding', points: 5, questionConcepts: ['base62Encoding'], aliases: ['shorten url'], requiresReasoning: true },
+            { id: 'unique-id-generation', label: 'Unique ID generation strategy', points: 4, concepts: ['idGeneration'], aliases: ['generate hashcode', 'generate code'] },
+            { id: 'collision-handling', label: 'Collision handling', points: 4, concepts: ['collisionHandling'], aliases: ['hash exists', 'hash existing', 'return cached value'] },
+            { id: 'generation-tradeoffs', label: 'Generation trade-offs', points: 2, concepts: ['tradeoffs'], aliases: ['predictable', 'random', 'security', 'guessable', 'hash', 'unique id'] }
           ]
         },
         {
@@ -82,9 +92,9 @@ const topic = {
           title: 'Storage Design',
           weight: 10,
           criteria: [
-            { id: 'url-mapping', label: 'URL mapping table', points: 4, aliases: ['short code to long url', 'short url to long url', 'hashcode long url', 'hashcode', 'mapping', 'url table', 'lookup original url', 'save long url', 'save short url'] },
-            { id: 'metadata', label: 'Metadata', points: 3, aliases: ['created at', 'expiry', 'owner', 'click count', 'status', 'metadata', 'other metadata'] },
-            { id: 'indexes', label: 'Indexes', points: 3, aliases: ['index', 'primary key', 'lookup index', 'unique index', 'database lookup'] }
+            { id: 'url-mapping', label: 'URL mapping table', points: 4, concepts: ['storage'], questionConcepts: ['urlMapping'], aliases: ['mapping', 'url table'] },
+            { id: 'metadata', label: 'Metadata', points: 3, concepts: ['storage'], questionConcepts: ['urlMetadata'], aliases: ['metadata', 'other metadata'] },
+            { id: 'indexes', label: 'Indexes', points: 3, concepts: ['storage'], aliases: ['index', 'primary key', 'lookup index', 'unique index', 'database lookup'] }
           ]
         },
         {
@@ -92,9 +102,9 @@ const topic = {
           title: 'Read and Write Flows',
           weight: 10,
           criteria: [
-            { id: 'create-flow', label: 'Create short URL flow', points: 4, aliases: ['create flow', 'shortening request', 'receive request', 'insert mapping', 'generate code', 'store url', 'save in database', 'update cache'] },
-            { id: 'redirect-flow', label: 'Redirect flow', points: 4, aliases: ['redirect flow', 'accessing short url', 'user provides short url', 'lookup short code', 'retrieve long url', 'redirect user', 'redirect to long url', '301', '302', 'return long url'] },
-            { id: 'retry-idempotency', label: 'Retry and idempotency behavior', points: 2, aliases: ['idempotency', 'retry', 'duplicate request', 'same result', 'if exists return', 'return cached value'] }
+            { id: 'create-flow', label: 'Create short URL flow', points: 4, concepts: ['writePath', 'idGeneration', 'storage', 'cache'], questionConcepts: ['urlShortenerBasics'], aliases: ['shortening request', 'receive request'] },
+            { id: 'redirect-flow', label: 'Redirect flow', points: 4, concepts: ['readPath', 'cache'], questionConcepts: ['redirect', 'urlMapping'], aliases: ['redirect flow', 'lookup short code'] },
+            { id: 'retry-idempotency', label: 'Retry and idempotency behavior', points: 2, concepts: ['writePath', 'collisionHandling'], aliases: ['same result', 'return cached value'] }
           ]
         },
         {
@@ -102,10 +112,10 @@ const topic = {
           title: 'Scaling and Performance',
           weight: 15,
           criteria: [
-            { id: 'cache', label: 'Caching hot links', points: 5, aliases: ['cache', 'redis', 'cdn', 'edge cache', 'hot link', 'cached value', 'update cache'] },
-            { id: 'partitioning', label: 'Partitioning or sharding', points: 4, aliases: ['shard', 'partition', 'consistent hashing', 'split by code', 'hash partition', 'database partition'] },
-            { id: 'read-heavy-optimization', label: 'Read-heavy optimization', points: 3, aliases: ['read heavy', 'read replica', 'low latency', 'high qps', 'cache lookup', 'check cache'] },
-            { id: 'backpressure', label: 'Backpressure and rate limits', points: 3, aliases: ['rate limit', 'throttle', 'throttling', 'backpressure', 'protect service', 'api gateway'] }
+            { id: 'cache', label: 'Caching hot links', points: 5, concepts: ['cache'], aliases: ['hot link'] },
+            { id: 'partitioning', label: 'Partitioning or sharding', points: 4, concepts: ['partitioning'], aliases: ['split by code'] },
+            { id: 'read-heavy-optimization', label: 'Read-heavy optimization', points: 3, concepts: ['readPath', 'cache'], aliases: ['read heavy', 'cache lookup', 'check cache'] },
+            { id: 'backpressure', label: 'Backpressure and rate limits', points: 3, concepts: ['apiGateway'], aliases: ['backpressure', 'protect service'] }
           ]
         },
         {
@@ -113,10 +123,10 @@ const topic = {
           title: 'Reliability and Consistency',
           weight: 15,
           criteria: [
-            { id: 'high-availability', label: 'High availability', points: 4, aliases: ['high availability', 'failover', 'multi region', 'replication', 'load balancer', 'k8s', 'pod autoscaler'] },
-            { id: 'consistency-tradeoffs', label: 'Consistency trade-offs', points: 4, aliases: ['eventual consistency', 'strong consistency', 'stale', 'consistency'] },
-            { id: 'failure-modes', label: 'Failure modes', points: 4, aliases: ['database down', 'cache down', 'partial failure', 'fallback', 'cache miss', 'if cache fails'] },
-            { id: 'analytics-consistency', label: 'Analytics consistency', points: 3, aliases: ['async analytics', 'eventual analytics', 'queue clicks', 'click events'] }
+            { id: 'high-availability', label: 'High availability', points: 4, concepts: ['reliability', 'loadBalancing'], aliases: ['high availability'] },
+            { id: 'consistency-tradeoffs', label: 'Consistency trade-offs', points: 4, concepts: ['consistency', 'tradeoffs'], aliases: ['eventual consistency', 'strong consistency', 'stale'] },
+            { id: 'failure-modes', label: 'Failure modes', points: 4, concepts: ['reliability'], aliases: ['database down', 'cache down', 'cache miss', 'if cache fails'] },
+            { id: 'analytics-consistency', label: 'Analytics consistency', points: 3, concepts: ['queue', 'consistency'], questionConcepts: ['clickAnalytics'], aliases: ['async analytics', 'eventual analytics'] }
           ]
         },
         {
@@ -124,9 +134,9 @@ const topic = {
           title: 'Security and Abuse Prevention',
           weight: 10,
           criteria: [
-            { id: 'malicious-url-protection', label: 'Malicious URL protection', points: 4, aliases: ['malicious url', 'spam', 'phishing', 'blocklist', 'safe browsing', 'ssl termination', 'authentication'] },
-            { id: 'rate-limiting', label: 'Rate limiting', points: 3, aliases: ['rate limit', 'quota', 'abuse', 'throttle', 'throttling', 'api gateway', 'per user', 'ip address'] },
-            { id: 'custom-alias-protection', label: 'Custom alias protection', points: 3, aliases: ['reserved alias', 'custom alias', 'namespace', 'ownership', 'authentication'] }
+            { id: 'malicious-url-protection', label: 'Malicious URL protection', points: 4, concepts: ['security'], questionConcepts: ['urlAbuse'], aliases: ['ssl termination'] },
+            { id: 'rate-limiting', label: 'Rate limiting', points: 3, concepts: ['apiGateway', 'security'], aliases: ['per user', 'ip address'] },
+            { id: 'custom-alias-protection', label: 'Custom alias protection', points: 3, concepts: ['security'], questionConcepts: ['customAlias'], aliases: ['authentication'] }
           ]
         },
         {
@@ -134,9 +144,9 @@ const topic = {
           title: 'Observability',
           weight: 10,
           criteria: [
-            { id: 'metrics', label: 'Metrics', points: 4, aliases: ['metrics', 'latency', 'error rate', 'cache hit rate', 'qps'] },
-            { id: 'logging-tracing', label: 'Logs and tracing', points: 3, aliases: ['logs', 'tracing', 'trace id', 'debug'] },
-            { id: 'alerts', label: 'Alerts', points: 3, aliases: ['alert', 'dashboard', 'monitoring', 'slo'] }
+            { id: 'metrics', label: 'Metrics', points: 4, concepts: ['observability'], aliases: ['metrics', 'latency', 'error rate', 'cache hit rate', 'qps'] },
+            { id: 'logging-tracing', label: 'Logs and tracing', points: 3, concepts: ['observability'], aliases: ['logs', 'tracing', 'trace id', 'debug'] },
+            { id: 'alerts', label: 'Alerts', points: 3, concepts: ['observability'], aliases: ['alert', 'dashboard', 'monitoring', 'slo'] }
           ]
         }
       ],
