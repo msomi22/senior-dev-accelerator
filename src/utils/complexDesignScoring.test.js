@@ -31,7 +31,7 @@ const midpointAnswer = `
   - Use shortCode as the primary key.
 
 - Create flow
-  - Validate the long URL.
+  - Receive the long URL request.
   - Generate the shortCode.
   - Save the mapping in the database.
   - Return the short URL.
