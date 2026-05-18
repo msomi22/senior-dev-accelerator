@@ -6,6 +6,50 @@ import { scoreComplexDesignAnswer } from './complexDesignScoring.js';
 
 const question = topic.questions.find((item) => item.id === 'complex-system-design-url-shortener-001');
 
+const zeroScoreAnswer = `
+- I will use a server.
+- The server will make the link short.
+- Users will click the link.
+- The system will open the website.
+- I will use a database.
+- I will make it fast.
+- I will make it secure.
+- It should work well.
+`;
+
+const fiftyPercentAnswer = `
+- Assumptions
+  - System is read-heavy.
+  - Redirects should be low latency.
+  - Must support short URL creation, redirects, expiry, and custom aliases.
+
+- APIs
+  - POST /urls accepts longUrl, optional customAlias, optional expiresAt, userId, and idempotencyKey.
+  - GET /{shortCode} returns a redirect or 404 if not found.
+
+- Short code generation
+  - Generate a unique ID and encode it using Base62.
+  - Enforce a unique index on shortCode.
+  - If collision happens, retry generation.
+  - For custom aliases, check uniqueness before saving.
+
+- Storage
+  - Store shortCode, longUrl, userId, customAlias, createdAt, expiresAt, status, and metadata.
+  - Use shortCode as the primary key.
+
+- Create flow
+  - Request goes through API Gateway with authentication, validation, throttling, and rate limiting.
+  - Service validates the URL, generates or validates the shortCode, saves mapping in database, updates Redis cache, and returns short URL.
+  - Use idempotencyKey to avoid duplicate creates.
+
+- Redirect flow
+  - User opens short URL.
+  - Check Redis cache.
+  - If cache hit, redirect to longUrl.
+  - If cache miss, lookup database by shortCode, update cache, then redirect.
+  - If not found in database, return 404.
+`;
+
 const issue49SampleAnswer = `
 1. shortening request
 - user provide long url
@@ -77,6 +121,24 @@ test('returns zero score and helpful feedback for an empty answer', () => {
   assert.equal(result.percentage, 0);
   assert.equal(result.level, 'Needs work');
   assert.equal(result.sectionScores.length, question.scoringRubric.length);
+});
+
+test('scores a vague generic answer at zero', () => {
+  const result = scoreComplexDesignAnswer(question, zeroScoreAnswer);
+
+  assert.equal(result.totalScore, 0);
+  assert.equal(result.percentage, 0);
+  assert.ok(result.sectionScores.every((section) => section.score === 0));
+});
+
+test('scores a realistic partial answer around 50 percent', () => {
+  const result = scoreComplexDesignAnswer(question, fiftyPercentAnswer);
+
+  assert.ok(result.percentage >= 45, `Expected at least 45%, got ${result.percentage}%`);
+  assert.ok(result.percentage <= 55, `Expected at most 55%, got ${result.percentage}%`);
+  assert.equal(result.level, 'Needs work');
+  assert.ok(result.sectionScores.find((section) => section.id === 'observability').score === 0);
+  assert.ok(result.sectionScores.find((section) => section.id === 'reliability-consistency').score < 8);
 });
 
 test('scores a complete rubric-covering answer at 100%', () => {
