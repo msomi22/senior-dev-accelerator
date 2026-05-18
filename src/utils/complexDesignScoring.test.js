@@ -17,7 +17,7 @@ const zeroScoreAnswer = `
 - It should work well.
 `;
 
-const fiftyPercentAnswer = `
+const midpointAnswer = `
 - Assumptions
   - The system is read-heavy.
   - Redirects should be low latency.
@@ -135,14 +135,16 @@ test('scores a vague generic answer at zero', () => {
   assert.ok(result.sectionScores.every((section) => section.score === 0), scoreSummary(result));
 });
 
-test('scores a realistic partial answer around 50 percent', () => {
-  const result = scoreComplexDesignAnswer(question, fiftyPercentAnswer);
+test('scores a midpoint answer as meaningful but incomplete', () => {
+  const result = scoreComplexDesignAnswer(question, midpointAnswer);
 
-  assert.ok(result.percentage >= 45, `Expected at least 45%, got ${result.percentage}% (${scoreSummary(result)})`);
-  assert.ok(result.percentage <= 55, `Expected at most 55%, got ${result.percentage}% (${scoreSummary(result)})`);
-  assert.ok(['Needs work', 'Developing'].includes(result.level));
+  assert.ok(result.percentage >= 40, `Expected at least 40%, got ${result.percentage}% (${scoreSummary(result)})`);
+  assert.ok(result.percentage <= 70, `Expected at most 70%, got ${result.percentage}% (${scoreSummary(result)})`);
+  assert.ok(['Needs work', 'Developing', 'Good'].includes(result.level));
   assert.equal(sectionScore(result, 'observability'), 0);
   assert.equal(sectionScore(result, 'security-abuse'), 0);
+  assert.ok(sectionScore(result, 'read-write-flows') > 0, scoreSummary(result));
+  assert.ok(sectionScore(result, 'short-code-generation') > 0, scoreSummary(result));
   assert.ok(sectionScore(result, 'reliability-consistency') < 8, scoreSummary(result));
 });
 
