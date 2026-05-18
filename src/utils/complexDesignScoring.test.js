@@ -161,3 +161,23 @@ test('uses question-specific dictionary concepts for domain wording', () => {
   assert.equal(result.totalScore, 10);
   assert.equal(result.percentage, 100);
 });
+
+test('keeps typo replacement word-boundary safe for throughput wording', () => {
+  const testQuestion = {
+    scoringRubric: [
+      {
+        id: 'requirements',
+        title: 'Requirements',
+        weight: 10,
+        criteria: [
+          { id: 'throughput', label: 'Throughput requirement', points: 10, concepts: ['requirements'], aliases: ['throughput'] }
+        ]
+      }
+    ]
+  };
+
+  const result = scoreComplexDesignAnswer(testQuestion, 'The system needs high throughput because many users will access it.');
+
+  assert.equal(result.totalScore, 10);
+  assert.equal(result.percentage, 100);
+});
