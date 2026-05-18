@@ -61,7 +61,7 @@
 }
 
 .complex-design-reveal-panel {
-  padding: 12px 14px 14px;
+  padding: 10px 12px 12px;
 }
 
 .complex-design-score-card {
@@ -91,8 +91,8 @@
 
 .complex-design-reveal-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   align-items: start;
 }
 
@@ -113,13 +113,13 @@
 
 .complex-design-reveal-panel {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .complex-design-reveal-panel > div:first-child p {
-  margin: 4px 0 0;
-  font-size: 0.88rem;
-  line-height: 1.35;
+  margin: 3px 0 0;
+  font-size: 0.84rem;
+  line-height: 1.3;
 }
 
 .complex-design-reveal-card {
@@ -127,13 +127,13 @@
   box-shadow: none;
   background: var(--surface-subtle);
   overflow: hidden;
-  border-radius: 14px;
+  border-radius: 13px;
 }
 
 .complex-design-reveal-card summary {
   cursor: pointer;
-  padding: 10px 12px;
-  font-size: 0.92rem;
+  padding: 8px 10px;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--text-primary);
   outline-offset: -3px;
@@ -141,7 +141,7 @@
 
 .complex-design-reveal-card summary:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--accent2), transparent 45%);
-  border-radius: 10px;
+  border-radius: 9px;
 }
 
 .complex-design-reveal-card[open] summary {
@@ -150,16 +150,16 @@
 
 .complex-design-reveal-card ul {
   margin-top: 0;
-  padding: 8px 16px 10px 30px;
+  padding: 6px 12px 8px 26px;
 }
 
 .complex-design-reveal-card li {
-  font-size: 0.9rem;
-  line-height: 1.35;
+  font-size: 0.84rem;
+  line-height: 1.25;
 }
 
 .complex-design-reveal-card li + li {
-  margin-top: 5px;
+  margin-top: 3px;
 }
 
 .complex-design-answer-panel {
@@ -337,6 +337,7 @@
     width: 100%;
   }
 
+  .complex-design-reveal-grid,
   .complex-design-section-list,
   .complex-design-model-answer[open] > .complex-design-card ul {
     grid-template-columns: 1fr;
