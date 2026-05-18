@@ -151,7 +151,7 @@ function ReinforcementCards({ question }) {
   return <aside className="learning-reinforcement-grid">{cards.map(([title, value]) => <TextBlock key={title} title={title}>{value}</TextBlock>)}</aside>;
 }
 
-export default function FocusedProblemWorkspace({ question, completed, onToggle, hideTopline = false }) {
+export default function FocusedProblemWorkspace({ question, completed, onToggle, onMarkComplete, hideTopline = false }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [selected, setSelected] = useState(() => storageService.getSelectedAnswer(question.id));
   const [focusMode, setFocusMode] = useState(false);
@@ -184,13 +184,13 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
 
     if (!completed && lastCompletedQuestionId.current !== question.id) {
       lastCompletedQuestionId.current = question.id;
-      onToggle?.(question.id);
+      onMarkComplete?.(question.id);
     }
   }
 
   return (
     <article className={`focused-problem-workspace glass-lite ${completed ? 'done' : ''} ${focusMode ? 'focus-mode' : ''}`}>
-      {!hideTopline ? <div className="focused-problem-topline"><div className="meta-strip"><span className="pill">{question.difficulty}</span><span className="time-pill">Time: {question.estimatedTime || '10 min'}</span></div><button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Completed' : 'Mark done'}</button></div> : null}
+      {!hideTopline ? <div className="focused-problem-topline"><div className="meta-strip"><span className="pill">{question.difficulty}</span><span className="time-pill">Time: {question.estimatedTime || '10 min'}</span></div><button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Reset progress' : 'Mark complete'}</button></div> : null}
       <div className="focused-tabs-wrap">
         <div className="focused-tabs" role="tablist" aria-label="Problem learning sections">{tabs.map(([id, label]) => <button key={id} type="button" className={`focused-tab-btn ${activeTab === id ? 'active' : ''}`} role="tab" aria-selected={activeTab === id} onClick={() => setActiveTab(id)}>{label}</button>)}</div>
         <button type="button" className={`focus-mode-toggle ${focusMode ? 'active' : ''}`} aria-pressed={focusMode} onClick={() => setFocusMode((current) => !current)}>{focusMode ? 'Exit focus' : 'Focus mode'}</button>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { storageService } from '../../services/storageService.js';
 import {
@@ -182,10 +182,27 @@ function SectionBreakdown({ result }) {
 }
 
 export default function ComplexSystemDesignProblem({ question, completed, onToggle, onMarkComplete }) {
-  const savedSubmission = storageService.getComplexDesignSubmission(question.id);
-  const [answer, setAnswer] = useState(savedSubmission?.answer || '');
-  const [result, setResult] = useState(savedSubmission?.result || null);
-  const [submitted, setSubmitted] = useState(Boolean(savedSubmission));
+  const [answer, setAnswer] = useState('');
+  const [result, setResult] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const previousQuestionId = useRef('');
+  const previousCompleted = useRef(false);
+
+  useEffect(() => {
+    const questionChanged = previousQuestionId.current !== question.id;
+    const wasReset = previousCompleted.current && !completed;
+
+    if (questionChanged || wasReset) {
+      const savedSubmission = storageService.getComplexDesignSubmission(question.id);
+
+      setAnswer(savedSubmission?.answer || '');
+      setResult(savedSubmission?.result || null);
+      setSubmitted(Boolean(savedSubmission));
+    }
+
+    previousQuestionId.current = question.id;
+    previousCompleted.current = completed;
+  }, [question.id, completed]);
 
   const wordCount = useMemo(() => answer.trim().split(/\s+/).filter(Boolean).length, [answer]);
   const guidance = guidanceFor(question, submitted);
@@ -211,7 +228,7 @@ export default function ComplexSystemDesignProblem({ question, completed, onTogg
           <p>{question.scenario}</p>
         </div>
         <button className="mark" type="button" onClick={() => onToggle?.(question.id)}>
-          {completed ? 'Completed' : 'Mark complete'}
+          {completed ? 'Reset progress' : 'Mark complete'}
         </button>
       </header>
 
