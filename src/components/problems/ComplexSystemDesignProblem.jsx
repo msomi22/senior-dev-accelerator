@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { storageService } from '../../services/storageService.js';
 import {
@@ -185,13 +185,23 @@ export default function ComplexSystemDesignProblem({ question, completed, onTogg
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const previousQuestionId = useRef('');
+  const previousCompleted = useRef(false);
 
   useEffect(() => {
-    const savedSubmission = storageService.getComplexDesignSubmission(question.id);
+    const questionChanged = previousQuestionId.current !== question.id;
+    const wasReset = previousCompleted.current && !completed;
 
-    setAnswer(savedSubmission?.answer || '');
-    setResult(savedSubmission?.result || null);
-    setSubmitted(Boolean(savedSubmission));
+    if (questionChanged || wasReset) {
+      const savedSubmission = storageService.getComplexDesignSubmission(question.id);
+
+      setAnswer(savedSubmission?.answer || '');
+      setResult(savedSubmission?.result || null);
+      setSubmitted(Boolean(savedSubmission));
+    }
+
+    previousQuestionId.current = question.id;
+    previousCompleted.current = completed;
   }, [question.id, completed]);
 
   const wordCount = useMemo(() => answer.trim().split(/\s+/).filter(Boolean).length, [answer]);
