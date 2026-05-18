@@ -168,8 +168,14 @@ export default function CategoryPage({ fixedCategoryId }) {
     }
   }, [filteredTopics, selectedId]);
 
-  const toggle = (id) => {
-    setCompleted(storageService.toggleComplete(id));
+  const handleCompletionClick = (id) => {
+    if (completed[id]) {
+      const updated = storageService.resetQuestionProgress(id);
+      setCompleted(updated.completed);
+      return;
+    }
+
+    setCompleted(storageService.markComplete(id));
   };
 
   if (!category) {
@@ -217,7 +223,7 @@ export default function CategoryPage({ fixedCategoryId }) {
               topic={selectedTopic}
               questions={selectedTopic.filteredQuestions}
               completed={completed}
-              onToggle={toggle}
+              onToggle={handleCompletionClick}
               activeDifficulty={topicDifficulty}
             />
           ) : null}
