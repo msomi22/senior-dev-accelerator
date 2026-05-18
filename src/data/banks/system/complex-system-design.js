@@ -60,6 +60,7 @@ const topic = {
         base62Encoding: ['base62', 'base 62', '62 characters', 'url safe alphabet', 'digits and letters', 'short code'],
         urlMapping: ['short code to long url', 'short url to long url', 'hashcode long url', 'lookup original url', 'save long url', 'save short url'],
         redirect: ['accessing short url', 'user provides short url', 'redirect user', 'redirect to long url', '301', '302', 'return long url'],
+        redirectDbFallback: ['database lookup on cache miss', 'check database on cache miss', 'cache miss then database', 'if not in cache check database', 'lookup database by short code', 'database miss then 404'],
         urlMetadata: ['expiry', 'click count', 'owner', 'custom alias', 'created at', 'status', 'other metadata'],
         customAlias: ['custom alias', 'reserved alias', 'namespace', 'ownership', 'alias ownership'],
         urlAbuse: ['malicious url', 'spam', 'phishing', 'blocklist', 'safe browsing'],
@@ -103,7 +104,7 @@ const topic = {
           weight: 10,
           criteria: [
             { id: 'create-flow', label: 'Create short URL flow', points: 4, concepts: ['writePath', 'idGeneration', 'storageWrite', 'cache'], questionConcepts: ['urlShortenerBasics'], aliases: ['shortening request', 'receive request'] },
-            { id: 'redirect-flow', label: 'Redirect flow', points: 4, concepts: ['readPath', 'cache'], questionConcepts: ['redirect', 'urlMapping'], aliases: ['redirect flow', 'lookup short code'] },
+            { id: 'redirect-flow', label: 'Redirect flow', points: 4, concepts: ['readPath', 'cache'], questionConcepts: ['redirect', 'urlMapping'], criticalQuestionConcepts: ['redirectDbFallback'], maxRatioWithoutCritical: 0.6, aliases: ['redirect flow', 'lookup short code'] },
             { id: 'retry-idempotency', label: 'Retry and idempotency behavior', points: 2, concepts: ['writePath', 'collisionHandling'], aliases: ['same result', 'return cached value'] }
           ]
         },
