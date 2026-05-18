@@ -144,8 +144,41 @@ function phraseMatches(text, phrase) {
   return matchedWords >= requiredWords;
 }
 
+function strictPhraseMatches(text, phrase) {
+  const normalizedPhrase = normalize(phrase);
+  if (!normalizedPhrase) return false;
+
+  const phraseWords = words(normalizedPhrase);
+  if (phraseWords.length === 1) {
+    return words(text).includes(phraseWords[0]);
+  }
+
+  return text.includes(normalizedPhrase);
+}
+
+function criticalPhraseMatches(text, phrase) {
+  if (strictPhraseMatches(text, phrase)) return true;
+
+  const normalizedPhrase = normalize(phrase);
+  const isCacheMissDatabaseFallback = normalizedPhrase.includes('cache miss') && normalizedPhrase.includes('database');
+
+  if (!isCacheMissDatabaseFallback) return false;
+
+  return text.includes('cache miss') && (
+    text.includes('lookup database')
+    || text.includes('lookup the database')
+    || text.includes('check database')
+    || text.includes('check the database')
+    || text.includes('database lookup')
+  );
+}
+
 function includesAny(text, phrases = []) {
   return phrases.some((phrase) => phraseMatches(text, phrase));
+}
+
+function includesAnyCritical(text, phrases = []) {
+  return phrases.some((phrase) => criticalPhraseMatches(text, phrase));
 }
 
 function matchedAliases(text, phrases = []) {
@@ -199,11 +232,14 @@ function scoreCriterion(answerText, criterion, question) {
   }
 
   const max = Number(criterion.points || 0);
-  const targetCoverage = Math.max(1, Math.min(phrases.length, Number(criterion.minimumMatches || 3)));
+  const requestedMinimumMatches = Number(criterion.minimumMatches || 0);
+  const targetCoverage = requestedMinimumMatches > 0
+    ? Math.max(1, Math.min(phrases.length, requestedMinimumMatches))
+    : 1;
   const aliasCoverage = Math.min(1, matches.length / targetCoverage);
   const signalFamilies = countSignalFamilies(answerText);
   const criticalPhrases = criterionCriticalPhrases(question, criterion);
-  const criticalMatched = !criticalPhrases.length || includesAny(answerText, criticalPhrases);
+  const criticalMatched = !criticalPhrases.length || includesAnyCritical(answerText, criticalPhrases);
   const criticalCap = Number(criterion.maxRatioWithoutCritical || 0.65);
 
   let ratio = 0.42 + aliasCoverage * 0.38;
