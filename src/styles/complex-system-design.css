@@ -16,7 +16,7 @@
 
 .complex-design-section-heading {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .complex-design-header h2 {
@@ -37,6 +37,8 @@
 .complex-design-section-heading p {
   margin: 0;
   max-width: 980px;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .complex-design-prompt,
@@ -62,7 +64,8 @@
 }
 
 .complex-design-breakdown {
-  padding: 14px 16px;
+  padding: 12px 14px 14px;
+  overflow: visible;
 }
 
 .complex-design-prompt.compact-prompt {
@@ -192,8 +195,9 @@
 .complex-design-signal-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
+  gap: 5px;
+  margin-top: 8px;
+  margin-bottom: 2px;
 }
 
 .complex-design-signal-list span {
@@ -201,52 +205,56 @@
   align-items: center;
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 4px 9px;
+  padding: 3px 8px;
   background: var(--surface-subtle);
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .complex-design-section-list {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .complex-design-section-score {
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--surface-subtle);
 }
 
 .complex-design-section-score > div {
   align-items: center;
+  gap: 10px;
 }
 
 .complex-design-section-score strong {
-  font-size: 0.96rem;
+  font-size: 0.9rem;
 }
 
 .complex-design-section-score p {
-  margin: 8px 0 0;
-  font-size: 0.92rem;
-  line-height: 1.45;
+  margin: 5px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
 .complex-design-section-score span {
   color: var(--text-secondary);
+  font-size: 0.84rem;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .complex-design-section-score small {
   display: block;
-  margin-top: 6px;
+  margin-top: 4px;
   color: var(--text-muted);
-  font-size: 0.78rem;
-  line-height: 1.4;
+  font-size: 0.72rem;
+  line-height: 1.3;
 }
 
 .complex-design-model-answer {
@@ -266,6 +274,12 @@
 
 .complex-design-model-answer[open] > .complex-design-card {
   margin: 0 18px 14px;
+}
+
+@media (max-width: 980px) {
+  .complex-design-section-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 780px) {
