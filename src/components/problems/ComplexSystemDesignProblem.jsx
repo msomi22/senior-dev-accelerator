@@ -154,8 +154,8 @@ function SectionBreakdown({ result }) {
       <div className="complex-design-section-heading">
         <span className="mini-label">{result.scoringModel || SCORING_MODEL_LABEL}</span>
         <p>
-          Combines rubric criteria, partial credit, natural wording aliases, typo tolerance,
-          reasoning, trade-offs, failure-mode coverage, observability signals, and quality caps.
+          Scored based on key design coverage, clear reasoning, trade-offs,
+          reliability, security, scaling, and observability.
         </p>
       </div>
 
