@@ -14,24 +14,40 @@ export const COMMON_SYSTEM_DESIGN_DICTIONARY = {
   apiGateway: [
     'api gateway',
     'request validation',
-    'ssl termination',
+    'ssl termination'
+  ],
+  authentication: [
     'authentication',
     'authorization',
+    'authenticated user',
+    'owner auth',
+    'access control'
+  ],
+  rateLimiting: [
     'rate limit',
+    'rate limiting',
     'throttle',
-    'quota'
+    'throttling',
+    'quota',
+    'per user',
+    'per ip',
+    'ip address',
+    'abuse limit'
   ],
   loadBalancing: [
     'load balancer',
     'load balancing',
     'stateless service',
     'multiple instances',
-    'horizontal scaling',
+    'horizontal scaling'
+  ],
+  orchestration: [
     'k8s',
     'kubernetes',
     'pod autoscaler',
     'auto scaler',
-    'autoscaler'
+    'autoscaler',
+    'auto scaling'
   ],
   idGeneration: [
     'unique id',
@@ -57,20 +73,40 @@ export const COMMON_SYSTEM_DESIGN_DICTIONARY = {
     'exists in database',
     'if exists return'
   ],
-  storage: [
-    'database',
-    'table',
-    'mapping',
+  storageWrite: [
+    'save in database',
+    'store in database',
+    'insert',
+    'persist',
+    'database write',
+    'write to database'
+  ],
+  storageModel: [
+    'database table',
+    'table schema',
+    'data model',
+    'mapping table',
     'primary key',
-    'index',
-    'unique index',
+    'row',
+    'column'
+  ],
+  metadata: [
     'metadata',
     'created at',
     'updated at',
     'status',
     'owner',
-    'save in database',
-    'store in database'
+    'expiry',
+    'expires at'
+  ],
+  indexing: [
+    'index',
+    'indexes',
+    'primary key',
+    'lookup index',
+    'unique index',
+    'database lookup indexed',
+    'indexed lookup'
   ],
   cache: [
     'cache',
@@ -98,7 +134,6 @@ export const COMMON_SYSTEM_DESIGN_DICTIONARY = {
   writePath: [
     'write path',
     'create flow',
-    'insert',
     'write request',
     'save',
     'persist',
@@ -136,33 +171,35 @@ export const COMMON_SYSTEM_DESIGN_DICTIONARY = {
     'replication lag',
     'source of truth'
   ],
-  reliability: [
+  availability: [
     'high availability',
     'failover',
     'replication',
     'multi region',
     'multi availability zone',
+    'active active',
+    'active passive'
+  ],
+  failureHandling: [
     'fallback',
     'timeout',
     'retry',
     'circuit breaker',
     'graceful degradation',
     'partial failure',
-    'region fails'
+    'region fails',
+    'database down',
+    'cache down'
   ],
-  security: [
-    'security',
-    'authentication',
-    'authorization',
+  abusePrevention: [
     'abuse',
-    'rate limit',
-    'quota',
     'spam',
     'phishing',
     'blocklist',
     'allowlist',
     'safe browsing',
-    'reserved namespace'
+    'malicious',
+    'malware'
   ],
   observability: [
     'metrics',
