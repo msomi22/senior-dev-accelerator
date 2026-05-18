@@ -127,14 +127,19 @@ function words(value = '') {
 function phraseMatches(text, phrase) {
   const normalizedPhrase = normalize(phrase);
   if (!normalizedPhrase) return false;
-  if (text.includes(normalizedPhrase)) return true;
 
   const phraseWords = words(normalizedPhrase);
-  if (phraseWords.length < 2) return false;
+  if (phraseWords.length === 1) {
+    return words(text).includes(phraseWords[0]);
+  }
+
+  if (text.includes(normalizedPhrase)) return true;
+
+  if (phraseWords.length <= 3) return false;
 
   const answerWords = new Set(words(text));
   const matchedWords = phraseWords.filter((word) => answerWords.has(word)).length;
-  const requiredWords = phraseWords.length <= 3 ? phraseWords.length : Math.ceil(phraseWords.length * 0.75);
+  const requiredWords = Math.ceil(phraseWords.length * 0.75);
 
   return matchedWords >= requiredWords;
 }
