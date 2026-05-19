@@ -4,6 +4,10 @@ import {
   filterQuestionsForActiveProfile,
   filterTopicsForActiveProfile
 } from '../config/contentProfile.js';
+import {
+  getDiscoveredQuestionsForTopic,
+  getProblemValidationResult
+} from '../problems/problemDiscovery.js';
 
 const bankModules = import.meta.glob('../data/banks/**/*.js');
 const SIMPLE_SYSTEM_DESIGN_TYPES = new Set(['system-design', 'production-scenario']);
@@ -77,6 +81,20 @@ async function mergeComplexDesignQuestions(bank) {
   };
 }
 
+function mergeDiscoveredQuestions(bank, discoveredQuestions = []) {
+  if (!discoveredQuestions.length) return bank;
+
+  const existingIds = new Set((bank.questions || []).map((question) => question.id));
+  const additiveQuestions = discoveredQuestions.filter((question) => !existingIds.has(question.id));
+
+  if (!additiveQuestions.length) return bank;
+
+  return {
+    ...bank,
+    questions: [...(bank.questions || []), ...additiveQuestions]
+  };
+}
+
 function applyContentProfileToBank(bank) {
   return {
     ...bank,
@@ -110,7 +128,9 @@ export async function loadTopicBank(topicId) {
         const overridden = applyQuestionOverrides(module.default);
         const merged = await mergeComplexDesignQuestions(overridden);
         const normalized = normalizeQuestionTypes(merged);
-        return applyContentProfileToBank(normalized);
+        const discoveredQuestions = await getDiscoveredQuestionsForTopic(topicId);
+        const withDiscoveredQuestions = mergeDiscoveredQuestions(normalized, discoveredQuestions);
+        return applyContentProfileToBank(withDiscoveredQuestions);
       })
     );
   }
@@ -225,3 +245,5 @@ export function topicProgress(topic, completed = {}) {
 
   return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
 }
+
+export { getProblemValidationResult };
