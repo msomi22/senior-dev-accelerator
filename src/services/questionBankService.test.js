@@ -43,6 +43,19 @@ test('mergeQuestionsById prefers migrated problem files and avoids duplicate IDs
   assert.equal(merged.find((question) => question.id === 'scalability-001').title, 'Migrated URL Shortener');
 });
 
+test('mergeQuestionsById keeps legacy questions visible when migrated discovery is empty', () => {
+  const legacyQuestions = [
+    {
+      id: 'api-design-001',
+      title: 'Legacy API Versioning',
+      category: 'system',
+      topicId: 'api-design'
+    }
+  ];
+
+  assert.deepEqual(mergeQuestionsById([], legacyQuestions), legacyQuestions);
+});
+
 test('mergeQuestionsById ignores malformed entries without IDs', () => {
   const merged = mergeQuestionsById(
     [{ title: 'Missing ID' }, null, { id: 'graphs-001', title: 'Graph BFS' }],
