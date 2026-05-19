@@ -10,6 +10,23 @@ function rows(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
 
+function nextFrame() {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined' || typeof window.requestAnimationFrame !== 'function') {
+      resolve();
+      return;
+    }
+
+    window.requestAnimationFrame(() => resolve());
+  });
+}
+
+function shortDelay(ms = 40) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
 function difficultyLevel(difficulty) {
   const value = String(difficulty || '').trim().toLowerCase();
   if (value === 'easy') return 'easy';
@@ -128,6 +145,29 @@ function ScoreMeter({ result }) {
   );
 }
 
+function EvaluationProgress({ active, progress }) {
+  if (!active) return null;
+
+  return (
+    <div className="complex-design-evaluation-progress" role="status" aria-live="polite">
+      <div className="complex-design-progress-copy">
+        <span>Evaluating answer…</span>
+        <strong>{progress}%</strong>
+      </div>
+      <div
+        className="complex-design-progress-track"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={progress}
+        aria-label="Evaluation progress"
+      >
+        <span style={{ width: `${progress}%` }} />
+      </div>
+    </div>
+  );
+}
+
 function FeedbackList({ title, items }) {
   const list = rows(items);
   if (!list.length) return null;
@@ -187,8 +227,11 @@ export default function ComplexSystemDesignProblem({ question, completed, onTogg
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluationProgress, setEvaluationProgress] = useState(0);
   const previousQuestionId = useRef('');
   const previousCompleted = useRef(false);
+  const progressResetTimer = useRef(null);
 
   useEffect(() => {
     const questionChanged = previousQuestionId.current !== question.id;
@@ -200,17 +243,42 @@ export default function ComplexSystemDesignProblem({ question, completed, onTogg
       setAnswer(savedSubmission?.answer || '');
       setResult(savedSubmission?.result || null);
       setSubmitted(Boolean(savedSubmission));
+      setIsEvaluating(false);
+      setEvaluationProgress(0);
     }
 
     previousQuestionId.current = question.id;
     previousCompleted.current = completed;
   }, [question.id, completed]);
 
+  useEffect(() => () => {
+    if (progressResetTimer.current) {
+      window.clearTimeout(progressResetTimer.current);
+    }
+  }, []);
+
   const wordCount = useMemo(() => answer.trim().split(/\s+/).filter(Boolean).length, [answer]);
   const guidance = guidanceFor(question, submitted);
 
-  function handleEvaluate() {
+  async function handleEvaluate() {
+    if (isEvaluating) return;
+
+    if (progressResetTimer.current) {
+      window.clearTimeout(progressResetTimer.current);
+    }
+
+    setIsEvaluating(true);
+    setEvaluationProgress(12);
+
+    await nextFrame();
+    setEvaluationProgress(35);
+    await shortDelay();
+
     const nextResult = scoreComplexDesignAnswer(question, answer);
+
+    setEvaluationProgress(82);
+    await nextFrame();
+
     setResult(nextResult);
     setSubmitted(true);
     storageService.setComplexDesignSubmission(question.id, {
@@ -219,6 +287,12 @@ export default function ComplexSystemDesignProblem({ question, completed, onTogg
       submittedAt: new Date().toISOString()
     });
     onMarkComplete?.(question.id);
+
+    setEvaluationProgress(100);
+    progressResetTimer.current = window.setTimeout(() => {
+      setIsEvaluating(false);
+      setEvaluationProgress(0);
+    }, 450);
   }
 
   return (
@@ -270,9 +344,13 @@ export default function ComplexSystemDesignProblem({ question, completed, onTogg
         />
 
         <div className="complex-design-actions">
-          <button className="btn" type="button" onClick={handleEvaluate}>Evaluate answer</button>
+          <button className="btn" type="button" onClick={handleEvaluate} disabled={isEvaluating}>
+            {isEvaluating ? 'Evaluating…' : 'Evaluate answer'}
+          </button>
           {submitted && result ? <span>{result.level} · {result.percentage}% · saved</span> : null}
         </div>
+
+        <EvaluationProgress active={isEvaluating} progress={evaluationProgress} />
       </section>
 
       <ScoreMeter result={result} />
