@@ -105,6 +105,21 @@ function mergeDiscoveredQuestions(bank, discoveredQuestions = []) {
   };
 }
 
+async function safelyGetDiscoveredQuestionsForTopic(topicId) {
+  try {
+    return await getDiscoveredQuestionsForTopic(topicId);
+  } catch (error) {
+    if (typeof console !== 'undefined') {
+      console.warn(
+        `[problem-discovery] Failed to load discovered problems for ${topicId}; using legacy bank fallback.`,
+        error
+      );
+    }
+
+    return [];
+  }
+}
+
 function applyContentProfileToBank(bank) {
   return {
     ...bank,
@@ -138,7 +153,7 @@ export async function loadTopicBank(topicId) {
         const overridden = applyQuestionOverrides(module.default);
         const merged = await mergeComplexDesignQuestions(overridden);
         const normalized = normalizeQuestionTypes(merged);
-        const discoveredQuestions = await getDiscoveredQuestionsForTopic(topicId);
+        const discoveredQuestions = await safelyGetDiscoveredQuestionsForTopic(topicId);
         const withDiscoveredQuestions = mergeDiscoveredQuestions(normalized, discoveredQuestions);
         return applyContentProfileToBank(withDiscoveredQuestions);
       })
