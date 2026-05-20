@@ -18,6 +18,28 @@ import {
   loadTopicBank
 } from '../services/questionBankService.js';
 
+async function loadTopicBankEntry(topic) {
+  try {
+    const bank = await loadTopicBank(topic.id);
+    return [topic.id, bank];
+  } catch (error) {
+    if (typeof console !== 'undefined') {
+      console.warn(
+        `[topic-bank] Failed to load ${topic.id}; keeping category page available.`,
+        error
+      );
+    }
+
+    return [
+      topic.id,
+      {
+        ...topic,
+        questions: []
+      }
+    ];
+  }
+}
+
 export default function CategoryPage({ fixedCategoryId }) {
   const params = useParams();
   const categoryId = fixedCategoryId || params.categoryId;
@@ -63,15 +85,21 @@ export default function CategoryPage({ fixedCategoryId }) {
         setSelectedId(validSelectedId);
 
         const loadedBanks = await Promise.all(
-          nextTopics.map(async (topic) => {
-            const bank = await loadTopicBank(topic.id);
-            return [topic.id, bank];
-          })
+          nextTopics.map(loadTopicBankEntry)
         );
 
         if (!alive) return;
 
         setTopicBanks(Object.fromEntries(loadedBanks));
+      })
+      .catch((error) => {
+        if (typeof console !== 'undefined') {
+          console.error('[category-page] Failed to load category topics.', error);
+        }
+
+        if (alive) {
+          setTopicBanks({});
+        }
       })
       .finally(() => {
         if (!alive) return;
