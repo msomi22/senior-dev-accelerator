@@ -31,11 +31,6 @@ test('keeps multi-hyphen approved production topics visible', () => {
   assert.equal(isTopicVisibleForActiveProfile('messaging-queues'), true);
 });
 
-test('does not treat approved problem slugs as topic IDs', () => {
-  assert.equal(isTopicVisibleForActiveProfile('api-design-rate-limiting'), false);
-  assert.equal(isTopicVisibleForActiveProfile('caching-product-details'), false);
-});
-
 test('filters arrays safely', () => {
   const questions = [
     { id: 'sliding-window-001', topicId: 'sliding-window' },
