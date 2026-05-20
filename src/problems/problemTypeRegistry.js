@@ -3,6 +3,14 @@ const defaultValidate = () => [];
 const defaultScorer = () => null;
 const defaultComponent = null;
 
+const legacyDsaType = (label) => ({
+  label,
+  normalize: defaultNormalize,
+  validate: defaultValidate,
+  scorer: defaultScorer,
+  component: defaultComponent
+});
+
 export const problemTypeRegistry = {
   'multiple-choice': {
     label: 'Multiple Choice',
@@ -11,6 +19,7 @@ export const problemTypeRegistry = {
     scorer: defaultScorer,
     component: defaultComponent
   },
+  mcq: legacyDsaType('Multiple Choice'),
   coding: {
     label: 'Coding',
     normalize: defaultNormalize,
@@ -25,6 +34,9 @@ export const problemTypeRegistry = {
     scorer: defaultScorer,
     component: defaultComponent
   },
+  optimization: legacyDsaType('Optimization'),
+  trace: legacyDsaType('Trace'),
+  debugging: legacyDsaType('Debugging'),
   'simple-system-design': {
     label: 'Simple System Design',
     normalize: defaultNormalize,
