@@ -21,16 +21,6 @@ const APPROVED_PROD_QUESTION_IDS = new Set([
   'scalability-url-shortener-001'
 ]);
 
-const APPROVED_PROD_TOPIC_IDS = new Set([
-  'sliding-window',
-  'dynamic-programming',
-  'api-design',
-  'caching',
-  'messaging-queues',
-  'scalability',
-  'databases'
-]);
-
 export function getContentProfile() {
   return CONTENT_PROFILE;
 }
@@ -42,10 +32,7 @@ export function isProductionContentProfile() {
 export function isQuestionApprovedForProfile(question) {
   if (!isProductionContentProfile()) return true;
 
-  return (
-    APPROVED_PROD_QUESTION_IDS.has(question.id) ||
-    APPROVED_PROD_TOPIC_IDS.has(question.topicId)
-  );
+  return APPROVED_PROD_QUESTION_IDS.has(question.id);
 }
 
 export function filterQuestionsForActiveProfile(questions = []) {
@@ -55,7 +42,11 @@ export function filterQuestionsForActiveProfile(questions = []) {
 export function isTopicVisibleForActiveProfile(topicId) {
   if (!isProductionContentProfile()) return true;
 
-  return APPROVED_PROD_TOPIC_IDS.has(topicId);
+  for (const questionId of APPROVED_PROD_QUESTION_IDS) {
+    if (questionId.startsWith(`${topicId}-`)) return true;
+  }
+
+  return false;
 }
 
 export function filterTopicsForActiveProfile(topics = []) {

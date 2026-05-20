@@ -2,33 +2,16 @@ import { categoryManifest, topicManifest, getTopicsByCategory } from '../data/to
 import { applyQuestionOverrides } from '../data/banks/question-overrides.js';
 import {
   filterQuestionsForActiveProfile,
-  filterTopicsForActiveProfile,
-  isProductionContentProfile,
-  isTopicVisibleForActiveProfile
+  filterTopicsForActiveProfile
 } from '../config/contentProfile.js';
 import {
   getDiscoveredQuestionsForTopic,
   getProblemValidationResult
 } from '../problems/problemDiscovery.js';
 
-const bankModules = typeof import.meta.glob === 'function'
-  ? import.meta.glob('../data/banks/**/*.js')
-  : {};
+const bankModules = import.meta.glob('../data/banks/**/*.js');
 const SIMPLE_SYSTEM_DESIGN_TYPES = new Set(['system-design', 'production-scenario']);
 const COMPLEX_SYSTEM_DESIGN_BANK_PATH = '../data/banks/system/complex-system-design.js';
-
-function readUseMigratedProblemsFlag() {
-  const viteValue = import.meta.env?.VITE_USE_MIGRATED_PROBLEMS;
-  const nodeValue = typeof process !== 'undefined'
-    ? process.env?.VITE_USE_MIGRATED_PROBLEMS
-    : undefined;
-
-  return String(viteValue || nodeValue || '').toLowerCase() === 'true';
-}
-
-function shouldUseMigratedProblems() {
-  return readUseMigratedProblemsFlag();
-}
 
 function getBankPath(topicId) {
   const topic = topicManifest.find((item) => item.id === topicId);
@@ -98,58 +81,24 @@ async function mergeComplexDesignQuestions(bank) {
   };
 }
 
-export function mergeQuestionsById(primaryQuestions = [], fallbackQuestions = []) {
-  const seenIds = new Set();
-  const mergedQuestions = [];
-
-  [...primaryQuestions, ...fallbackQuestions].forEach((question) => {
-    if (!question?.id || seenIds.has(question.id)) return;
-    seenIds.add(question.id);
-    mergedQuestions.push(question);
-  });
-
-  return mergedQuestions;
-}
-
 function mergeDiscoveredQuestions(bank, discoveredQuestions = []) {
   if (!discoveredQuestions.length) return bank;
 
+  const existingIds = new Set((bank.questions || []).map((question) => question.id));
+  const additiveQuestions = discoveredQuestions.filter((question) => !existingIds.has(question.id));
+
+  if (!additiveQuestions.length) return bank;
+
   return {
     ...bank,
-    questions: mergeQuestionsById(discoveredQuestions, bank.questions || [])
+    questions: [...(bank.questions || []), ...additiveQuestions]
   };
 }
 
-async function safelyGetDiscoveredQuestionsForTopic(topicId) {
-  if (!shouldUseMigratedProblems()) return [];
-
-  try {
-    return await getDiscoveredQuestionsForTopic(topicId);
-  } catch (error) {
-    if (typeof console !== 'undefined') {
-      console.warn(
-        `[problem-discovery] Failed to load discovered problems for ${topicId}; using legacy bank fallback.`,
-        error
-      );
-    }
-
-    return [];
-  }
-}
-
 function applyContentProfileToBank(bank) {
-  const questions = bank.questions || [];
-
-  if (isProductionContentProfile() && isTopicVisibleForActiveProfile(bank.id)) {
-    return {
-      ...bank,
-      questions
-    };
-  }
-
   return {
     ...bank,
-    questions: filterQuestionsForActiveProfile(questions)
+    questions: filterQuestionsForActiveProfile(bank.questions || [])
   };
 }
 
@@ -179,7 +128,7 @@ export async function loadTopicBank(topicId) {
         const overridden = applyQuestionOverrides(module.default);
         const merged = await mergeComplexDesignQuestions(overridden);
         const normalized = normalizeQuestionTypes(merged);
-        const discoveredQuestions = await safelyGetDiscoveredQuestionsForTopic(topicId);
+        const discoveredQuestions = await getDiscoveredQuestionsForTopic(topicId);
         const withDiscoveredQuestions = mergeDiscoveredQuestions(normalized, discoveredQuestions);
         return applyContentProfileToBank(withDiscoveredQuestions);
       })
