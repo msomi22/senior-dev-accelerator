@@ -9,9 +9,12 @@ import {
   getProblemValidationResult
 } from '../problems/problemDiscovery.js';
 
-const bankModules = import.meta.glob('../data/banks/**/*.js');
+const bankModules = typeof import.meta.glob === 'function'
+  ? import.meta.glob('../data/banks/**/*.js')
+  : {};
 const SIMPLE_SYSTEM_DESIGN_TYPES = new Set(['system-design', 'production-scenario']);
 const COMPLEX_SYSTEM_DESIGN_BANK_PATH = '../data/banks/system/complex-system-design.js';
+const MIGRATED_TOPIC_IDS = new Set(['bit-manipulation']);
 
 function getBankPath(topicId) {
   const topic = topicManifest.find((item) => item.id === topicId);
@@ -81,17 +84,36 @@ async function mergeComplexDesignQuestions(bank) {
   };
 }
 
+export function isMigratedTopic(topicId) {
+  return MIGRATED_TOPIC_IDS.has(topicId);
+}
+
+export function mergeQuestionsById(primaryQuestions = [], fallbackQuestions = []) {
+  const seenIds = new Set();
+  const mergedQuestions = [];
+
+  [...primaryQuestions, ...fallbackQuestions].forEach((question) => {
+    if (!question?.id || seenIds.has(question.id)) return;
+    seenIds.add(question.id);
+    mergedQuestions.push(question);
+  });
+
+  return mergedQuestions;
+}
+
 function mergeDiscoveredQuestions(bank, discoveredQuestions = []) {
   if (!discoveredQuestions.length) return bank;
 
-  const existingIds = new Set((bank.questions || []).map((question) => question.id));
-  const additiveQuestions = discoveredQuestions.filter((question) => !existingIds.has(question.id));
-
-  if (!additiveQuestions.length) return bank;
+  const primaryQuestions = isMigratedTopic(bank.id)
+    ? discoveredQuestions
+    : bank.questions || [];
+  const fallbackQuestions = isMigratedTopic(bank.id)
+    ? bank.questions || []
+    : discoveredQuestions;
 
   return {
     ...bank,
-    questions: [...(bank.questions || []), ...additiveQuestions]
+    questions: mergeQuestionsById(primaryQuestions, fallbackQuestions)
   };
 }
 
