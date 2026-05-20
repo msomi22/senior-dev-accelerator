@@ -26,8 +26,14 @@ test('allows questions from approved production topics during migration', () => 
   assert.equal(isQuestionApprovedForProfile(migrated), true);
 });
 
-test('keeps approved production topics visible', () => {
+test('keeps multi-hyphen approved production topics visible', () => {
   assert.equal(isTopicVisibleForActiveProfile('api-design'), true);
+  assert.equal(isTopicVisibleForActiveProfile('messaging-queues'), true);
+});
+
+test('does not treat approved problem slugs as topic IDs', () => {
+  assert.equal(isTopicVisibleForActiveProfile('api-design-rate-limiting'), false);
+  assert.equal(isTopicVisibleForActiveProfile('caching-product-details'), false);
 });
 
 test('filters arrays safely', () => {
