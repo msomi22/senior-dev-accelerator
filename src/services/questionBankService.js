@@ -2,7 +2,9 @@ import { categoryManifest, topicManifest, getTopicsByCategory } from '../data/to
 import { applyQuestionOverrides } from '../data/banks/question-overrides.js';
 import {
   filterQuestionsForActiveProfile,
-  filterTopicsForActiveProfile
+  filterTopicsForActiveProfile,
+  isProductionContentProfile,
+  isTopicVisibleForActiveProfile
 } from '../config/contentProfile.js';
 import {
   getDiscoveredQuestionsForTopic,
@@ -136,9 +138,18 @@ async function safelyGetDiscoveredQuestionsForTopic(topicId) {
 }
 
 function applyContentProfileToBank(bank) {
+  const questions = bank.questions || [];
+
+  if (isProductionContentProfile() && isTopicVisibleForActiveProfile(bank.id)) {
+    return {
+      ...bank,
+      questions
+    };
+  }
+
   return {
     ...bank,
-    questions: filterQuestionsForActiveProfile(bank.questions || [])
+    questions: filterQuestionsForActiveProfile(questions)
   };
 }
 
