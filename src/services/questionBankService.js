@@ -15,6 +15,19 @@ const bankModules = typeof import.meta.glob === 'function'
 const SIMPLE_SYSTEM_DESIGN_TYPES = new Set(['system-design', 'production-scenario']);
 const COMPLEX_SYSTEM_DESIGN_BANK_PATH = '../data/banks/system/complex-system-design.js';
 
+function readUseMigratedProblemsFlag() {
+  const viteValue = import.meta.env?.VITE_USE_MIGRATED_PROBLEMS;
+  const nodeValue = typeof process !== 'undefined'
+    ? process.env?.VITE_USE_MIGRATED_PROBLEMS
+    : undefined;
+
+  return String(viteValue || nodeValue || '').toLowerCase() === 'true';
+}
+
+function shouldUseMigratedProblems() {
+  return readUseMigratedProblemsFlag();
+}
+
 function getBankPath(topicId) {
   const topic = topicManifest.find((item) => item.id === topicId);
   if (!topic) throw new Error(`Unknown topic bank: ${topicId}`);
@@ -106,6 +119,8 @@ function mergeDiscoveredQuestions(bank, discoveredQuestions = []) {
 }
 
 async function safelyGetDiscoveredQuestionsForTopic(topicId) {
+  if (!shouldUseMigratedProblems()) return [];
+
   try {
     return await getDiscoveredQuestionsForTopic(topicId);
   } catch (error) {
