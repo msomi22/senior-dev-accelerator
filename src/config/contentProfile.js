@@ -21,11 +21,15 @@ const APPROVED_PROD_QUESTION_IDS = new Set([
   'scalability-url-shortener-001'
 ]);
 
-const APPROVED_PROD_TOPIC_IDS = new Set(
-  Array.from(APPROVED_PROD_QUESTION_IDS)
-    .map((questionId) => questionId.split('-').slice(0, -1).join('-'))
-    .filter(Boolean)
-);
+const APPROVED_PROD_TOPIC_IDS = new Set([
+  'sliding-window',
+  'dynamic-programming',
+  'api-design',
+  'caching',
+  'messaging-queues',
+  'scalability',
+  'databases'
+]);
 
 export function getContentProfile() {
   return CONTENT_PROFILE;
