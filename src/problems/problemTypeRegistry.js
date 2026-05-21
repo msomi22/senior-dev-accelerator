@@ -20,6 +20,7 @@ export const problemTypeRegistry = {
     component: defaultComponent
   },
   mcq: legacyDsaType('Multiple Choice'),
+  learning: legacyDsaType('Learning'),
   coding: {
     label: 'Coding',
     normalize: defaultNormalize,
