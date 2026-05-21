@@ -177,6 +177,7 @@ test('normal simple-system-design problems continue working', async () => {
 
   assert.deepEqual(bank.questions[0], {
     ...simpleProblem,
+    difficulty: 'Easy',
     tags: ['simple-system-design'],
     prompt: '',
     question: '',
