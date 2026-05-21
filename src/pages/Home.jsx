@@ -55,11 +55,10 @@ function DashboardCard({ eyebrow, title, children, action }) {
 export default function Home() {
   const { completed } = usePreferences();
   const [summary, setSummary] = useState(emptySummary);
+  const [categories, setCategories] = useState([]);
   const [countedCategories, setCountedCategories] = useState([]);
   const [topics, setTopics] = useState([]);
   const [loadingStats, setLoadingStats] = useState(true);
-
-  const categories = useMemo(() => getCategorySummaries(), []);
 
   useEffect(() => {
     let alive = true;
@@ -68,13 +67,15 @@ export default function Home() {
     Promise.all([
       progressSummary(completed),
       getCategoriesWithCounts(completed),
-      getAllTopicsWithCounts()
+      getAllTopicsWithCounts(),
+      getCategorySummaries()
     ])
-      .then(([nextSummary, nextCategories, nextTopics]) => {
+      .then(([nextSummary, nextCategories, nextTopics, nextCategorySummaries]) => {
         if (!alive) return;
         setSummary(nextSummary);
-        setCountedCategories(nextCategories);
-        setTopics(nextTopics);
+        setCountedCategories(Array.isArray(nextCategories) ? nextCategories : []);
+        setTopics(Array.isArray(nextTopics) ? nextTopics : []);
+        setCategories(Array.isArray(nextCategorySummaries) ? nextCategorySummaries : []);
       })
       .finally(() => {
         if (alive) setLoadingStats(false);
