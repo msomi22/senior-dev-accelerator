@@ -62,12 +62,23 @@ export async function loadLegacyBankIfPresent(topic, modules = bankModules) {
   return applyQuestionOverrides(module.default);
 }
 
+function normalizeSystemQuestion(question) {
+  const normalized = normalizeProblem(question);
+
+  if (normalized.type === 'complex-system-design') return normalized;
+
+  return {
+    ...normalized,
+    difficulty: 'Easy'
+  };
+}
+
 function normalizeQuestionTypes(bank) {
   if (bank.category !== 'system') return bank;
 
   return {
     ...bank,
-    questions: (bank.questions || []).map((question) => normalizeProblem(question))
+    questions: (bank.questions || []).map((question) => normalizeSystemQuestion(question))
   };
 }
 
