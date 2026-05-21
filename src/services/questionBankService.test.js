@@ -19,13 +19,21 @@ const topics = [
     id: 'discovered-only',
     name: 'Discovered Only',
     category: 'system',
-    description: 'A topic backed only by discovered problems.'
+    description: 'A topic backed only by discovered problems.',
+    questionBank: { mode: 'discovered' }
   },
   {
     id: 'empty-topic',
     name: 'Empty Topic',
     category: 'dsa',
-    description: 'A topic that intentionally has no questions yet.'
+    description: 'A topic that intentionally has no questions yet.',
+    questionBank: { mode: 'empty' }
+  },
+  {
+    id: 'missing-bank-topic',
+    name: 'Missing Bank Topic',
+    category: 'dsa',
+    description: 'A topic missing its legacy bank unexpectedly.'
   }
 ];
 
@@ -99,7 +107,7 @@ test('discovered question overrides duplicate legacy question by id', async () =
   assert.equal(bank.questions[0].title, 'Discovered version');
 });
 
-test('topic with no questions returns an empty bank safely after discovered lookup', async () => {
+test('topic with no questions returns an empty bank safely after discovered lookup when explicitly opted in', async () => {
   let discoveredLookupCount = 0;
 
   const bank = await loadTopicBankFromSources('empty-topic', {
@@ -114,6 +122,17 @@ test('topic with no questions returns an empty bank safely after discovered look
   assert.equal(discoveredLookupCount, 1);
   assert.equal(bank.id, 'empty-topic');
   assert.deepEqual(bank.questions, []);
+});
+
+test('missing legacy bank without discovered questions or explicit opt-in errors clearly', async () => {
+  await assert.rejects(
+    () => loadTopicBankFromSources('missing-bank-topic', {
+      topics,
+      modules: {},
+      getDiscoveredQuestions: async () => []
+    }),
+    /Missing quiz bank file for missing-bank-topic/
+  );
 });
 
 test('unknown topicId still errors clearly', async () => {
