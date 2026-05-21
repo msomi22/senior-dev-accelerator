@@ -1,16 +1,24 @@
+import {
+  getProblemTypeMetadata,
+  normalizeProblemTypeAlias,
+  normalizeProblemTypeTags
+} from './problemTypeRegistry.js';
+
 export function normalizeProblem(problem = {}) {
   const prompt = problem.prompt ?? problem.question ?? '';
   const question = problem.question ?? problem.prompt ?? '';
+  const type = normalizeProblemTypeAlias(problem.type);
+  const typeMetadata = getProblemTypeMetadata(problem.type);
 
   return {
     ...problem,
     id: problem.id,
-    type: problem.type,
+    type,
     category: problem.category,
     topicId: problem.topicId,
     title: problem.title,
-    difficulty: problem.difficulty,
-    tags: Array.isArray(problem.tags) ? problem.tags : [],
+    difficulty: problem.difficulty ?? typeMetadata?.defaultDifficulty,
+    tags: normalizeProblemTypeTags(Array.isArray(problem.tags) ? problem.tags : []),
     prompt,
     question,
     options: problem.options,
