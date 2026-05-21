@@ -38,6 +38,23 @@ export function createVirtualBank(topic, questions = []) {
   };
 }
 
+export function canUseVirtualBank(topic, discoveredQuestions = []) {
+  return discoveredQuestions.length > 0
+    || topic?.allowVirtualBank === true
+    || topic?.questionBank?.allowVirtual === true
+    || topic?.questionBank?.mode === 'discovered'
+    || topic?.questionBank?.mode === 'empty';
+}
+
+export function assertCanUseVirtualBank(topic, discoveredQuestions = []) {
+  if (canUseVirtualBank(topic, discoveredQuestions)) return;
+
+  throw new Error(
+    `Missing quiz bank file for ${topic.id}. Expected: src/data/banks/${topic.category}/${topic.id}.js. `
+    + 'Add discovered problems for this topic or set questionBank.mode to "discovered" or "empty" in topicManifest.'
+  );
+}
+
 export async function loadLegacyBankIfPresent(topic, modules = bankModules) {
   const path = getOptionalBankPath(topic, modules);
   if (!path) return null;
@@ -141,6 +158,11 @@ export async function loadTopicBankFromSources(topicId, options = {}) {
 
   const discoveredQuestions = await getDiscoveredQuestions(topicId);
   const legacyBank = await loadLegacyBankIfPresent(topic, modules);
+
+  if (!legacyBank) {
+    assertCanUseVirtualBank(topic, discoveredQuestions);
+  }
+
   const baseBank = legacyBank || createVirtualBank(topic);
   const merged = await mergeComplexDesignQuestions(baseBank, modules);
   const normalized = normalizeQuestionTypes(merged);
@@ -238,11 +260,15 @@ export async function getRandomQuestion(filters = {}) {
     return true;
   });
 
-  const pickedTopic = candidates[Math.floor(Math.random() * candidates.length)] || allTopics[0];
-  const bank = await loadTopicBank(pickedTopic.id);
-  const question = bank.questions[Math.floor(Math.random() * bank.questions.length)];
+  for (const pickedTopic of candidates.sort(() => Math.random() - 0.5)) {
+    const bank = await loadTopicBank(pickedTopic.id);
+    if (!bank.questions.length) continue;
 
-  return { ...question, parentTopic: bank.name, category: bank.category };
+    const question = bank.questions[Math.floor(Math.random() * bank.questions.length)];
+    return { ...question, parentTopic: bank.name, category: bank.category };
+  }
+
+  throw new Error('No questions available for the selected filters.');
 }
 
 export async function findQuestionById(questionId) {
