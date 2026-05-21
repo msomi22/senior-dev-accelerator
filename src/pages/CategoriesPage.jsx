@@ -1,10 +1,21 @@
+import { useEffect, useState } from 'react';
 import CategoryLibrary from '../components/CategoryLibrary.jsx';
 import { getCategorySummaries } from '../services/questionBankService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 
 export default function CategoriesPage() {
   const { completed } = usePreferences();
-  const categories = getCategorySummaries();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    let alive = true;
+
+    getCategorySummaries().then((nextCategories) => {
+      if (alive) setCategories(nextCategories);
+    });
+
+    return () => { alive = false; };
+  }, []);
 
   return (
     <main className="page category-page">

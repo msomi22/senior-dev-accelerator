@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 
 import {
   createVirtualBank,
+  getVisibleCategoriesForActiveProfile,
+  getVisibleTopicsForCategory,
   loadTopicBankFromSources,
   mergeQuestionsById,
   topicProgress
@@ -78,6 +80,10 @@ const topics = [
     questionBank: { mode: 'empty' }
   }
 ];
+
+const discoveredVisibilityTopics = topics.filter((topic) => (
+  topic.id === 'discovered-only' || topic.id === 'plain-system-topic'
+));
 
 function moduleLoader(defaultExport) {
   return async () => ({ default: defaultExport });
@@ -177,6 +183,7 @@ test('normal simple-system-design problems continue working', async () => {
 
   assert.deepEqual(bank.questions[0], {
     ...simpleProblem,
+    category: undefined,
     difficulty: 'Easy',
     tags: ['simple-system-design'],
     prompt: '',
@@ -291,6 +298,111 @@ test('discovered-only topic loads without a legacy bank by creating a virtual ba
   assert.equal(bank.category, 'system');
   assert.deepEqual(bank.questions.map((question) => question.id), ['discovered-only-001']);
   assert.equal(bank.questions[0].title, 'Discovered question');
+});
+
+test('prod hides draft discovered questions in topic bank', async () => {
+  const bank = await loadTopicBankFromSources('discovered-only', {
+    profile: 'prod',
+    topics,
+    modules: {},
+    getDiscoveredQuestions: async () => [
+      {
+        id: 'discovered-only-draft-001',
+        type: 'production-scenario',
+        topicId: 'discovered-only',
+        title: 'Draft discovered question',
+        metadata: { reviewStatus: 'draft', visibility: ['dev'], authoringVersion: 2 }
+      }
+    ]
+  });
+
+  assert.deepEqual(bank.questions, []);
+});
+
+test('prod shows approved discovered questions with prod visibility in topic bank', async () => {
+  const bank = await loadTopicBankFromSources('discovered-only', {
+    profile: 'prod',
+    topics,
+    modules: {},
+    getDiscoveredQuestions: async () => [
+      {
+        id: 'discovered-only-approved-001',
+        type: 'production-scenario',
+        topicId: 'discovered-only',
+        title: 'Approved discovered question',
+        metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'], authoringVersion: 2 }
+      }
+    ]
+  });
+
+  assert.deepEqual(bank.questions.map((question) => question.id), ['discovered-only-approved-001']);
+});
+
+test('service topic visibility uses approved discovered problems', async () => {
+  const visibleTopics = await getVisibleTopicsForCategory('system', {
+    profile: 'prod',
+    topics: discoveredVisibilityTopics,
+    questions: [
+      {
+        id: 'discovered-only-approved-001',
+        topicId: 'discovered-only',
+        metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'], authoringVersion: 2 }
+      },
+      {
+        id: 'plain-system-topic-draft-001',
+        topicId: 'plain-system-topic',
+        metadata: { reviewStatus: 'draft', visibility: ['dev'], authoringVersion: 2 }
+      }
+    ]
+  });
+
+  assert.deepEqual(visibleTopics.map((topic) => topic.id), ['discovered-only']);
+});
+
+test('service category visibility uses approved discovered topics', async () => {
+  const visibleCategories = await getVisibleCategoriesForActiveProfile({
+    profile: 'prod',
+    categories: [
+      { id: 'dsa', name: 'Data Structures & Algorithms' },
+      { id: 'system', name: 'System Design' }
+    ],
+    topics: discoveredVisibilityTopics,
+    questions: [
+      {
+        id: 'discovered-only-approved-001',
+        topicId: 'discovered-only',
+        metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'], authoringVersion: 2 }
+      }
+    ]
+  });
+
+  assert.deepEqual(visibleCategories.map((category) => category.id), ['system']);
+});
+
+test('profile override loads discovered metadata when questions are not explicitly supplied', async () => {
+  const visibleTopics = await getVisibleTopicsForCategory('system', {
+    profile: 'prod',
+    topics: discoveredVisibilityTopics,
+    getAllDiscoveredQuestions: async () => [
+      {
+        id: 'discovered-only-approved-001',
+        topicId: 'discovered-only',
+        metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'], authoringVersion: 2 }
+      }
+    ]
+  });
+
+  assert.deepEqual(visibleTopics.map((topic) => topic.id), ['discovered-only']);
+});
+
+test('explicit empty questions option remains an intentional override', async () => {
+  const visibleTopics = await getVisibleTopicsForCategory('system', {
+    profile: 'prod',
+    topics: discoveredVisibilityTopics,
+    questions: []
+  });
+
+  assert.deepEqual(visibleTopics, []);
 });
 
 test('discovered question overrides duplicate legacy question by id', async () => {

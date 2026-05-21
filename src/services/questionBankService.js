@@ -1,10 +1,12 @@
 import { categoryManifest, topicManifest, getTopicsByCategory } from '../data/topicManifest.js';
 import { applyQuestionOverrides } from '../data/banks/question-overrides.js';
 import {
+  filterCategoriesForActiveProfile,
   filterQuestionsForActiveProfile,
   filterTopicsForActiveProfile
 } from '../config/contentProfile.js';
 import {
+  discoverProblems,
   getDiscoveredQuestionsForTopic,
   getProblemValidationResult
 } from '../problems/problemDiscovery.js';
@@ -18,6 +20,14 @@ function getTopic(topicId, topics = topicManifest) {
   const topic = topics.find((item) => item.id === topicId);
   if (!topic) throw new Error(`Unknown topic bank: ${topicId}`);
   return topic;
+}
+
+function getTopicsByCategoryFrom(categoryId, topics = topicManifest) {
+  return topics.filter((topic) => topic.category === categoryId);
+}
+
+function hasExplicitQuestionsOption(options = {}) {
+  return Object.prototype.hasOwnProperty.call(options, 'questions');
 }
 
 export function getOptionalBankPath(topic, modules = bankModules) {
@@ -156,10 +166,10 @@ function mergeDiscoveredQuestions(bank, discoveredQuestions = []) {
   };
 }
 
-function applyContentProfileToBank(bank) {
+function applyContentProfileToBank(bank, options = {}) {
   return {
     ...bank,
-    questions: filterQuestionsForActiveProfile(bank.questions || [])
+    questions: filterQuestionsForActiveProfile(bank.questions || [], options)
   };
 }
 
@@ -180,11 +190,46 @@ export async function loadTopicBankFromSources(topicId, options = {}) {
   const withDiscoveredQuestions = mergeDiscoveredQuestions(withLegacySources, discoveredQuestions);
   const normalized = normalizeQuestionTypes(withDiscoveredQuestions);
 
-  return applyContentProfileToBank(normalized);
+  return applyContentProfileToBank(normalized, options);
 }
 
 const bankCache = new Map();
 const countCache = new Map();
+let discoveredQuestionsCache;
+let visibleTopicsCache;
+let visibleCategoriesCache;
+
+async function getAllDiscoveredQuestions() {
+  if (!discoveredQuestionsCache) {
+    discoveredQuestionsCache = discoverProblems();
+  }
+
+  return discoveredQuestionsCache;
+}
+
+async function getQuestionsForProfileOptions(options = {}) {
+  if (hasExplicitQuestionsOption(options)) return options.questions || [];
+  if (options.getAllDiscoveredQuestions) return options.getAllDiscoveredQuestions();
+  return getAllDiscoveredQuestions();
+}
+
+async function getVisibleTopics() {
+  if (!visibleTopicsCache) {
+    visibleTopicsCache = getAllDiscoveredQuestions()
+      .then((questions) => filterTopicsForActiveProfile(topicManifest, questions));
+  }
+
+  return visibleTopicsCache;
+}
+
+async function getVisibleCategories() {
+  if (!visibleCategoriesCache) {
+    visibleCategoriesCache = getAllDiscoveredQuestions()
+      .then((questions) => filterCategoriesForActiveProfile(categoryManifest, topicManifest, questions));
+  }
+
+  return visibleCategoriesCache;
+}
 
 export const categories = categoryManifest;
 export const allTopics = filterTopicsForActiveProfile(topicManifest);
@@ -197,6 +242,36 @@ export function getCategory(categoryId) {
 
 export function getTopicsForCategory(categoryId) {
   return filterTopicsForActiveProfile(getTopicsByCategory(categoryId));
+}
+
+export async function getVisibleCategoriesForActiveProfile(options = {}) {
+  if (options.categories || options.topics || options.profile || hasExplicitQuestionsOption(options)) {
+    const questions = await getQuestionsForProfileOptions(options);
+
+    return filterCategoriesForActiveProfile(
+      options.categories || categoryManifest,
+      options.topics || topicManifest,
+      questions,
+      options
+    );
+  }
+
+  return getVisibleCategories();
+}
+
+export async function getVisibleTopicsForCategory(categoryId, options = {}) {
+  if (options.topics || options.profile || hasExplicitQuestionsOption(options)) {
+    const questions = await getQuestionsForProfileOptions(options);
+
+    return filterTopicsForActiveProfile(
+      getTopicsByCategoryFrom(categoryId, options.topics || topicManifest),
+      questions,
+      options
+    );
+  }
+
+  const topics = await getVisibleTopics();
+  return topics.filter((topic) => topic.category === categoryId);
 }
 
 export async function loadTopicBank(topicId) {
@@ -220,22 +295,25 @@ export async function getTopicWithCount(topic) {
 }
 
 export async function getTopicsWithCounts(categoryId) {
-  const topics = getTopicsForCategory(categoryId);
+  const topics = await getVisibleTopicsForCategory(categoryId);
   return Promise.all(topics.map(getTopicWithCount));
 }
 
 export async function getAllTopicsWithCounts() {
-  return Promise.all(allTopics.map(getTopicWithCount));
+  const topics = await getVisibleTopics();
+  return Promise.all(topics.map(getTopicWithCount));
 }
 
-export function getCategorySummaries() {
-  return categories.map((category) => {
-    const topics = getTopicsForCategory(category.id);
+export async function getCategorySummaries() {
+  const visibleCategories = await getVisibleCategoriesForActiveProfile();
+
+  return Promise.all(visibleCategories.map(async (category) => {
+    const topics = await getVisibleTopicsForCategory(category.id);
     return {
       ...category,
       topicCount: topics.length
     };
-  });
+  }));
 }
 
 export async function getCategoryWithCounts(categoryId, completed = {}) {
@@ -243,8 +321,10 @@ export async function getCategoryWithCounts(categoryId, completed = {}) {
   if (!category) return null;
 
   const topics = await getTopicsWithCounts(categoryId);
+  if (!topics.length) return null;
+
   const quizCount = topics.reduce((sum, topic) => sum + topic.count, 0);
-  const done = topics.reduce((sum, topic) => sum + topicProgress(topic, completed).done, 0);
+  const done = topics.reduce((sum, topic) => topicProgress(topic, completed).done + sum, 0);
 
   return {
     ...category,
@@ -256,7 +336,7 @@ export async function getCategoryWithCounts(categoryId, completed = {}) {
 }
 
 export async function getCategoriesWithCounts(completed = {}) {
-  const summaries = getCategorySummaries();
+  const summaries = await getCategorySummaries();
   const enriched = await Promise.all(summaries.map((category) => getCategoryWithCounts(category.id, completed)));
   return enriched.filter(Boolean);
 }
@@ -266,7 +346,8 @@ export async function loadTopicBanks(topicIds) {
 }
 
 export async function getRandomQuestion(filters = {}) {
-  const candidates = allTopics.filter((topic) => {
+  const topics = await getVisibleTopics();
+  const candidates = topics.filter((topic) => {
     if (filters.category && topic.category !== filters.category) return false;
     if (filters.topicId && topic.id !== filters.topicId) return false;
     return true;
@@ -284,7 +365,9 @@ export async function getRandomQuestion(filters = {}) {
 }
 
 export async function findQuestionById(questionId) {
-  for (const topic of allTopics) {
+  const topics = await getVisibleTopics();
+
+  for (const topic of topics) {
     const bank = await loadTopicBank(topic.id);
     const question = bank.questions.find((item) => item.id === questionId);
 
