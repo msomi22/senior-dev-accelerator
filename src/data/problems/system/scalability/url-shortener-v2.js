@@ -70,22 +70,10 @@ const problem = defineComplexSystemDesignProblem({
       type: 'comparison',
       title: 'Short code strategy trade-offs',
       items: [
-        {
-          title: 'Random Base62',
-          content: 'Simple, hard to guess, horizontally friendly. It needs collision retry logic and good randomness.'
-        },
-        {
-          title: 'Counter + Base62',
-          content: 'No random collision and compact codes. It can reveal scale, needs careful sharding, and may create hot counters.'
-        },
-        {
-          title: 'Hash long URL',
-          content: 'Deterministic and easy to reproduce. It may leak patterns, needs collision handling, and duplicate-long-URL semantics must be clear.'
-        },
-        {
-          title: 'Custom alias',
-          content: 'Human friendly and useful for campaigns. It needs strong uniqueness checks, moderation, reserved words, and abuse controls.'
-        }
+        { title: 'Random Base62', content: 'Simple, hard to guess, horizontally friendly. It needs collision retry logic and good randomness.' },
+        { title: 'Counter + Base62', content: 'No random collision and compact codes. It can reveal scale, needs careful sharding, and may create hot counters.' },
+        { title: 'Hash long URL', content: 'Deterministic and easy to reproduce. It may leak patterns, needs collision handling, and duplicate-long-URL semantics must be clear.' },
+        { title: 'Custom alias', content: 'Human friendly and useful for campaigns. It needs strong uniqueness checks, moderation, reserved words, and abuse controls.' }
       ]
     },
     {
@@ -172,7 +160,167 @@ const problem = defineComplexSystemDesignProblem({
       content: 'The core design is a short-code mapping service with a fast redirect path, cache for hot codes, safe unique code generation, expiry checks, async analytics, abuse controls, replicated storage, and stateless services for high availability.'
     }
   ],
+  scoringDictionary: {
+    urlShortenerBasics: {
+      terms: ['short url', 'short link', 'long url', 'url shortener', 'redirect', 'create short url'],
+      synonyms: ['create compact link', 'shorten url', 'original url to short code']
+    },
+    base62Encoding: {
+      terms: ['base62', 'url safe alphabet', 'digits and letters', 'short code'],
+      synonyms: ['base 62 encoding', 'alphanumeric code']
+    },
+    urlMapping: {
+      terms: ['short code to long url', 'lookup original url', 'save long url', 'mapping table', 'url mapping'],
+      synonyms: ['short code mapping', 'mapping from code to original url'],
+      proximity: {
+        windowSize: 12,
+        groups: [
+          ['short code', 'short url'],
+          ['long url', 'original url'],
+          ['mapping', 'lookup', 'table', 'store', 'database']
+        ]
+      }
+    },
+    redirectDbFallback: {
+      terms: ['database lookup on cache miss', 'cache miss then database', 'lookup database by short code', 'fallback to database'],
+      synonyms: ['read through cache fallback', 'cache miss database fallback'],
+      negativePhrases: ['do not check database', 'return 404 on cache miss', 'cache miss return 404'],
+      proximity: {
+        windowSize: 12,
+        groups: [
+          ['cache', 'redis', 'cdn'],
+          ['miss', 'missing', 'not found', 'fails'],
+          ['database', 'db', 'postgresql', 'storage'],
+          ['lookup', 'check', 'read', 'fallback']
+        ]
+      }
+    },
+    urlMetadata: {
+      terms: ['expiry', 'expiration', 'click count', 'owner', 'custom alias', 'created at', 'status', 'metadata'],
+      synonyms: ['metadata fields']
+    },
+    customAlias: {
+      terms: ['custom alias', 'reserved alias', 'ownership', 'alias ownership', 'vanity url'],
+      proximity: {
+        windowSize: 10,
+        groups: [
+          ['custom alias', 'alias', 'reserved'],
+          ['owner', 'ownership', 'unique', 'protect']
+        ]
+      }
+    },
+    urlAbuse: {
+      terms: ['malicious url', 'spam', 'phishing', 'blocklist', 'safe browsing', 'abuse prevention'],
+      synonyms: ['unsafe link blocking', 'malware scanning']
+    },
+    clickAnalytics: {
+      terms: ['analytics', 'click analytics', 'click events', 'queue clicks', 'asynchronous analytics', 'eventual analytics'],
+      synonyms: ['track clicks', 'click stream'],
+      proximity: {
+        windowSize: 12,
+        groups: [
+          ['analytics', 'click', 'event'],
+          ['queue', 'worker', 'kafka', 'stream'],
+          ['asynchronous', 'eventual', 'background']
+        ]
+      }
+    }
+  },
+  scoringRubric: [
+    {
+      id: 'requirements',
+      title: 'Requirements Clarification',
+      weight: 10,
+      criteria: [
+        { id: 'functional-requirements', label: 'Functional requirements', points: 4, questionConcepts: ['urlShortenerBasics', 'customAlias', 'urlMetadata', 'clickAnalytics'], aliases: ['create short url', 'expiry', 'analytics', 'click count'] },
+        { id: 'non-functional-requirements', label: 'Non-functional requirements', points: 4, concepts: ['loadBalancing', 'orchestration'], aliases: ['latency', 'availability', 'scale', 'throughput', 'read heavy'] },
+        { id: 'assumptions', label: 'Assumptions and traffic estimates', points: 2, aliases: ['assume', 'traffic', 'qps', 'read write ratio', 'read heavy'] }
+      ]
+    },
+    {
+      id: 'short-code-generation',
+      title: 'Short Code Generation',
+      weight: 15,
+      criteria: [
+        { id: 'base62', label: 'Base62 or URL-safe encoding', points: 5, questionConcepts: ['base62Encoding'], aliases: ['short code', 'alphanumeric'], requiresReasoning: true },
+        { id: 'unique-id-generation', label: 'Unique ID generation strategy', points: 4, concepts: ['idGeneration'], aliases: ['generate code', 'random code', 'unique code'] },
+        { id: 'collision-handling', label: 'Collision handling', points: 4, concepts: ['collisionHandling'], aliases: ['collision', 'unique constraint', 'retry', 'duplicate'] },
+        { id: 'generation-tradeoffs', label: 'Generation trade-offs', points: 2, concepts: ['tradeoffs'], aliases: ['predictable', 'random', 'guessable', 'counter', 'hash'] }
+      ]
+    },
+    {
+      id: 'storage-design',
+      title: 'Storage Design',
+      weight: 10,
+      criteria: [
+        { id: 'url-mapping', label: 'URL mapping table', points: 4, concepts: ['storageWrite', 'storageModel'], questionConcepts: ['urlMapping'], aliases: ['mapping', 'url table', 'short code table'] },
+        { id: 'metadata', label: 'Metadata', points: 3, concepts: ['metadata'], questionConcepts: ['urlMetadata'], aliases: ['metadata', 'expires at', 'created at', 'status'] },
+        { id: 'indexes', label: 'Indexes', points: 3, concepts: ['indexing'], aliases: ['index', 'primary key', 'unique index', 'short code uniqueness'] }
+      ]
+    },
+    {
+      id: 'read-write-flows',
+      title: 'Read and Write Flows',
+      weight: 10,
+      criteria: [
+        { id: 'create-flow', label: 'Create short URL flow', points: 4, concepts: ['writePath', 'idGeneration', 'storageWrite', 'cache'], questionConcepts: ['urlShortenerBasics'], aliases: ['shortening request', 'receive request', 'create api'] },
+        { id: 'redirect-flow', label: 'Redirect flow', points: 4, concepts: ['readPath', 'cache'], questionConcepts: ['redirectDbFallback', 'urlMapping'], criticalQuestionConcepts: ['redirectDbFallback'], maxRatioWithoutCritical: 0.6, aliases: ['redirect flow', 'lookup short code', 'fallback to database'] },
+        { id: 'retry-idempotency', label: 'Retry and idempotency behavior', points: 2, concepts: ['writePath', 'collisionHandling'], aliases: ['retry', 'idempotency', 'same request', 'duplicate request'] }
+      ]
+    },
+    {
+      id: 'scaling-performance',
+      title: 'Scaling and Performance',
+      weight: 15,
+      criteria: [
+        { id: 'cache', label: 'Caching hot links', points: 5, concepts: ['cache'], aliases: ['hot link', 'redis', 'cdn', 'cache lookup'] },
+        { id: 'partitioning', label: 'Partitioning or sharding', points: 4, concepts: ['partitioning'], aliases: ['partition', 'shard', 'split by code'] },
+        { id: 'read-heavy-optimization', label: 'Read-heavy optimization', points: 3, concepts: ['readPath', 'cache'], aliases: ['read heavy', 'low latency', 'fast redirect'] },
+        { id: 'backpressure', label: 'Backpressure and rate limits', points: 3, concepts: ['apiGateway', 'rateLimiting'], aliases: ['backpressure', 'rate limit', 'throttle'] }
+      ]
+    },
+    {
+      id: 'reliability-consistency',
+      title: 'Reliability and Consistency',
+      weight: 15,
+      criteria: [
+        { id: 'high-availability', label: 'High availability', points: 4, concepts: ['availability', 'loadBalancing', 'orchestration', 'replication'], aliases: ['high availability', 'availability zones', 'failover'] },
+        { id: 'consistency-tradeoffs', label: 'Consistency trade-offs', points: 4, concepts: ['consistency', 'tradeoffs'], aliases: ['eventual consistency', 'strong consistency', 'unique constraint'] },
+        { id: 'failure-modes', label: 'Failure modes', points: 4, concepts: ['failureHandling'], aliases: ['database down', 'cache fails', 'fallback', 'timeout', 'circuit breaker'] },
+        { id: 'analytics-consistency', label: 'Analytics consistency', points: 3, concepts: ['queue', 'consistency'], questionConcepts: ['clickAnalytics'], aliases: ['async analytics', 'eventual analytics'] }
+      ]
+    },
+    {
+      id: 'security-abuse',
+      title: 'Security and Abuse Prevention',
+      weight: 10,
+      criteria: [
+        { id: 'malicious-url-protection', label: 'Malicious URL protection', points: 4, concepts: ['abusePrevention'], questionConcepts: ['urlAbuse'], aliases: ['block malicious', 'phishing', 'spam urls'] },
+        { id: 'rate-limiting', label: 'Rate limiting', points: 3, concepts: ['rateLimiting'], aliases: ['rate limit', 'per user', 'ip address'] },
+        { id: 'custom-alias-protection', label: 'Custom alias protection', points: 3, concepts: ['authentication'], questionConcepts: ['customAlias'], aliases: ['reserved alias', 'protect custom aliases', 'ownership'] }
+      ]
+    },
+    {
+      id: 'observability',
+      title: 'Observability',
+      weight: 15,
+      criteria: [
+        { id: 'metrics', label: 'Metrics', points: 5, concepts: ['observability'], aliases: ['metrics', 'latency', 'error rate', 'cache hit rate', 'qps'] },
+        { id: 'logging-tracing', label: 'Logs and tracing', points: 4, concepts: ['observability'], aliases: ['logs', 'tracing', 'trace id', 'audit'] },
+        { id: 'alerts', label: 'Alerts', points: 3, concepts: ['observability'], aliases: ['alert', 'dashboard', 'monitoring', 'slo'] },
+        { id: 'operational-actions', label: 'Operational controls', points: 3, aliases: ['disable links', 'cleanup job', 'health checks', 'takedown'] }
+      ]
+    }
+  ],
   explanation: 'A strong solution identifies redirect as the latency-critical path and keeps everything else off that path. The authoritative short_links store maps short_code to long_url and enforces uniqueness. New links use random Base62 generation with database-backed collision handling, while custom aliases use conditional uniqueness checks and moderation rules. Redirects check cache first, then storage, enforce status and expiry, emit analytics asynchronously, and return a redirect response. Analytics flows through a queue or stream into raw events and aggregated stats. The design scales with stateless services, partitioned storage, cache, replicas, rate limiting, abuse detection, and operational controls that can disable unsafe links quickly.',
+  modelAnswer: 'A strong answer should clarify requirements, define APIs, design a short-code mapping table, generate unique short codes with Base62 or another URL-safe strategy, handle collisions through unique constraints and retries, optimize redirects with cache plus database fallback, record analytics asynchronously, enforce expiry, support custom aliases safely, prevent abuse through validation and rate limits, scale with stateless services and partitioned replicated storage, and explain availability, consistency, observability, and trade-offs.',
+  commonWeakAnswers: [
+    'Only mentions Base62 without explaining uniqueness or collision handling.',
+    'Returns 404 immediately on cache miss instead of falling back to storage.',
+    'Writes analytics synchronously on the redirect path.',
+    'Ignores expiry, custom aliases, or abuse prevention.',
+    'Ignores observability, failure modes, and operational controls.'
+  ],
   hints: [
     'Clarify read/write ratio first; URL shorteners are usually read-heavy.',
     'Keep the redirect path fast and avoid synchronous analytics writes.',
