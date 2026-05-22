@@ -1,0 +1,183 @@
+:root {
+  --code-bg: #07101c;
+  --code-bg-elevated: #0b1524;
+  --code-border: rgba(148, 163, 184, 0.28);
+  --code-text: #e5edf7;
+  --code-muted: #9fb2c8;
+  --code-gutter: #64748b;
+  --code-keyword: #93c5fd;
+  --code-string: #86efac;
+  --code-comment: #94a3b8;
+  --code-number: #fbbf24;
+  --code-type: #c4b5fd;
+  --code-method: #67e8f9;
+  --code-operator: #f0abfc;
+  --code-punctuation: #cbd5e1;
+}
+
+:root[data-theme="light"] {
+  --code-bg: #f8fafc;
+  --code-bg-elevated: #eef4ff;
+  --code-border: rgba(30, 64, 105, 0.18);
+  --code-text: #102033;
+  --code-muted: #52657a;
+  --code-gutter: #64748b;
+  --code-keyword: #1d4ed8;
+  --code-string: #047857;
+  --code-comment: #64748b;
+  --code-number: #a16207;
+  --code-type: #6d28d9;
+  --code-method: #0e7490;
+  --code-operator: #9333ea;
+  --code-punctuation: #334155;
+}
+
+.ide-code-block {
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--code-border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--code-bg-elevated), var(--code-bg));
+  color: var(--code-text);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
+}
+
+.ide-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--code-border);
+  background: color-mix(in srgb, var(--code-bg-elevated) 84%, var(--accent) 16%);
+}
+
+.ide-code-title,
+.ide-code-language,
+.ide-code-filename {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+.ide-code-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--code-text);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ide-code-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.ide-code-language,
+.ide-code-filename {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--code-border);
+  border-radius: 999px;
+  color: var(--code-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+.ide-code-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--code-muted) transparent;
+}
+
+.ide-code-scroll:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.ide-code-pre {
+  min-width: max-content;
+  margin: 0;
+  padding: 16px 18px;
+  color: var(--code-text);
+  font-family: "JetBrains Mono", "Cascadia Code", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", monospace;
+  font-size: clamp(0.82rem, 0.78rem + 0.18vw, 0.95rem);
+  font-variant-ligatures: none;
+  line-height: 1.62;
+  tab-size: 2;
+  text-align: left;
+  white-space: pre;
+}
+
+.ide-code-line {
+  display: block;
+  min-height: 1.62em;
+}
+
+.ide-code-caption {
+  margin: 0;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--code-border);
+  color: var(--code-muted);
+}
+
+.code-token-keyword { color: var(--code-keyword); font-weight: 800; }
+.code-token-string { color: var(--code-string); }
+.code-token-comment { color: var(--code-comment); font-style: italic; }
+.code-token-number { color: var(--code-number); }
+.code-token-type { color: var(--code-type); font-weight: 750; }
+.code-token-method { color: var(--code-method); }
+.code-token-operator { color: var(--code-operator); }
+.code-token-punctuation { color: var(--code-punctuation); }
+.code-token-plain { color: var(--code-text); }
+
+.problem-code-block,
+.focused-code-block {
+  min-width: 0;
+}
+
+.problem-code-block pre,
+.focused-code-block pre {
+  max-width: none;
+}
+
+@media (max-width: 760px) {
+  .ide-code-block {
+    border-radius: 16px;
+  }
+
+  .ide-code-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .ide-code-title {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .ide-code-pre {
+    padding: 14px 12px;
+    font-size: clamp(0.78rem, 2.7vw, 0.88rem);
+    line-height: 1.58;
+  }
+}

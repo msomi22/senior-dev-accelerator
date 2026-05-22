@@ -19,6 +19,7 @@ import './styles/public-brand-logo-fix.css';
 import './styles/simple-problem-list.css';
 import './styles/complex-system-design.css';
 import './styles/rich-problem.css';
+import './styles/ide-code-block.css';
 import './styles/mobile-first-rich-problem-ui.css';
 
 createRoot(document.getElementById('root')).render(
