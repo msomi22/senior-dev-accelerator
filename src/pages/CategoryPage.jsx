@@ -14,7 +14,7 @@ import { usePreferences } from '../hooks/usePreferences.js';
 
 import {
   getCategory,
-  getTopicsForCategory,
+  getVisibleTopicsForCategory,
   loadTopicBank
 } from '../services/questionBankService.js';
 
@@ -45,7 +45,7 @@ export default function CategoryPage({ fixedCategoryId }) {
     setLoadingTopics(true);
     setLoadingBanks(true);
 
-    Promise.resolve(getTopicsForCategory(categoryId))
+    getVisibleTopicsForCategory(categoryId)
       .then(async (nextTopics) => {
         if (!alive) return;
 
