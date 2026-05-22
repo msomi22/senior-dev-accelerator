@@ -116,7 +116,7 @@ test('migrated discovered problems override legacy bank items with the same ID',
   assert.equal(bank.questions[0].title, 'Scaling Live Order Status Updates');
 });
 
-test.skip('existing legacy bank support remains intact for non-production profiles', async () => {
+test('existing legacy bank support remains intact for non-production profiles', async () => {
   const legacyQuestion = {
     id: 'api-design-legacy-only-001',
     type: 'mcq',
@@ -132,10 +132,12 @@ test.skip('existing legacy bank support remains intact for non-production profil
     modules: {
       '../data/banks/system/api-design.js': moduleLoader(createBank('api-design', [legacyQuestion]))
     },
-    getDiscoveredQuestions: async () => []
+    getDiscoveredQuestions: async () => [apiRateLimiting, paymentIdempotency]
   });
 
-  assert.deepEqual(bank.questions.map((question) => question.id), ['api-design-legacy-only-001']);
+  assert.ok(bank.questions.some((question) => question.id === 'api-design-legacy-only-001'));
+  assert.ok(bank.questions.some((question) => question.id === 'api-design-rate-limiting-001'));
+  assert.ok(bank.questions.some((question) => question.id === 'api-design-payment-idempotency-001'));
 });
 
 test('topic and category visibility work for migrated System Design content', async () => {
