@@ -8,6 +8,10 @@ import ComplexSystemDesignProblem from '../components/problems/ComplexSystemDesi
 import { findQuestionById } from '../services/questionBankService.js';
 import { recordQuestionOpen } from '../services/recentQuestionService.js';
 import { storageService } from '../services/storageService.js';
+import {
+  buildCategoryReturnPath,
+  categoryPath
+} from '../services/categoryNavigationService.js';
 
 function uniqueItems(items = []) {
   const seen = new Set();
@@ -21,12 +25,6 @@ function uniqueItems(items = []) {
     seen.add(key);
     return true;
   });
-}
-
-function categoryPath(categoryId) {
-  if (categoryId === 'dsa') return '/dsa';
-  if (categoryId === 'system') return '/system-design';
-  return categoryId ? `/category/${categoryId}` : '/';
 }
 
 function pillClass(type, label, difficulty) {
@@ -150,7 +148,12 @@ export default function ProblemPage() {
   }
 
   const categoryId = entry.topic?.category || entry.category?.id;
-  const categoryBackPath = categoryPath(categoryId);
+  const categoryBackPath = location.state?.returnToCategory
+    ? buildCategoryReturnPath({
+        categoryId,
+        ...location.state.returnToCategory
+      })
+    : categoryPath(categoryId);
   const primaryPattern = entry.question.finalPattern || entry.topic?.name;
   const isComplexSystemDesign = entry.question.type === 'complex-system-design';
 
