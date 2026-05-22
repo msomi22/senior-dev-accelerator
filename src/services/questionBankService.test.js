@@ -425,6 +425,35 @@ test('discovered question overrides duplicate legacy question by id', async () =
   assert.equal(bank.questions[0].title, 'Discovered version');
 });
 
+test('migrated live order status problem overrides legacy bank copy by id', async () => {
+  const legacyProblem = {
+    id: 'scalability-realtime-updates-001',
+    type: 'mcq',
+    topicId: 'scalability',
+    title: 'Legacy live order status problem',
+    question: 'Legacy question?',
+    options: ['Legacy option'],
+    correctAnswer: 0
+  };
+  const migratedProblem = {
+    ...legacyProblem,
+    title: 'Scaling Live Order Status Updates',
+    metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'], authoringVersion: 2 }
+  };
+
+  const bank = await loadTopicBankFromSources('scalability', {
+    topics,
+    modules: {
+      '../data/banks/system/scalability.js': moduleLoader(createVirtualBank(topics[4], [legacyProblem]))
+    },
+    getDiscoveredQuestions: async () => [migratedProblem]
+  });
+
+  assert.equal(bank.questions.filter((question) => question.id === 'scalability-realtime-updates-001').length, 1);
+  assert.equal(bank.questions[0].title, 'Scaling Live Order Status Updates');
+  assert.equal(bank.questions[0].metadata.reviewStatus, 'approved');
+});
+
 test('topic with no questions returns an empty bank safely after discovered lookup when explicitly opted in', async () => {
   let discoveredLookupCount = 0;
 
