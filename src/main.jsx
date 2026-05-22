@@ -18,6 +18,7 @@ import './styles/global-search.css';
 import './styles/public-brand-logo-fix.css';
 import './styles/simple-problem-list.css';
 import './styles/complex-system-design.css';
+import './styles/rich-problem.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
