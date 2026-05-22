@@ -5,7 +5,7 @@ A fast, multi-page learning platform for DSA and System Design mastery.
 ## What changed in this performance refactor
 
 - Route-level lazy loading with `React.lazy` and `Suspense`.
-- Every topic now reads from a different quiz bank file.
+- Topic pages load visible content through the topic manifest and question-bank service.
 - Home and Progress pages use a lightweight manifest instead of importing all quizzes.
 - DSA and System Design pages load only the selected topic bank.
 - Random question page loads only the selected/random topic bank.
@@ -42,7 +42,7 @@ Includes the original app topics plus the frameworks from the uploaded DSA Patte
 - Messaging Queues
 - API Design
 
-Every topic has at least 10 quiz items. This build uses 15 per topic.
+Production-visible real DSA and System Design content is authored under `src/data/problems/**` and made production-visible through problem metadata.
 
 ## Setup
 
@@ -84,20 +84,33 @@ VITE_PAYPAL_HOSTED_BUTTON_ID="YOUR_REAL_PAYPAL_HOSTED_BUTTON_ID"
 
 The UI component reads this from `src/config/siteConfig.js`, so payment data is not hardcoded inside the button component.
 
-## Add a new topic in under one minute
+## Add real production content
 
-1. Create a new file under one of these folders:
+New real content should be authored as discovered problem files under:
 
 ```text
-src/data/banks/dsa/
-src/data/banks/system/
+src/data/problems/{category}/{topicId}/{problem-id}.js
 ```
 
-2. Export a topic object with `id`, `name`, `category`, `description`, and `questions`.
-3. Add the topic metadata to `src/data/topicManifest.js`.
-4. Add one loader entry in `src/services/questionBankService.js`.
+Production visibility is controlled by each problem's metadata:
 
-The UI will automatically support progress, random practice, topic navigation, and completion tracking.
+```js
+metadata: {
+  reviewStatus: 'approved',
+  visibility: ['dev', 'prod']
+}
+```
+
+Do not add new real production content to `src/data/banks/**`, and do not add per-question production allow-list entries for new real content. Legacy banks remain supported for local/test/demo compatibility. If a discovered problem and a legacy bank item share the same `id`, the discovered problem is preferred.
+
+## Add a new topic
+
+1. Add the topic metadata to `src/data/topicManifest.js`.
+2. Use `questionBank: { mode: 'discovered' }` when the topic should rely on discovered problem files only.
+3. Add one or more problem files under `src/data/problems/{category}/{topicId}/`.
+4. Run validation/build commands.
+
+The UI will automatically support progress, random practice, topic navigation, and completion tracking for visible topics.
 
 ## Important note on content protection
 
