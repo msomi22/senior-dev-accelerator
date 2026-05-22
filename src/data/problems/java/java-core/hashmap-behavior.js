@@ -26,7 +26,7 @@ const problem = defineLearningProblem({
     },
     {
       type: 'callout',
-      tone: 'question',
+      tone: 'info',
       title: 'Predict before reveal',
       content: 'If two different keys land in the same bucket, does HashMap overwrite the first value immediately? Predict the answer before reading the collision section.'
     },
@@ -69,7 +69,7 @@ const problem = defineLearningProblem({
     },
     {
       type: 'callout',
-      tone: 'question',
+      tone: 'info',
       title: 'Self-explanation prompt',
       content: 'In your own words, explain why same hash or same bucket is not enough to prove two keys are the same.'
     },
