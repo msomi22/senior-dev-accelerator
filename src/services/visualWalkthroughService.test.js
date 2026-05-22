@@ -27,3 +27,15 @@ test('supports multi-segment IDs', () => {
 
   assert.ok(paths[0].includes('sliding-window'));
 });
+
+test('migrated DSA problem IDs still resolve to existing visual walkthrough folders', () => {
+  assert.deepEqual(buildCandidatePaths('sliding-window-001'), [
+    '../data/visuals/dsa/sliding-window/sliding-window-001.js',
+    '../data/visuals/system/sliding-window/sliding-window-001.js'
+  ]);
+
+  assert.deepEqual(buildCandidatePaths('two-pointers-001'), [
+    '../data/visuals/dsa/two-pointers/two-pointers-001.js',
+    '../data/visuals/system/two-pointers/two-pointers-001.js'
+  ]);
+});
