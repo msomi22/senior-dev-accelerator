@@ -11,14 +11,7 @@ const CONTENT_PROFILE = readContentProfile();
 
 const APPROVED_PROD_QUESTION_IDS = new Set([
   'sliding-window-001',
-  'dynamic-programming-020',
-  'api-design-rate-limiting-001',
-  'caching-product-details-001',
-  'messaging-queues-email-notification-001',
-  'api-design-payment-idempotency-001',
-  'scalability-realtime-updates-001',
-  'databases-multi-region-consistency-001',
-  'scalability-url-shortener-001'
+  'dynamic-programming-020'
 ]);
 
 function resolveProfile(options = {}) {
@@ -73,13 +66,7 @@ export function hasVisibleQuestionForTopic(topicId, questions = [], options = {}
 export function isTopicVisibleForActiveProfile(topicId, questions = [], options = {}) {
   if (!isProductionProfile(options)) return true;
 
-  if (hasVisibleQuestionForTopic(topicId, questions, options)) return true;
-
-  for (const questionId of APPROVED_PROD_QUESTION_IDS) {
-    if (questionId.startsWith(`${topicId}-`)) return true;
-  }
-
-  return false;
+  return hasVisibleQuestionForTopic(topicId, questions, options);
 }
 
 export function filterTopicsForActiveProfile(topics = [], questions = [], options = {}) {
