@@ -5,14 +5,32 @@ const problem = defineMcqProblem({
   topicId: 'java-core',
   title: 'Java Pass-by-Value and Object References',
   difficulty: 'Medium',
-  prompt: 'Look at the code example. The changeName method receives a Dog parameter and assigns that parameter to a new Dog. What happens to the caller\'s original dog variable after the method returns?',
+  prompt: `Given this Java code:
+
+class Dog {
+    String name;
+
+    Dog(String name) {
+        this.name = name;
+    }
+}
+
+static void changeName(Dog pet) {
+    pet = new Dog("Max");
+}
+
+Dog dog = new Dog("Buddy");
+changeName(dog);
+System.out.println(dog.name);
+
+What is printed, and what happens to the caller's original dog variable?`,
   options: [
-    'The caller\'s dog variable is reassigned to the new Dog("Max").',
-    'The caller\'s dog variable still points to the original Dog("Buddy").',
-    'Java passes objects by reference, so dog and pet must always point to the same variable slot.',
+    'It prints Max because the caller\'s dog variable is reassigned to the new Dog("Max").',
+    'It prints Buddy because the caller\'s dog variable still points to the original Dog("Buddy").',
+    'It prints Max because Java passes objects by reference, so dog and pet are the same variable slot.',
     'The code will not compile because Java objects cannot be passed to methods.'
   ],
-  correctAnswer: 'The caller\'s dog variable still points to the original Dog("Buddy").',
+  correctAnswer: 'It prints Buddy because the caller\'s dog variable still points to the original Dog("Buddy").',
   explanation: 'Java is pass-by-value. For objects, the value being copied is the reference value. The method parameter gets its own copy of the reference. Reassigning the parameter makes only the parameter point somewhere else; it does not change the caller\'s variable. But if the method uses the copied reference to mutate the same object, the caller can observe that mutation.',
   tags: ['java', 'references', 'oop'],
   rendering: {
