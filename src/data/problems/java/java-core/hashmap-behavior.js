@@ -65,8 +65,8 @@ const problem = defineLearningProblem({
   ],
   explanation: 'A strong answer should connect hashing to bucket selection, equality to final key matching, and collisions to normal map behavior rather than failure.',
   metadata: {
-    reviewStatus: 'draft',
-    visibility: ['dev']
+    reviewStatus: 'approved',
+    visibility: ['dev', 'prod']
   }
 });
 
