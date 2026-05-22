@@ -168,8 +168,8 @@ test('topic and category visibility work for migrated System Design content', as
 
 test('production-visible System Design IDs still appear after migration', () => {
   assert.deepEqual(
-    migratedSystemDesignProblems.map((problem) => problem.id).sort(),
-    productionSystemDesignIds.toSorted()
+    [...migratedSystemDesignProblems.map((problem) => problem.id)].sort(),
+    [...productionSystemDesignIds].sort()
   );
 });
 
