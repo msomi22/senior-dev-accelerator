@@ -1,1 +1,96 @@
-const a = 1;
+function readContentProfile() {
+  const viteProfile = import.meta.env?.VITE_CONTENT_PROFILE;
+  const nodeProfile = typeof process !== 'undefined'
+    ? process.env?.VITE_CONTENT_PROFILE
+    : undefined;
+
+  return viteProfile || nodeProfile || 'dev';
+}
+
+const CONTENT_PROFILE = readContentProfile();
+
+const APPROVED_PROD_QUESTION_IDS = new Set([
+  'sliding-window-001',
+  'dynamic-programming-020',
+  'api-design-rate-limiting-001',
+  'caching-product-details-001',
+  'messaging-queues-email-notification-001',
+  'api-design-payment-idempotency-001',
+  'scalability-realtime-updates-001',
+  'databases-multi-region-consistency-001',
+  'scalability-url-shortener-001'
+]);
+
+function resolveProfile(options = {}) {
+  return options.profile || CONTENT_PROFILE;
+}
+
+function isProductionProfile(options = {}) {
+  return resolveProfile(options) === 'prod';
+}
+
+function hasExplicitHiddenVisibility(question) {
+  const visibility = question?.metadata?.visibility;
+  return Array.isArray(visibility) && visibility.length === 0;
+}
+
+export function getContentProfile() {
+  return CONTENT_PROFILE;
+}
+
+export function isProductionContentProfile() {
+  return isProductionProfile();
+}
+
+export function isProblemApprovedForProduction(question) {
+  return question?.metadata?.reviewStatus === 'approved'
+    && Array.isArray(question?.metadata?.visibility)
+    && question.metadata.visibility.includes('prod');
+}
+
+export function isLegacyQuestionApprovedForProduction(question) {
+  return APPROVED_PROD_QUESTION_IDS.has(question?.id);
+}
+
+export function isQuestionApprovedForProfile(question, options = {}) {
+  if (!isProductionProfile(options)) return !hasExplicitHiddenVisibility(question);
+
+  if (isProblemApprovedForProduction(question)) return true;
+
+  return isLegacyQuestionApprovedForProduction(question);
+}
+
+export function filterQuestionsForActiveProfile(questions = [], options = {}) {
+  return questions.filter((question) => isQuestionApprovedForProfile(question, options));
+}
+
+export function hasVisibleQuestionForTopic(topicId, questions = [], options = {}) {
+  return questions.some((question) => (
+    question?.topicId === topicId && isQuestionApprovedForProfile(question, options)
+  ));
+}
+
+export function isTopicVisibleForActiveProfile(topicId, questions = [], options = {}) {
+  if (!isProductionProfile(options)) return true;
+
+  if (hasVisibleQuestionForTopic(topicId, questions, options)) return true;
+
+  for (const questionId of APPROVED_PROD_QUESTION_IDS) {
+    if (questionId.startsWith(`${topicId}-`)) return true;
+  }
+
+  return false;
+}
+
+export function filterTopicsForActiveProfile(topics = [], questions = [], options = {}) {
+  return topics.filter((topic) => isTopicVisibleForActiveProfile(topic.id, questions, options));
+}
+
+export function filterCategoriesForActiveProfile(categories = [], topics = [], questions = [], options = {}) {
+  if (!isProductionProfile(options)) return categories;
+
+  const visibleTopics = filterTopicsForActiveProfile(topics, questions, options);
+  const visibleCategoryIds = new Set(visibleTopics.map((topic) => topic.category));
+
+  return categories.filter((category) => visibleCategoryIds.has(category.id));
+}
