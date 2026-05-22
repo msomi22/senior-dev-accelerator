@@ -7,7 +7,6 @@ const problem = defineProblem({
   ...legacyProblem,
   category: 'dsa',
   scenario: 'You are solving Maximum Sum Subarray of Size K. Given an array of numbers and a fixed window size k, find the largest sum of any contiguous subarray of length k. The learning goal is to see exactly how a fixed-size window reuses work instead of recomputing each subarray from scratch.',
-  question: 'Design the algorithm for Maximum Sum Subarray of Size K and explain the invariant, the rolling state, and the complexity. Use the example arr = [2, 1, 5, 1, 3, 2], k = 3 in your explanation.',
   starterThought: 'Before writing code, make the window visible. For a fixed-size window, the invariant is: after each move, the active window contains exactly k contiguous elements, windowSum equals the sum of those k elements, and bestSum is the largest valid window sum seen so far.',
   hints: [
     'Start by computing the first k values once.',
