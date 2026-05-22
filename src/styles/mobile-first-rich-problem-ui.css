@@ -59,6 +59,13 @@
   word-break: normal;
 }
 
+.option-btn em {
+  min-width: max-content;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
 .focused-code-block pre,
 .focused-code-block code,
 .problem-code-block pre,
