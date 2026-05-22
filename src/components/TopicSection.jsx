@@ -1,4 +1,5 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import QuestionCard from './QuestionCard.jsx';
 import Button from './Button.jsx';
@@ -32,27 +33,54 @@ function TopicSection({
   questions,
   completed,
   onToggle,
-  activeDifficulty = 'all'
+  activeDifficulty = 'all',
+  currentPage,
+  onPageChange,
+  returnContext
 }) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [internalPage, setInternalPage] = useState(1);
+  const navigate = useNavigate();
   const sectionRef = useRef(null);
+  const previousTopicKey = useRef('');
+  const isControlled = typeof currentPage === 'number';
 
   const safeQuestions = questions || topic.questions || [];
 
   const pageSize = Math.max(1, performanceConfig.questionsPerPage);
   const totalQuestions = safeQuestions.length;
   const totalPages = Math.max(1, Math.ceil(totalQuestions / pageSize));
+  const rawPage = isControlled ? currentPage : internalPage;
+  const safePage = clampPage(rawPage, totalPages);
 
   useEffect(() => {
-    setCurrentPage(1);
+    const topicKey = `${topic.id}:${activeDifficulty}`;
+    const hadPreviousTopic = Boolean(previousTopicKey.current);
 
-    sectionRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-  }, [topic.id, activeDifficulty]);
+    if (!isControlled) {
+      setInternalPage(1);
+    }
 
-  const safePage = clampPage(currentPage, totalPages);
+    if (hadPreviousTopic && previousTopicKey.current !== topicKey) {
+      sectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+
+    previousTopicKey.current = topicKey;
+  }, [topic.id, activeDifficulty, isControlled]);
+
+  useEffect(() => {
+    if (safePage === rawPage) return;
+
+    if (isControlled) {
+      onPageChange?.(safePage);
+      return;
+    }
+
+    setInternalPage(safePage);
+  }, [isControlled, onPageChange, rawPage, safePage]);
+
   const pageStart = (safePage - 1) * pageSize;
   const pageEnd = Math.min(pageStart + pageSize, totalQuestions);
 
@@ -71,10 +99,33 @@ function TopicSection({
     [safePage, totalPages]
   );
 
+  function openFocusedProblem(question) {
+    if (!question?.id) return;
+
+    navigate(`/problem/${question.id}`, {
+      state: {
+        returnToCategory: {
+          ...returnContext,
+          questionId: question.id
+        }
+      }
+    });
+  }
+
+  function shouldIgnoreCardNavigation(event) {
+    return event.target.closest(
+      'button, a, input, select, summary, details, [data-no-card-nav]'
+    );
+  }
+
   function goToPage(page) {
     const nextPage = clampPage(page, totalPages);
 
-    setCurrentPage(nextPage);
+    if (isControlled) {
+      onPageChange?.(nextPage);
+    } else {
+      setInternalPage(nextPage);
+    }
 
     requestAnimationFrame(() => {
       sectionRef.current?.scrollIntoView({
@@ -122,13 +173,30 @@ function TopicSection({
       ) : (
         <div className="card-grid compact-grid problem-list-grid">
           {visibleQuestions.map((question) => (
-            <QuestionCard
+            <div
               key={question.id}
-              question={question}
-              completed={!!completed[question.id]}
-              onToggle={onToggle}
-              compact
-            />
+              role="button"
+              tabIndex={0}
+              className="clickable-problem-card-shell"
+              aria-label={`Open ${question.title} in focused workspace`}
+              onClick={(event) => {
+                if (shouldIgnoreCardNavigation(event)) return;
+                openFocusedProblem(question);
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== 'Enter') return;
+                if (shouldIgnoreCardNavigation(event)) return;
+                openFocusedProblem(question);
+              }}
+            >
+              <QuestionCard
+                question={question}
+                completed={!!completed[question.id]}
+                onToggle={onToggle}
+                disableCardNavigation
+                compact
+              />
+            </div>
           ))}
         </div>
       )}
