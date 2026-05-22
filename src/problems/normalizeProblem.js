@@ -29,6 +29,8 @@ export function normalizeProblem(problem = {}) {
     references: problem.references,
     followUpQuestions: problem.followUpQuestions,
     scoring: problem.scoring,
+    body: problem.body,
+    rendering: problem.rendering ?? {},
     metadata: problem.metadata ?? {}
   };
 
