@@ -14,7 +14,11 @@ const problem = defineMcqProblem({
   ],
   correctAnswer: '== compares object identity, while equals() can compare logical equality when implemented correctly.',
   explanation: 'For reference types, == checks whether two references point to the same object. equals() is a method that classes can override to define meaningful equality, such as matching String content.',
-  tags: ['java', 'objects', 'equality']
+  tags: ['java', 'objects', 'equality'],
+  metadata: {
+    reviewStatus: 'approved',
+    visibility: ['dev', 'prod']
+  }
 });
 
 export default problem;
