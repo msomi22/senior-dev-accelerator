@@ -410,24 +410,26 @@ Before opening a PR, check:
 
 ## Linking PRs to issues
 
-Use the closing keyword only for the issue the PR is meant to close automatically. For this final documentation phase, the PR body should include exactly:
+Use issue references intentionally so project bookkeeping stays accurate.
+
+- Use a closing keyword such as `Fixes`, `Closes`, or `Resolves` only for the issue that should close automatically when the PR merges.
+- Use `Refs` for related parent issues, epics, checklists, or follow-up issues that should not close automatically.
+- Do not copy issue IDs from old examples. Always use the issue numbers for the current PR.
+- If a PR belongs to a larger epic, close the smallest completed implementation issue automatically and reference the epic unless the PR truly completes the epic.
+
+Example format:
 
 ```text
-Fixes #59
-Refs #60
-Refs #67
-Refs #68
+Fixes #<issue-this-pr-completes>
+Refs #<related-epic-or-parent>
+Refs #<related-checklist-or-follow-up>
 ```
 
-Do not use closing keywords for `#60`, `#67`, or `#68` in this PR body.
+## After merge
 
-## Issues closed by this final docs PR
+After an authoring PR merges:
 
-When this PR merges:
-
-1. `#59` should close automatically because the PR body uses `Fixes #59`.
-2. Close `#67` manually as completed.
-3. Close `#68` manually if the final acceptance checklist is satisfied.
-4. Close `#60` manually if the full epic is complete.
-
-Do not reopen or modify previous phase issues unless a documentation bug requires it.
+1. Confirm any issue referenced with a closing keyword closed automatically.
+2. Manually close related checklist, phase, or epic issues only when their acceptance criteria are fully satisfied.
+3. Leave related issues open when the PR only references them or only completes part of the work.
+4. Do not reopen or modify previous phase issues unless a new documentation or content bug requires it.
