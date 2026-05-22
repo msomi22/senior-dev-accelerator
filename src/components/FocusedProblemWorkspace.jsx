@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import VisualRail from './visuals/VisualRail.jsx';
+import ProblemBlockRenderer from './rich-problem/ProblemBlockRenderer.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
 import { storageService } from '../services/storageService.js';
 
@@ -21,6 +22,31 @@ function text(value) {
 
 function has(value) {
   return text(value).trim().length > 0;
+}
+
+function isVisualRichBlock(block) {
+  return block?.type === 'diagram' || block?.type === 'flow' || block?.type === 'image';
+}
+
+function RichBodyBlocks({ blocks, mode = 'overview' }) {
+  const rows = list(blocks).filter((block) => {
+    const visual = isVisualRichBlock(block);
+    return mode === 'visual' ? visual : !visual;
+  });
+
+  if (!rows.length) return null;
+
+  return (
+    <div className="focused-rich-body-stack">
+      {rows.map((block, index) => (
+        <ProblemBlockRenderer
+          block={block}
+          index={index}
+          key={`${block?.type || 'block'}-${block?.title || block?.label || index}`}
+        />
+      ))}
+    </div>
+  );
 }
 
 function TextBlock({ title, children, className = '' }) {
@@ -159,15 +185,18 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
   const codeContent = question.solutionCode || question.code || question.pseudocode || question.approachPseudocode;
   const explanation = question.explanation || question.solutionExplanation || question.answerExplanation || question.finalReasoning;
   const hasMcq = question.type === 'mcq' && question.options?.length;
+  const richBody = list(question.body);
+  const hasOverviewRichBody = richBody.some((block) => !isVisualRichBlock(block));
+  const hasVisualRichBody = richBody.some(isVisualRichBlock);
 
   const tabs = useMemo(() => [
     ['overview', 'Overview', true],
-    ['visual', 'Visual Walkthrough', true],
+    ['visual', 'Visual Walkthrough', hasVisualRichBody || true],
     ['intuition', 'Intuition', has(question.intuition) || has(question.starterThought) || has(question.visualExplanation)],
     ['approach', 'Approach', list(question.stepByStepBreakdown).length || has(question.bruteForceThought) || has(question.optimizationJourney)],
     [hasMcq ? 'answer' : 'solution', hasMcq ? 'Answer' : 'Solution', hasMcq || has(codeContent) || has(explanation)],
     ['complexity', 'Complexity', has(question.complexityAnalysis) || has(question.productionReality)]
-  ].filter(([, , available]) => available), [codeContent, explanation, hasMcq, question]);
+  ].filter(([, , available]) => available), [codeContent, explanation, hasMcq, hasVisualRichBody, question]);
 
   useEffect(() => {
     if (!tabs.some(([id]) => id === activeTab)) setActiveTab(tabs[0]?.[0] || 'overview');
@@ -198,8 +227,8 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
 
       <div className="focused-workspace-layout">
         <div className="focused-tab-content">
-          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock><TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock></div>{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ListBlock title="Examples" items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
-          {activeTab === 'visual' ? <VisualBlock question={question} showFallback /> : null}
+          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>{!hasOverviewRichBody ? <TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock> : null}</div><RichBodyBlocks blocks={question.body} mode="overview" />{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ListBlock title="Examples" items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
+          {activeTab === 'visual' ? <div className="focused-panel-stack">{hasVisualRichBody ? <RichBodyBlocks blocks={question.body} mode="visual" /> : <VisualBlock question={question} showFallback />}{hasVisualRichBody ? <VisualBlock question={question} /> : null}</div> : null}
           {activeTab === 'intuition' ? <div className="focused-two-col"><TextBlock title="Think first" className="think-box">{question.starterThought}</TextBlock><TextBlock title="Why this pattern fits">{question.intuition || question.visualExplanation}</TextBlock><TextBlock title="Recognition signal">{question.patternSignal}</TextBlock><TextBlock title="Invariant to maintain">{question.invariant}</TextBlock></div> : null}
           {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="focused-two-col"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><TextBlock title="Edge cases">{question.edgeCases}</TextBlock></div></div> : null}
           {activeTab === 'solution' ? <div className="focused-panel-stack"><TextBlock title="Solution explanation">{explanation}</TextBlock><section className="workspace-block focused-code-block"><span className="mini-label">Implementation notes</span><pre><code>{codeContent || 'No code sample is configured yet.'}</code></pre></section></div> : null}

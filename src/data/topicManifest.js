@@ -130,6 +130,15 @@ export const topicManifest = [
     "name": "API Design",
     "category": "system",
     "description": "Create clear, secure, versioned, reliable APIs with strong contracts and operational behavior."
+  },
+  {
+    "id": "java-core",
+    "name": "Java Core",
+    "category": "java",
+    "description": "Practice Java language fundamentals, object-oriented reasoning, collections, exceptions, and JVM basics.",
+    "questionBank": {
+      "mode": "discovered"
+    }
   }
 ];
 
@@ -154,6 +163,16 @@ export const categoryManifest = [
     tags: ["architecture", "distributed systems", "scalability"],
     route: "/category/system",
     featured: true
+  },
+  {
+    id: "java",
+    name: "Java",
+    shortName: "Java",
+    description: "Core Java, backend fundamentals, language behavior, and production-ready Java reasoning.",
+    domain: "Backend Engineering",
+    tags: ["java", "backend", "engineering"],
+    route: "/category/java",
+    featured: true
   }
 ];
 
@@ -165,3 +184,4 @@ export const getCategoryById = (categoryId) =>
 
 export const dsaTopicManifest = getTopicsByCategory("dsa");
 export const systemTopicManifest = getTopicsByCategory("system");
+export const javaTopicManifest = getTopicsByCategory("java");
