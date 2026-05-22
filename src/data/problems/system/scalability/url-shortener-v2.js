@@ -45,6 +45,18 @@ const problem = defineComplexSystemDesignProblem({
       content: 'Start by separating the critical user-facing path from secondary features. The system must create short links, redirect users quickly, support expiry and custom aliases, collect analytics, prevent obvious abuse, and remain highly available during traffic spikes.'
     },
     {
+      type: 'diagram',
+      title: 'Architecture mental model',
+      content: 'Client -> CDN/edge -> Redirect Service -> Cache -> Mapping Store\nCreate API -> Short Code Generator -> Mapping Store\nRedirect Service -> Click Event Queue -> Analytics Workers -> Stats Store\nAdmin/Abuse Tools -> Mapping Store + Cache Eviction',
+      caption: 'The redirect path must stay fast. Analytics, abuse review, cleanup, and aggregation should sit beside the hot path, not inside it.'
+    },
+    {
+      type: 'callout',
+      tone: 'question',
+      title: 'Predict before reveal',
+      content: 'Before reading the flows, predict the hottest path. Is it creating links, redirecting links, or reading analytics dashboards? A strong design optimizes redirects first because every click uses that path.'
+    },
+    {
       type: 'table',
       title: 'Requirements table',
       columns: ['Area', 'Requirement', 'Notes'],
@@ -73,6 +85,19 @@ const problem = defineComplexSystemDesignProblem({
           title: 'Interview framing',
           content: 'Make create-link correctness strong, but keep redirect reads extremely fast. Treat analytics as eventually consistent.'
         }
+      ]
+    },
+    {
+      type: 'flow',
+      title: 'Create-link flow',
+      steps: [
+        'Authenticate the caller and apply create-link rate limits.',
+        'Validate and normalize the long URL, then check basic abuse rules.',
+        'If a custom alias is requested, validate reserved words and claim it with a conditional insert.',
+        'If no alias is requested, generate a random Base62 code.',
+        'Insert the mapping with a unique short_code constraint; on generated-code conflict, retry with a new code.',
+        'Return the short URL and metadata after the authoritative mapping is saved.',
+        'Optionally enqueue deeper abuse scanning outside the synchronous create response.'
       ]
     },
     {
@@ -131,6 +156,19 @@ const problem = defineComplexSystemDesignProblem({
         'Raw events are stored in an append-only analytics store with retention limits.',
         'Aggregation jobs update daily_link_stats for dashboard queries.',
         'Analytics API reads aggregated stats first and only scans raw events for narrow debugging or export cases.'
+      ]
+    },
+    {
+      type: 'table',
+      title: 'Bottlenecks and failure modes',
+      columns: ['Risk', 'Symptom', 'Design response'],
+      rows: [
+        ['Hot short link', 'One code gets a huge burst of redirects.', 'Cache at CDN or Redis, protect origin storage, monitor cache hit rate.'],
+        ['Cache miss storm', 'Many misses hit the mapping store at once.', 'Use request coalescing, negative caching for missing codes, and read replicas.'],
+        ['Analytics queue delay', 'Dashboards lag behind real clicks.', 'Keep redirects independent, alert on consumer lag, replay events safely.'],
+        ['Generated-code collision', 'Insert fails because code already exists.', 'Use unique constraint and retry with a new random code.'],
+        ['Unsafe destination', 'Link points to phishing, malware, or spam.', 'Scan destinations, disable unsafe links, evict cache, keep audit trail.'],
+        ['Region outage', 'A region cannot serve redirects.', 'Fail over through DNS/load balancer and replicated mapping storage.']
       ]
     },
     {
@@ -377,7 +415,9 @@ const problem = defineComplexSystemDesignProblem({
     'How would you detect and disable phishing links quickly?',
     'What analytics would you store, and what would you avoid storing for privacy?',
     'How would you migrate from a relational mapping store to a distributed key-value store?',
-    'How would you prevent hot links from overwhelming the origin database?'
+    'How would you prevent hot links from overwhelming the origin database?',
+    'Predict the impact of choosing 301 instead of 302 for all redirects. What improves, and what becomes harder?',
+    'Predict what happens if analytics is written synchronously before every redirect response.'
   ],
   references: [
     'Base62 encoding for compact URL-safe identifiers',
