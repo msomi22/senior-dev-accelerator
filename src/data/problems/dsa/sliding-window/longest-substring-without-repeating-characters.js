@@ -41,7 +41,7 @@ const problem = defineLearningProblem({
   ],
   edgeCases: ['Empty string', 'All unique characters', 'All same characters', 'Duplicates far apart'],
   complexityAnalysis: 'Time is O(n) because each character enters and leaves the active substring at most once. Space is O(k), where k is the number of possible distinct characters.',
-  explanation: 'For abcabcbb, the active substring grows to abc. The next a creates abca, which is not clean because the new a at index 3 matches the old a at index 0. Remove letters from the left until the old a is gone, leaving bca. The best clean length remains 3.',
+  explanation: 'For abcabcbb, the active substring grows to abc. The next a creates abca, which is not clean because the new a at index 3 matches the old a at index 0. Remove letters from the left until the old a is gone, leaving bca. The scan continues to the end of the string, but no later clean substring becomes longer than 3.',
   solutionCode: `import java.util.HashMap;
 import java.util.Map;
 
@@ -82,84 +82,93 @@ class Solution {
         {
           title: 'Start with a',
           activeRange: [0, 0],
-          items: [
-            { index: 0, role: 'current', caption: 'left + right' }
-          ],
+          items: [{ index: 0, role: 'current', caption: 'left + right' }],
           state: { label: 'clean', role: 'success', values: ['left 0', 'right 0', 'tray a', 'best 1'], helper: 'The tray has one letter, so nothing repeats.' },
           description: 'The first clean substring is just "a".'
         },
         {
           title: 'Add b',
           activeRange: [0, 1],
-          items: [
-            { index: 0, role: 'window', caption: 'left' },
-            { index: 1, role: 'current', caption: 'right adds b' }
-          ],
+          items: [{ index: 0, role: 'window', caption: 'left' }, { index: 1, role: 'current', caption: 'right adds b' }],
           state: { label: 'clean', role: 'success', values: ['left 0', 'right 1', 'tray ab', 'best 2'], helper: 'a and b are different, so the tray is still clean.' },
           description: 'Add "b" to the right side. The clean substring becomes "ab".'
         },
         {
           title: 'Add c',
           activeRange: [0, 2],
-          items: [
-            { index: 0, role: 'window', caption: 'left' },
-            { index: 2, role: 'current', caption: 'right adds c' }
-          ],
+          items: [{ index: 0, role: 'window', caption: 'left' }, { index: 2, role: 'current', caption: 'right adds c' }],
           state: { label: 'clean', role: 'success', values: ['left 0', 'right 2', 'tray abc', 'best 3'], helper: 'abc is clean and becomes the best length so far.' },
           description: 'Add "c". Now the clean substring is "abc", length 3.'
         },
         {
           title: 'The new a repeats the old a',
           activeRange: [0, 3],
-          items: [
-            { index: 0, role: 'remove', caption: 'old a' },
-            { index: 3, role: 'remove', caption: 'new a' }
-          ],
+          items: [{ index: 0, role: 'warning', caption: 'old a' }, { index: 3, role: 'warning', caption: 'new a' }],
           state: { label: 'duplicate found', role: 'warning', values: ['left 0', 'right 3', 'tray abca', 'best 3'], helper: 'The a at index 3 matches the a at index 0. The current substring is not clean yet.' },
           description: 'The new "a" enters at index 3, but there is already an "a" at index 0. Those two red cells show the exact duplicate pair.'
         },
         {
           title: 'Throw out the old a',
           activeRange: [1, 3],
-          items: [
-            { index: 0, role: 'remove', caption: 'removed' },
-            { index: 1, role: 'window', caption: 'left' },
-            { index: 3, role: 'current', caption: 'right' }
-          ],
+          items: [{ index: 0, role: 'remove', caption: 'removed' }, { index: 1, role: 'window', caption: 'left' }, { index: 3, role: 'current', caption: 'right' }],
           state: { label: 'clean again', role: 'success', values: ['left 1', 'right 3', 'tray bca', 'best 3'], helper: 'After the old a leaves, every letter is unique again.' },
           description: 'Move left forward and remove the old "a". The clean substring is now "bca".'
         },
         {
           title: 'The new b repeats the old b',
           activeRange: [1, 4],
-          items: [
-            { index: 1, role: 'remove', caption: 'old b' },
-            { index: 4, role: 'remove', caption: 'new b' }
-          ],
+          items: [{ index: 1, role: 'warning', caption: 'old b' }, { index: 4, role: 'warning', caption: 'new b' }],
           state: { label: 'duplicate found', role: 'warning', values: ['left 1', 'right 4', 'tray bcab', 'best 3'], helper: 'The b at index 4 matches the b at index 1. The current substring must be repaired.' },
           description: 'The new "b" enters at index 4, but the old "b" at index 1 is still inside the substring. The red cells show the repeated pair.'
         },
         {
           title: 'Throw out the old b',
           activeRange: [2, 4],
-          items: [
-            { index: 1, role: 'remove', caption: 'removed' },
-            { index: 2, role: 'window', caption: 'left' },
-            { index: 4, role: 'current', caption: 'right' }
-          ],
+          items: [{ index: 1, role: 'remove', caption: 'removed' }, { index: 2, role: 'window', caption: 'left' }, { index: 4, role: 'current', caption: 'right' }],
           state: { label: 'clean again', role: 'success', values: ['left 2', 'right 4', 'tray cab', 'best 3'], helper: 'cab is clean, but it only ties the best length.' },
           description: 'Move left past the old "b". The clean substring becomes "cab".'
         },
         {
-          title: 'Best length stays 3',
+          title: 'The new c repeats the old c',
+          activeRange: [2, 5],
+          items: [{ index: 2, role: 'warning', caption: 'old c' }, { index: 5, role: 'warning', caption: 'new c' }],
+          state: { label: 'duplicate found', role: 'warning', values: ['left 2', 'right 5', 'tray cabc', 'best 3'], helper: 'The c at index 5 matches the c at index 2. Repair before counting this window.' },
+          description: 'right continues to index 5. The new "c" repeats the old "c" still inside the substring.'
+        },
+        {
+          title: 'Throw out the old c',
           activeRange: [3, 5],
-          items: [
-            { index: 3, role: 'answer', caption: 'clean' },
-            { index: 4, role: 'answer', caption: 'clean' },
-            { index: 5, role: 'answer', caption: 'clean' }
-          ],
-          state: { label: 'answer', role: 'success', values: ['best 3'], helper: 'Several clean substrings have length 3, but none are longer.' },
-          description: 'The longest clean substring length is 3. Examples include "abc", "bca", and "cab".',
+          items: [{ index: 2, role: 'remove', caption: 'removed' }, { index: 3, role: 'window', caption: 'left' }, { index: 5, role: 'current', caption: 'right' }],
+          state: { label: 'clean again', role: 'success', values: ['left 3', 'right 5', 'tray abc', 'best 3'], helper: 'abc is clean again, but it only ties the best length.' },
+          description: 'Move left past the old "c". The clean substring becomes "abc" again.'
+        },
+        {
+          title: 'The new b repeats b inside the tray',
+          activeRange: [3, 6],
+          items: [{ index: 4, role: 'warning', caption: 'old b' }, { index: 6, role: 'warning', caption: 'new b' }],
+          state: { label: 'duplicate found', role: 'warning', values: ['left 3', 'right 6', 'tray abcb', 'best 3'], helper: 'The b at index 6 matches the b at index 4. The left side must move until that old b leaves.' },
+          description: 'right moves to index 6. The repeated pair is not at the left edge this time, so left will move past "a" and then past the old "b".'
+        },
+        {
+          title: 'Repair until the old b is gone',
+          activeRange: [5, 6],
+          items: [{ index: 3, role: 'remove', caption: 'removed' }, { index: 4, role: 'remove', caption: 'removed' }, { index: 5, role: 'window', caption: 'left' }, { index: 6, role: 'current', caption: 'right' }],
+          state: { label: 'clean again', role: 'success', values: ['left 5', 'right 6', 'tray cb', 'best 3'], helper: 'left moved past a and the old b. Now only one b remains.' },
+          description: 'The repair may remove more than one letter. After removing "a" and the old "b", the clean substring is "cb".'
+        },
+        {
+          title: 'The final b repeats the previous b',
+          activeRange: [5, 7],
+          items: [{ index: 6, role: 'warning', caption: 'old b' }, { index: 7, role: 'warning', caption: 'new b' }],
+          state: { label: 'duplicate found', role: 'warning', values: ['left 5', 'right 7', 'tray cbb', 'best 3'], helper: 'The b at index 7 matches the b at index 6, so the last window must also be repaired.' },
+          description: 'right reaches the final character. The new "b" repeats the "b" at index 6.'
+        },
+        {
+          title: 'End of string: best is still 3',
+          activeRange: [7, 7],
+          items: [{ index: 5, role: 'remove', caption: 'removed' }, { index: 6, role: 'remove', caption: 'removed' }, { index: 7, role: 'current', caption: 'left + right' }],
+          state: { label: 'answer', role: 'success', values: ['left 7', 'right 7', 'tray b', 'best 3'], helper: 'The scan reached the end. No clean substring beat length 3.' },
+          description: 'After the final repair, only the last "b" remains in the clean substring. The full scan is complete, and the best length is 3.',
           finalResult: { title: 'Final answer', body: 'Return 3.' }
         }
       ]
