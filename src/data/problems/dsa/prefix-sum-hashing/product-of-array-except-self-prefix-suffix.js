@@ -47,21 +47,65 @@ const problem = defineLearningProblem({
     }
 }`,
   finalTakeaway: 'For “everything except me” problems, first remove self from the product, then multiply what remains around it.',
-  visualExplanation: 'The visual focuses on the changing output state. Each answer slot represents one index whose own value is excluded.',
+  visualExplanation: 'The visual focuses on the answer slot currently being built. Each frame shows self, the values used, the values skipped, and the output state.',
   visualWalkthrough: {
-    title: 'Prefix and suffix walkthrough',
+    title: 'Product except self walkthrough',
     summary: 'Each answer is the product of everything except the number at that same index.',
     diagram: {
-      type: 'cards',
-      title: 'Product except self walkthrough',
-      description: 'Self means the number at the current index. That number is skipped when filling its own answer slot.',
-      stateTitle: 'Building the output array',
-      stateDescription: 'Each output slot excludes its own input value, then combines the product before it with the product after it.',
+      type: 'array',
+      title: 'Build one answer slot at a time',
+      description: 'Self is the input value at the current index. That value is skipped for its own output slot.',
+      values: [2, 3, 4],
+      stateTitle: 'Answer slot being built',
+      stateDescription: 'Read left to right: current self, numbers multiplied, and the output value created for that index.',
+      legend: [
+        { role: 'current', label: 'self / skipped', marker: 'S' },
+        { role: 'success', label: 'used in product', marker: '×' },
+        { role: 'answer', label: 'answer written', marker: '✓' }
+      ],
       frames: [
-        { title: 'What does except self mean?', state: { label: 'meaning first', values: { nums: '[2, 3, 4]', self: '2 at index 0', answer0: '3 × 4 = 12' }, helper: 'At index 0, self is 2, so 2 is skipped and the other numbers are multiplied.' }, description: 'Before optimizing, understand the target: each index skips its own value.' },
-        { title: 'Start building output', state: { label: 'products before index', values: { output: '[1, _, _, _]', leftProduct: 1 }, helper: 'Index 0 has nothing before it.' }, description: 'Write the product before the current index.' },
-        { title: 'Output stores products before each index', state: { label: 'products before index', values: { output: '[1, 1, 2, 6]' }, helper: 'Each cell still excludes its own value.' }, description: 'The output now contains products strictly before each position.' },
-        { title: 'Combine with values after each index', state: { label: 'products after index', values: { output: '[24, 12, 8, 6]' }, helper: 'Each answer combines products before and after its own index.' }, description: 'After combining both sides, every answer excludes self.', finalResult: { title: 'Final answer', body: 'Return [24, 12, 8, 6].' } }
+        {
+          title: 'Index 0 excludes 2',
+          description: 'At index 0, self is 2. Skip 2, multiply the remaining values: 3 × 4 = 12.',
+          items: [
+            { index: 0, role: 'current', caption: 'self: skip 2' },
+            { index: 1, role: 'success', caption: 'use 3' },
+            { index: 2, role: 'success', caption: 'use 4' }
+          ],
+          state: { label: 'output[0]', role: 'answer', values: { nums: '[2, 3, 4]', self: '2 at index 0', multiply: '3 × 4', output: '[12, _, _]' }, helper: 'The answer at index 0 belongs to 2, so 2 cannot be part of that answer.' }
+        },
+        {
+          title: 'Index 1 excludes 3',
+          description: 'Move one index. Now self is 3. Skip 3, multiply the values around it: 2 × 4 = 8.',
+          items: [
+            { index: 0, role: 'success', caption: 'use 2' },
+            { index: 1, role: 'current', caption: 'self: skip 3' },
+            { index: 2, role: 'success', caption: 'use 4' }
+          ],
+          state: { label: 'output[1]', role: 'answer', values: { self: '3 at index 1', multiply: '2 × 4', output: '[12, 8, _]' }, helper: 'Each frame moves one answer slot. No jump: only the current index changes.' }
+        },
+        {
+          title: 'Index 2 excludes 4',
+          description: 'Move to index 2. Self is 4, so only 2 and 3 are multiplied: 2 × 3 = 6.',
+          items: [
+            { index: 0, role: 'success', caption: 'use 2' },
+            { index: 1, role: 'success', caption: 'use 3' },
+            { index: 2, role: 'current', caption: 'self: skip 4' }
+          ],
+          state: { label: 'output[2]', role: 'answer', values: { self: '4 at index 2', multiply: '2 × 3', output: '[12, 8, 6]' }, helper: 'The smaller example makes the meaning obvious before the optimized prefix/suffix trick.' },
+          finalResult: { title: 'Meaning is clear', body: 'For [2, 3, 4], product except self is [12, 8, 6].' }
+        },
+        {
+          title: 'Optimization idea',
+          description: 'For the real input [1, 2, 3, 4], we avoid recomputing. Store product before each index, then multiply by product after each index.',
+          items: [
+            { index: 0, role: 'answer', label: '24', caption: '2×3×4' },
+            { index: 1, role: 'answer', label: '12', caption: '1×3×4' },
+            { index: 2, role: 'answer', label: '8', caption: '1×2×4' }
+          ],
+          state: { label: 'optimized result', role: 'answer', values: { nums: '[1, 2, 3, 4]', output: '[24, 12, 8, 6]' }, helper: 'Prefix gives product before self. Suffix gives product after self. Together they exclude self.' },
+          finalResult: { title: 'Final answer', body: 'Return [24, 12, 8, 6].' }
+        }
       ]
     }
   },
