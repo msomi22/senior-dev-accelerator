@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+import {
+  filterTopicsForActiveProfile,
+  isTopicVisibleForActiveProfile
+} from '../config/contentProfile.js';
+import { topicManifest } from '../data/topicManifest.js';
 import { validateProblemCollection } from './validateProblem.js';
 
 import binarySearch from '../data/problems/dsa/binary-search/binary-search-search-space-elimination.js';
@@ -56,4 +61,24 @@ test('DSA mastery content batch has unique ids and valid rich body blocks', () =
   const validation = validateProblemCollection(dsaMasteryProblems);
   assert.deepEqual(validation.errors, []);
   assert.equal(validation.valid, true);
+});
+
+test('DSA mastery topics remain visible in production topic fallback paths', () => {
+  for (const topicId of expectedTopicIds) {
+    assert.equal(
+      isTopicVisibleForActiveProfile(topicId, [], { profile: 'prod' }),
+      true,
+      `${topicId} should remain visible before discovered questions are loaded`
+    );
+  }
+
+  const visibleDsaTopicIds = filterTopicsForActiveProfile(
+    topicManifest.filter((topic) => topic.category === 'dsa'),
+    [],
+    { profile: 'prod' }
+  ).map((topic) => topic.id);
+
+  for (const topicId of expectedTopicIds) {
+    assert.ok(visibleDsaTopicIds.includes(topicId), `${topicId} should appear in production DSA topic list`);
+  }
 });
