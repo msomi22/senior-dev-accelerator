@@ -136,25 +136,25 @@ class Solution {
           description: 'right continues to index 5. The new "c" repeats the old "c" still inside the substring.'
         },
         {
-          title: 'Throw out the old c',
+          title: 'After repair, the window is indexes 3 to 5',
           activeRange: [3, 5],
-          items: [{ index: 2, role: 'remove', caption: 'removed' }, { index: 3, role: 'window', caption: 'left' }, { index: 4, role: 'window', caption: 'kept b' }, { index: 5, role: 'current', caption: 'right' }],
-          state: { label: 'clean again', role: 'success', values: ['left 3', 'right 5', 'tray abc', 'best 3'], helper: 'The clean tray is indexes 3 to 5: a, b, c. Notice b at index 4 is still inside.' },
-          description: 'Move left past the old "c". The clean substring becomes "abc" again, using indexes 3, 4, and 5.'
+          items: [{ index: 2, role: 'remove', caption: 'removed' }, { index: 3, role: 'window', caption: 'left = 3' }, { index: 4, role: 'window', caption: 'inside' }, { index: 5, role: 'current', caption: 'right = 5' }],
+          state: { label: 'clean again', role: 'success', values: ['left 3', 'right 5', 'tray abc', 'best 3'], helper: 'After repair, left is 3 and right is 5. The clean tray is indexes 3, 4, and 5: a, b, c.' },
+          description: 'Move left past the old "c". Now the active substring is indexes 3 to 5: "abc". This means index 4 is already inside the window before the next step starts.'
         },
         {
-          title: 'Right adds b, but index 4 already has b',
+          title: 'Right moves from 5 to 6 and finds another b',
           activeRange: [3, 6],
-          items: [{ index: 3, role: 'window', caption: 'inside tray' }, { index: 4, role: 'warning', caption: 'old b' }, { index: 5, role: 'window', caption: 'inside tray' }, { index: 6, role: 'warning', caption: 'right adds b' }],
-          state: { label: 'duplicate found', role: 'warning', values: ['left 3', 'right 6', 'tray abcb', 'best 3'], helper: 'Before this step, the tray was indexes 3..5: a, b, c. Now right adds b at index 6, which matches the b already inside at index 4.' },
-          description: 'The pointer did not jump to index 4. Index 4 was already inside the active substring. When right adds the new "b" at index 6, the duplicate pair becomes index 4 and index 6.'
+          items: [{ index: 3, role: 'window', caption: 'left stays 3' }, { index: 4, role: 'warning', caption: 'old b inside' }, { index: 5, role: 'window', caption: 'was right' }, { index: 6, role: 'warning', caption: 'right moves to 6' }],
+          state: { label: 'duplicate found', role: 'warning', values: ['left 3', 'right 6', 'tray abcb', 'best 3'], helper: 'left did not move. right moved one step from 5 to 6. The new b at index 6 matches the b already inside the tray at index 4.' },
+          description: 'Only right moved. Before this step, the window was indexes 3..5: a, b, c. After right moves to index 6, the window becomes indexes 3..6: a, b, c, b. That is why we compare the new b at index 6 with the old b at index 4.'
         },
         {
           title: 'Repair until the old b is gone',
           activeRange: [5, 6],
-          items: [{ index: 3, role: 'remove', caption: 'removed a' }, { index: 4, role: 'remove', caption: 'removed old b' }, { index: 5, role: 'window', caption: 'left' }, { index: 6, role: 'current', caption: 'right' }],
-          state: { label: 'clean again', role: 'success', values: ['left 5', 'right 6', 'tray cb', 'best 3'], helper: 'left moved past a and then past the old b at index 4. Now only the new b remains.' },
-          description: 'The repair removes more than one letter: first "a" at index 3, then the old "b" at index 4. Now the clean substring is "cb".'
+          items: [{ index: 3, role: 'remove', caption: 'remove a' }, { index: 4, role: 'remove', caption: 'remove old b' }, { index: 5, role: 'window', caption: 'left = 5' }, { index: 6, role: 'current', caption: 'right = 6' }],
+          state: { label: 'clean again', role: 'success', values: ['left 5', 'right 6', 'tray cb', 'best 3'], helper: 'Now left moves: first past index 3, then past the old b at index 4. The duplicate is gone.' },
+          description: 'Now the repair starts. left moves from 3 to 5, removing "a" at index 3 and the old "b" at index 4. The clean substring is now indexes 5..6: "cb".'
         },
         {
           title: 'The final b repeats the previous b',
