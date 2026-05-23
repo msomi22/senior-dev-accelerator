@@ -150,11 +150,18 @@ class Solution {
           description: 'Only right moved. Before this step, the window was indexes 3..5: a, b, c. After right moves to index 6, the window becomes indexes 3..6: a, b, c, b. That is why we compare the new b at index 6 with the old b at index 4.'
         },
         {
-          title: 'Repair until the old b is gone',
+          title: 'Repair part 1: left removes a at index 3',
+          activeRange: [4, 6],
+          items: [{ index: 3, role: 'remove', caption: 'remove a' }, { index: 4, role: 'warning', caption: 'left now 4' }, { index: 5, role: 'window', caption: 'inside' }, { index: 6, role: 'warning', caption: 'right 6' }],
+          state: { label: 'still dirty', role: 'warning', values: ['left 4', 'right 6', 'tray bcb', 'best 3'], helper: 'left moved one step from 3 to 4. But the old b is now at the left edge, so the duplicate b is still inside.' },
+          description: 'Repair happens one left move at a time. First remove "a" at index 3. The window becomes indexes 4..6: "bcb". It is still dirty because index 4 and index 6 are both "b".'
+        },
+        {
+          title: 'Repair part 2: left removes the old b',
           activeRange: [5, 6],
-          items: [{ index: 3, role: 'remove', caption: 'remove a' }, { index: 4, role: 'remove', caption: 'remove old b' }, { index: 5, role: 'window', caption: 'left = 5' }, { index: 6, role: 'current', caption: 'right = 6' }],
-          state: { label: 'clean again', role: 'success', values: ['left 5', 'right 6', 'tray cb', 'best 3'], helper: 'Now left moves: first past index 3, then past the old b at index 4. The duplicate is gone.' },
-          description: 'Now the repair starts. left moves from 3 to 5, removing "a" at index 3 and the old "b" at index 4. The clean substring is now indexes 5..6: "cb".'
+          items: [{ index: 4, role: 'remove', caption: 'remove old b' }, { index: 5, role: 'window', caption: 'left = 5' }, { index: 6, role: 'current', caption: 'right = 6' }],
+          state: { label: 'clean again', role: 'success', values: ['left 5', 'right 6', 'tray cb', 'best 3'], helper: 'left moved one more step from 4 to 5. The old b left the tray, so only the new b remains.' },
+          description: 'Now remove the old "b" at index 4. left moves to index 5, the window becomes indexes 5..6: "cb", and the duplicate is gone.'
         },
         {
           title: 'The final b repeats the previous b',
