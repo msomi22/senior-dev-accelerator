@@ -76,8 +76,8 @@ class Solution {
       type: 'array',
       title: 's = abcabcbb',
       values: ['a', 'b', 'c', 'a', 'b', 'c', 'b', 'b'],
-      stateTitle: 'Clean substring tracker',
-      stateDescription: 'left marks where the clean substring starts. right marks the newest letter that entered. best remembers the largest clean substring seen.',
+      stateTitle: 'What to watch',
+      stateDescription: 'The highlighted letters are the substring we are testing right now. left shows where it starts. right shows the newest letter that joined. best remembers the longest clean substring seen so far.',
       frames: [
         {
           title: 'Start with a',
