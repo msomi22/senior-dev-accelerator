@@ -54,19 +54,18 @@ const problem = defineLearningProblem({
     diagram: {
       type: 'timeline',
       title: 'Output state evolution',
-      stateTitle: 'Left pass then right pass',
+      stateTitle: 'Building the output array',
       stateDescription: 'The current number is excluded by writing or multiplying before the running product is updated.',
       frames: [
-        { title: 'Left pass begins', state: { label: 'left products', values: { output: '[1, _, _, _]', leftProduct: 1 }, helper: 'Index 0 has nothing on the left.' }, description: 'Write the product before the current index.' },
-        { title: 'Left pass complete', state: { label: 'left products', values: { output: '[1, 1, 2, 6]' }, helper: 'Each cell excludes its own value.' }, description: 'The output now contains products strictly to the left.' },
-        { title: 'Right pass begins', state: { label: 'right products', values: { output: '[1, 1, 2, 6]', rightProduct: 1 }, helper: 'Index 3 has nothing on the right.' }, description: 'Multiply by the product after the current index.' },
-        { title: 'Right pass complete', state: { label: 'answer', values: { output: '[24, 12, 8, 6]' }, helper: 'Every index combines left and right products.' }, description: 'All answers exclude the current value.', finalResult: { title: 'Final answer', body: 'Return [24, 12, 8, 6].' } }
+        { title: 'Start building output', state: { label: 'products before index', values: { output: '[1, _, _, _]', leftProduct: 1 }, helper: 'Index 0 has nothing before it.' }, description: 'Write the product before the current index.' },
+        { title: 'Output stores products before each index', state: { label: 'products before index', values: { output: '[1, 1, 2, 6]' }, helper: 'Each cell excludes its own value.' }, description: 'The output now contains products strictly before each position.' },
+        { title: 'Combine with values after each index', state: { label: 'products after index', values: { output: '[1, 1, 2, 6]', rightProduct: 1 }, helper: 'Index 3 has nothing after it.' }, description: 'Multiply by the product after the current index.' },
+        { title: 'Final output is ready', state: { label: 'answer', values: { output: '[24, 12, 8, 6]' }, helper: 'Every index combines products before and after it.' }, description: 'All answers exclude the current value.', finalResult: { title: 'Final answer', body: 'Return [24, 12, 8, 6].' } }
       ]
     }
   },
   body: [
     { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use prefix/suffix thinking when each answer depends on all items except the current one.' },
-    { type: 'flow', title: 'Space-optimized flow', steps: ['First pass writes left products into output', 'Second pass keeps one running right product', 'Multiply output by the right product before updating it', 'Return the completed output array'] },
     { type: 'checklist', title: 'Mistakes to avoid', items: ['Do not include nums[i]', 'Do not rely on division', 'Handle zeros through multiplication naturally'] }
   ],
   relatedConcepts: ['prefix products', 'suffix products', 'running accumulator'],
