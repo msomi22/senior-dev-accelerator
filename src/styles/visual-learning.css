@@ -657,7 +657,25 @@
 .config-visual-state-list.is-scrollable .config-visual-state-row.active {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 10;
+  background: #fffaf0 !important;
+  isolation: isolate;
+  box-shadow:
+    0 12px 26px rgba(74, 53, 27, 0.14),
+    0 0 0 999px rgba(255, 250, 240, 0.02);
+}
+
+.config-visual-state-list.is-scrollable .config-visual-state-row.active.config-visual-role-warning,
+.config-visual-state-list.is-scrollable .config-visual-state-row.active.config-visual-role-error,
+.config-visual-state-list.is-scrollable .config-visual-state-row.active.config-visual-role-remove {
+  background: #fee2e2 !important;
+  border-color: rgba(220, 38, 38, 0.5) !important;
+}
+
+.config-visual-state-list.is-scrollable .config-visual-state-row.active.config-visual-role-success,
+.config-visual-state-list.is-scrollable .config-visual-state-row.active.config-visual-role-answer {
+  background: #dcfce7 !important;
+  border-color: rgba(21, 128, 61, 0.42) !important;
 }
 
 @media (max-width: 920px) {
