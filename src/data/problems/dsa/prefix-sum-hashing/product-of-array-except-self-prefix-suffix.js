@@ -12,21 +12,21 @@ const problem = defineLearningProblem({
   question: 'Given nums = [1, 2, 3, 4], return [24, 12, 8, 6].',
   examples: ['nums = [1, 2, 3, 4] -> [24, 12, 8, 6]', 'At index 0, answer[0] excludes 1, so answer[0] = 2 × 3 × 4 = 24'],
   constraints: ['Do not use division.', 'Each output index must exclude nums[i].', 'Use prefix and suffix products to avoid repeated multiplication.'],
-  starterThought: 'At every loop step, the current value is nums[i]. The code first stores the product before index i, then later multiplies by the product after index i.',
-  intuition: '“Product except self” means each position gets the product of all the other positions. For [1, 2, 3, 4], answer[0] excludes 1 and becomes 2 × 3 × 4 = 24. answer[1] excludes 2 and becomes 1 × 3 × 4 = 12.',
-  mentalPicture: 'Imagine each answer slot pointing to one input number and saying, “leave this one out, multiply the rest.” In code, the excluded number is nums[i].',
-  patternSignal: 'Use prefix/suffix thinking when each answer depends on information from both sides of the current index.',
-  invariant: 'Before multiplying by the right product at index i, output[i] already contains the product of all values strictly to the left of i.',
-  bruteForceThought: 'Brute force recomputes a product for every index by excluding the current value and multiplying all the others again.',
-  optimizationJourney: 'Once “except self” is clear, the optimization is to avoid rebuilding the same products many times. The code uses two simple passes. The first pass stores the product before each index in answer[i]. The second pass multiplies answer[i] by the product after that index.',
-  stepByStepBreakdown: ['The current value is nums[i].', 'First loop, left to right: answer[i] = leftProduct stores the product before index i.', 'Then leftProduct *= nums[i] adds the current value for future indexes.', 'Second loop, right to left: answer[i] *= rightProduct multiplies by the product after index i.', 'Then rightProduct *= nums[i] adds the current value for earlier indexes.'],
+  starterThought: 'Start with the meaning of one answer slot: the value at the same index is skipped, and every other value is multiplied.',
+  intuition: 'For nums = [1, 2, 3, 4], each output slot skips the input value at the same index. So output[0] skips 1 and uses 2 × 3 × 4 = 24. output[1] skips 2 and uses 1 × 3 × 4 = 12. output[2] skips 3 and uses 1 × 2 × 4 = 8. output[3] skips 4 and uses 1 × 2 × 3 = 6.',
+  mentalPicture: 'Imagine each output slot pointing at one input value and saying: “skip this one, multiply the rest.”',
+  patternSignal: 'This fits prefix/suffix thinking because each answer needs values from both sides of one skipped index.',
+  invariant: 'Each answer slot must be built from values before its index and values after its index, but not the value at that same index.',
+  bruteForceThought: 'A direct solution would rebuild the product for every index by scanning the whole array and skipping only that index.',
+  optimizationJourney: 'The repeated work is the clue. Products before an index are reused many times, and products after an index are reused many times. Store the before part first, then combine it with the after part.',
+  stepByStepBreakdown: ['Understand one slot first: output[0] skips nums[0] and multiplies nums[1], nums[2], and nums[3].', 'Build the products that appear before each index.', 'Build the products that appear after each index.', 'For each index, combine before × after.', 'Because the same-index value is not in before or after, it is excluded naturally.'],
   finalPattern: 'Precompute information before and after each position.',
-  commonMistake: 'Accidentally including the current element in either the prefix or suffix product.',
-  commonMistakes: ['Including the current value in the product for its own index.', 'Updating the running suffix before multiplying output[i].', 'Using division even though the constraint disallows it.', 'Counting the output array as extra space when the problem allows returning it.'],
+  commonMistake: 'Including the current value in its own answer.',
+  commonMistakes: ['Including nums[i] in output[i].', 'Using division even though the constraint disallows it.', 'Forgetting that edge positions still need a neutral multiplication value.', 'Counting the returned output array as extra space when the problem allows it.'],
   edgeCases: ['One zero in the array', 'Multiple zeros', 'Negative numbers', 'Array length two', 'Values of one'],
-  complexityAnalysis: 'Time is O(n) because the code makes two linear passes: one pass builds products from the left, and one pass combines products from the right. Extra space is O(1) beyond the output array.',
-  explanation: 'The code builds the answer in two passes. First, create answer with the same length as nums. The first loop goes left to right. At each index i, answer[i] receives leftProduct, which is the product of values before i. Then leftProduct is updated with nums[i] for the next index. The second loop goes right to left. At each index i, answer[i] is multiplied by rightProduct, which is the product of values after i. Then rightProduct is updated with nums[i] for the next index to the left. This works because answer[i] becomes product before i × product after i, so nums[i] is never included in its own answer.',
-  approach: 'Use answer as the place to store partial results. After the first loop on nums = [1, 2, 3, 4], answer is [1, 1, 2, 6]. These are the products before each index. The second loop multiplies in the products after each index: index 3 multiplies by 1, index 2 by 4, index 1 by 12, and index 0 by 24. The final answer becomes [24, 12, 8, 6].',
+  complexityAnalysis: 'Time is O(n) because each index is visited from the left side and from the right side. Extra space is O(1) beyond the output array because the returned answer array is required.',
+  explanation: 'Read the code in two parts. First, answer is created to hold the result. In the left-to-right loop, answer[i] is assigned leftProduct before leftProduct is updated with nums[i]. That means answer[i] receives only values before index i. For nums = [1, 2, 3, 4], this first pass creates answer = [1, 1, 2, 6]. The first 1 does not mean “nothing equals 1”; it means no earlier values have been multiplied yet, so leftProduct is still its multiplication starting value. Next, the right-to-left loop uses rightProduct. answer[i] is multiplied by rightProduct before rightProduct is updated with nums[i]. That means answer[i] receives only values after index i. For the same input, the second pass changes [1, 1, 2, 6] into [24, 12, 8, 6]. The current value nums[i] is excluded because each product is used before nums[i] is added to that product.',
+  approach: 'Break every answer into two pieces: product before the index and product after the index. For [1, 2, 3, 4], the before-products are [1, 1, 2, 6]. The after-products are [24, 12, 4, 1]. Multiply matching positions: [1×24, 1×12, 2×4, 6×1] = [24, 12, 8, 6].',
   solutionCode: `class Solution {
     public int[] productExceptSelf(int[] nums) {
         int n = nums.length;
@@ -47,8 +47,8 @@ const problem = defineLearningProblem({
         return answer;
     }
 }`,
-  finalTakeaway: 'The first loop stores product-before-index in answer[i]. The second loop multiplies product-after-index into answer[i]. Because each loop updates its product after using nums[i], the current value is excluded from its own answer.',
-  visualExplanation: 'The visual explains the given example directly. Each frame builds one answer slot for nums = [1, 2, 3, 4]. The code uses two loops to build the same idea efficiently: one left pass for products before the current index, then one right pass for products after the current index.',
+  finalTakeaway: 'Each output index gets product before that index × product after that index. Since nums[i] is neither before nor after index i, it is excluded.',
+  visualExplanation: 'The visual only builds the given example: one frame, one output slot. The highlighted value is skipped, the other values are multiplied, and the answer is written for that slot.',
   visualWalkthrough: {
     title: 'Product except self walkthrough',
     summary: 'Each answer is the product of everything except the number at that same index.',
@@ -114,43 +114,21 @@ const problem = defineLearningProblem({
     }
   },
   body: [
-    { type: 'callout', tone: 'info', title: 'Code variables used below', content: 'The Java code uses three important names: answer[i] is the output slot being filled, leftProduct is the product of values before index i, and rightProduct is the product of values after index i.' },
-    { type: 'callout', tone: 'info', title: 'Why leftProduct starts at 1', content: 'Before the first loop reaches index 0, no input values have been multiplied yet. leftProduct starts at 1 because 1 is the safe starting value for multiplication: 1 × 2 = 2. Starting with 0 would break the product because 0 × 2 = 0.' },
     { type: 'callout', tone: 'info', title: 'What “except self” means', content: 'For nums = [1, 2, 3, 4], answer[0] excludes nums[0], which is 1, and multiplies the rest: 2 × 3 × 4 = 24.' },
-    { type: 'callout', tone: 'info', title: 'Why the code has two loops', content: 'The first loop fills answer[i] with the product before index i. The second loop multiplies answer[i] by the product after index i. before × after gives product except self.' },
     {
       type: 'table',
-      title: 'First loop: answer[i] = leftProduct, then leftProduct *= nums[i]',
-      columns: ['i', 'nums[i]', 'leftProduct before answer[i]', 'answer[i] writes', 'leftProduct after update'],
+      title: 'Before and after products for the given example',
+      columns: ['Index', 'Skip value', 'Product before index', 'Product after index', 'Answer'],
       rows: [
-        ['0', '1', '1; no values before index 0 have been multiplied yet', 'answer[0] = 1', '1 × nums[0] = 1'],
-        ['1', '2', '1', 'answer[1] = 1', '1 × nums[1] = 2'],
-        ['2', '3', '2', 'answer[2] = 2', '2 × nums[2] = 6'],
-        ['3', '4', '6', 'answer[3] = 6', '6 × nums[3] = 24']
+        ['0', '1', '1', '2 × 3 × 4 = 24', '1 × 24 = 24'],
+        ['1', '2', '1', '3 × 4 = 12', '1 × 12 = 12'],
+        ['2', '3', '1 × 2 = 2', '4', '2 × 4 = 8'],
+        ['3', '4', '1 × 2 × 3 = 6', '1', '6 × 1 = 6']
       ]
     },
-    {
-      type: 'table',
-      title: 'Second loop: answer[i] *= rightProduct, then rightProduct *= nums[i]',
-      columns: ['i', 'nums[i]', 'rightProduct before answer[i]', 'answer[i] becomes', 'rightProduct after update'],
-      rows: [
-        ['3', '4', '1; no values after index 3 have been multiplied yet', '6 × 1 = 6', '1 × nums[3] = 4'],
-        ['2', '3', '4', '2 × 4 = 8', '4 × nums[2] = 12'],
-        ['1', '2', '12', '1 × 12 = 12', '12 × nums[1] = 24'],
-        ['0', '1', '24', '1 × 24 = 24', '24 × nums[0] = 24']
-      ]
-    },
-    {
-      type: 'flow',
-      title: 'How the two loops connect to the answer',
-      steps: [
-        { title: 'After first loop', detail: 'answer is [1, 1, 2, 6]. These are products before each index.' },
-        { title: 'During second loop', detail: 'rightProduct supplies the product after each index and multiplies into answer[i].' },
-        { title: 'After second loop', detail: 'answer is [24, 12, 8, 6]. Each slot now has product before index i × product after index i.' }
-      ]
-    },
-    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use prefix/suffix thinking when each answer depends on all items except the current one.' },
-    { type: 'checklist', title: 'Mistakes to avoid', items: ['Do not include nums[i]', 'Do not rely on division', 'Handle zeros through multiplication naturally'] }
+    { type: 'callout', tone: 'info', title: 'Why the edge product is 1', content: 'At index 0, there is no product before the index yet. At index 3, there is no product after the index yet. We use 1 as the multiplication starting value because it does not change the other side of the answer.' },
+    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use prefix/suffix thinking when each answer needs values before and after one skipped index.' },
+    { type: 'checklist', title: 'Mistakes to avoid', items: ['Do not include nums[i] in output[i].', 'Do not rely on division.', 'Do not use 0 as the multiplication starting value.'] }
   ],
   relatedConcepts: ['prefix products', 'suffix products', 'running accumulator'],
   metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'] }
