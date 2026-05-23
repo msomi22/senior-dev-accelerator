@@ -36,7 +36,6 @@ export const PROBLEM_TAB_RESPONSIBILITIES = Object.freeze({
     'starterThought',
     'mentalPicture',
     'intuition',
-    'visualExplanation',
     'patternSignal',
     'invariant'
   ],
@@ -82,7 +81,8 @@ export function getFocusedProblemTabs({ question, codeContent, explanation, hasM
       hasProblemTabContent(question.intuition) ||
         hasProblemTabContent(question.starterThought) ||
         hasProblemTabContent(question.mentalPicture) ||
-        hasProblemTabContent(question.visualExplanation)
+        hasProblemTabContent(question.patternSignal) ||
+        hasProblemTabContent(question.invariant)
     ],
     [
       'approach',
