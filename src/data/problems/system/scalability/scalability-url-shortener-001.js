@@ -1,3 +1,10 @@
+// Legacy URL shortener problem wrapper.
+// Keep this file as the review/scoring-drill version migrated from the legacy bank.
+// The current learner-facing canonical walkthrough is `url-shortener-v2.js`
+// with problem id `scalability-url-shortener-v2`.
+// Do not treat this file as a duplicate of the v2 walkthrough without first
+// checking `metadata.contentRole` and `metadata.relatedTeachingProblemId` below.
+
 import { defineComplexSystemDesignProblem } from '../../../../problems/problemAuthoring.js';
 import legacyBank from '../../../banks/system/complex-system-design.js';
 
