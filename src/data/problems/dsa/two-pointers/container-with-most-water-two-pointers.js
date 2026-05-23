@@ -67,23 +67,23 @@ const problem = defineLearningProblem({
 }`,
   finalTakeaway: 'The shorter wall is the spill point. Move the spill point, not the wall that is already tall enough.',
   selfExplanationPrompt: 'Why can moving the taller wall inward never help while the shorter wall remains the same?',
-  visualExplanation: 'The walkthrough draws the problem as actual walls and water. The blue fill shows the water level, the highlighted walls show the current container, and the metrics explain width, water level, area, and best area.',
+  visualExplanation: 'Focus on the picture: two selected walls, blue water between them, and the shorter wall where water spills. Width shows how far apart the walls are. Water level shows the height that can actually be held.',
   visualWalkthrough: {
-    title: 'Visual Walkthrough: walls, water, and the bottleneck',
-    summary: 'Watch the container form between two walls. The water level stops at the shorter wall, so the shorter wall decides which pointer moves.',
+    title: 'Walls, water, and the spill point',
+    summary: 'The visual below is the main explanation: choose two walls, fill water between them, then move the wall where water spills.',
     diagram: {
       type: 'container-water',
       title: 'height = [1, 8, 6, 2, 5, 4, 8, 3, 7]',
-      description: 'Each step shows the selected walls, water fill, width, water level, current area, best area, and the reason for the next pointer move.',
+      description: 'Each frame shows one real container: the chosen walls, the blue water, the width, and the bottleneck wall.',
       values: [1, 8, 6, 2, 5, 4, 8, 3, 7],
       bestPair: [1, 8],
-      takeaway: 'Area is limited by the shorter wall. Since width only shrinks, the only hopeful move is to replace the shorter wall with a taller one.',
-      stateTitle: 'Container reasoning',
-      stateDescription: 'The same formula is applied at every step: area = width × shorter wall.',
+      takeaway: 'The shorter wall is the spill point. Since width only shrinks, the only useful move is to replace that shorter wall.',
+      stateTitle: 'What the picture means',
+      stateDescription: 'Do not memorize pointer movement. Watch which wall limits the water.',
       frames: [
         {
-          title: 'Start with the widest container',
-          short: 'Widest container, but water is shallow.',
+          title: 'Wide but shallow',
+          short: 'Left wall is tiny, so water spills at height 1.',
           left: 0,
           right: 8,
           width: 8,
@@ -92,13 +92,13 @@ const problem = defineLearningProblem({
           best: 8,
           bestPair: [0, 8],
           movePointer: 'left',
-          reason: 'The left wall has height 1, so water spills there. Moving the right wall would shrink the width while the water level stays stuck at 1. Replace the short left wall.',
-          state: { label: 'area 8', values: ['left 0', 'right 8', 'width 8', 'water level 1', 'best 8'], helper: 'Wide is not enough when one wall is very short.' },
-          description: 'The first container is very wide, but it is shallow because the left wall is only height 1.'
+          reason: 'The left wall is the spill point. Keeping it would keep the water shallow, even if the right wall changes.',
+          state: { label: 'spill at left wall', values: ['width 8', 'water level 1', 'area 8'], helper: 'Wide is not enough if one wall is tiny.' },
+          description: 'A very wide container still holds little water when one wall is too short.'
         },
         {
-          title: 'A deep and still-wide container appears',
-          short: 'Move left to height 8. New best = 49.',
+          title: 'Wide and deep',
+          short: 'Move to height 8 on the left. This creates the best container.',
           left: 1,
           right: 8,
           width: 7,
@@ -107,13 +107,13 @@ const problem = defineLearningProblem({
           best: 49,
           bestPair: [1, 8],
           movePointer: 'right',
-          reason: 'Now the right wall has height 7 and becomes the shorter wall. This pair is strong because it is both wide and deep.',
-          state: { label: 'best 49', values: ['left 1', 'right 8', 'width 7', 'water level 7', 'area 49'], helper: 'This is the best container in the example.' },
-          description: 'The water can now rise to height 7 across width 7, giving area 49.'
+          reason: 'Now the right wall is the shorter wall, but this pair is already strong because it is still wide and deep.',
+          state: { label: 'best container', values: ['width 7', 'water level 7', 'area 49'], helper: 'This is the winning picture.' },
+          description: 'The water rises to height 7 across width 7, so the container holds 49 units.'
         },
         {
-          title: 'The right wall becomes the spill point',
-          short: 'Right wall is short, so move right inward.',
+          title: 'Short right wall',
+          short: 'Right wall becomes the spill point.',
           left: 1,
           right: 7,
           width: 6,
@@ -122,13 +122,13 @@ const problem = defineLearningProblem({
           best: 49,
           bestPair: [1, 8],
           movePointer: 'right',
-          reason: 'The right wall is only height 3. The left wall is tall enough already, so moving the left wall would not fix the low spill point on the right.',
-          state: { label: 'area 18', values: ['left 1', 'right 7', 'width 6', 'water level 3', 'best 49'], helper: 'The shorter wall tells us which pointer should move.' },
-          description: 'This container is worse because the water level drops to 3 and the width is already smaller.'
+          reason: 'The left wall is tall enough. The right wall is now too short, so the right pointer must move.',
+          state: { label: 'spill at right wall', values: ['width 6', 'water level 3', 'area 18'], helper: 'The shorter wall decides the next move.' },
+          description: 'The container becomes worse because the water can only rise to height 3.'
         },
         {
-          title: 'A tall wall is useful only if width remains enough',
-          short: 'Another tall wall appears, but width is smaller.',
+          title: 'Tall but narrower',
+          short: 'Both walls are tall, but width has dropped.',
           left: 1,
           right: 6,
           width: 5,
@@ -137,13 +137,13 @@ const problem = defineLearningProblem({
           best: 49,
           bestPair: [1, 8],
           movePointer: 'right',
-          reason: 'Both walls are tall, but the width has shrunk to 5. Deep water with too little width still cannot beat 49.',
-          state: { label: 'area 40', values: ['left 1', 'right 6', 'width 5', 'water level 8', 'best 49'], helper: 'Height improved, but width dropped too much.' },
-          description: 'This pair can hold deep water, but not enough total area to beat the earlier wide-and-deep container.'
+          reason: 'The height improved, but the container is now narrower. Deep water with too little width still loses to 49.',
+          state: { label: 'not enough width', values: ['width 5', 'water level 8', 'area 40'], helper: 'Height alone is not the answer.' },
+          description: 'This pair is deep, but not wide enough to beat the best container.'
         },
         {
-          title: 'Keep eliminating the bottleneck',
-          short: 'Keep moving the shorter wall.',
+          title: 'Best picture remains',
+          short: 'The search continues, but the winning container stays remembered.',
           left: 1,
           right: 5,
           width: 4,
@@ -152,13 +152,13 @@ const problem = defineLearningProblem({
           best: 49,
           bestPair: [1, 8],
           movePointer: 'right',
-          reason: 'The right wall is shorter, so it controls the water level. The algorithm keeps replacing the bottleneck wall.',
-          state: { label: 'area 16', values: ['left 1', 'right 5', 'width 4', 'water level 4', 'best 49'], helper: 'Best stays remembered while weaker containers are checked.' },
-          description: 'The current area is smaller, so the best value remains 49.'
+          reason: 'This right wall is shorter, so it controls the water level. Move it and keep the best picture saved.',
+          state: { label: 'best still 49', values: ['width 4', 'water level 4', 'area 16'], helper: 'Weak containers do not replace the best.' },
+          description: 'The current container cannot beat 49, so the best answer stays unchanged.'
         },
         {
-          title: 'All useful candidates are checked',
-          short: 'Search finishes. Best area = 49.',
+          title: 'Final answer',
+          short: 'The best container is between index 1 and index 8.',
           left: 1,
           right: 2,
           width: 1,
@@ -167,9 +167,9 @@ const problem = defineLearningProblem({
           best: 49,
           bestPair: [1, 8],
           movePointer: 'right',
-          reason: 'At this point the width is too small to beat the best container. The search has safely eliminated weaker choices.',
-          state: { label: 'answer 49', values: ['best left 1', 'best right 8', 'best width 7', 'best area 49'], helper: 'Return the strongest container seen.' },
-          description: 'The maximum water is held between index 1 and index 8.',
+          reason: 'The remaining width is too small. The best visual container already found is the answer.',
+          state: { label: 'return 49', values: ['best left 1', 'best right 8', 'best area 49'], helper: 'Return the strongest container seen.' },
+          description: 'The maximum water is held between the wall at index 1 and the wall at index 8.',
           finalResult: { title: 'Final answer', body: 'Return 49.' }
         }
       ]
@@ -177,8 +177,7 @@ const problem = defineLearningProblem({
   },
   body: [
     { type: 'callout', tone: 'info', title: 'Mental model', content: 'A container is controlled by its spill point. The spill point is always the shorter wall.' },
-    { type: 'flow', title: 'How to reason naturally', steps: ['Start as wide as possible.', 'Measure the water level using the shorter wall.', 'Save the area.', 'Move the shorter wall because it is the bottleneck.', 'Repeat until the pointers meet.'] },
-    { type: 'checklist', title: 'Senior-engineer explanation', items: ['Area = width × min(left height, right height).', 'Width decreases after every move.', 'Moving the taller wall cannot raise the water level while the shorter wall remains.', 'So we eliminate the shorter wall and search for a better bottleneck.'] }
+    { type: 'checklist', title: 'Reasoning checkpoints', items: ['Area = width × min(left height, right height).', 'Width gets smaller after every move.', 'The shorter wall is the only wall that can improve the water level.'] }
   ],
   relatedConcepts: ['two pointers', 'greedy elimination', 'bottleneck reasoning'],
   metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'] }
