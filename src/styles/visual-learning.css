@@ -648,6 +648,12 @@
   border-color: #fca5a5;
 }
 
+/* Config visual state panel: keep the current mental state visible first. */
+.config-visual-state-list {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+}
+
 @media (max-width: 920px) {
   .visual-frame {
     grid-template-columns: 1fr;
