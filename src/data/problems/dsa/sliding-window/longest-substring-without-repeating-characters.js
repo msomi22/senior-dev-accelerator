@@ -145,7 +145,7 @@ class Solution {
         {
           title: 'Right moves from 5 to 6 and finds another b',
           activeRange: [3, 6],
-          items: [{ index: 3, role: 'window', caption: 'left stays 3' }, { index: 4, role: 'warning', caption: 'old b inside' }, { index: 5, role: 'window', caption: 'was right' }, { index: 6, role: 'warning', caption: 'right moves to 6' }],
+          items: [{ index: 3, role: 'window', caption: 'left stays 3' }, { index: 4, role: 'warning', caption: 'old b' }, { index: 5, role: 'window', caption: 'previous right' }, { index: 6, role: 'warning', caption: 'right → 6' }],
           state: { label: 'duplicate found', role: 'warning', values: ['left 3', 'right 6', 'tray abcb', 'best 3'], helper: 'left did not move. right moved one step from 5 to 6. The new b at index 6 matches the b already inside the tray at index 4.' },
           description: 'Only right moved. Before this step, the window was indexes 3..5: a, b, c. After right moves to index 6, the window becomes indexes 3..6: a, b, c, b. That is why we compare the new b at index 6 with the old b at index 4.'
         },
