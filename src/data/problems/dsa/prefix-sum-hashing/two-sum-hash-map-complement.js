@@ -73,8 +73,7 @@ class Solution {
     }
   },
   body: [
-    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use complement lookup when a pair must combine to a target and you can remember values already seen.' },
-    { type: 'flow', title: 'Mental flow', steps: ['Look at current number', 'Compute target - current', 'Check whether complement was seen earlier', 'If yes, return both indices', 'If no, store current number for future values'] }
+    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use complement lookup when a pair must combine to a target and you can remember values already seen.' }
   ],
   relatedConcepts: ['hash map lookup', 'complement', 'single-pass scan'],
   metadata: {
