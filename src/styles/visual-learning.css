@@ -654,6 +654,12 @@
   flex-direction: column-reverse !important;
 }
 
+.config-visual-state-list.is-scrollable .config-visual-state-row.active {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
 @media (max-width: 920px) {
   .visual-frame {
     grid-template-columns: 1fr;
