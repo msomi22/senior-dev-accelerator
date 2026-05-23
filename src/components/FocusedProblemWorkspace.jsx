@@ -4,7 +4,7 @@ import VisualRail from './visuals/VisualRail.jsx';
 import ProblemBlockRenderer from './rich-problem/ProblemBlockRenderer.jsx';
 import { loadVisualWalkthrough } from '../services/visualWalkthroughService.js';
 import { storageService } from '../services/storageService.js';
-import { getFocusedProblemTabs, getReinforcementCardsForTab, hasProblemTabContent } from '../problems/problemTabSections.js';
+import { getFocusedProblemTabs, getReinforcementCardsForTab } from '../problems/problemTabSections.js';
 
 function optionLetter(index) {
   return String.fromCharCode(65 + index);
@@ -20,10 +20,6 @@ function text(value) {
   if (Array.isArray(value)) return value.map(text).filter(Boolean).join(' ');
   if (typeof value === 'object') return Object.values(value).map(text).filter(Boolean).join(' | ');
   return String(value);
-}
-
-function has(value) {
-  return text(value).trim().length > 0;
 }
 
 function isVisualRichBlock(block) {
@@ -158,19 +154,19 @@ function VisualBlock({ question, showFallback = false }) {
 function SupportPanel({ question }) {
   const concepts = list(question.relatedConcepts).slice(0, 4);
   const tags = list(question.tags).slice(0, 3);
-  const summary = question.patternSummary || question.intuition || question.visualExplanation;
-  if (!summary && !concepts.length && !tags.length) return null;
+
+  if (!concepts.length && !tags.length) return null;
+
   return (
-    <aside className="problem-support-panel" aria-label="Problem support details">
-      <TextBlock title="Pattern summary">{summary}</TextBlock>
+    <aside className="problem-support-panel" aria-label="Problem metadata">
       {concepts.length ? <section><span className="mini-label">Concepts</span><div className="compact-chip-row">{concepts.map((concept) => <span key={text(concept)}>{text(concept)}</span>)}</div></section> : null}
       {tags.length ? <section><span className="mini-label">Tags</span><div className="compact-chip-row muted">{tags.map((tag) => <span key={text(tag)}>#{text(tag)}</span>)}</div></section> : null}
     </aside>
   );
 }
 
-function ReinforcementCards({ question, activeTab }) {
-  const cards = getReinforcementCardsForTab(question, activeTab);
+function ApproachReinforcementCards({ question }) {
+  const cards = getReinforcementCardsForTab(question, 'approach');
 
   if (!cards.length) return null;
 
@@ -235,11 +231,10 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
           {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>{!hasOverviewRichBody ? <TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock> : null}</div><RichBodyBlocks blocks={question.body} mode="overview" />{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ListBlock title="Examples" items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
           {activeTab === 'visual' ? <div className="focused-panel-stack">{hasVisualRichBody ? <RichBodyBlocks blocks={question.body} mode="visual" /> : <VisualBlock question={question} showFallback />}{hasVisualRichBody ? <VisualBlock question={question} /> : null}</div> : null}
           {activeTab === 'intuition' ? <div className="focused-two-col"><TextBlock title="Think first" className="think-box">{question.starterThought}</TextBlock><TextBlock title="Why this pattern fits">{question.intuition || question.visualExplanation}</TextBlock><TextBlock title="Recognition signal">{question.patternSignal}</TextBlock><TextBlock title="Invariant to maintain">{question.invariant}</TextBlock></div> : null}
-          {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="focused-two-col"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><TextBlock title="Edge cases">{question.edgeCases}</TextBlock></div></div> : null}
+          {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="focused-two-col"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><TextBlock title="Edge cases">{question.edgeCases}</TextBlock></div><ApproachReinforcementCards question={question} /></div> : null}
           {activeTab === 'solution' ? <div className="focused-panel-stack"><TextBlock title="Solution explanation">{explanation}</TextBlock><CodeBlock code={codeContent || 'No code sample is configured yet.'} language={question.language || 'java'} title="Implementation notes" className="workspace-block focused-code-block" /></div> : null}
           {activeTab === 'answer' ? <div className="focused-panel-stack"><McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /><TextBlock title="Explanation">{explanation || question.intuition}</TextBlock><ListBlock title="Why other options are wrong" items={question.optionExplanations || question.wrongOptionExplanations} /></div> : null}
           {activeTab === 'complexity' ? <div className="focused-two-col"><TextBlock title="Complexity / trade-off analysis">{question.complexityAnalysis}</TextBlock><TextBlock title="Production reality">{question.productionReality}</TextBlock></div> : null}
-          <ReinforcementCards question={question} activeTab={activeTab} />
         </div>
         {!focusMode ? <SupportPanel question={question} /> : null}
       </div>
