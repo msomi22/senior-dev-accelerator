@@ -13,6 +13,15 @@ function formatValue(value) {
   return String(value);
 }
 
+function normalizeStateValues(values) {
+  if (!values) return [];
+  if (Array.isArray(values)) return values;
+  if (typeof values === 'object') {
+    return Object.entries(values).map(([key, value]) => `${key}: ${formatValue(value)}`);
+  }
+  return [values];
+}
+
 function buildCellMap(cells = []) {
   const map = new Map();
 
@@ -71,7 +80,7 @@ function StateHistory({ frames = [], activeIndex, stateTitle, stateDescription }
           <div className={`grid-visualizer-state-row ${index === rows.length - 1 ? 'active' : ''}`} key={`${frame.state.label || frame.title}-${index}`}>
             <span className="grid-visualizer-state-label">{frame.state.label || `S${index}`}</span>
             <span className="grid-visualizer-state-values">
-              {(frame.state.values || []).map((value, valueIndex) => (
+              {normalizeStateValues(frame.state.values).map((value, valueIndex) => (
                 <span className={`grid-visualizer-state-value ${formatValue(value) === '∞' ? 'infinite' : ''}`} key={`${value}-${valueIndex}`}>
                   {formatValue(value)}
                 </span>
