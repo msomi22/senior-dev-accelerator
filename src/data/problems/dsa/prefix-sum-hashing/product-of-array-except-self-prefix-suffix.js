@@ -26,6 +26,7 @@ const problem = defineLearningProblem({
   edgeCases: ['One zero in the array', 'Multiple zeros', 'Negative numbers', 'Array length two', 'Values of one'],
   complexityAnalysis: 'Time is O(n) because each index is visited from the left side and from the right side. Extra space is O(1) beyond the output array because the returned answer array is required.',
   explanation: '',
+  plainLanguageExplanation: 'The walkthrough shows the target answer directly: each output slot skips its own input value and multiplies the rest. The solution code reaches the same result by storing the product before each index, then multiplying in the product after each index.',
   approach: 'Break every answer into two pieces: product before the index and product after the index. For [1, 2, 3, 4], index 2 skips 3. The answer is 1 × 2 × 4. That can be seen as left side 1 × 2 and right side 4, so answer[2] = 2 × 4 = 8.',
   solutionCode: `class Solution {
     public int[] productExceptSelf(int[] nums) {
