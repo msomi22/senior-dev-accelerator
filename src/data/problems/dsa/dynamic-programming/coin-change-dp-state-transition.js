@@ -6,44 +6,65 @@ const problem = defineLearningProblem({
   title: 'Coin Change — dynamic programming state/transition',
   difficulty: 'Medium',
   estimatedTime: '17 min',
-  tags: ['dynamic-programming', 'state-transition', 'arrays', 'interview-pattern', 'mental-model', 'visual-walkthrough'],
+  language: 'java',
+  tags: ['dynamic-programming', 'state-transition', 'arrays', 'interview-pattern', 'visual-walkthrough', 'coding'],
   scenario: 'Given coin denominations and a target amount, find the fewest coins needed to make that amount.',
-  prompt: 'How does dynamic programming build the best answer for a large amount from saved answers to smaller amounts?',
+  question: 'Given coins = [1, 2, 5] and amount = 11, return 3.',
+  examples: ['coins = [1, 2, 5], amount = 11 -> 3'],
+  constraints: ['Each coin can be used multiple times.', 'Return -1 if the amount cannot be made.'],
   starterThought: 'To solve amount X, try using one coin now and ask which smaller amount remains.',
-  plainLanguageExplanation: 'Let dp[a] mean the fewest coins needed to make amount a. The base case is dp[0] = 0 because zero coins make amount zero. For each amount and each coin, if amount - coin is reachable, then dp[amount - coin] + 1 is a candidate answer.',
-  mentalPicture: 'A row of boxes from amount 0 to the target amount. Each box stores the fewest coins needed for that amount. Bigger boxes learn from smaller boxes.',
-  bruteForceThought: 'Brute force tries many coin combinations and repeatedly solves the same remaining amounts.',
-  optimizationJourney: 'DP removes repeated work by saving the best answer for every smaller amount once, then reusing those saved answers.',
+  intuition: 'Let dp[a] mean the fewest coins needed to make amount a. Start with dp[0] = 0, then build every larger amount from reachable smaller amounts.',
+  mentalPicture: 'A row of boxes from amount 0 to the target amount. Each box stores the fewest coins needed for that amount.',
+  patternSignal: 'Use DP when a large answer can be built from repeated smaller answers that should be saved.',
+  invariant: 'After processing an amount, its dp cell stores the minimum number of coins currently known for that exact amount.',
+  stepByStepBreakdown: ['Create the dp table.', 'Set the zero amount to zero.', 'Try every coin for every amount.', 'Keep the smallest reachable candidate.', 'Return the target cell or -1.'],
+  bruteForceThought: 'Brute force repeats the same remaining amounts many times.',
+  optimizationJourney: 'DP saves each smaller result once and reuses it.',
   finalPattern: 'Bottom-up DP with state and transition.',
-  commonMistake: 'Treating unreachable states as valid can produce fake answers. Another common mistake is confusing minimum coins with the number of combinations.',
-  edgeCases: ['Amount 0', 'No combination can make the amount', 'Coin value larger than target', 'Coin value 1 guarantees reachability', 'Unsorted coin list'],
-  complexityAnalysis: 'Time is O(amount × number of coins) because each amount considers each coin. Space is O(amount) because the dp table stores one best value for every amount from 0 to target.',
+  commonMistake: 'Treating unreachable states as valid can produce fake answers.',
+  edgeCases: ['Amount zero', 'No valid combination', 'Coin larger than amount'],
+  complexityAnalysis: 'Time is O(amount times number of coins). Space is O(amount).',
+  explanation: 'For every amount, try each coin as the last coin used. If the remaining amount is reachable, that creates a candidate answer. The smallest candidate becomes the dp value.',
+  solutionCode: `import java.util.Arrays;
+
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int limit = amount + 1;
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, limit);
+        dp[0] = 0;
+
+        for (int a = 1; a <= amount; a++) {
+            for (int coin : coins) {
+                int prev = a - coin;
+                if (prev >= 0 && dp[prev] != limit) {
+                    dp[a] = Math.min(dp[a], dp[prev] + 1);
+                }
+            }
+        }
+
+        return dp[amount] == limit ? -1 : dp[amount];
+    }
+}`,
   finalTakeaway: 'Dynamic programming works when a big answer can be built from saved smaller answers.',
-  selfExplanationPrompt: 'In one sentence, explain what dp[amount] means before writing the transition.',
-  body: [
-    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use DP when the same smaller subproblems repeat and a larger answer can reuse saved smaller answers.' },
-    { type: 'diagram', title: 'State definition', content: 'dp[a] = fewest coins needed to make amount a\nbase: dp[0] = 0\ntransition: try each coin, then use dp[a - coin] + 1 when reachable' },
-    {
-      type: 'table',
-      title: 'Walkthrough: coins = [1, 2, 5], amount = 5',
-      columns: ['Amount', 'Coin considered', 'Previous smaller amount', 'Candidate answer', 'Best so far'],
-      rows: [
-        ['1', '1', '0', 'dp[0] + 1 = 1', '1'],
-        ['2', '1', '1', 'dp[1] + 1 = 2', '2'],
-        ['2', '2', '0', 'dp[0] + 1 = 1', '1'],
-        ['3', '1', '2', 'dp[2] + 1 = 2', '2'],
-        ['3', '2', '1', 'dp[1] + 1 = 2', '2'],
-        ['5', '5', '0', 'dp[0] + 1 = 1', '1']
+  visualExplanation: 'Each frame shows one dp amount learning from smaller reachable amounts.',
+  visualWalkthrough: {
+    title: 'Coin Change DP walkthrough',
+    summary: 'Build the answer amount by amount using saved smaller answers.',
+    diagram: {
+      type: 'timeline',
+      title: 'DP state evolution',
+      frames: [
+        { title: 'Base', state: { label: 'dp0', values: { amount0: 0 } }, description: 'Zero amount needs zero coins.' },
+        { title: 'Amount 1', state: { label: 'dp1', values: { amount1: 1 } }, description: 'Use one coin of value 1.' },
+        { title: 'Amount 2', state: { label: 'dp2', values: { amount2: 1 } }, description: 'Use one coin of value 2.' },
+        { title: 'Target', state: { label: 'amount11', values: { answer: 3 } }, description: 'The best result for 11 is three coins.', finalResult: { title: 'Final answer', body: 'Return 3.' } }
       ]
-    },
-    { type: 'flow', title: 'DP fill order', steps: ['Create dp table from 0 to target', 'Set dp[0] = 0', 'For every amount, try every coin', 'Skip coin if amount - coin is negative or unreachable', 'Keep the minimum candidate', 'Return -1 if target remains unreachable'] },
-    { type: 'checklist', title: 'Mistakes to avoid', items: ['Define state before transition', 'Initialize dp[0] correctly', 'Use a safe unreachable value', 'Do not count combinations when the question asks for minimum coins'] }
-  ],
-  relatedConcepts: ['bottom-up DP', 'state definition', 'transition', 'unreachable state'],
-  metadata: {
-    reviewStatus: 'approved',
-    visibility: ['dev', 'prod']
-  }
+    }
+  },
+  body: [{ type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use DP when smaller saved answers build larger answers.' }],
+  relatedConcepts: ['bottom-up DP', 'state definition', 'transition'],
+  metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'] }
 });
 
 export default problem;
