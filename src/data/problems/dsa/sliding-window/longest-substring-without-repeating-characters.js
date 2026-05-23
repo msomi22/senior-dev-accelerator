@@ -138,23 +138,23 @@ class Solution {
         {
           title: 'Throw out the old c',
           activeRange: [3, 5],
-          items: [{ index: 2, role: 'remove', caption: 'removed' }, { index: 3, role: 'window', caption: 'left' }, { index: 5, role: 'current', caption: 'right' }],
-          state: { label: 'clean again', role: 'success', values: ['left 3', 'right 5', 'tray abc', 'best 3'], helper: 'abc is clean again, but it only ties the best length.' },
-          description: 'Move left past the old "c". The clean substring becomes "abc" again.'
+          items: [{ index: 2, role: 'remove', caption: 'removed' }, { index: 3, role: 'window', caption: 'left' }, { index: 4, role: 'window', caption: 'kept b' }, { index: 5, role: 'current', caption: 'right' }],
+          state: { label: 'clean again', role: 'success', values: ['left 3', 'right 5', 'tray abc', 'best 3'], helper: 'The clean tray is indexes 3 to 5: a, b, c. Notice b at index 4 is still inside.' },
+          description: 'Move left past the old "c". The clean substring becomes "abc" again, using indexes 3, 4, and 5.'
         },
         {
-          title: 'The new b repeats b inside the tray',
+          title: 'Right adds b, but index 4 already has b',
           activeRange: [3, 6],
-          items: [{ index: 4, role: 'warning', caption: 'old b' }, { index: 6, role: 'warning', caption: 'new b' }],
-          state: { label: 'duplicate found', role: 'warning', values: ['left 3', 'right 6', 'tray abcb', 'best 3'], helper: 'The b at index 6 matches the b at index 4. The left side must move until that old b leaves.' },
-          description: 'right moves to index 6. The repeated pair is not at the left edge this time, so left will move past "a" and then past the old "b".'
+          items: [{ index: 3, role: 'window', caption: 'inside tray' }, { index: 4, role: 'warning', caption: 'old b' }, { index: 5, role: 'window', caption: 'inside tray' }, { index: 6, role: 'warning', caption: 'right adds b' }],
+          state: { label: 'duplicate found', role: 'warning', values: ['left 3', 'right 6', 'tray abcb', 'best 3'], helper: 'Before this step, the tray was indexes 3..5: a, b, c. Now right adds b at index 6, which matches the b already inside at index 4.' },
+          description: 'The pointer did not jump to index 4. Index 4 was already inside the active substring. When right adds the new "b" at index 6, the duplicate pair becomes index 4 and index 6.'
         },
         {
           title: 'Repair until the old b is gone',
           activeRange: [5, 6],
-          items: [{ index: 3, role: 'remove', caption: 'removed' }, { index: 4, role: 'remove', caption: 'removed' }, { index: 5, role: 'window', caption: 'left' }, { index: 6, role: 'current', caption: 'right' }],
-          state: { label: 'clean again', role: 'success', values: ['left 5', 'right 6', 'tray cb', 'best 3'], helper: 'left moved past a and the old b. Now only one b remains.' },
-          description: 'The repair may remove more than one letter. After removing "a" and the old "b", the clean substring is "cb".'
+          items: [{ index: 3, role: 'remove', caption: 'removed a' }, { index: 4, role: 'remove', caption: 'removed old b' }, { index: 5, role: 'window', caption: 'left' }, { index: 6, role: 'current', caption: 'right' }],
+          state: { label: 'clean again', role: 'success', values: ['left 5', 'right 6', 'tray cb', 'best 3'], helper: 'left moved past a and then past the old b at index 4. Now only the new b remains.' },
+          description: 'The repair removes more than one letter: first "a" at index 3, then the old "b" at index 4. Now the clean substring is "cb".'
         },
         {
           title: 'The final b repeats the previous b',
