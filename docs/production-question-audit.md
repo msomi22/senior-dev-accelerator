@@ -56,7 +56,7 @@ Assumptions:
 
 - The audit treats `metadata.reviewStatus: 'approved'` plus `visibility` containing `prod` as the source of truth for production question visibility.
 - Files under `src/data/problems/**` that wrap legacy bank content were judged using both the wrapper and the inherited legacy content when visible from imports.
-- No production visibility changes were made.
+- PR #129 removes the legacy URL shortener wrapper from production by changing its metadata to `reviewStatus: 'legacy'` and `visibility: ['dev']`.
 - The audit is intentionally practical rather than academic: each note should be easy to verify in the related production problem files.
 
 ## Rating definitions
@@ -97,8 +97,8 @@ No P0, P1, or P2 audit issues remain open in the reviewed production-visible set
 | System / caching | 1 | 1 | 0 | 0 | 0 | Cache-aside now explicitly covers stale data, TTL/invalidation, and freshness trade-offs. |
 | System / databases | 1 | 1 | 0 | 0 | 0 | Multi-region consistency now has a clearer two-lane mental model and business-risk takeaway. |
 | System / messaging queues | 1 | 1 | 0 | 0 | 0 | Queue-based notifications now cover idempotent workers, retries, backoff, and dead-letter queues. |
-| System / scalability | 3 | 3 | 0 | 0 | 0 | URL shortener v2 is the canonical walkthrough; URL shortener 001 is a clearly marked legacy review drill; realtime updates now covers connection ownership and fan-out. |
-| **Total** | **14** | **14** | **0** | **0** | **0** | No pending production-quality issue remains from this audit. |
+| System / scalability | 2 | 2 | 0 | 0 | 0 | URL shortener v2 is the only production-visible URL shortener walkthrough; realtime updates now covers connection ownership and fan-out. |
+| **Total** | **13** | **13** | **0** | **0** | **0** | No pending production-quality issue remains from this audit. |
 
 > Note: `dynamic-programming-020` is counted under DSA even though most learner content is inherited from `src/data/banks/dsa/minimum-sideway-jumps.js`.
 
@@ -108,8 +108,7 @@ No P0, P1, or P2 audit issues remain open in the reviewed production-visible set
 | --- | --- | --- | --- | --- | --- | --- |
 | `sliding-window-001` | DSA | sliding-window | coding | Excellent | Already production-ready. | P3 |
 | `dynamic-programming-020` | DSA | dynamic-programming | coding | Excellent | Already production-ready. | P3 |
-| `scalability-url-shortener-v2` | System design | scalability | complex system design | Excellent | Current canonical learner-facing walkthrough. | P3 |
-| `scalability-url-shortener-001` | System design | scalability | complex system design / review drill | Excellent | Legacy review/scoring drill clarified with comments and role metadata. | P3 |
+| `scalability-url-shortener-v2` | System design | scalability | complex system design | Excellent | Current canonical learner-facing walkthrough and only URL shortener visible in production/search. | P3 |
 | `scalability-realtime-updates-001` | System design | scalability | MCQ | Excellent | Added mental picture, stronger event-routing visual, production reality, common mistake, and final takeaway. | P3 |
 | `caching-product-details-001` | System design | caching | MCQ | Excellent | Added cache shelf mental picture, freshness/invalidation production note, common mistake, and final takeaway. | P3 |
 | `api-design-rate-limiting-001` | System design | api-design | MCQ | Excellent | Added turnstile mental picture, distributed counter note, anonymous/authenticated caller warning, common mistake, and final takeaway. | P3 |
@@ -121,6 +120,12 @@ No P0, P1, or P2 audit issues remain open in the reviewed production-visible set
 | `java-core-pass-by-value-object-references-001` | Java | java-core | MCQ | Excellent | Already production-ready. | P3 |
 | `java-core-hashmap-behavior-001` | Java | java-core | learning | Excellent | Already production-ready. | P3 |
 
+## Dev-only legacy reference
+
+| Question ID | Status | Replacement | Notes |
+| --- | --- | --- | --- |
+| `scalability-url-shortener-001` | Dev-only legacy reference | `scalability-url-shortener-v2` | Removed from production/search by setting `reviewStatus: 'legacy'` and `visibility: ['dev']`. Retained only as a reference to the migrated legacy bank wrapper. |
+
 ## High-priority issues found
 
 ### P0 issues
@@ -129,15 +134,15 @@ No P0 production risk was found in the reviewed production-visible set.
 
 ### P1 issues
 
-No P1 issue remains after clarifying the URL shortener pair.
+No P1 issue remains after removing the legacy URL shortener wrapper from production.
 
 Resolved clarification:
 
-1. **Clarified the role of `scalability-url-shortener-001`.**
+1. **Removed `scalability-url-shortener-001` from production visibility.**
    - `scalability-url-shortener-v2` is the current canonical learner-facing walkthrough.
-   - `scalability-url-shortener-001` is the older legacy wrapper retained as a design-review/scoring drill.
-   - Both files now include comments that explain the relationship and reduce future confusion.
-   - The legacy wrapper keeps metadata that marks its role with `contentRole: 'design-review-drill'` and `relatedTeachingProblemId: 'scalability-url-shortener-v2'`.
+   - `scalability-url-shortener-001` is the older legacy wrapper retained only for dev/reference use.
+   - The legacy wrapper now has `metadata.reviewStatus: 'legacy'` and `metadata.visibility: ['dev']`.
+   - Both files include comments explaining the relationship and reducing future confusion.
 
 ### P2 issues
 
@@ -169,7 +174,7 @@ Resolved for:
 - `messaging-queues-email-notification-001`
 - `java-core-equals-vs-double-equals-001`
 
-### 3. Visual explanations improved where useful
+### 3. Visual explanations improved where useful and made visible in the UI
 
 Resolved for:
 
@@ -180,6 +185,8 @@ Resolved for:
 - `caching-product-details-001`
 - `messaging-queues-email-notification-001`
 - `java-core-equals-vs-double-equals-001`
+
+`visualExplanation` now appears in the focused Visual Walkthrough tab when a question does not have a structured `visualWalkthrough` object.
 
 ### 4. Production-reality notes added to system MCQs
 
@@ -196,14 +203,15 @@ Resolved for:
 
 Resolved for all previously `Good` MCQs listed in the audit.
 
-### 6. Duplicate-topic risk clarified
+### 6. Duplicate-topic risk removed from production
 
-There are two production-visible URL shortener questions. This is intentional:
+Only one URL shortener problem is now production-visible:
 
 - `scalability-url-shortener-v2` is the canonical teaching walkthrough.
-- `scalability-url-shortener-001` is the legacy review/scoring drill.
 
-Both files now include comments explaining the relationship so future contributors do not confuse a review drill with a teaching walkthrough.
+The legacy wrapper remains dev-only:
+
+- `scalability-url-shortener-001` is retained only as a legacy reference and is not production-visible.
 
 ### 7. Metadata guardrail status
 
@@ -226,11 +234,11 @@ Future improvements can be treated as new enhancement work, not pending audit re
 
 1. Add automated production metadata guardrails for future batches.
 2. Add richer step-frame support for future DSA questions involving pointer movement, DP tables, graph traversal, stack state, and queue state.
-3. Continue using role metadata such as `contentRole` and `relatedTeachingProblemId` when keeping both legacy and canonical versions of similar content.
+3. Continue using role metadata such as `contentRole`, `productionReplacementId`, and `relatedTeachingProblemId` when keeping legacy references beside canonical content.
 
 ## Suggested future quality order
 
-1. Keep the current 14 production-visible questions as the baseline standard.
+1. Keep the current 13 production-visible questions as the baseline standard.
 2. Add automated checks before scaling the question bank further.
 3. Add new production batches only when they meet the same content standard.
 4. When duplicate-looking problems are discovered, confirm which one is legacy and which one is current before hiding, deleting, or rewriting either file.
@@ -260,7 +268,7 @@ This checklist is adapted from `docs/content-quality-rubric.md`:
 
 - This audit now records the completed remediation, not only the original findings.
 - This PR does not add new question batches.
-- This PR does not change UI, routing, styling, rendering components, or production visibility.
+- This PR does not change routing, styling, rendering components unrelated to focused problem field visibility, or production visibility beyond removing the legacy URL shortener wrapper from prod/search.
 - The audit found no clearly broken production-visible question.
 - The main improvement opportunity was consistency, and the reviewed production-visible MCQs were upgraded to match the strongest Java, DSA, and URL shortener v2 examples.
 
