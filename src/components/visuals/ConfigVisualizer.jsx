@@ -10,6 +10,40 @@ function normalizeEntries(state = {}) {
   return Object.entries(state.values || state).map(([key, value]) => [key, value, false]);
 }
 
+const CAPTION_ACTION_ROLES = {
+  adds: 'add',
+  add: 'add',
+  removes: 'remove',
+  remove: 'remove',
+  removed: 'remove',
+  repeats: 'warning',
+  repeat: 'warning',
+  matches: 'warning',
+  match: 'warning',
+  stays: 'best',
+  stay: 'best',
+  keeps: 'success',
+  keep: 'success',
+  ties: 'best',
+  tie: 'best',
+  beats: 'best',
+  beat: 'best'
+};
+
+function CaptionText({ caption }) {
+  if (!caption) return null;
+  return String(caption).split(/(\s+)/).map((part, index) => {
+    const key = part.trim().toLowerCase();
+    const role = CAPTION_ACTION_ROLES[key];
+    if (!role) return <span key={`${part}-${index}`}>{part}</span>;
+    return (
+      <span className={`config-visual-caption-action ${getSemanticRoleClass(role)}`} key={`${part}-${index}`}>
+        {part}
+      </span>
+    );
+  });
+}
+
 function VisualLegend({ legend = [] }) {
   if (!legend.length) return null;
   return (
@@ -70,7 +104,12 @@ function VisualStyles() {
       .config-visual-array-item.config-visual-role-warning, .config-visual-array-item.config-visual-role-remove, .config-visual-array-item.config-visual-role-error { background: linear-gradient(180deg, rgba(254, 202, 202, 0.98), rgba(252, 165, 165, 0.76)); border-color: rgba(220, 38, 38, 0.55); color: #450a0a; box-shadow: 0 10px 22px rgba(220, 38, 38, 0.14), inset 0 -4px 0 rgba(220, 38, 38, 0.16); }
       .config-visual-array-item.config-visual-role-answer, .config-visual-array-item.config-visual-role-success, .config-visual-array-item.config-visual-role-goal { background: linear-gradient(180deg, rgba(220, 252, 231, 0.98), rgba(134, 239, 172, 0.8)); border-color: rgba(21, 128, 61, 0.58); color: #052e16; box-shadow: 0 10px 22px rgba(21, 128, 61, 0.16), inset 0 -4px 0 rgba(21, 128, 61, 0.16); }
       .config-visual-array-item.config-visual-role-best { background: linear-gradient(180deg, rgba(254, 243, 199, 0.98), rgba(252, 211, 77, 0.74)); border-color: rgba(217, 119, 6, 0.58); color: #451a03; box-shadow: 0 10px 22px rgba(217, 119, 6, 0.16), inset 0 -4px 0 rgba(217, 119, 6, 0.18); }
-      .config-visual-array-caption { min-height: 1rem; color: var(--text-muted, #756a5a); font-size: 0.7rem; font-weight: 800; }
+      .config-visual-array-caption { min-height: 1rem; display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.16rem; color: var(--text-muted, #756a5a); font-size: 0.7rem; font-weight: 800; line-height: 1.35; }
+      .config-visual-caption-action { display: inline-flex; align-items: center; border-radius: 999px; padding: 0.05rem 0.25rem; border-width: 1px; border-style: solid; font-size: 0.66rem; line-height: 1.2; box-shadow: none; }
+      .config-visual-caption-action.config-visual-role-add { background: rgba(219, 234, 254, 0.95); border-color: rgba(37, 99, 235, 0.36); color: #1d4ed8; }
+      .config-visual-caption-action.config-visual-role-remove, .config-visual-caption-action.config-visual-role-warning { background: rgba(254, 226, 226, 0.95); border-color: rgba(220, 38, 38, 0.34); color: #b91c1c; }
+      .config-visual-caption-action.config-visual-role-best { background: rgba(254, 243, 199, 0.95); border-color: rgba(217, 119, 6, 0.34); color: #92400e; }
+      .config-visual-caption-action.config-visual-role-success { background: rgba(220, 252, 231, 0.95); border-color: rgba(22, 163, 74, 0.34); color: #15803d; }
       .config-visual-table { width: 100%; border-collapse: separate; border-spacing: 0.32rem; }
       .config-visual-table th, .config-visual-table td { border: 1px solid rgba(86, 67, 42, 0.12); background: rgba(255,255,255,0.48); border-radius: 11px; padding: 0.5rem; text-align: left; }
       .config-visual-timeline { display: grid; gap: 0.58rem; }
@@ -183,11 +222,12 @@ function ArrayView({ diagram, frame }) {
         const override = frameItems.get(index) || {};
         const inRange = Array.isArray(activeRange) && index >= activeRange[0] && index <= activeRange[1];
         const role = override.role || (inRange ? 'window' : 'neutral');
+        const caption = override.caption || (inRange ? 'window' : '');
         return (
           <span className="config-visual-array-cell" key={`${value}-${index}`}>
             <span className="config-visual-array-index">{index}</span>
             <span className={`config-visual-array-item ${getSemanticRoleClass(role)}`}>{override.label || formatVisualValue(value)}</span>
-            <span className="config-visual-array-caption">{override.caption || (inRange ? 'window' : '')}</span>
+            <span className="config-visual-array-caption"><CaptionText caption={caption} /></span>
           </span>
         );
       })}
