@@ -146,8 +146,6 @@ function VisualStyles() {
 }
 
 function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, onPrevious, onNext, onTogglePlay, children, showStatePanel = true }) {
-  const isLastFrame = activeIndex >= frameCount - 1;
-
   return (
     <section className={`config-visual config-visual-${diagram.type || 'generic'} config-visual-${diagram.variant || 'default'}`} aria-label={diagram.title || 'Visual walkthrough'}>
       <VisualStyles />
@@ -160,8 +158,8 @@ function VisualShell({ diagram, activeFrame, activeIndex, frameCount, playing, o
           {frameCount > 1 ? (
             <div className="config-visual-controls" data-no-card-nav>
               <button type="button" onClick={onPrevious} disabled={activeIndex === 0}>Previous</button>
-              <button type="button" onClick={onTogglePlay}>{playing ? 'Pause' : isLastFrame ? 'Replay' : 'Play'}</button>
-              <button type="button" onClick={onNext}>{isLastFrame ? 'Restart' : 'Next'}</button>
+              <button type="button" onClick={onTogglePlay}>{playing ? 'Pause' : activeIndex >= frameCount - 1 ? 'Replay' : 'Play'}</button>
+              <button type="button" onClick={onNext} disabled={activeIndex >= frameCount - 1}>Next</button>
               <span>Step {activeIndex + 1} of {frameCount}</span>
             </div>
           ) : null}
@@ -221,3 +219,229 @@ function ArrayView({ diagram, frame }) {
   return (
     <div className="config-visual-array">
       {values.map((value, index) => {
+        const override = frameItems.get(index) || {};
+        const inRange = Array.isArray(activeRange) && index >= activeRange[0] && index <= activeRange[1];
+        const role = override.role || (inRange ? 'window' : 'neutral');
+        const caption = override.caption || (inRange ? 'window' : '');
+        return (
+          <span className="config-visual-array-cell" key={`${value}-${index}`}>
+            <span className="config-visual-array-index">{index}</span>
+            <span className={`config-visual-array-item ${getSemanticRoleClass(role)}`}>{override.label || formatVisualValue(value)}</span>
+            <span className="config-visual-array-caption"><CaptionText caption={caption} /></span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function ContainerWaterView({ diagram, frame }) {
+  const heights = asArray(diagram.values);
+  const maxHeight = Math.max(...heights, 1);
+  const left = frame.left ?? frame.pointers?.left ?? 0;
+  const right = frame.right ?? frame.pointers?.right ?? heights.length - 1;
+  const width = frame.width ?? Math.max(0, right - left);
+  const waterLevel = frame.waterLevel ?? Math.min(heights[left] || 0, heights[right] || 0);
+  const area = frame.area ?? width * waterLevel;
+  const best = frame.best ?? area;
+  const bestPair = frame.bestPair || diagram.bestPair || [left, right];
+  const movePointer = frame.movePointer || (heights[left] <= heights[right] ? 'left' : 'right');
+  const chartLeft = 6;
+  const chartWidth = 88;
+  const spacing = heights.length > 1 ? chartWidth / (heights.length - 1) : chartWidth;
+  const xFor = (index) => chartLeft + spacing * index;
+  const waterLeft = Math.min(xFor(left), xFor(right));
+  const waterRight = Math.max(xFor(left), xFor(right));
+  const waterHeight = (waterLevel / maxHeight) * 100;
+  return (
+    <div className="container-water">
+      <div className="container-water-stage">
+        {[8, 7, 6, 5, 4, 3, 2, 1].map((label) => (
+          <span className="container-water-y-label" style={{ bottom: `${(label / maxHeight) * 73}%` }} key={label}>{label}</span>
+        ))}
+        <div className="container-water-chart">
+          <div className="container-water-fill" style={{ left: `${waterLeft}%`, width: `${waterRight - waterLeft}%`, height: `${waterHeight}%` }} aria-label={`Water level ${waterLevel}`} />
+          {heights.map((height, index) => {
+            const isLeft = index === left;
+            const isRight = index === right;
+            const isBest = bestPair.includes(index);
+            const className = ['container-water-bar', isLeft ? 'left' : '', isRight ? 'right' : '', isBest ? 'best' : ''].filter(Boolean).join(' ');
+            return (
+              <span className={className} style={{ left: `${xFor(index)}%`, height: `${(height / maxHeight) * 100}%` }} key={`${height}-${index}`}>
+                <span className="container-water-value">{height}</span>
+                <span className="container-water-index">{index}</span>
+                {isLeft ? <span className="container-water-pointer left">↑<br />left</span> : null}
+                {isRight ? <span className="container-water-pointer right">↑<br />right</span> : null}
+              </span>
+            );
+          })}
+        </div>
+        <div className="container-water-width">width = {width}</div>
+      </div>
+      <div className="container-water-panels">
+        <article className="container-water-panel">
+          <h4>Current Container</h4>
+          <div className="container-water-metric"><span>Left</span><strong>{left}</strong></div>
+          <div className="container-water-metric"><span>Right</span><strong>{right}</strong></div>
+          <div className="container-water-metric"><span>Width</span><strong>{width}</strong></div>
+          <div className="container-water-metric"><span>Water Level</span><strong>{waterLevel}</strong></div>
+          <div className="container-water-metric"><span>Area</span><strong>{width} × {waterLevel} = {area}</strong></div>
+          <div className="container-water-metric"><span>Best</span><strong>{best}</strong></div>
+        </article>
+        <article className="container-water-panel">
+          <h4>Why move the {movePointer} pointer?</h4>
+          <p className="container-water-reason">{frame.reason || 'The shorter wall is the bottleneck. Moving the taller wall would only shrink the width while the same short wall still limits the water level.'}</p>
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function TimelineView({ diagram, frame, activeIndex }) {
+  const steps = asArray(diagram.steps || diagram.items || diagram.frames);
+  return (
+    <div className="config-visual-timeline">
+      {steps.map((step, index) => {
+        const active = index <= activeIndex || step.id === frame.stepId;
+        return (
+          <div className={`config-visual-timeline-step ${active ? 'is-active' : ''}`} key={`${step.title || step.label}-${index}`}>
+            <span className="config-visual-timeline-dot" aria-hidden="true" />
+            <div className={`config-visual-node ${getSemanticRoleClass(step.role || (active ? 'active' : 'neutral'))}`}>
+              <strong>{step.title || step.label || `Step ${index + 1}`}</strong>
+              {step.description ? <p className="config-visual-muted">{step.description}</p> : null}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function TableView({ diagram, frame }) {
+  const columns = asArray(diagram.columns);
+  const rows = asArray(frame.rows || diagram.rows);
+  return (
+    <table className="config-visual-table">
+      <thead><tr>{columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
+      <tbody>
+        {rows.map((row, rowIndex) => (
+          <tr key={`row-${rowIndex}`}>
+            {columns.map((column) => {
+              const value = Array.isArray(row) ? row[columns.indexOf(column)] : row[column];
+              return <td key={`${column}-${rowIndex}`}>{formatVisualValue(value)}</td>;
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function CardsView({ diagram, frame }) {
+  const cards = asArray(frame.cards || diagram.cards || diagram.items);
+  return (
+    <div className="config-visual-list">
+      {cards.map((card, index) => (
+        <article className={`config-visual-node ${getSemanticRoleClass(card.role)}`} key={`${card.title || card.label}-${index}`}>
+          <strong>{card.title || card.label}</strong>
+          {card.description ? <p className="config-visual-muted">{card.description}</p> : null}
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function GraphLikeView({ diagram, frame }) {
+  const nodes = asArray(diagram.nodes || frame.nodes);
+  const edges = asArray(diagram.edges || frame.edges);
+  const activeIds = new Set(asArray(frame.activeNodes || frame.activeIds));
+  const visitedIds = new Set(asArray(frame.visitedNodes || frame.visitedIds));
+  return (
+    <div>
+      <div className="config-visual-pill-list">
+        {nodes.map((node) => {
+          const id = node.id || node.label;
+          const role = activeIds.has(id) ? 'active' : visitedIds.has(id) ? 'visited' : node.role;
+          return <span className={`config-visual-pill ${getSemanticRoleClass(role)}`} key={id}>{node.label || id}</span>;
+        })}
+      </div>
+      {edges.length ? (
+        <div className="config-visual-edge-list">
+          {edges.map((edge, index) => <span className="config-visual-state-value" key={`edge-${index}`}>{edge.from} → {edge.to}{edge.weight !== undefined ? ` (${edge.weight})` : ''}</span>)}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export default function ConfigVisualizer({ diagram }) {
+  const frames = getVisualFrames(diagram);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const activeFrame = frames[activeIndex] || frames[0] || {};
+  const visualType = String(diagram.type || '').toLowerCase();
+
+  useEffect(() => {
+    setActiveIndex(0);
+    setPlaying(false);
+  }, [diagram]);
+
+  useEffect(() => {
+    if (!playing || frames.length <= 1) return undefined;
+    const timer = window.setInterval(() => {
+      setActiveIndex((current) => {
+        if (current >= frames.length - 1) {
+          setPlaying(false);
+          return current;
+        }
+        return current + 1;
+      });
+    }, diagram?.intervalMs || 1400);
+    return () => window.clearInterval(timer);
+  }, [diagram?.intervalMs, frames.length, playing]);
+
+  if (!frames.length) return null;
+
+  const goPrevious = () => {
+    setPlaying(false);
+    setActiveIndex((current) => Math.max(0, current - 1));
+  };
+  const goNext = () => {
+    setPlaying(false);
+    setActiveIndex((current) => Math.min(frames.length - 1, current + 1));
+  };
+  const togglePlay = () => {
+    if (activeIndex >= frames.length - 1) {
+      setActiveIndex(0);
+      setPlaying(true);
+      return;
+    }
+    setPlaying((current) => !current);
+  };
+
+  const view = (() => {
+    if (visualType === 'container-water') return <ContainerWaterView diagram={diagram} frame={activeFrame} />;
+    if (visualType === 'array') return <ArrayView diagram={diagram} frame={activeFrame} />;
+    if (visualType === 'timeline' || visualType === 'state') return <TimelineView diagram={diagram} frame={activeFrame} activeIndex={activeIndex} />;
+    if (visualType === 'table') return <TableView diagram={diagram} frame={activeFrame} />;
+    if (visualType === 'cards') return <CardsView diagram={diagram} frame={activeFrame} />;
+    if (['graph', 'tree', 'heap'].includes(visualType)) return <GraphLikeView diagram={diagram} frame={activeFrame} />;
+    return <CardsView diagram={diagram} frame={activeFrame} />;
+  })();
+
+  return (
+    <VisualShell
+      diagram={diagram}
+      activeFrame={activeFrame}
+      activeIndex={activeIndex}
+      frameCount={frames.length}
+      playing={playing}
+      onPrevious={goPrevious}
+      onNext={goNext}
+      onTogglePlay={togglePlay}
+      showStatePanel={visualType !== 'container-water'}
+    >
+      {view}
+    </VisualShell>
+  );
+}
