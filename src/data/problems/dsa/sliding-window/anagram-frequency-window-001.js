@@ -67,23 +67,24 @@ const problem = defineProblem({
     'coding',
     'visual-walkthrough'
   ],
-  scenario: 'Find every contiguous substring of s that is a permutation of p. For s = "cbaebabacd" and p = "abc", the valid windows are "cba" starting at 0 and "bac" starting at 6.',
+  scenario: 'Find every contiguous substring of s that is an anagram of p. An anagram uses the same characters with the same counts, but the order can be different. For s = "cbaebabacd" and p = "abc", the valid windows are "cba" starting at 0 and "bac" starting at 6 because both contain one a, one b, and one c.',
   prompt: question,
   question,
   examples: [
     {
       input: 's = "cbaebabacd", p = "abc"',
       output: '[0, 6]',
-      explanation: '"cba" at index 0 is an anagram of "abc", and "bac" at index 6 is also an anagram of "abc".'
+      explanation: '"cba" at index 0 is an anagram of "abc", and "bac" at index 6 is also an anagram of "abc" because both windows contain one a, one b, and one c.'
     },
     {
       input: 's = "abab", p = "ab"',
       output: '[0, 1, 2]',
-      explanation: '"ab", "ba", and "ab" are overlapping fixed-size windows, and all three are anagrams of "ab".'
+      explanation: '"ab", "ba", and "ab" are overlapping fixed-size windows, and all three are anagrams of "ab" because each has one a and one b.'
     }
   ],
   constraints: [
     'The authored solution for this problem must use Java only.',
+    'An anagram must contain the same characters with the same counts as p, but the order may be different.',
     'The candidate must be a contiguous substring of s, not a subsequence.',
     'Every candidate window has fixed length p.length().',
     'Assume lowercase English letters for the count-array solution.',
@@ -92,7 +93,7 @@ const problem = defineProblem({
     'The result indices must be returned in increasing order.'
   ],
   starterThought: 'Stage A used the same fixed-size slide with a rolling sum. Here the window still moves the same way, but the maintained state is a frequency table instead of one number.',
-  intuition: 'An anagram of p must use exactly the same characters with exactly the same counts. That means every candidate in s must have length p.length(). Slide a fixed-size window across s. When a character enters from the right, increment its window count. If the window grows too large, the character at left leaves, so decrement its count and move left. Once the window has exactly p.length() characters, compare the window counts with the target counts from p. A match means the current left index is an answer.',
+  intuition: 'An anagram of p must use exactly the same characters with exactly the same counts. The order does not matter: "cba" is an anagram of "abc" because both have one c, one b, and one a. That means every candidate in s must have length p.length(). Slide a fixed-size window across s. When a character enters from the right, increment its window count. If the window grows too large, the character at left leaves, so decrement its count and move left. Once the window has exactly p.length() characters, compare the window counts with the target counts from p. A match means the current left index is an answer.',
   mentalPicture: 'Picture a small tray that can hold exactly p.length() letters. The tray slides across s one position at a time. Each slide removes the oldest letter and adds the newest letter. If the tray contains the same letter counts as p, the tray spells an anagram even if the order is different.',
   patternSignal: 'Use this pattern when the prompt asks for permutations or anagrams inside a string and every valid answer must have the same length as the pattern.',
   invariant: 'After each iteration, the window frequency array describes exactly the characters in s[left..right]. Before checking for a match, the algorithm ensures the window length is exactly p.length().',
@@ -259,6 +260,7 @@ const problem = defineProblem({
   },
   body: [
     { type: 'callout', tone: 'info', title: 'Java-only solution', content: 'Use Java for this authored solution. The reference implementation uses List<Integer>, int[26] target/window frequency arrays, and a helper that compares the two arrays.' },
+    { type: 'callout', tone: 'info', title: 'What is an anagram?', content: 'Two strings are anagrams when they contain the same characters with the same counts, but the order can be different. For example, "cba" is an anagram of "abc" because both contain one a, one b, and one c.' },
     { type: 'callout', tone: 'info', title: 'Core idea', content: 'This is the same fixed-size slide from rolling-sum problems, but the state is a frequency table. One character leaves, one character enters, and the counts decide whether the window is an anagram.' },
     { type: 'callout', tone: 'warning', title: 'Contiguous only', content: 'Do not skip characters. Every candidate is a contiguous length-p.length() window inside s.' }
   ],
