@@ -1,5 +1,7 @@
 import { defineMcqProblem } from '../../../../problems/problemAuthoring.js';
 
+const question = 'Why does a fixed-size Sliding Window solution for maximum sum of size k run in O(n) instead of recomputing every length-k sum from scratch?';
+
 const problem = defineMcqProblem({
   id: 'sliding-window-fixed-window-rolling-state-001',
   topicId: 'sliding-window',
@@ -15,7 +17,7 @@ const problem = defineMcqProblem({
     'rolling-sum',
     'mcq'
   ],
-  prompt: 'Why does a fixed-size Sliding Window solution for maximum sum of size k run in O(n) instead of recomputing every length-k sum from scratch?',
+  prompt: question,
   options: [
     'Because each slide reuses the previous sum by subtracting the outgoing value and adding the incoming value, so each index is processed a constant number of times.',
     'Because the algorithm sorts the array first, making every future window lookup constant time.',
@@ -45,6 +47,7 @@ const problem = defineMcqProblem({
   complexityAnalysis: 'Time is O(n) because each value enters the rolling state once and leaves it at most once. Extra space is O(1) because the algorithm stores only the rolling sum, the best answer, and indexes.',
   relatedConcepts: ['rolling state', 'time complexity', 'fixed-size window', 'overlap reuse'],
   body: [
+    { type: 'callout', tone: 'info', title: 'Question', content: question },
     { type: 'callout', tone: 'info', title: 'Why O(n)?', content: 'The algorithm does not skip work incorrectly. It avoids repeated work by updating only the two values that changed between neighboring windows.' },
     { type: 'callout', tone: 'warning', title: 'Avoid recomputing', content: 'If every candidate recomputes k values, the solution loses the main benefit of Sliding Window.' }
   ],
