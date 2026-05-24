@@ -119,6 +119,23 @@ function VisualStyles() {
       .config-visual-timeline-step.is-active .config-visual-timeline-dot { background: rgba(82, 116, 76, 0.35); border-color: rgba(82, 116, 76, 0.45); }
       .config-visual-edge-list { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.65rem; }
 
+      .stack-visual-stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, 0.6fr); gap: 0.8rem; align-items: stretch; }
+      .stack-visual-input-row { display: flex; flex-wrap: wrap; gap: 0.42rem; align-items: center; margin-bottom: 0.7rem; }
+      .stack-visual-char { min-width: 42px; min-height: 42px; display: grid; place-items: center; border-radius: 14px; border: 1px solid rgba(86, 67, 42, 0.14); background: rgba(255, 255, 255, 0.72); color: var(--text-strong, #2f261b); font-family: var(--font-mono); font-weight: 950; box-shadow: 0 8px 18px rgba(74, 53, 27, 0.06); }
+      .stack-visual-char.is-processed { background: rgba(220, 252, 231, 0.72); border-color: rgba(21, 128, 61, 0.28); }
+      .stack-visual-char.is-current { background: linear-gradient(180deg, rgba(254, 243, 199, 0.98), rgba(252, 211, 77, 0.78)); border-color: rgba(217, 119, 6, 0.68); color: #451a03; box-shadow: 0 10px 22px rgba(217, 119, 6, 0.18), 0 0 0 3px rgba(217, 119, 6, 0.12), inset 0 -4px 0 rgba(217, 119, 6, 0.18); transform: translateY(-2px); }
+      .stack-visual-action-card { border: 1px solid rgba(86, 67, 42, 0.12); border-radius: 16px; background: rgba(255, 255, 255, 0.56); padding: 0.65rem; }
+      .stack-visual-action-card strong { display: block; margin-bottom: 0.35rem; color: var(--text-strong, #2f261b); }
+      .stack-visual-action-card p { margin: 0; color: var(--text-muted, #756a5a); line-height: 1.42; }
+      .stack-visual-stack-shell { display: grid; grid-template-rows: auto 1fr; gap: 0.55rem; border: 1px solid rgba(86, 67, 42, 0.13); border-radius: 18px; background: rgba(255, 255, 255, 0.46); padding: 0.65rem; min-height: 190px; }
+      .stack-visual-stack-shell h4 { margin: 0; color: var(--text-strong, #2f261b); font-size: 0.92rem; }
+      .stack-visual-stack { align-self: end; display: flex; flex-direction: column-reverse; gap: 0.38rem; min-height: 130px; border: 2px solid rgba(86, 67, 42, 0.12); border-top: 0; border-radius: 0 0 16px 16px; padding: 0.5rem; background: rgba(255, 252, 244, 0.5); }
+      .stack-visual-empty { margin: auto; color: var(--text-muted, #756a5a); font-weight: 800; font-size: 0.84rem; }
+      .stack-visual-item { min-height: 34px; display: grid; place-items: center; border-radius: 12px; border: 1px solid rgba(37, 99, 235, 0.36); background: rgba(219, 234, 254, 0.9); color: #1e3a8a; font-family: var(--font-mono); font-weight: 950; }
+      .stack-visual-item.is-top { background: rgba(254, 243, 199, 0.95); border-color: rgba(217, 119, 6, 0.5); color: #451a03; }
+      .stack-visual-compare { margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; color: var(--text-muted, #756a5a); font-size: 0.82rem; font-weight: 800; }
+      .stack-visual-compare code { border: 1px solid rgba(86, 67, 42, 0.12); border-radius: 999px; background: rgba(255, 255, 255, 0.68); padding: 0.15rem 0.4rem; color: var(--text-strong, #2f261b); }
+
       .container-water { display: grid; gap: 0.7rem; }
       .container-water-stage { position: relative; min-height: 330px; border-radius: 22px; border: 1px solid rgba(148, 163, 184, 0.22); background: radial-gradient(circle at 25% 20%, rgba(59, 130, 246, 0.18), transparent 32%), linear-gradient(135deg, #07111f 0%, #0f172a 58%, #111827 100%); color: #f8fafc; padding: 0.75rem 0.75rem 3rem; overflow: hidden; }
       .container-water-chart { position: absolute; inset: 2.4rem 1rem 5rem 2.6rem; border-left: 2px solid rgba(226, 232, 240, 0.75); border-bottom: 2px solid rgba(226, 232, 240, 0.75); }
@@ -141,7 +158,7 @@ function VisualStyles() {
       .container-water-metric { display: flex; justify-content: space-between; gap: 1rem; padding: 0.25rem 0; font-weight: 800; font-size: 0.9rem; }
       .container-water-metric span:first-child { color: #cbd5e1; font-weight: 650; }
       .container-water-reason { margin: 0; color: #e2e8f0; line-height: 1.42; font-size: 0.92rem; }
-      @media (max-width: 860px) { .config-visual-layout, .container-water-panels { grid-template-columns: 1fr; } .config-visual-controls span { width: 100%; margin-left: 0; } .container-water-stage { min-height: 300px; } }
+      @media (max-width: 860px) { .config-visual-layout, .container-water-panels, .stack-visual-stage { grid-template-columns: 1fr; } .config-visual-controls span { width: 100%; margin-left: 0; } .container-water-stage { min-height: 300px; } }
     `}</style>
   );
 }
@@ -234,6 +251,47 @@ function ArrayView({ diagram, frame }) {
           </span>
         );
       })}
+    </div>
+  );
+}
+
+function StackView({ diagram, frame }) {
+  const values = asArray(diagram.values || diagram.items);
+  const stack = asArray(frame.stack);
+  const currentIndex = frame.currentIndex ?? -1;
+  const top = stack[stack.length - 1];
+
+  return (
+    <div className="stack-visual-stage">
+      <div>
+        <div className="stack-visual-input-row" aria-label="Input characters">
+          {values.map((value, index) => {
+            const className = [
+              'stack-visual-char',
+              index < currentIndex ? 'is-processed' : '',
+              index === currentIndex ? 'is-current' : ''
+            ].filter(Boolean).join(' ');
+            return <span className={className} key={`${value}-${index}`}>{value}</span>;
+          })}
+        </div>
+        <article className="stack-visual-action-card">
+          <strong>{frame.action || 'Read character'}</strong>
+          <p>{frame.detail || frame.description || diagram.summary}</p>
+          {frame.compare ? (
+            <span className="stack-visual-compare">
+              Compare <code>{frame.compare.top}</code> with <code>{frame.compare.current}</code> → {frame.compare.result}
+            </span>
+          ) : null}
+        </article>
+      </div>
+      <aside className="stack-visual-stack-shell" aria-label="Stack state">
+        <h4>Stack {top ? `(top = ${top})` : '(empty)'}</h4>
+        <div className="stack-visual-stack">
+          {stack.length ? stack.map((item, index) => (
+            <span className={`stack-visual-item ${index === stack.length - 1 ? 'is-top' : ''}`} key={`${item}-${index}`}>{item}</span>
+          )) : <span className="stack-visual-empty">empty</span>}
+        </div>
+      </aside>
     </div>
   );
 }
@@ -424,6 +482,7 @@ export default function ConfigVisualizer({ diagram }) {
 
   const view = (() => {
     if (visualType === 'container-water') return <ContainerWaterView diagram={diagram} frame={activeFrame} />;
+    if (visualType === 'stack') return <StackView diagram={diagram} frame={activeFrame} />;
     if (visualType === 'array') return <ArrayView diagram={diagram} frame={activeFrame} />;
     if (visualType === 'timeline' || visualType === 'state') return <TimelineView diagram={diagram} frame={activeFrame} activeIndex={activeIndex} />;
     if (visualType === 'table') return <TableView diagram={diagram} frame={activeFrame} />;
@@ -442,7 +501,7 @@ export default function ConfigVisualizer({ diagram }) {
       onPrevious={goPrevious}
       onNext={goNext}
       onTogglePlay={togglePlay}
-      showStatePanel={visualType !== 'container-water'}
+      showStatePanel={visualType !== 'container-water' && visualType !== 'stack'}
     >
       {view}
     </VisualShell>
