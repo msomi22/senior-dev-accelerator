@@ -66,6 +66,11 @@ export default function TopicLibrary({
 
   const filteredTopics = useMemo(() => {
     return [...topics].sort((a, b) => {
+      const selectedDelta =
+        Number(b.id === selectedId) - Number(a.id === selectedId);
+
+      if (selectedDelta !== 0) return selectedDelta;
+
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name);
       }
@@ -90,7 +95,7 @@ export default function TopicLibrary({
         a.name.localeCompare(b.name)
       );
     });
-  }, [topics, sortBy, completed]);
+  }, [topics, sortBy, completed, selectedId]);
 
   const totalPages = Math.max(
     1,
@@ -112,7 +117,7 @@ export default function TopicLibrary({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [difficulty, completionFilter, sortBy]);
+  }, [difficulty, completionFilter, sortBy, selectedId]);
 
   function goToPage(page) {
     setCurrentPage(Math.min(Math.max(page, 1), totalPages));
