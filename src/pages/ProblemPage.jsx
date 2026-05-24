@@ -156,6 +156,8 @@ export default function ProblemPage() {
     : categoryPath(categoryId);
   const primaryPattern = entry.question.finalPattern || entry.topic?.name;
   const isComplexSystemDesign = entry.question.type === 'complex-system-design';
+  const isMcq = entry.question.type === 'mcq';
+  const introText = isMcq ? '' : entry.question.question || entry.topic?.description || entry.question.scenario;
 
   const problemTags = uniqueItems([
     { label: entry.question.difficulty, type: 'difficulty' },
@@ -186,7 +188,7 @@ export default function ProblemPage() {
             ))}
           </div>
 
-          <p>{entry.question.question || entry.topic?.description || entry.question.scenario}</p>
+          {introText ? <p>{introText}</p> : null}
         </div>
 
         <div className="reference-action-group" aria-label="Focused problem actions">
