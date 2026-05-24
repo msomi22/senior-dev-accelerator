@@ -62,6 +62,9 @@ const problem = defineMcqProblem({
     'Recomputing the full sum every time instead of using the rolling update.'
   ],
   relatedConcepts: ['outgoing value', 'incoming value', 'rolling sum', 'fixed-size invariant'],
+  body: [
+    { type: 'callout', tone: 'info', title: 'Question', content: question }
+  ],
   metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'] }
 });
 
