@@ -1,5 +1,7 @@
 import { defineMcqProblem } from '../../../../problems/problemAuthoring.js';
 
+const question = 'You are scanning nums with a fixed window size k and a rolling sum. Which update order is correct?';
+
 const problem = defineMcqProblem({
   id: 'sliding-window-fixed-window-update-timing-001',
   topicId: 'sliding-window',
@@ -15,7 +17,7 @@ const problem = defineMcqProblem({
     'rolling-state',
     'mcq'
   ],
-  prompt: 'You are scanning nums with a fixed window size k and a rolling sum. Which update order is correct?',
+  prompt: question,
   options: [
     'Add nums[right]. If the window has more than k values, subtract nums[left] and move left. Update best only when the window has exactly k values.',
     'Update best immediately after every add, even when the window has fewer than k values, because every prefix is a candidate.',
@@ -48,6 +50,7 @@ const problem = defineMcqProblem({
   complexityAnalysis: 'The fixed-size rolling-sum pattern is O(n) time because each right index is processed once and each outgoing left value is removed at most once. It uses O(1) extra space for left, windowSum, and best.',
   relatedConcepts: ['answer update timing', 'fixed-size invariant', 'rolling state', 'variable window contrast'],
   body: [
+    { type: 'callout', tone: 'info', title: 'Question', content: question },
     { type: 'callout', tone: 'info', title: 'Correct timing', content: 'Update best only when the current state represents a complete length-k window.' },
     { type: 'callout', tone: 'warning', title: 'Fixed is not variable', content: 'A fixed-size window does not shrink while a condition is true. It slides by removing one outgoing value when the size would exceed k.' }
   ],
