@@ -159,13 +159,7 @@ const problem = defineProblem({
   finalTakeaway: 'Permutation-in-string is not about generating permutations. It is about recognizing that every candidate is a fixed-size contiguous window and that exact character counts are the state that decides success.',
   visualWalkthrough: {
     title: 'Exact frequency window',
-    summary: 'Watch a length-2 window move across s2. Each full window is compared against the target counts for s1 = "ab", and the algorithm stops as soon as the window "ba" matches.',
-    inputs: [
-      { label: 's1', value: '"ab"' },
-      { label: 's2', value: '"eidbaooo"' },
-      { label: 'window length', value: '2' },
-      { label: 'expected result', value: 'true' }
-    ],
+    summary: 'Watch a length-2 window move across s2 = "eidbaooo". Each full window is compared against the target counts for s1 = "ab", and the algorithm stops as soon as the window "ba" matches.',
     diagram: {
       type: 'array',
       variant: 'sliding-window',
