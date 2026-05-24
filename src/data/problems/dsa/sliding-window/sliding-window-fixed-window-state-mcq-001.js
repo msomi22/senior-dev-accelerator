@@ -1,5 +1,7 @@
 import { defineMcqProblem } from '../../../../problems/problemAuthoring.js';
 
+const question = 'nums = [2, 1, 5, 1, 3] and k = 3. When does the first valid fixed-size window exist, and when should best first be updated?';
+
 const problem = defineMcqProblem({
   id: 'sliding-window-fixed-window-state-mcq-001',
   topicId: 'sliding-window',
@@ -15,7 +17,7 @@ const problem = defineMcqProblem({
     'mcq',
     'foundation'
   ],
-  prompt: 'nums = [2, 1, 5, 1, 3] and k = 3. When does the first valid fixed-size window exist, and when should best first be updated?',
+  prompt: question,
   options: [
     'After index 0 is included, because the first number can already be compared as a candidate answer.',
     'After index 1 is included, because the window has started growing and contains multiple values.',
@@ -44,6 +46,7 @@ const problem = defineMcqProblem({
   ],
   relatedConcepts: ['fixed-size window invariant', 'first valid window', 'answer update timing'],
   body: [
+    { type: 'callout', tone: 'info', title: 'Question', content: question },
     { type: 'callout', tone: 'info', title: 'Invariant', content: 'For this task, a valid fixed-size window always contains exactly k contiguous elements.' },
     { type: 'callout', tone: 'warning', title: 'Do not update too early', content: 'Before right reaches index 2, the current window has fewer than 3 values, so it is only setup state.' }
   ],
