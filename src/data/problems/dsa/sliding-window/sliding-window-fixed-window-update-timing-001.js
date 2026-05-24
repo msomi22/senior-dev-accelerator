@@ -43,6 +43,7 @@ const problem = defineMcqProblem({
   complexityAnalysis: 'The fixed-size rolling-sum pattern is O(n) time because each right index is processed once and each outgoing left value is removed at most once. It uses O(1) extra space for left, windowSum, and best.',
   relatedConcepts: ['answer update timing', 'fixed-size invariant', 'rolling state', 'variable window contrast'],
   body: [
+    { type: 'callout', tone: 'info', title: 'Question', content: question },
     { type: 'callout', tone: 'info', title: 'Correct timing', content: 'Update best only when the current state represents a complete length-k window.' },
     { type: 'callout', tone: 'warning', title: 'Fixed is not variable', content: 'A fixed-size window maintains a known length. After it is full, each move adds one value and removes one value.' }
   ],
