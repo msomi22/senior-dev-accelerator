@@ -108,7 +108,7 @@
 .approach-card-stack,
 .learning-reinforcement-stack {
   display: grid;
-  gap: 12px;
+  gap: 22px;
   margin-top: 0;
 }
 
