@@ -10,6 +10,7 @@ export const VISUAL_TYPES = Object.freeze({
   TREE: 'tree',
   HEAP: 'heap',
   STATE: 'state',
+  STACK: 'stack',
   CONTAINER_WATER: 'container-water'
 });
 
@@ -28,6 +29,7 @@ export const GENERIC_VISUAL_TYPES = new Set([
   VISUAL_TYPES.TREE,
   VISUAL_TYPES.HEAP,
   VISUAL_TYPES.STATE,
+  VISUAL_TYPES.STACK,
   VISUAL_TYPES.CONTAINER_WATER
 ]);
 
