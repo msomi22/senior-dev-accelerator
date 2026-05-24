@@ -47,7 +47,6 @@ const problem = defineMcqProblem({
   complexityAnalysis: 'Time is O(n) because each value enters the rolling state once and leaves it at most once. Extra space is O(1) because the algorithm stores only the rolling sum, the best answer, and indexes.',
   relatedConcepts: ['rolling state', 'time complexity', 'fixed-size window', 'overlap reuse'],
   body: [
-    { type: 'callout', tone: 'info', title: 'Question', content: question },
     { type: 'callout', tone: 'info', title: 'Why O(n)?', content: 'The algorithm does not skip work incorrectly. It avoids repeated work by updating only the two values that changed between neighboring windows.' },
     { type: 'callout', tone: 'warning', title: 'Avoid recomputing', content: 'If every candidate recomputes k values, the solution loses the main benefit of Sliding Window.' }
   ],
