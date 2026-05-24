@@ -454,6 +454,10 @@
   min-width: 0;
 }
 
+.focused-two-col > :only-child {
+  grid-column: 1 / -1;
+}
+
 .focused-problem-workspace .workspace-block,
 .focused-problem-workspace .learning-panel {
   margin: 0;
