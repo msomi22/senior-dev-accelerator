@@ -6,13 +6,35 @@ This project should treat quiz/problem visuals as data, not as one-off React com
 
 New quiz/problem additions should be config-only whenever they use an existing visual capability.
 
+Any new question or problem should include a `visualWalkthrough` whenever the concept can reasonably benefit from a visual explanation. This is especially expected for DSA, state transitions, pointer movement, window movement, recursion, graph traversal, DP, queues/stacks/heaps, and any problem where the learner needs to see how state changes over time.
+
+If a visual walkthrough is not included, the implementation or PR notes should briefly explain why a visual would not add meaningful clarity for that specific problem.
+
 Normal problem additions should usually modify only files under:
 
 ```txt
-src/data/banks/...
+src/data/problems/...
 ```
 
 Core React changes are acceptable only when adding a new reusable visual capability that many future problems can use.
+
+## Visual walkthrough expectation
+
+Use a `visualWalkthrough` for new authored questions whenever possible. The goal is not decoration; the visual should teach the important state change, invariant, or decision point that the learner might otherwise miss.
+
+Good candidates for a required visual walkthrough include:
+
+- Sliding Window problems where values enter/leave a window.
+- Two Pointers problems where pointer movement matters.
+- Prefix Sum problems where running state changes by index.
+- Dynamic Programming problems where table/state transitions matter.
+- Graph or tree traversal problems where visited/frontier state changes.
+- Stack, queue, heap, or monotonic structure problems where push/pop state is central.
+- Greedy problems where choices happen in sequence.
+
+A visual may be skipped only when it would be repetitive or unhelpful, such as a purely conceptual text-only question with no meaningful state transition. In that case, say so in the task or PR notes.
+
+Do not satisfy this requirement with raw HTML, raw CSS, screenshots, or one-off components. Use the config-driven schema and existing reusable renderers.
 
 ## Why this exists
 
@@ -21,7 +43,7 @@ Without a visual schema, every interesting problem risks adding a custom compone
 The desired flow is:
 
 ```txt
-Problem bank config
+Problem config
   -> visual schema
   -> reusable renderer
   -> consistent interactive walkthrough
@@ -107,6 +129,8 @@ error
 muted
 neutral
 infinite
+remove
+warning
 ```
 
 The renderer owns the styling. Problem config owns the meaning.
@@ -141,51 +165,73 @@ visualWalkthrough: {
 ## Array example
 
 ```js
-diagram: {
-  type: 'array',
-  variant: 'sliding-window',
-  title: 'Sliding window',
-  values: [2, 1, 5, 1, 3, 2],
-  frames: [
-    {
-      title: 'First full window',
-      activeRange: [0, 2],
-      state: { label: 'W0', values: { windowSum: 8, best: 8 } },
-      description: 'The first valid window has sum 8.'
-    }
-  ]
+visualWalkthrough: {
+  diagram: {
+    type: 'array',
+    variant: 'sliding-window',
+    title: 'Sliding window',
+    description: 'A fixed-size window slides one step at a time.',
+    values: [2, 1, 5, 1, 3, 2],
+    stateTitle: 'Window state',
+    stateDescription: 'The state panel shows the rolling summary for the active window.',
+    legend: [
+      { role: 'window', label: 'current window' },
+      { role: 'remove', label: 'outgoing value' },
+      { role: 'current', label: 'incoming value' },
+      { role: 'answer', label: 'best answer so far' }
+    ],
+    frames: [
+      {
+        title: 'First full window',
+        activeRange: [0, 2],
+        items: [
+          { index: 0, role: 'window' },
+          { index: 1, role: 'window' },
+          { index: 2, role: 'window' }
+        ],
+        state: {
+          label: 'W0',
+          values: { windowSum: 8, best: 8 },
+          helper: 'The first valid window has size k, so best can be updated.'
+        },
+        description: 'The first valid window has sum 8.'
+      }
+    ]
+  }
 }
 ```
 
 ## Graph example
 
 ```js
-diagram: {
-  type: 'graph',
-  variant: 'bfs',
-  title: 'BFS traversal',
-  nodes: [
-    { id: 'A', label: 'A' },
-    { id: 'B', label: 'B' }
-  ],
-  edges: [
-    { from: 'A', to: 'B' }
-  ],
-  frames: [
-    {
-      title: 'Visit A',
-      activeNodes: ['A'],
-      visitedNodes: [],
-      state: { label: 'Queue', values: ['A'] },
-      description: 'Start BFS from A.'
-    }
-  ]
+visualWalkthrough: {
+  diagram: {
+    type: 'graph',
+    variant: 'bfs',
+    title: 'BFS traversal',
+    nodes: [
+      { id: 'A', label: 'A' },
+      { id: 'B', label: 'B' }
+    ],
+    edges: [
+      { from: 'A', to: 'B' }
+    ],
+    frames: [
+      {
+        title: 'Visit A',
+        activeNodes: ['A'],
+        visitedNodes: [],
+        state: { label: 'Queue', values: ['A'] },
+        description: 'Start BFS from A.'
+      }
+    ]
+  }
 }
 ```
 
 ## Guardrails
 
-Do not add raw HTML or raw CSS into problem banks.
+Do not add raw HTML or raw CSS into problem configs.
 
 Prefer:
 
