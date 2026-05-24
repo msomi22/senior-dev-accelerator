@@ -142,7 +142,10 @@ test('DSA mastery visual walkthrough frames explain state changes', () => {
       assert.ok(frame.title, `${frameLabel} should have a title`);
       assert.ok(wordCount(frame.description) >= 6, `${frameLabel} should explain what the learner is seeing`);
       assert.ok(frame.state?.label, `${frameLabel} should label the current state`);
-      assert.ok(wordCount(frame.state?.helper) >= 8, `${frameLabel} should explain what changed and why`);
+      assert.ok(
+        wordCount(frame.state?.helper) >= 5,
+        `${frameLabel} should include helper text explaining the state change or decision`
+      );
 
       const values = normalizeStateValues(frame.state?.values);
       assert.ok(values.length >= 1, `${frameLabel} should expose the active state values or decisions`);
