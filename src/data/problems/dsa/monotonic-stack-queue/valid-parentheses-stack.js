@@ -57,16 +57,87 @@ class Solution {
   finalTakeaway: 'Use a stack when the last thing opened must be the first thing closed.',
   visualExplanation: 'For s = "({[]})", scan one character at a time. Opening brackets are pushed onto the stack. A closing bracket must match the current top of the stack. If it matches, pop that top opening. If it does not match, return false immediately.',
   visualWalkthrough: {
-    title: 'Stack matching walkthrough',
-    summary: 'Watch only the changing state: current character, current stack top, and the stack after the action.',
-    steps: [
-      { title: 'Read (', body: 'Opening bracket. Push it. Stack becomes: (.' },
-      { title: 'Read {', body: 'Opening bracket. Push it above (. Stack becomes: ( then { on top.' },
-      { title: 'Read [', body: 'Opening bracket. Push it above {. Stack becomes: ( then { then [ on top.' },
-      { title: 'Read ]', body: 'Closing bracket. The top is [, so ] matches. Pop [. Stack becomes: ( then { on top.' },
-      { title: 'Read }', body: 'Closing bracket. The top is {, so } matches. Pop {. Stack becomes: (.' },
-      { title: 'Read )', body: 'Closing bracket. The top is (, so ) matches. Pop (. Stack becomes empty.' }
-    ]
+    title: 'Stack matching animation',
+    summary: 'Use Next to scan one character at a time. The highlighted box is the current character. The stack on the right shows unmatched openings, with the top item being the only one a closing bracket may match.',
+    diagram: {
+      type: 'stack',
+      title: 'Scan s = "({[]})"',
+      description: 'Left: input characters. Right: stack of unmatched opening brackets. One click performs one visible action.',
+      values: ['(', '{', '[', ']', '}', ')'],
+      frames: [
+        {
+          title: 'Start with an empty stack',
+          description: 'Nothing has been scanned yet, so there are no unmatched opening brackets waiting to close.',
+          currentIndex: -1,
+          stack: [],
+          action: 'Before scanning',
+          detail: 'The stack starts empty.'
+        },
+        {
+          title: 'Read (',
+          description: '( is an opening bracket, so push it onto the stack. It now waits for a future ) to close it.',
+          currentIndex: 0,
+          stack: ['('],
+          action: 'Push opening bracket',
+          detail: 'Opening bracket found: push ( onto the stack.'
+        },
+        {
+          title: 'Read {',
+          description: '{ is another opening bracket, so push it above (. It must be closed before ( can close.',
+          currentIndex: 1,
+          stack: ['(', '{'],
+          action: 'Push opening bracket',
+          detail: 'Opening bracket found: push { onto the stack.'
+        },
+        {
+          title: 'Read [',
+          description: '[ is an opening bracket, so push it above {. It is now the most recent unmatched opening.',
+          currentIndex: 2,
+          stack: ['(', '{', '['],
+          action: 'Push opening bracket',
+          detail: 'Opening bracket found: push [ onto the stack.'
+        },
+        {
+          title: 'Read ]',
+          description: '] is a closing bracket. The stack top is [, so this is the correct match. Pop [ from the stack.',
+          currentIndex: 3,
+          stack: ['(', '{'],
+          action: 'Match then pop',
+          detail: 'The closing ] matches the top opening [, so [ is removed.',
+          compare: { top: '[', current: ']', result: 'match' }
+        },
+        {
+          title: 'Read }',
+          description: '} is a closing bracket. The stack top is {, so this is the correct match. Pop { from the stack.',
+          currentIndex: 4,
+          stack: ['('],
+          action: 'Match then pop',
+          detail: 'The closing } matches the top opening {, so { is removed.',
+          compare: { top: '{', current: '}', result: 'match' }
+        },
+        {
+          title: 'Read )',
+          description: ') is a closing bracket. The stack top is (, so this is the correct match. Pop ( from the stack.',
+          currentIndex: 5,
+          stack: [],
+          action: 'Match then pop',
+          detail: 'The closing ) matches the top opening (, so ( is removed.',
+          compare: { top: '(', current: ')', result: 'match' }
+        },
+        {
+          title: 'Finish scan',
+          description: 'All characters were scanned and the stack is empty. That means every opening bracket found its correct closing bracket.',
+          currentIndex: 6,
+          stack: [],
+          action: 'Return true',
+          detail: 'No unmatched opening brackets remain.',
+          finalResult: {
+            title: 'Valid string',
+            body: 'Return true because the stack is empty after processing all characters.'
+          }
+        }
+      ]
+    }
   },
   body: [
     { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use a stack when nested work must close in reverse order.' },
