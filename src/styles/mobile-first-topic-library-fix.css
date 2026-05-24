@@ -1,0 +1,159 @@
+/* ========================================================================
+   Mobile-first topic/category layout guard
+   ------------------------------------------------------------------------
+   This file is intentionally imported last. It protects the category topic
+   list, topic detail cards, and pagination from horizontal overflow on
+   narrow screens.
+   ======================================================================== */
+
+@media (max-width: 760px) {
+  html,
+  body,
+  #root,
+  .app-shell,
+  .layout,
+  .page-wrap,
+  .main-content,
+  .page {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .page-wrap,
+  .main-content {
+    width: 100%;
+    padding-right: var(--page-padding);
+    padding-left: var(--page-padding);
+  }
+
+  .topic-library,
+  .topic-section,
+  .category-library,
+  .search-panel,
+  .learning-map,
+  .hero-card,
+  .page-title {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .topic-picker,
+  .card-grid,
+  .category-grid,
+  .scalable-topic-picker,
+  .scalable-category-grid,
+  .problem-list-grid,
+  .topic-roadmap-grid {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .topic-tab,
+  .category-card,
+  .question-card,
+  .clickable-problem-card-shell,
+  .workspace-block,
+  .topic-learning-guide {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .topic-tab *,
+  .category-card *,
+  .question-card *,
+  .workspace-block *,
+  .topic-learning-guide * {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .topic-tab strong,
+  .topic-tab small,
+  .topic-tab em,
+  .category-card strong,
+  .category-card p,
+  .question-card h3,
+  .question-card p,
+  .section-head p,
+  .library-head p {
+    display: block;
+    max-width: 100%;
+  }
+
+  .topic-tab,
+  .category-card,
+  .question-card {
+    text-align: left;
+  }
+
+  .q-top,
+  .category-card-top,
+  .section-head,
+  .library-head {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .q-top,
+  .category-card-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .mark,
+  .question-actions .btn,
+  .question-actions button {
+    width: 100%;
+  }
+
+  .pagination,
+  .compact-pagination,
+  .category-pagination {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    overflow-x: hidden;
+  }
+
+  .pagination-summary,
+  .pagination-status {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .pagination-controls {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .pagination-controls .btn,
+  .pagination-controls button,
+  .pagination-controls .page-btn,
+  .compact-pagination > button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .compact-pagination .pagination-status {
+    order: -1;
+  }
+
+  .status-bar {
+    max-width: 100vw;
+    overflow-x: auto;
+  }
+}
