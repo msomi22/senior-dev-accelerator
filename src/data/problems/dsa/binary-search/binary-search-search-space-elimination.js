@@ -108,8 +108,7 @@ const problem = defineLearningProblem({
     }
   },
   body: [
-    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use binary search on sorted data or any monotonic yes/no condition where one side can be proven impossible.' },
-    { type: 'flow', title: 'Boundary flow', steps: ['Set left and right to the searchable range', 'Compute mid safely', 'Return mid if found', 'Move left or right so the range strictly shrinks'] }
+    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use binary search on sorted data or any monotonic yes/no condition where one side can be proven impossible.' }
   ],
   relatedConcepts: ['sorted array', 'monotonic predicate', 'bounds'],
   metadata: {
