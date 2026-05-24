@@ -160,6 +160,12 @@ const problem = defineProblem({
   visualWalkthrough: {
     title: 'Exact frequency window',
     summary: 'Watch a length-2 window move across s2 = "eidbaooo". Each full window is compared against the target counts for s1 = "ab", and the algorithm stops as soon as the window "ba" matches.',
+    inputs: [
+      { label: 's1', value: '"ab"' },
+      { label: 's2', value: '"eidbaooo"' },
+      { label: 'window length', value: '2' },
+      { label: 'expected result', value: 'true' }
+    ],
     diagram: {
       type: 'array',
       variant: 'sliding-window',
