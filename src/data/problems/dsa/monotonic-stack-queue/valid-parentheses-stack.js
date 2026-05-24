@@ -55,7 +55,19 @@ class Solution {
     }
 }`,
   finalTakeaway: 'Use a stack when the last thing opened must be the first thing closed.',
-  visualExplanation: '',
+  visualExplanation: 'For s = "({[]})", scan one character at a time. Opening brackets are pushed onto the stack. A closing bracket must match the current top of the stack. If it matches, pop that top opening. If it does not match, return false immediately.',
+  visualWalkthrough: {
+    title: 'Stack matching walkthrough',
+    summary: 'Watch only the changing state: current character, current stack top, and the stack after the action.',
+    steps: [
+      { title: 'Read (', body: 'Opening bracket. Push it. stack = ['('].' },
+      { title: 'Read {', body: 'Opening bracket. Push it above (. stack = ['(', '{'].' },
+      { title: 'Read [', body: 'Opening bracket. Push it above {. stack = ['(', '{', '['].' },
+      { title: 'Read ]', body: 'Closing bracket. The top is [, so ] matches. Pop [. stack = ['(', '{'].' },
+      { title: 'Read }', body: 'Closing bracket. The top is {, so } matches. Pop {. stack = ['('].' },
+      { title: 'Read )', body: 'Closing bracket. The top is (, so ) matches. Pop (. stack = empty.' }
+    ]
+  },
   body: [
     { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use a stack when nested work must close in reverse order.' },
     { type: 'checklist', title: 'Mistakes to avoid', items: ['Only compare with the top of stack', 'Fail fast on empty stack before closing', 'Check leftover openings at the end'] }
