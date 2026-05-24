@@ -180,14 +180,6 @@ const problem = defineProblem({
       values: ['c', 'b', 'a', 'e', 'b', 'a', 'b', 'a', 'c', 'd'],
       stateTitle: 'Frequency state',
       stateDescription: 'The window tracks character counts and compares them with the target pattern counts.',
-      legend: [
-        { role: 'window', label: 'current fixed-size window' },
-        { role: 'remove', label: 'outgoing character' },
-        { role: 'current', label: 'incoming character' },
-        { role: 'answer', label: 'recorded anagram start' },
-        { role: 'success', label: 'frequency match' },
-        { role: 'warning', label: 'frequency mismatch' }
-      ],
       frames: [
         {
           title: 'First full window cba matches',
