@@ -9,14 +9,7 @@ const problem = defineMcqProblem({
   title: 'Fixed Window State MCQ',
   difficulty: 'Easy',
   estimatedTime: '5 min',
-  tags: [
-    'arrays',
-    'sliding-window',
-    'fixed-window',
-    'window-invariant',
-    'mcq',
-    'foundation'
-  ],
+  tags: ['arrays', 'sliding-window', 'fixed-window', 'window-invariant', 'mcq', 'foundation'],
   prompt: question,
   options: [
     'After index 0 is included, because the first number can already be compared as a candidate answer.',
@@ -46,13 +39,11 @@ const problem = defineMcqProblem({
   ],
   relatedConcepts: ['fixed-size window invariant', 'first valid window', 'answer update timing'],
   body: [
+    { type: 'callout', tone: 'info', title: 'Question', content: question },
     { type: 'callout', tone: 'info', title: 'Invariant', content: 'For this task, a valid fixed-size window always contains exactly k contiguous elements.' },
-    { type: 'callout', tone: 'warning', title: 'Do not update too early', content: 'Before right reaches index 2, the current window has fewer than 3 values, so it is only setup state.' }
+    { type: 'callout', tone: 'warning', title: 'Update timing', content: 'Before right reaches index 2, the current window has fewer than 3 values, so it is only setup state.' }
   ],
-  metadata: {
-    reviewStatus: 'approved',
-    visibility: ['dev', 'prod']
-  }
+  metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'] }
 });
 
 export default problem;
