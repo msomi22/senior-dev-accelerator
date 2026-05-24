@@ -68,7 +68,7 @@ function TopicLearningGuide({ topic }) {
 
   return (
     <details
-      className="advanced-search-panel topic-learning-guide"
+      className="question-card topic-learning-guide"
       style={{
         marginTop: 12,
         maxWidth: '100%',
@@ -78,16 +78,18 @@ function TopicLearningGuide({ topic }) {
     >
       <summary
         style={{
-          alignItems: 'flex-start',
+          cursor: 'pointer',
           display: 'grid',
           gap: 4,
+          listStyle: 'revert',
           minWidth: 0
         }}
       >
-        <span>Topic notes & roadmap</span>
-        <small>
-          Optional learner guide. Open only when you want objectives,
-          mental model, and staged coverage.
+        <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>
+          Topic notes & roadmap
+        </span>
+        <small style={{ color: 'var(--text-secondary)' }}>
+          Optional learner guide for objectives, mental model, and staged coverage.
         </small>
       </summary>
 
@@ -97,11 +99,12 @@ function TopicLearningGuide({ topic }) {
           borderTop: '1px solid var(--border)',
           display: 'grid',
           gap: 12,
+          marginTop: 12,
           maxWidth: '100%',
           minWidth: 0,
           overflow: 'hidden',
           overflowWrap: 'anywhere',
-          padding: 12,
+          paddingTop: 12,
           wordBreak: 'normal'
         }}
       >
