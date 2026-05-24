@@ -140,22 +140,9 @@ class Solution {
     {
       type: 'callout',
       tone: 'info',
-      title: 'What each dp cell means',
-      content: 'Because the target is 11, we solve smaller target amounts first: 0, 1, 2, 3, and so on up to 11. dp[4] means the fewest coins needed to make exactly amount 4. It does not mean progress toward 11.'
-    },
-    {
-      type: 'callout',
-      tone: 'info',
-      title: 'Why the answer is 3',
-      content: 'We need to make 11 using coins [1, 2, 5]. One optimal way is 5 + 5 + 1 = 11, which uses 3 coins. The problem asks for the fewest coins, so the answer is 3.'
-    },
-    {
-      type: 'callout',
-      tone: 'info',
-      title: 'Why dynamic programming?',
-      content: 'For each amount, there may be many ways to make it. For amount 4, four 1-coins work, but two 2-coins are better. DP saves only the best answer for each amount and reuses those saved answers later.'
-    },
-    { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use DP when smaller saved answers build larger answers.' }
+      title: 'How to think about this problem',
+      content: 'What each dp cell means\nBecause the target is 11, we solve smaller target amounts first: 0, 1, 2, 3, and so on up to 11. For example, dp[4] means the fewest coins needed to make exactly amount 4. The fewest is 2 coins of denomination 2. Another alternative would be 4 coins of denomination 1, but that uses more coins.\n\nWhy the final answer is 3\nWe need to make amount 11 using coins [1, 2, 5]. The optimal way is 5 + 5 + 1 = 11, which uses 3 coins. The problem asks for the fewest coins, so the answer is 3.\n\nWhy dynamic programming?\nFor each amount, there may be many ways to make it. For amount 4, four 1-coins work, but two 2-coins are better. DP saves only the best answer for each amount and reuses those saved answers later.\n\nPattern signal\nUse DP when smaller saved answers build larger answers.'
+    }
   ],
   relatedConcepts: ['bottom-up DP', 'state definition', 'transition'],
   metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'] }
