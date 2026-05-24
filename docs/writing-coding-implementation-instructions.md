@@ -10,13 +10,13 @@ When asked to create coding or implementation instructions, deliver the final in
 
 The one-block format is important because it gives the user a single copy button at the top right of the generated instruction.
 
-The **first generated line in the assistant response** must be the suggested chat name.
+The **first generated line in the assistant response** must be the required ChatGPT chat name.
 
 The **first section inside the Markdown instruction block** must also be chat naming.
 
 Use this response shape:
 
-    Suggested chat name: #123 — Short Title
+    Required ChatGPT chat name: #123 — Short Title
 
     Here is the copy-ready coding instruction:
 
@@ -25,9 +25,11 @@ Use this response shape:
 
     ## 1. Chat Naming
 
-    Suggested chat name: #123 — Short Title
+    Required ChatGPT chat name: #123 — Short Title
 
-    Use this name for the chat/thread so the work is easy to find later.
+    Before doing any implementation work, rename this ChatGPT conversation/thread to the exact name above.
+
+    If the assistant or coding agent cannot rename the conversation directly, it must first surface this name to the user and ask the user to rename the conversation manually before continuing.
 
     ## 2. Task Summary
     ...
@@ -39,9 +41,32 @@ Do **not** push an instruction file to the repository unless the user explicitly
 
 Inline code examples are allowed inside the one Markdown block, but avoid nested fenced code blocks where possible. Use indented code blocks or plain text labels inside the main block so the copy-ready block remains easy to paste.
 
+## Mandatory first execution step for coding agents
+
+When an implementer, coding agent, or assistant is asked to execute coding implementation instructions, the chat name instruction must be handled before any other action.
+
+This means the first assistant response after receiving the implementation request must:
+
+1. Repeat the exact required ChatGPT chat name.
+2. State that this is the required ChatGPT chat/thread name.
+3. Ask the user to rename the ChatGPT conversation manually if the assistant cannot directly rename it.
+4. Do this before reading issues, searching files, calling GitHub tools, checking branches, inspecting code, or starting implementation work.
+
+Do not treat chat naming as background context.
+Do not skip it because it looks like a simple title.
+Do not begin repository work until the chat name has been surfaced first.
+
+Required first response shape when executing instructions:
+
+    Chat name: #<issue-number> — <short description>
+
+    Please rename this ChatGPT conversation to the chat name above before continuing. I will use this as the working thread name for the implementation.
+
+Only after this first response should the implementer proceed to references, branch setup, file inspection, coding, validation, and PR work.
+
 ## Chat naming convention
 
-When creating a new chat for coding or implementation instructions, make the desired chat name obvious using the issue number plus a short description.
+Every coding implementation instruction must begin with a required ChatGPT chat name.
 
 Use this format:
 
@@ -53,7 +78,17 @@ Examples:
     #133 — DSA Explanation Review
     #131 — Explanation-First Authoring Standard
 
-Important: the assistant cannot directly rename the ChatGPT conversation. The app may still generate its own title. To give the title generator the strongest signal, the desired chat name must appear twice:
+Important: the chat name is not only documentation. It is the first execution step.
+
+When an assistant or coding agent is asked to execute the instruction, it must handle chat naming before any other action. It must not inspect GitHub issues, search files, check branches, read docs, or start implementation until the chat name has been surfaced first.
+
+Because assistants may not be able to directly rename the ChatGPT conversation, the required behavior is:
+
+1. First response: show the exact required chat name.
+2. Ask the user to rename the ChatGPT conversation manually if needed.
+3. Only then continue to implementation work.
+
+The desired chat name must appear twice when generating instructions:
 
 1. As the first visible/generated line before the copy-ready Markdown block.
 2. As the first instruction/section inside the Markdown block.
@@ -66,18 +101,22 @@ Every implementation instruction should include these sections in this order.
 
 ### 1. Chat naming
 
-This must be the first instruction inside the Markdown block.
+This must be the first instruction inside the Markdown block and the first execution step for any assistant or coding agent using the instruction.
 
 Include:
 
-- suggested chat name using `#<issue-number> — <short description>`
-- a brief instruction to use that name for the chat/thread
+- required ChatGPT chat name using `#<issue-number> — <short description>`
+- a brief instruction to use that exact name for the ChatGPT chat/thread
+- a reminder that no repository, GitHub, branch, file, or coding work should start before chat naming is surfaced
+- a fallback instruction that, if the assistant cannot rename ChatGPT directly, it must ask the user to rename the conversation manually before continuing
 
 Example:
 
-    Suggested chat name: #135 — Minimum Size Subarray Sum
+    Required ChatGPT chat name: #135 — Minimum Size Subarray Sum
 
-    Use this name for the chat/thread so the implementation work is easy to find later.
+    Before doing any implementation work, rename this ChatGPT conversation/thread to the exact name above.
+
+    If the assistant or coding agent cannot rename the conversation directly, it must first surface this name to the user and ask the user to rename the conversation manually before continuing.
 
 ### 2. Task summary
 
@@ -199,9 +238,13 @@ Examples:
 
 Before posting implementation instructions, confirm:
 
-- [ ] The first generated line is `Suggested chat name: #<issue-number> — <short description>`.
+- [ ] The first generated line is `Required ChatGPT chat name: #<issue-number> — <short description>`.
+- [ ] The chat name is marked as required, not merely suggested.
 - [ ] The first section inside the Markdown block is `## 1. Chat Naming`.
-- [ ] The same suggested chat name appears inside that first Markdown section.
+- [ ] The same required ChatGPT chat name appears inside that first Markdown section.
+- [ ] The first instruction explicitly says chat naming must happen before any repository, GitHub, branch, file, or coding work.
+- [ ] The instruction tells coding agents not to call tools or inspect context before surfacing the required chat name.
+- [ ] The instruction explains that if the assistant cannot rename ChatGPT directly, it must ask the user to rename the conversation manually first.
 - [ ] The final answer is one complete Markdown code block for one-click copying.
 - [ ] The target branch is named.
 - [ ] The task issue is linked.
@@ -217,9 +260,9 @@ Before posting implementation instructions, confirm:
 
 ## Preferred instruction template
 
-When producing the final answer in chat, first write the suggested chat name as plain text, then put the entire instruction inside a single `md` code block.
+When producing the final answer in chat, first write the required ChatGPT chat name as plain text, then put the entire instruction inside a single `md` code block.
 
-    Suggested chat name: #<number> — <Short Title>
+    Required ChatGPT chat name: #<number> — <Short Title>
 
     Here is the copy-ready coding instruction:
 
@@ -228,9 +271,11 @@ When producing the final answer in chat, first write the suggested chat name as 
 
     ## 1. Chat Naming
 
-    Suggested chat name: #<number> — <Short Title>
+    Required ChatGPT chat name: #<number> — <Short Title>
 
-    Use this name for the chat/thread so the implementation work is easy to find later.
+    Before doing any implementation work, rename this ChatGPT conversation/thread to the exact name above.
+
+    If the assistant or coding agent cannot rename the conversation directly, it must first surface this name to the user and ask the user to rename the conversation manually before continuing.
 
     ---
 
@@ -356,7 +401,10 @@ When producing the final answer in chat, first write the suggested chat name as 
 - Giving a high-level plan but no exact file paths.
 - Splitting the final instruction across several code blocks instead of one copy-ready block.
 - Pushing a coding-instruction file when the user asked for instructions in chat.
-- Forgetting to make the suggested chat name the first generated line.
+- Forgetting to make the required ChatGPT chat name the first generated line.
+- Treating chat naming as optional or background context during execution.
+- Calling GitHub tools, reading issues, checking branches, searching files, or starting repository work before surfacing the required ChatGPT chat name.
+- Forgetting to tell the user to rename the ChatGPT conversation manually when the assistant cannot rename it directly.
 - Forgetting to make chat naming the first section inside the Markdown instruction.
 - Naming chats generically instead of using `#<issue-number> — <short description>`.
 - Asking the implementer to create a branch that already exists.
