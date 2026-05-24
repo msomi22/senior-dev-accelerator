@@ -60,12 +60,12 @@ class Solution {
     title: 'Stack matching walkthrough',
     summary: 'Watch only the changing state: current character, current stack top, and the stack after the action.',
     steps: [
-      { title: 'Read (', body: 'Opening bracket. Push it. stack = ['('].' },
-      { title: 'Read {', body: 'Opening bracket. Push it above (. stack = ['(', '{'].' },
-      { title: 'Read [', body: 'Opening bracket. Push it above {. stack = ['(', '{', '['].' },
-      { title: 'Read ]', body: 'Closing bracket. The top is [, so ] matches. Pop [. stack = ['(', '{'].' },
-      { title: 'Read }', body: 'Closing bracket. The top is {, so } matches. Pop {. stack = ['('].' },
-      { title: 'Read )', body: 'Closing bracket. The top is (, so ) matches. Pop (. stack = empty.' }
+      { title: 'Read (', body: 'Opening bracket. Push it. Stack becomes: (.' },
+      { title: 'Read {', body: 'Opening bracket. Push it above (. Stack becomes: ( then { on top.' },
+      { title: 'Read [', body: 'Opening bracket. Push it above {. Stack becomes: ( then { then [ on top.' },
+      { title: 'Read ]', body: 'Closing bracket. The top is [, so ] matches. Pop [. Stack becomes: ( then { on top.' },
+      { title: 'Read }', body: 'Closing bracket. The top is {, so } matches. Pop {. Stack becomes: (.' },
+      { title: 'Read )', body: 'Closing bracket. The top is (, so ) matches. Pop (. Stack becomes empty.' }
     ]
   },
   body: [
