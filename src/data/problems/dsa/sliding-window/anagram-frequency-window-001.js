@@ -241,10 +241,9 @@ const problem = defineProblem({
         {
           title: 'Final result',
           description: 'After scanning every full fixed-size window, only starts 0 and 6 matched the target frequency.',
-          activeRange: [7, 9],
           items: [
-            { index: 6, role: 'answer', caption: 'answer 0' },
-            { index: 8, role: 'answer', caption: 'answer 6 window end' },
+            { index: 0, role: 'answer', caption: 'answer start 0' },
+            { index: 6, role: 'answer', caption: 'answer start 6' },
             { index: 9, role: 'current', caption: 'scan complete' }
           ],
           state: {
