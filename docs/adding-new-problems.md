@@ -64,14 +64,18 @@ This is especially expected when the learner benefits from seeing:
 
 For DSA coding questions, the default expectation is: include a visual walkthrough unless there is a clear reason it would not help. If no visual is included, explain why in the PR notes.
 
+A visual walkthrough is for mental pictures and state movement, not for repeating static algorithm instructions. Do not add extra `body` flow cards beside the visual that simply duplicate steps already covered by `stepByStepBreakdown`, `hints`, `intuition`, or `explanation`. For example, avoid cards like `Window update order` when the visual itself already shows what enters, what leaves, and when state matches.
+
 Visuals must follow `docs/visual-schema.md`:
 
 - use `visualWalkthrough` config in the problem file;
 - use supported diagram types such as `array`, `grid`, `graph`, `table`, `timeline`, `cards`, `tree`, `heap`, or `state`;
 - use ordered `frames` to show progression;
 - use semantic `role` values instead of CSS classes;
+- focus each frame on the changing state, movement, invariant, or decision point;
 - do not add raw HTML or raw CSS;
-- do not create one-off React renderers for a single problem.
+- do not create one-off React renderers for a single problem;
+- do not use static step cards as a substitute for a real visual walkthrough.
 
 For Sliding Window problems, prefer:
 
