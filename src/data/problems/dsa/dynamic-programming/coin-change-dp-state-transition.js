@@ -47,42 +47,55 @@ class Solution {
     }
 }`,
   finalTakeaway: 'Dynamic programming works when a big answer can be built from saved smaller answers.',
-  visualExplanation: 'Each frame highlights the dp cell that improves and the smaller saved answer it reuses.',
+  visualExplanation: 'For coins = [1, 2, 5] and amount = 11, each frame highlights the dp cell that becomes useful for reaching the final answer.',
   visualWalkthrough: {
     title: 'Coin Change DP walkthrough',
-    summary: 'Build the answer amount by amount using saved smaller answers.',
+    summary: 'For coins = [1, 2, 5] and amount = 11, build the answer using saved smaller answers.',
     diagram: {
       type: 'array',
       title: 'DP table updates',
-      description: 'The highlighted cell is the amount currently being improved.',
-      values: ['dp[0]', 'dp[1]', 'dp[2]', '...', 'dp[11]'],
+      description: 'Example: coins = [1, 2, 5], amount = 11. Each dp cell stores the fewest coins needed for that amount.',
+      values: ['dp[0]', 'dp[1]', 'dp[2]', 'dp[5]', 'dp[6]', 'dp[11]'],
       stateTitle: 'Current update',
-      stateDescription: 'Only real table changes are shown here.',
+      stateDescription: 'The latest state explains the cell currently being improved.',
+      stateOrder: 'latest-first',
       frames: [
         {
-          title: 'Set dp[0] = 0',
+          title: 'Define the trusted base',
           items: [{ index: 0, role: 'answer', label: '0', caption: 'known' }],
-          state: { label: 'dp[0]', values: ['0 coins'], helper: 'Making amount 0 needs no coins, so this becomes the trusted starting point.' },
-          description: 'Before solving positive amounts, the table needs one known answer: amount 0 costs 0 coins.'
+          state: { label: 'dp[0]', values: ['0 coins'], helper: 'Making amount 0 needs no coins. This gives the table a trusted starting point.' },
+          description: 'Start with dp[0] = 0 because amount 0 costs 0 coins.'
         },
         {
-          title: 'Improve dp[1] using coin 1',
-          items: [{ index: 0, role: 'success', label: '0', caption: 'reuse' }, { index: 1, role: 'current', label: '1', caption: 'update' }],
-          state: { label: 'dp[1]', values: ['dp[1]=1', 'dp[0]+1'], helper: 'Use the saved answer for amount 0, then add one coin of value 1.' },
-          description: 'Amount 1 can be made from amount 0 plus coin 1, so dp[1] becomes 1.'
+          title: 'One coin can solve 1, 2, and 5',
+          items: [
+            { index: 0, role: 'success', label: '0', caption: 'base' },
+            { index: 1, role: 'current', label: '1', caption: 'coin 1' },
+            { index: 2, role: 'current', label: '1', caption: 'coin 2' },
+            { index: 3, role: 'current', label: '1', caption: 'coin 5' }
+          ],
+          state: { label: 'dp[1], dp[2], dp[5]', values: ['1 coin each'], helper: 'Amounts 1, 2, and 5 can each be made directly using one available coin.' },
+          description: 'The coin values themselves are the first useful positive amounts: 1, 2, and 5 each need one coin.'
         },
         {
-          title: 'Improve dp[2] using coin 2',
-          items: [{ index: 0, role: 'success', label: '0', caption: 'reuse' }, { index: 2, role: 'current', label: '1', caption: 'update' }],
-          state: { label: 'dp[2]', values: ['dp[2]=1', 'dp[0]+1'], helper: 'Coin 2 reaches amount 2 directly, so one coin is better than two 1-coins.' },
-          description: 'The table keeps the fewest coins. For amount 2, one coin of value 2 is optimal.'
+          title: 'Build amount 6 from a saved answer',
+          items: [
+            { index: 1, role: 'success', label: '1', caption: 'reuse' },
+            { index: 3, role: 'success', label: '1', caption: 'coin 5' },
+            { index: 4, role: 'current', label: '2', caption: 'update' }
+          ],
+          state: { label: 'dp[6]', values: ['dp[1] + coin 5', '1 + 1 = 2'], helper: 'Amount 6 can be made by reusing dp[1], then adding coin 5. That gives 1 + 5 = 6 using 2 coins.' },
+          description: 'Amount 6 matters because it becomes the saved smaller answer we can reuse to reach 11.'
         },
         {
-          title: 'Reach dp[11] with 5 + 5 + 1',
-          items: [{ index: 0, role: 'success', label: '0', caption: 'base' }, { index: 4, role: 'answer', label: '3', caption: 'answer' }],
-          state: { label: 'dp[11]', values: ['dp[11]=3', '5+5+1', '3 coins'], helper: 'The target amount 11 can be made with two 5-coins and one 1-coin.' },
-          description: 'The best saved answer for amount 11 uses three coins: 5 + 5 + 1.',
-          finalResult: { title: 'Final answer', body: 'Return 3 because 11 can be made with three coins, and no two-coin combination from [1, 2, 5] can make 11.' }
+          title: 'Reach the target amount 11',
+          items: [
+            { index: 4, role: 'success', label: '2', caption: 'reuse dp[6]' },
+            { index: 5, role: 'answer', label: '3', caption: 'answer' }
+          ],
+          state: { label: 'dp[11]', values: ['dp[6] + coin 5', '2 + 1 = 3', '5 + 1 + 5'], helper: 'Use coin 5 as the last coin. Before that, amount 6 was already solved in 2 coins, so amount 11 takes 3 coins.' },
+          description: 'Since dp[6] = 2, adding one more 5-coin gives dp[11] = 3. This matches 5 + 5 + 1.',
+          finalResult: { title: 'Final answer', body: 'Return 3 because 11 can be made with three coins: 5 + 5 + 1. The problem asks for the fewest coins, not just any combination.' }
         }
       ]
     }
@@ -92,7 +105,13 @@ class Solution {
       type: 'callout',
       tone: 'info',
       title: 'Why the answer is 3',
-      content: 'We need to make 11 using the fewest coins. One optimal choice is 5 + 5 + 1 = 11, which uses 3 coins. The goal is not just to make the amount; it is to make it with the minimum number of coins.'
+      content: 'We need to make 11 using coins [1, 2, 5]. One optimal way is 5 + 5 + 1 = 11, which uses 3 coins. The problem asks for the fewest coins, so the answer is 3.'
+    },
+    {
+      type: 'callout',
+      tone: 'info',
+      title: 'Why dynamic programming?',
+      content: 'For this example, the best answer is easy to see. In general, choosing the biggest coin first can fail, so DP saves the best answer for each smaller amount and reuses it.'
     },
     { type: 'callout', tone: 'info', title: 'Pattern signal', content: 'Use DP when smaller saved answers build larger answers.' }
   ],
