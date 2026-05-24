@@ -48,8 +48,8 @@ function RoadmapItemList({ label, items }) {
   if (!hasListItems(items)) return null;
 
   return (
-    <div className="topic-roadmap-list">
-      <p className="topic-roadmap-label">{label}</p>
+    <div className="workspace-block topic-roadmap-list">
+      <span className="mini-label">{label}</span>
       <TopicMetadataList items={items} />
     </div>
   );
@@ -67,62 +67,69 @@ function TopicLearningGuide({ topic }) {
   if (!hasObjectives && !hasNotes && !hasRoadmap) return null;
 
   return (
-    <div className="topic-learning-guide" aria-label={`${topic.name} learning guide`}>
-      {hasObjectives ? (
-        <section className="topic-objectives glass-lite">
-          <p className="eyebrow">Learning focus</p>
-          <h3>Objectives</h3>
-          <TopicMetadataList items={topic.objectives} />
-        </section>
-      ) : null}
+    <details className="advanced-search-panel topic-learning-guide">
+      <summary>
+        <span>Topic notes & roadmap</span>
+        <small>Open learner guidance for objectives, mental model, and staged coverage.</small>
+      </summary>
 
-      {hasNotes ? (
-        <section className="topic-notes glass-lite">
-          <p className="eyebrow">How to think</p>
-          <h3>Topic notes</h3>
+      <div className="topic-learning-guide-body">
+        {hasObjectives ? (
+          <section className="workspace-block topic-objectives">
+            <span className="mini-label">Learning focus</span>
+            <h3>Objectives</h3>
+            <TopicMetadataList items={topic.objectives} />
+          </section>
+        ) : null}
 
-          {topic.notes.summary ? <p>{topic.notes.summary}</p> : null}
-          {topic.notes.strategy ? <p>{topic.notes.strategy}</p> : null}
+        {hasNotes ? (
+          <section className="workspace-block topic-notes">
+            <span className="mini-label">How to think</span>
+            <h3>Topic notes</h3>
 
-          <TopicMetadataList
-            className="topic-notes-list"
-            items={topic.notes.mentalModel}
-          />
-        </section>
-      ) : null}
+            {topic.notes.summary ? <p>{topic.notes.summary}</p> : null}
+            {topic.notes.strategy ? <p>{topic.notes.strategy}</p> : null}
 
-      {hasRoadmap ? (
-        <section className="topic-roadmap" aria-labelledby={`${topic.id}-roadmap-heading`}>
-          <div className="section-head compact-section-head">
-            <div>
-              <p className="eyebrow">Mastery path</p>
-              <h3 id={`${topic.id}-roadmap-heading`}>Roadmap</h3>
-              <p>
-                Follow the stages in order to connect the current practice set
-                with near-term and future Sliding Window coverage.
-              </p>
+            <TopicMetadataList
+              className="topic-notes-list"
+              items={topic.notes.mentalModel}
+            />
+          </section>
+        ) : null}
+
+        {hasRoadmap ? (
+          <section className="topic-roadmap" aria-labelledby={`${topic.id}-roadmap-heading`}>
+            <div className="section-head compact-section-head">
+              <div>
+                <p className="eyebrow">Mastery path</p>
+                <h3 id={`${topic.id}-roadmap-heading`}>Roadmap</h3>
+                <p>
+                  Follow the stages in order to connect the current practice set
+                  with near-term and future Sliding Window coverage.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="topic-roadmap-grid">
-            {topic.roadmap.map((stage) => (
-              <article
-                key={`${stage.stage}-${stage.title}`}
-                className="topic-roadmap-card glass-lite"
-              >
-                <p className="eyebrow">{stage.stage}</p>
-                <h4>{stage.title}</h4>
-                <p>{stage.purpose}</p>
+            <div className="card-grid compact-grid topic-roadmap-grid">
+              {topic.roadmap.map((stage) => (
+                <article
+                  key={`${stage.stage}-${stage.title}`}
+                  className="question-card topic-roadmap-card"
+                >
+                  <p className="eyebrow">{stage.stage}</p>
+                  <h3>{stage.title}</h3>
+                  <p>{stage.purpose}</p>
 
-                <RoadmapItemList label="Current examples" items={stage.currentExamples} />
-                <RoadmapItemList label="Near-term additions" items={stage.nearTermAdditions} />
-                <RoadmapItemList label="Future ideas" items={stage.futureIdeas} />
-              </article>
-            ))}
-          </div>
-        </section>
-      ) : null}
-    </div>
+                  <RoadmapItemList label="Current examples" items={stage.currentExamples} />
+                  <RoadmapItemList label="Near-term additions" items={stage.nearTermAdditions} />
+                  <RoadmapItemList label="Future ideas" items={stage.futureIdeas} />
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </div>
+    </details>
   );
 }
 
