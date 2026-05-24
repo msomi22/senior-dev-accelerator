@@ -71,13 +71,6 @@ const problem = defineProblem({
     {
       input: 's1 = "ab", s2 = "eidbaooo"',
       output: 'true',
-      highlightedInput: {
-        prefix: 's2 = "eid',
-        segments: [
-          { text: 'ba', highlight: true }
-        ],
-        suffix: 'ooo", s1 = "ab"'
-      },
       explanation: 's2 contains "ba", which is a permutation of "ab". The order changed, but the counts are still one a and one b.'
     },
     {
@@ -88,13 +81,6 @@ const problem = defineProblem({
     {
       input: 's1 = "aabc", s2 = "eidbacaooo"',
       output: 'true',
-      highlightedInput: {
-        prefix: 's2 = "eid',
-        segments: [
-          { text: 'baca', highlight: true }
-        ],
-        suffix: 'ooo", s1 = "aabc"'
-      },
       explanation: 's2 contains "baca", which has two a characters, one b, and one c.'
     }
   ],
