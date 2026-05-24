@@ -10,18 +10,21 @@ When asked to create coding or implementation instructions, deliver the final in
 
 The one-block format is important because it gives the user a single copy button at the top right of the generated instruction.
 
-Do this:
+Start the response with the desired chat title as the first visible line, then provide the copy-ready block.
 
-```text
-Here is the copy-ready coding instruction:
+Use this response shape:
 
-```md
-# Coding Implementation Instruction: Issue #123 — Short Title
+    Suggested chat name: #123 — Short Title
 
-## 1. Task Summary
-...
-```
-```
+    Here is the copy-ready coding instruction:
+
+    ```md
+    # Coding Implementation Instruction: Issue #123 — Short Title
+
+    ## 1. Task Summary
+    Suggested chat name: #123 — Short Title
+    ...
+    ```
 
 Do **not** split the final instruction across many small code blocks, because that forces the user to copy many fragments.
 
@@ -31,7 +34,7 @@ Inline code examples are allowed inside the one Markdown block, but avoid nested
 
 ## Chat naming convention
 
-When creating a new chat for coding or implementation instructions, name the chat clearly using the issue number plus a short description.
+When creating a new chat for coding or implementation instructions, make the desired chat name obvious using the issue number plus a short description.
 
 Use this format:
 
@@ -43,11 +46,12 @@ Examples:
     #133 — DSA Explanation Review
     #131 — Explanation-First Authoring Standard
 
+Important: the assistant cannot directly rename the ChatGPT conversation. The app may still generate its own title. To give the title generator the strongest signal, the desired chat name must appear twice:
+
+1. As the first visible line before the copy-ready Markdown block.
+2. Inside the Markdown block near the top of the Task Summary section.
+
 If the issue title is long, shorten it while keeping the intent clear. Prefer the issue number first so the chat is easy to find later.
-
-When the generated instruction includes a task summary, mention the suggested chat name near the top:
-
-    Suggested chat name: #135 — Minimum Size Subarray Sum
 
 ## Required structure
 
@@ -175,8 +179,9 @@ Examples:
 
 Before posting implementation instructions, confirm:
 
+- [ ] The first visible line is `Suggested chat name: #<issue-number> — <short description>`.
+- [ ] The same suggested chat name appears inside the Markdown block near the top.
 - [ ] The final answer is one complete Markdown code block for one-click copying.
-- [ ] The suggested chat name is included near the top and follows `#<issue-number> — <short description>`.
 - [ ] The target branch is named.
 - [ ] The task issue is linked.
 - [ ] The parent epic is linked when relevant.
@@ -191,8 +196,13 @@ Before posting implementation instructions, confirm:
 
 ## Preferred instruction template
 
-When producing the final answer in chat, put the entire instruction below inside a single `md` code block.
+When producing the final answer in chat, first write the suggested chat name as plain text, then put the entire instruction inside a single `md` code block.
 
+    Suggested chat name: #<number> — <Short Title>
+
+    Here is the copy-ready coding instruction:
+
+    ```md
     # Coding Implementation Instruction: Issue #<number> — <Short Title>
 
     ## 1. Task Summary
@@ -312,13 +322,15 @@ When producing the final answer in chat, put the entire instruction below inside
     - <done criterion 1>
     - <done criterion 2>
     - <done criterion 3>
+    ```
 
 ## Common mistakes to avoid
 
 - Giving a high-level plan but no exact file paths.
 - Splitting the final instruction across several code blocks instead of one copy-ready block.
 - Pushing a coding-instruction file when the user asked for instructions in chat.
-- Forgetting to include the suggested chat name near the top.
+- Forgetting to put the suggested chat name as the first visible line.
+- Forgetting to include the same suggested chat name inside the Markdown block near the top.
 - Naming chats generically instead of using `#<issue-number> — <short description>`.
 - Asking the implementer to create a branch that already exists.
 - Forgetting to link the parent epic or quality standard.
