@@ -72,9 +72,19 @@ export const PROBLEM_TAB_RESPONSIBILITIES = Object.freeze({
 });
 
 export function getFocusedProblemTabs({ question, codeContent, explanation, hasMcq = false, hasVisualRichBody = false }) {
+  const hasStructuredVisualWalkthrough =
+    hasProblemTabContent(question.visualWalkthrough?.summary) ||
+    list(question.visualWalkthrough?.steps).length > 0 ||
+    list(question.visualWalkthrough?.diagram?.frames).length > 0 ||
+    hasProblemTabContent(question.visualWalkthrough?.image);
+
   return [
     ['overview', 'Overview', true],
-    ['visual', 'Visual Walkthrough', hasVisualRichBody || hasProblemTabContent(question.visualExplanation)],
+    [
+      'visual',
+      'Visual Walkthrough',
+      hasVisualRichBody || hasStructuredVisualWalkthrough || hasProblemTabContent(question.visualExplanation)
+    ],
     [
       'intuition',
       'Intuition',

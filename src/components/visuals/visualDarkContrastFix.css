@@ -1,0 +1,45 @@
+/*
+  Small contrast-only patch for dark-mode config visuals.
+
+  Keep this CSS-only: no walkthrough/data logic changes.
+  ConfigVisualizer injects its base styles from inside the component, so this
+  file uses a narrow dark-mode override with !important to keep large active
+  state cards readable in dark mode.
+*/
+
+:root[data-theme="dark"] .config-visual .config-visual-state-row.active,
+html[data-theme='dark'] .config-visual .config-visual-state-row.active,
+body[data-theme='dark'] .config-visual .config-visual-state-row.active,
+.dark .config-visual .config-visual-state-row.active,
+[data-theme='dark'] .config-visual .config-visual-state-row.active,
+[data-color-mode='dark'] .config-visual .config-visual-state-row.active,
+[data-appearance='dark'] .config-visual .config-visual-state-row.active {
+  background: rgba(15, 23, 42, 0.82) !important;
+  border-color: rgba(45, 212, 191, 0.5) !important;
+  color: var(--visual-text, #f8fafc) !important;
+  box-shadow: inset 0 0 0 1px rgba(45, 212, 191, 0.08) !important;
+}
+
+:root[data-theme="dark"] .config-visual .config-visual-state-row.active strong,
+:root[data-theme="dark"] .config-visual .config-visual-state-row.active p,
+:root[data-theme="dark"] .config-visual .config-visual-state-row.active .config-visual-state-value,
+html[data-theme='dark'] .config-visual .config-visual-state-row.active strong,
+html[data-theme='dark'] .config-visual .config-visual-state-row.active p,
+html[data-theme='dark'] .config-visual .config-visual-state-row.active .config-visual-state-value,
+body[data-theme='dark'] .config-visual .config-visual-state-row.active strong,
+body[data-theme='dark'] .config-visual .config-visual-state-row.active p,
+body[data-theme='dark'] .config-visual .config-visual-state-row.active .config-visual-state-value,
+.dark .config-visual .config-visual-state-row.active strong,
+.dark .config-visual .config-visual-state-row.active p,
+.dark .config-visual .config-visual-state-row.active .config-visual-state-value,
+[data-theme='dark'] .config-visual .config-visual-state-row.active strong,
+[data-theme='dark'] .config-visual .config-visual-state-row.active p,
+[data-theme='dark'] .config-visual .config-visual-state-row.active .config-visual-state-value,
+[data-color-mode='dark'] .config-visual .config-visual-state-row.active strong,
+[data-color-mode='dark'] .config-visual .config-visual-state-row.active p,
+[data-color-mode='dark'] .config-visual .config-visual-state-row.active .config-visual-state-value,
+[data-appearance='dark'] .config-visual .config-visual-state-row.active strong,
+[data-appearance='dark'] .config-visual .config-visual-state-row.active p,
+[data-appearance='dark'] .config-visual .config-visual-state-row.active .config-visual-state-value {
+  color: var(--visual-text, #f8fafc) !important;
+}
