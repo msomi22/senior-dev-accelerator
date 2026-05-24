@@ -25,7 +25,7 @@ const problem = defineLearningProblem({
   commonMistakes: ['Including nums[i] in output[i].', 'Using division even though the constraint disallows it.', 'Forgetting that edge positions still need a neutral multiplication value.', 'Counting the returned output array as extra space when the problem allows it.'],
   edgeCases: ['One zero in the array', 'Multiple zeros', 'Negative numbers', 'Array length two', 'Values of one'],
   complexityAnalysis: 'Time is O(n) because each index is visited from the left side and from the right side. Extra space is O(1) beyond the output array because the returned answer array is required.',
-  explanation: '',
+  explanation: 'The implementation avoids division by splitting every answer into two products. During the left-to-right pass, answer[i] receives the product of all values before i, so nums[i] is not included yet. During the right-to-left pass, rightProduct represents all values after i and is multiplied into answer[i]. Only after writing answer[i] does the code update the running product with nums[i], which preserves the except-self rule.',
   plainLanguageExplanation: 'The walkthrough shows the target answer directly: each output slot skips its own input value and multiplies the rest. The solution code reaches the same result by storing the product before each index, then multiplying in the product after each index.',
   approach: 'Use the same rule for every index: answer[i] = leftProduct × rightProduct. First, move left to right and write the product before each index into answer[i]. For [1, 2, 3, 4], this creates [1, 1, 2, 6]. Then move right to left and multiply each slot by the product after that index: [24, 12, 8, 6].',
   solutionCode: `class Solution {
