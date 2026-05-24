@@ -28,6 +28,150 @@ function buildPageNumbers(currentPage, totalPages, windowSize) {
   return pages;
 }
 
+function hasListItems(items) {
+  return Array.isArray(items) && items.length > 0;
+}
+
+function TopicMetadataList({ className, items }) {
+  if (!hasListItems(items)) return null;
+
+  return (
+    <ul className={className}>
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+    </ul>
+  );
+}
+
+function RoadmapItemList({ label, items }) {
+  if (!hasListItems(items)) return null;
+
+  return (
+    <div className="workspace-block topic-roadmap-list">
+      <span className="mini-label">{label}</span>
+      <TopicMetadataList items={items} />
+    </div>
+  );
+}
+
+function TopicLearningGuide({ topic }) {
+  const hasObjectives = hasListItems(topic.objectives);
+  const hasNotes = topic.notes && (
+    topic.notes.summary ||
+    topic.notes.strategy ||
+    hasListItems(topic.notes.mentalModel)
+  );
+  const hasRoadmap = hasListItems(topic.roadmap);
+
+  if (!hasObjectives && !hasNotes && !hasRoadmap) return null;
+
+  return (
+    <details
+      className="question-card topic-learning-guide"
+      style={{
+        marginTop: 12,
+        maxWidth: '100%',
+        minWidth: 0,
+        overflow: 'hidden'
+      }}
+    >
+      <summary
+        style={{
+          cursor: 'pointer',
+          display: 'grid',
+          gap: 4,
+          listStyle: 'revert',
+          minWidth: 0
+        }}
+      >
+        <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>
+          Topic notes & roadmap
+        </span>
+        <small style={{ color: 'var(--text-secondary)' }}>
+          Optional learner guide for objectives, mental model, and staged coverage.
+        </small>
+      </summary>
+
+      <div
+        className="topic-learning-guide-body"
+        style={{
+          borderTop: '1px solid var(--border)',
+          display: 'grid',
+          gap: 12,
+          marginTop: 12,
+          maxWidth: '100%',
+          minWidth: 0,
+          overflow: 'hidden',
+          overflowWrap: 'anywhere',
+          paddingTop: 12,
+          wordBreak: 'normal'
+        }}
+      >
+        {hasObjectives ? (
+          <section className="workspace-block topic-objectives" style={{ minWidth: 0 }}>
+            <span className="mini-label">Learning focus</span>
+            <h3>Objectives</h3>
+            <TopicMetadataList items={topic.objectives} />
+          </section>
+        ) : null}
+
+        {hasNotes ? (
+          <section className="workspace-block topic-notes" style={{ minWidth: 0 }}>
+            <span className="mini-label">How to think</span>
+            <h3>Topic notes</h3>
+
+            {topic.notes.summary ? <p>{topic.notes.summary}</p> : null}
+            {topic.notes.strategy ? <p>{topic.notes.strategy}</p> : null}
+
+            <TopicMetadataList
+              className="topic-notes-list"
+              items={topic.notes.mentalModel}
+            />
+          </section>
+        ) : null}
+
+        {hasRoadmap ? (
+          <section
+            className="topic-roadmap"
+            aria-labelledby={`${topic.id}-roadmap-heading`}
+            style={{ minWidth: 0 }}
+          >
+            <div className="section-head compact-section-head">
+              <div>
+                <p className="eyebrow">Mastery path</p>
+                <h3 id={`${topic.id}-roadmap-heading`}>Roadmap</h3>
+                <p>
+                  Follow the stages in order to connect the current practice set
+                  with near-term and future Sliding Window coverage.
+                </p>
+              </div>
+            </div>
+
+            <div className="card-grid compact-grid topic-roadmap-grid">
+              {topic.roadmap.map((stage) => (
+                <article
+                  key={`${stage.stage}-${stage.title}`}
+                  className="question-card topic-roadmap-card"
+                  style={{ minWidth: 0 }}
+                >
+                  <p className="eyebrow">{stage.stage}</p>
+                  <h3>{stage.title}</h3>
+                  <p>{stage.purpose}</p>
+
+                  <RoadmapItemList label="Current examples" items={stage.currentExamples} />
+                  <RoadmapItemList label="Near-term additions" items={stage.nearTermAdditions} />
+                  <RoadmapItemList label="Future ideas" items={stage.futureIdeas} />
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </div>
+    </details>
+  );
+}
+
 function TopicSection({
   topic,
   questions,
@@ -268,6 +412,8 @@ function TopicSection({
           </div>
         </nav>
       ) : null}
+
+      <TopicLearningGuide topic={topic} />
     </section>
   );
 }
