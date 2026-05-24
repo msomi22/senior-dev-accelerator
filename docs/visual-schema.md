@@ -22,6 +22,10 @@ Core React changes are acceptable only when adding a new reusable visual capabil
 
 Use a `visualWalkthrough` for new authored questions whenever possible. The goal is not decoration; the visual should teach the important state change, invariant, or decision point that the learner might otherwise miss.
 
+A visual walkthrough must support the learner's mental picture. It should show movement, state transitions, or changing relationships over time. It should not be used as a place to repeat static algorithm notes that are already covered by fields such as `stepByStepBreakdown`, `hints`, `intuition`, `explanation`, or `body` callouts.
+
+Avoid adding extra static cards near the visual walkthrough that simply restate ordered steps, such as a `body` flow card titled `Window update order`. The visual section should stay focused on the animated/configured mental model: what enters, what leaves, which state changes, when an invariant becomes true/false, and when an answer is recorded.
+
 Good candidates for a required visual walkthrough include:
 
 - Sliding Window problems where values enter/leave a window.
@@ -34,7 +38,7 @@ Good candidates for a required visual walkthrough include:
 
 A visual may be skipped only when it would be repetitive or unhelpful, such as a purely conceptual text-only question with no meaningful state transition. In that case, say so in the task or PR notes.
 
-Do not satisfy this requirement with raw HTML, raw CSS, screenshots, or one-off components. Use the config-driven schema and existing reusable renderers.
+Do not satisfy this requirement with raw HTML, raw CSS, screenshots, static step cards, or one-off components. Use the config-driven schema and existing reusable renderers.
 
 ## Why this exists
 
@@ -59,7 +63,7 @@ Problem config
 | `array` | Sliding window, two pointers, prefix sums, scans, partitions |
 | `timeline` | Greedy choices, state transitions, process walkthroughs |
 | `table` | Comparisons, DP state tables, complexity trade-offs |
-| `cards` | Concept explanations, invariants, step grouping |
+| `cards` | Only when the cards themselves model changing state, decisions, or relationships; not for repeating static notes |
 | `graph` | BFS, DFS, shortest path, relationship traversal |
 | `tree` | Tree traversal, recursion, hierarchy problems |
 | `heap` | Priority queues and heap state walkthroughs |
@@ -232,6 +236,8 @@ visualWalkthrough: {
 ## Guardrails
 
 Do not add raw HTML or raw CSS into problem configs.
+
+Do not use visual walkthrough areas or adjacent visual-body cards to duplicate static ordered instructions. Put static algorithm explanation in normal authored fields instead.
 
 Prefer:
 
