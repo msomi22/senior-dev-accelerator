@@ -9,14 +9,7 @@ const problem = defineMcqProblem({
   title: 'Which Value Leaves and Enters?',
   difficulty: 'Easy',
   estimatedTime: '6 min',
-  tags: [
-    'arrays',
-    'sliding-window',
-    'fixed-window',
-    'rolling-sum',
-    'trace',
-    'mcq'
-  ],
+  tags: ['arrays', 'sliding-window', 'fixed-window', 'rolling-sum', 'trace', 'mcq'],
   prompt: question,
   options: [
     '2 leaves, 1 enters, so newSum = oldSum - 2 + 1.',
@@ -50,46 +43,10 @@ const problem = defineMcqProblem({
         { role: 'answer', label: 'best update' }
       ],
       frames: [
-        {
-          title: 'First full window [0..2]',
-          activeRange: [0, 2],
-          items: [
-            { index: 0, role: 'window', caption: 'left' },
-            { index: 2, role: 'window', caption: 'right' }
-          ],
-          state: { label: 'valid', role: 'success', values: ['window [2, 1, 5]', 'sum 8', 'best 8', 'size 3'], helper: 'This is the first complete length-k window.' },
-          description: 'The first valid fixed window contains exactly three values, so best is initialized to 8.'
-        },
-        {
-          title: 'Slide right: remove 2, add 1',
-          activeRange: [1, 3],
-          items: [
-            { index: 0, role: 'remove', caption: 'leaves 2' },
-            { index: 3, role: 'current', caption: 'enters 1' }
-          ],
-          state: { label: 'rolling update', role: 'neutral', values: ['old sum 8', 'subtract 2', 'add 1', 'new sum 7'], helper: 'Only the boundary values change. The shared middle values stay in the window.' },
-          description: 'The rolling state avoids recomputing 1 + 5 + 1 from scratch.'
-        },
-        {
-          title: 'New window [1..3]',
-          activeRange: [1, 3],
-          items: [
-            { index: 1, role: 'window', caption: 'left' },
-            { index: 3, role: 'window', caption: 'right' }
-          ],
-          state: { label: 'valid', role: 'success', values: ['window [1, 5, 1]', 'sum 7', 'best remains 8', 'size 3'], helper: 'The window is still valid because it still has exactly k values.' },
-          description: 'After the slide, compare the valid rolling sum with best. Since 7 is less than 8, best stays 8.'
-        },
-        {
-          title: 'Next slide: remove 1, add 3',
-          activeRange: [2, 4],
-          items: [
-            { index: 1, role: 'remove', caption: 'leaves 1' },
-            { index: 4, role: 'current', caption: 'enters 3' }
-          ],
-          state: { label: 'best update', role: 'answer', values: ['old sum 7', 'subtract 1', 'add 3', 'new sum 9', 'best becomes 9'], helper: 'Again, one value leaves and one value enters.' },
-          description: 'The next valid window is [5, 1, 3] with sum 9, so best improves to 9.'
-        }
+        { title: 'First full window [0..2]', activeRange: [0, 2], items: [{ index: 0, role: 'window', caption: 'left' }, { index: 2, role: 'window', caption: 'right' }], state: { label: 'valid', role: 'success', values: ['window [2, 1, 5]', 'sum 8', 'best 8', 'size 3'], helper: 'This is the first complete length-k window.' }, description: 'The first valid fixed window contains exactly three values, so best is initialized to 8.' },
+        { title: 'Slide right: remove 2, add 1', activeRange: [1, 3], items: [{ index: 0, role: 'remove', caption: 'leaves 2' }, { index: 3, role: 'current', caption: 'enters 1' }], state: { label: 'rolling update', role: 'neutral', values: ['old sum 8', 'subtract 2', 'add 1', 'new sum 7'], helper: 'Only the boundary values change. The shared middle values stay in the window.' }, description: 'The rolling state avoids recomputing 1 + 5 + 1 from scratch.' },
+        { title: 'New window [1..3]', activeRange: [1, 3], items: [{ index: 1, role: 'window', caption: 'left' }, { index: 3, role: 'window', caption: 'right' }], state: { label: 'valid', role: 'success', values: ['window [1, 5, 1]', 'sum 7', 'best remains 8', 'size 3'], helper: 'The window is still valid because it still has exactly k values.' }, description: 'After the slide, compare the valid rolling sum with best. Since 7 is less than 8, best stays 8.' },
+        { title: 'Next slide: remove 1, add 3', activeRange: [2, 4], items: [{ index: 1, role: 'remove', caption: 'leaves 1' }, { index: 4, role: 'current', caption: 'enters 3' }], state: { label: 'best update', role: 'answer', values: ['old sum 7', 'subtract 1', 'add 3', 'new sum 9', 'best becomes 9'], helper: 'Again, one value leaves and one value enters.' }, description: 'The next valid window is [5, 1, 3] with sum 9, so best improves to 9.' }
       ]
     }
   },
@@ -105,13 +62,7 @@ const problem = defineMcqProblem({
     'Recomputing the full sum every time instead of using the rolling update.'
   ],
   relatedConcepts: ['outgoing value', 'incoming value', 'rolling sum', 'fixed-size invariant'],
-  body: [
-    { type: 'callout', tone: 'info', title: 'Question', content: question }
-  ],
-  metadata: {
-    reviewStatus: 'approved',
-    visibility: ['dev', 'prod']
-  }
+  metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'] }
 });
 
 export default problem;
