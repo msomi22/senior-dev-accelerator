@@ -58,15 +58,85 @@ function TextBlock({ title, children, className = '' }) {
   );
 }
 
-function ListBlock({ title, items, ordered = false }) {
+function ListBlock({ title, items, ordered = false, className = '' }) {
   const rows = list(items);
   if (!rows.length) return null;
   const Tag = ordered ? 'ol' : 'ul';
   return (
-    <section className="workspace-block">
+    <section className={`workspace-block ${className}`}>
       <span className="mini-label">{title}</span>
       <Tag>{rows.map((row, index) => <li key={`${text(row)}-${index}`}>{text(row)}</li>)}</Tag>
     </section>
+  );
+}
+
+function HighlightedSegments({ segments }) {
+  const rows = list(segments);
+  if (!rows.length) return null;
+
+  return (
+    <span className="example-highlighted-sequence" aria-label={rows.map((segment) => text(segment?.text || segment)).join('')}>
+      {rows.map((segment, index) => {
+        const value = typeof segment === 'object' ? segment.text : segment;
+        const highlighted = typeof segment === 'object' && segment.highlight;
+        return (
+          <span className={highlighted ? 'example-highlight-match' : ''} key={`${value}-${index}`}>
+            {value}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+function ExampleBlock({ items }) {
+  const rows = list(items);
+  if (!rows.length) return null;
+
+  return (
+    <section className="workspace-block focused-examples-block">
+      <span className="mini-label">Examples</span>
+      <ul>
+        {rows.map((row, index) => {
+          const hasHighlightedInput = row?.highlightedInput?.segments?.length;
+          if (!hasHighlightedInput) {
+            return <li key={`${text(row)}-${index}`}>{text(row)}</li>;
+          }
+
+          return (
+            <li className="focused-example-item" key={`${row.input || index}-${index}`}>
+              <div className="focused-example-main">
+                <span>{row.highlightedInput.prefix || ''}</span>
+                <HighlightedSegments segments={row.highlightedInput.segments} />
+                <span>{row.highlightedInput.suffix || ''}</span>
+                {row.output ? <span className="focused-example-output">→ {text(row.output)}</span> : null}
+              </div>
+              {row.explanation ? <p>{text(row.explanation)}</p> : null}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function VisualInputStrip({ inputs }) {
+  const rows = list(inputs);
+  if (!rows.length) return null;
+
+  return (
+    <div className="visual-input-strip" aria-label="Walkthrough input values">
+      {rows.map((item, index) => {
+        const label = typeof item === 'object' ? item.label : `input ${index + 1}`;
+        const value = typeof item === 'object' ? item.value : item;
+        return (
+          <div className="visual-input-chip" key={`${label}-${text(value)}-${index}`}>
+            <small>{label}</small>
+            <code>{text(value)}</code>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -143,6 +213,7 @@ function VisualBlock({ question, showFallback = false }) {
         <strong>{visual?.title || 'Mental model walkthrough'}</strong>
       </div>
       {visual?.summary ? <p className="visual-summary">{visual.summary}</p> : null}
+      <VisualInputStrip inputs={visual?.inputs} />
       {hasVisualExplanation ? <p className="visual-summary">{fallbackVisualExplanation}</p> : null}
       {visual?.image ? <img className="visual-image-panel" src={visual.image} alt={visual.imageAlt || visual.title || 'Problem visual walkthrough'} loading="lazy" /> : null}
       <VisualRail diagram={visual?.diagram} />
@@ -177,7 +248,7 @@ function ApproachReinforcementCards({ question }) {
   if (!cards.length) return null;
 
   return (
-    <aside className="learning-reinforcement-grid">
+    <aside className="learning-reinforcement-stack">
       {cards.map(([title, value]) => Array.isArray(value)
         ? <ListBlock key={title} title={title} items={value} />
         : <TextBlock key={title} title={title}>{value}</TextBlock>)}
@@ -235,10 +306,10 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
 
       <div className="focused-workspace-layout">
         <div className="focused-tab-content">
-          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>{!hasOverviewRichBody ? <TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock> : null}</div><RichBodyBlocks blocks={question.body} mode="overview" />{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ListBlock title="Examples" items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
+          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>{!hasOverviewRichBody ? <TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock> : null}</div><RichBodyBlocks blocks={question.body} mode="overview" />{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ExampleBlock items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
           {activeTab === 'visual' ? <div className="focused-panel-stack">{hasVisualRichBody ? <RichBodyBlocks blocks={question.body} mode="visual" /> : <VisualBlock question={question} showFallback />}{hasVisualRichBody ? <VisualBlock question={question} /> : null}</div> : null}
           {activeTab === 'intuition' ? <div className="focused-two-col"><TextBlock title="1. Think first" className="think-box">{question.starterThought}</TextBlock><TextBlock title="2. Mental picture">{question.mentalPicture}</TextBlock><TextBlock title="3. Why this pattern fits">{question.intuition}</TextBlock><TextBlock title="4. Recognition signal">{question.patternSignal}</TextBlock><TextBlock title="5. Invariant to maintain">{question.invariant}</TextBlock></div> : null}
-          {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="focused-two-col"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><TextBlock title="Edge cases">{question.edgeCases}</TextBlock></div><ApproachReinforcementCards question={question} /></div> : null}
+          {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="approach-card-stack"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><ListBlock title="Edge cases" items={question.edgeCases} /></div><ApproachReinforcementCards question={question} /></div> : null}
           {activeTab === 'solution' ? <div className="focused-panel-stack"><TextBlock title="Solution explanation">{explanation}</TextBlock><CodeBlock code={codeContent || 'No code sample is configured yet.'} language={question.language || 'java'} title="Implementation notes" className="workspace-block focused-code-block" /><RichBodyBlocks blocks={question.solutionBody || question.solutionBlocks} mode="overview" /></div> : null}
           {activeTab === 'answer' ? <div className="focused-panel-stack"><McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /><TextBlock title="Explanation">{explanation || question.intuition}</TextBlock><TextBlock title="Final takeaway">{question.finalTakeaway || question.keyTakeaway || question.takeaway}</TextBlock><ListBlock title="Why other options are wrong" items={question.optionExplanations || question.wrongOptionExplanations || question.distractorExplanations} /></div> : null}
           {activeTab === 'complexity' ? <div className="focused-two-col"><TextBlock title="Complexity / trade-off analysis">{question.complexityAnalysis}</TextBlock><TextBlock title="Production reality">{question.productionReality}</TextBlock><TextBlock title="Common mistake">{question.commonMistake}</TextBlock></div> : null}
