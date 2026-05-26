@@ -2,6 +2,168 @@
    Keeps the new mobile-first Home UI inside the viewport while preserving
    horizontal scrolling only inside the recommended starting path carousel. */
 
+/* Issue #151: tablet navigation contract.
+   senior-ui.css intentionally changes the desktop sidebar into a horizontal
+   sticky row below 1100px. That clashes with the later mobile-first shell
+   rules, so this final imported stylesheet pins the medium/tablet range to a
+   deliberate compact vertical sidebar instead of a half-collapsed nav row. */
+@media (min-width: 761px) and (max-width: 1100px) {
+  :root,
+  :root[data-theme="light"],
+  :root[data-theme="dark"] {
+    --sidebar-width: 72px;
+    --page-padding: 20px;
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  .app-shell,
+  .layout {
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    padding-top: 0;
+  }
+
+  .nav,
+  .navbar,
+  .topbar {
+    inset: 0 0 auto var(--sidebar-width);
+    height: var(--nav-height);
+    padding: 0 18px;
+    gap: 14px;
+  }
+
+  .topbar-title {
+    min-width: 0;
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 20px;
+  }
+
+  .sidebar,
+  .app-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 1010;
+    width: var(--sidebar-width);
+    height: 100vh;
+    min-height: 0;
+    max-height: none;
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-right: 1px solid var(--sidebar-border);
+    border-bottom: 0;
+    background: var(--bg-sidebar);
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar,
+  .app-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar-logo {
+    min-height: 44px;
+    justify-content: center;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--sidebar-border);
+  }
+
+  .sidebar-logo .brand-logo {
+    max-width: 42px;
+    max-height: 34px;
+    object-fit: contain;
+  }
+
+  .nav-section {
+    display: grid !important;
+    gap: 8px;
+    padding: 0;
+  }
+
+  .nav-label,
+  .sidebar-spacer,
+  .coffee-link {
+    display: none !important;
+  }
+
+  .app-sidebar .nav-section .nav-item,
+  .nav-item,
+  .sidebar a {
+    width: 100%;
+    min-height: 46px;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    place-items: center;
+    gap: 0;
+    padding: 9px 0;
+    border-radius: 12px;
+    white-space: normal;
+  }
+
+  .app-sidebar .nav-icon {
+    width: 22px;
+    height: 22px;
+    justify-self: center;
+  }
+
+  .app-sidebar .nav-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .page-wrap,
+  .main-content {
+    grid-column: 2;
+    width: 100%;
+    height: 100vh;
+    min-width: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: calc(var(--nav-height) + var(--page-padding)) var(--page-padding) calc(44px + var(--footer-height));
+  }
+
+  .page,
+  .learning-dashboard-page {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .status-bar {
+    left: var(--sidebar-width);
+    padding: 0 var(--page-padding);
+  }
+
+  .bottom-nav {
+    display: none !important;
+  }
+}
+
 @media (max-width: 760px) {
   body,
   #root,
@@ -12,6 +174,11 @@
   .learning-dashboard-page {
     max-width: 100%;
     overflow-x: hidden;
+  }
+
+  .sidebar,
+  .app-sidebar {
+    display: none !important;
   }
 
   .learning-dashboard-page,
