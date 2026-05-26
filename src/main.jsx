@@ -24,6 +24,7 @@ import './styles/mobile-first-rich-problem-ui.css';
 import './styles/mobile-first-topic-library-fix.css';
 import './styles/ux-improvements.css';
 import './styles/mobile-home-overflow-fix.css';
+import './styles/responsive-sidebar-layout.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
