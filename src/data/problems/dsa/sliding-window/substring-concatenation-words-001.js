@@ -18,55 +18,58 @@ const problem = defineProblem({
     'token-window'
   ],
   scenario:
-    'You are solving Substring with Concatenation of All Words. The string should be viewed as word-sized bricks, not loose characters. For example, with s = "barfoofoofoobar" and words = ["foo", "bar", "foo"], each brick has length 3 and the required word-count bag is { foo: 2, bar: 1 }. A valid starting index is one where the next three bricks match that bag exactly.',
+    'You are solving Substring with Concatenation of All Words. The string should be viewed as word-sized bricks, not loose characters. For example, with s = "barfoofoobarthefoobarman" and words = ["bar", "foo", "the"], each brick has length 3. A valid answer starts where the next three bricks contain exactly bar, foo, and the in any order. That is why starts 6, 9, and 12 are valid.',
   prompt:
     'Given a string s and an array words, where every word in words has the same length, return all starting indices of substrings in s that are formed by concatenating every word in words exactly once, in any order, without extra characters between them. If a word appears more than once in words, it must appear the same number of times in the substring. Return the indices in increasing order.',
   question:
     'Given a string s and an array words, where every word in words has the same length, return all starting indices of substrings in s that are formed by concatenating every word in words exactly once, in any order, without extra characters between them. If a word appears more than once in words, it must appear the same number of times in the substring. Return the indices in increasing order.',
   constraints: [
     'All words have the same length, so the string can be scanned as fixed-size tokens instead of one character at a time.',
-    'A valid substring length is words.length * words[0].length. For words = ["foo", "bar"], the valid block length is 6.',
+    'A valid substring length is words.length * words[0].length. For words = ["bar", "foo", "the"], the valid block length is 9.',
+    'The words may appear in any order inside the valid substring.',
     'Duplicate words are meaningful. For ["foo", "foo", "bar"], a valid block must contain foo twice and bar once.',
     'Invalid tokens reset the current window because no valid answer can cross a word that is not required.',
-    'Overflow tokens shrink the window from the left. If foo appears three times but only two are allowed, remove whole tokens until the count is legal again.',
+    'Overflow tokens shrink the window from the left. If foo appears more times than allowed, remove whole tokens until the count is legal again.',
     'Return starting indices in increasing order, even though offset-based scans may discover them grouped by token alignment.'
   ],
   examples: [
     {
-      input: 's = "barfoothefoobarman", words = ["foo", "bar"]',
-      output: '[0, 9]',
-      explanation: 'The substring starting at 0 is "barfoo". The substring starting at 9 is "foobar". Both use "foo" and "bar" exactly once.'
+      input: 's = "barfoofoobarthefoobarman", words = ["bar", "foo", "the"]',
+      output: '[6, 9, 12]',
+      explanation:
+        'The substring starting at 6 is "foobarthe" = "foo" + "bar" + "the". The substring starting at 9 is "barthefoo" = "bar" + "the" + "foo". The substring starting at 12 is "thefoobar" = "the" + "foo" + "bar".'
     },
     {
-      input: 's = "barfoofoofoobar", words = ["foo", "bar", "foo"]',
-      output: '[0, 6]',
-      explanation: 'The required counts are { foo: 2, bar: 1 }. "barfoofoo" starts at 0 and "foofoobar" starts at 6, so both are valid.'
+      input: 's = "barfoothefoobarman", words = ["foo", "bar"]',
+      output: '[0, 9]',
+      explanation:
+        'The substring starting at 0 is "barfoo". The substring starting at 9 is "foobar". Both use "foo" and "bar" exactly once.'
     },
     {
       input: 's = "aaaa", words = ["aa"]',
       output: '[0, 1, 2]',
-      explanation: 'The valid substring "aa" starts at indices 0, 1, and 2. Different token offsets can produce valid starts, so the final result must be ordered.'
+      explanation:
+        'The valid substring "aa" starts at indices 0, 1, and 2. Different token offsets can produce valid starts, so the final result must be ordered.'
     }
   ],
   starterThought:
     'Before writing code, stop thinking character-by-character. The important unit is one whole word. The invariant is: within one offset scan, the active window contains only complete word tokens, currentCounts never exceeds requiredCounts after repair, and matchedWords equals the number of tokens currently inside the window.',
   plainLanguageExplanation:
-    'A valid answer is a block of exact word-sized pieces. If words = ["foo", "bar"], then "barfoo" and "foobar" work. "fooba" does not because it cuts a word. "barfoox" does not because it has an extra character. With duplicates, counts matter: ["foo", "foo", "bar"] requires two foo tokens, not just one.',
+    'A valid answer is a block of exact word-sized pieces. If words = ["bar", "foo", "the"], then "foobarthe", "barthefoo", and "thefoobar" all work because each uses the same three words exactly once. "foofoofoo" does not work because it repeats foo and misses bar and the. With duplicates, counts matter: ["foo", "foo", "bar"] requires two foo tokens, not just one.',
   mentalPicture:
-    'Picture a tray sliding over bricks. Each brick is one word-length slice of the string. The tray is valid only when the bricks inside it match the required word-count bag exactly. A bad brick clears the tray. Too many copies of a good brick forces the tray to slide forward until the extra copy is removed.',
+    'Picture a tray sliding over word bricks. Each brick is one word-length slice of the string. The tray is valid only when the bricks inside it match the required word-count bag exactly. A bad brick clears the tray. Too many copies of a good brick forces the tray to slide forward until the extra copy is removed.',
   intuition:
     'Equal word length is the trick. It lets us run several aligned scans: offset 0, offset 1, up to wordLength - 1. Inside each scan, read one full token at a time. Valid tokens enter the window, overflow tokens make the left side shrink, and invalid tokens reset the window. Because each offset scan appends its own matches, sort the final indices before returning them.',
   workedExample: {
-    input: 's = "barfoofoofoobar", words = ["foo", "bar", "foo"]',
-    answer: [0, 6],
+    input: 's = "barfoofoobarthefoobarman", words = ["bar", "foo", "the"]',
+    answer: [6, 9, 12],
     explanation:
-      'The target counts are { foo: 2, bar: 1 } and each token has length 3. Starting at index 0, "barfoofoo" uses bar once and foo twice. Starting at index 6, "foofoobar" also uses foo twice and bar once.',
+      'The target counts are { bar: 1, foo: 1, the: 1 } and each token has length 3. Starting at 6 gives "foo | bar | the". Starting at 9 gives "bar | the | foo". Starting at 12 gives "the | foo | bar". All three windows match the required word bag exactly.',
     trace: [
-      { token: 'bar', window: '[bar]', currentCounts: { bar: 1 }, note: 'Required token enters.' },
-      { token: 'foo', window: '[bar, foo]', currentCounts: { bar: 1, foo: 1 }, note: 'Still legal, but not complete yet.' },
-      { token: 'foo', window: '[bar, foo, foo]', currentCounts: { bar: 1, foo: 2 }, note: 'Counts match exactly, record 0.' },
-      { token: 'foo', window: '[foo, foo, foo]', currentCounts: { foo: 3 }, note: 'foo overflows, so shrink from the left.' },
-      { token: 'bar', window: '[foo, foo, bar]', currentCounts: { foo: 2, bar: 1 }, note: 'Counts match again, record 6.' }
+      { start: 0, window: '[bar, foo, foo]', currentCounts: { bar: 1, foo: 2 }, note: 'Invalid because the is missing and foo appears too many times.' },
+      { start: 6, window: '[foo, bar, the]', currentCounts: { foo: 1, bar: 1, the: 1 }, note: 'Counts match exactly, record 6.' },
+      { start: 9, window: '[bar, the, foo]', currentCounts: { bar: 1, the: 1, foo: 1 }, note: 'Same words in a different order, record 9.' },
+      { start: 12, window: '[the, foo, bar]', currentCounts: { the: 1, foo: 1, bar: 1 }, note: 'Same words in another order, record 12.' }
     ]
   },
   bruteForceThought:
@@ -209,90 +212,108 @@ class Solution {
     diagram: {
       type: 'array',
       variant: 'sliding-window',
-      title: 'Candidate windows for s = "barfoofoofoobar"',
+      title: 'Candidate windows for s = "barfoofoobarthefoobarman"',
       description:
-        'words = ["foo", "bar", "foo"], so each candidate must contain exactly 3 tokens. Since each word has length 3, offset 0 reads tokens at character starts 0, 3, 6, 9, and 12: bar, foo, foo, foo, bar.',
+        'words = ["bar", "foo", "the"], so each candidate must contain exactly 3 tokens. Since each word has length 3, offset 0 reads tokens at character starts 0, 3, 6, 9, 12, 15, 18, and 21.',
       values: [
         'start 0: bar | foo | foo',
-        'start 3: foo | foo | foo',
-        'start 6: foo | foo | bar'
+        'start 3: foo | foo | bar',
+        'start 6: foo | bar | the',
+        'start 9: bar | the | foo',
+        'start 12: the | foo | bar',
+        'start 15: foo | bar | man'
       ],
       stateTitle: 'Candidate check',
       stateDescription:
-        'Each card is one possible 3-token window. We compare its word counts with required = { foo: 2, bar: 1 }.',
+        'Each card is one possible 3-token window. We compare its word counts with required = { bar: 1, foo: 1, the: 1 }.',
       frames: [
         {
-          title: 'Check the 3-token window starting at character index 0',
+          title: 'Start 0 is not valid',
           activeRange: [0, 0],
-          items: [{ index: 0, role: 'answer' }],
+          items: [{ index: 0, role: 'warning' }],
           state: {
             label: 'start = 0',
             values: {
               candidate: 'bar | foo | foo',
               currentCounts: '{ bar: 1, foo: 2 }',
-              required: '{ bar: 1, foo: 2 }',
-              action: 'record 0',
-              answers: [0]
+              required: '{ bar: 1, foo: 1, the: 1 }',
+              reason: 'the is missing and foo appears twice',
+              answers: []
             },
-            helper: 'This is exactly the required bag of words.'
+            helper: 'Same length is not enough. The word counts must match exactly.'
           },
           description:
-            'The substring "barfoofoo" uses bar once and foo twice, so index 0 is valid.'
+            'The substring "barfoofoo" has the right total length, but it is not a valid concatenation of all required words.'
         },
         {
-          title: 'Slide by one word to the candidate starting at character index 3',
-          activeRange: [1, 1],
-          items: [{ index: 1, role: 'warning' }],
-          state: {
-            label: 'start = 3',
-            values: {
-              candidate: 'foo | foo | foo',
-              currentCounts: '{ foo: 3 }',
-              required: '{ foo: 2, bar: 1 }',
-              action: 'too many foo tokens; shrink from the left',
-              answers: [0]
-            },
-            helper: 'This is not a valid answer because it is missing bar and has one extra foo.'
-          },
-          description:
-            'This is the overflow moment. The window is repaired by moving the left side forward by whole words, not by single characters.'
-        },
-        {
-          title: 'After the overflow repair, check the candidate starting at character index 6',
+          title: 'Start 6 is valid',
           activeRange: [2, 2],
           items: [{ index: 2, role: 'answer' }],
           state: {
             label: 'start = 6',
             values: {
-              candidate: 'foo | foo | bar',
-              currentCounts: '{ foo: 2, bar: 1 }',
-              required: '{ foo: 2, bar: 1 }',
+              candidate: 'foo | bar | the',
+              currentCounts: '{ foo: 1, bar: 1, the: 1 }',
+              required: '{ bar: 1, foo: 1, the: 1 }',
               action: 'record 6',
-              answers: [0, 6]
+              answers: [6]
             },
-            helper: 'This is the next exact match.'
+            helper: 'The words appear in a valid order even though it is not the same order as the input array.'
           },
           description:
-            'The substring "foofoobar" uses foo twice and bar once, so index 6 is valid.'
+            'The substring "foobarthe" is a valid concatenation of foo, bar, and the.'
         },
         {
-          title: 'Return the valid starting indices',
-          activeRange: [0, 2],
-          items: [
-            { index: 0, role: 'answer' },
-            { index: 2, role: 'answer' }
-          ],
+          title: 'Start 9 is also valid',
+          activeRange: [3, 3],
+          items: [{ index: 3, role: 'answer' }],
+          state: {
+            label: 'start = 9',
+            values: {
+              candidate: 'bar | the | foo',
+              currentCounts: '{ bar: 1, the: 1, foo: 1 }',
+              required: '{ bar: 1, foo: 1, the: 1 }',
+              action: 'record 9',
+              answers: [6, 9]
+            },
+            helper: 'Order can change; counts must stay the same.'
+          },
+          description:
+            'The substring "barthefoo" uses the same three words exactly once.'
+        },
+        {
+          title: 'Start 12 is also valid',
+          activeRange: [4, 4],
+          items: [{ index: 4, role: 'answer' }],
+          state: {
+            label: 'start = 12',
+            values: {
+              candidate: 'the | foo | bar',
+              currentCounts: '{ the: 1, foo: 1, bar: 1 }',
+              required: '{ bar: 1, foo: 1, the: 1 }',
+              action: 'record 12',
+              answers: [6, 9, 12]
+            },
+            helper: 'This is the third valid permutation of the same word bag.'
+          },
+          description:
+            'The substring "thefoobar" is valid, so 12 is recorded.'
+        },
+        {
+          title: 'Start 15 is not valid, then return the answer',
+          activeRange: [5, 5],
+          items: [{ index: 5, role: 'warning' }],
           state: {
             label: 'final output',
             values: {
-              validStarts: [0, 6],
-              output: [0, 6],
-              note: 'other offsets are scanned too, then results are sorted'
+              candidate: 'foo | bar | man',
+              reason: 'man is not required and the is missing',
+              output: [6, 9, 12]
             },
             helper: 'The answer contains character start indices, not token-card numbers.'
           },
           description:
-            'The final result for this example is [0, 6].'
+            'After checking the aligned candidates, the valid starting indices are [6, 9, 12].'
         }
       ]
     }
