@@ -18,11 +18,11 @@ const problem = defineProblem({
     'token-window'
   ],
   scenario:
-    'Imagine the string as a row of equal-sized word bricks. For s = "barfoofoofoobar" and words = ["foo", "bar", "foo"], each brick has length 3 and the target brick bag is { foo: 2, bar: 1 }. A valid answer is a starting index where the next three bricks use exactly that bag, in any order, with no missing word, no extra word, and no broken brick. In this example, index 0 gives "barfoofoo" and index 6 gives "foofoobar", so the answer is [0, 6].',
+    'You are solving Substring with Concatenation of All Words. The string should be viewed as word-sized bricks, not loose characters. For example, with s = "barfoofoofoobar" and words = ["foo", "bar", "foo"], each brick has length 3 and the required word-count bag is { foo: 2, bar: 1 }. A valid starting index is one where the next three bricks match that bag exactly.',
   prompt:
-    'Find every starting index where a word-sized block of s is made from all words exactly once. Example: if s = "barfoothefoobarman" and words = ["foo", "bar"], the valid starts are [0, 9] because "barfoo" starts at 0 and "foobar" starts at 9. The hard part is that words may appear in any order, duplicates matter, and the search must move by word-sized tokens rather than ordinary characters.',
+    'Given a string s and an array words, where every word in words has the same length, return all starting indices of substrings in s that are formed by concatenating every word in words exactly once, in any order, without extra characters between them. If a word appears more than once in words, it must appear the same number of times in the substring. Return the indices in increasing order.',
   question:
-    'Find every starting index where a word-sized block of s is made from all words exactly once. Example: if s = "barfoothefoobarman" and words = ["foo", "bar"], the valid starts are [0, 9] because "barfoo" starts at 0 and "foobar" starts at 9. The hard part is that words may appear in any order, duplicates matter, and the search must move by word-sized tokens rather than ordinary characters.',
+    'Given a string s and an array words, where every word in words has the same length, return all starting indices of substrings in s that are formed by concatenating every word in words exactly once, in any order, without extra characters between them. If a word appears more than once in words, it must appear the same number of times in the substring. Return the indices in increasing order.',
   constraints: [
     'All words have the same length, so the string can be scanned as fixed-size tokens instead of one character at a time.',
     'A valid substring length is words.length * words[0].length. For words = ["foo", "bar"], the valid block length is 6.',
@@ -35,17 +35,17 @@ const problem = defineProblem({
     {
       input: 's = "barfoothefoobarman", words = ["foo", "bar"]',
       output: '[0, 9]',
-      explanation: '"barfoo" starts at 0 and "foobar" starts at 9.'
+      explanation: 'The substring starting at 0 is "barfoo". The substring starting at 9 is "foobar". Both use "foo" and "bar" exactly once.'
     },
     {
       input: 's = "barfoofoofoobar", words = ["foo", "bar", "foo"]',
       output: '[0, 6]',
-      explanation: 'The target counts are { foo: 2, bar: 1 }. Both "barfoofoo" and "foofoobar" match exactly.'
+      explanation: 'The required counts are { foo: 2, bar: 1 }. "barfoofoo" starts at 0 and "foofoobar" starts at 6, so both are valid.'
     },
     {
       input: 's = "aaaa", words = ["aa"]',
       output: '[0, 1, 2]',
-      explanation: 'Different token offsets can produce valid starts, so final output order must be normalized.'
+      explanation: 'The valid substring "aa" starts at indices 0, 1, and 2. Different token offsets can produce valid starts, so the final result must be ordered.'
     }
   ],
   starterThought:
