@@ -41,7 +41,7 @@ const learningTracksHeroStyles = `
   .learning-tracks-hero__content {
     display: grid;
     gap: 16px;
-    max-width: 760px;
+    max-width: 820px;
   }
 
   .learning-tracks-hero__identity {
@@ -100,7 +100,7 @@ const learningTracksHeroStyles = `
 
   .learning-tracks-hero__divider {
     width: 100%;
-    max-width: 620px;
+    max-width: 760px;
     height: 1px;
     border: 0;
     margin: 0;
@@ -112,7 +112,7 @@ const learningTracksHeroStyles = `
   }
 
   .learning-tracks-hero__description {
-    max-width: 590px;
+    max-width: 760px;
     margin: 0;
     color: var(--text-secondary);
     font-size: clamp(0.94rem, 1vw, 1rem);
