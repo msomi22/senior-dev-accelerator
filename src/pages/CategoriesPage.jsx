@@ -99,15 +99,12 @@ const learningTracksHeroStyles = `
   }
 
   .learning-tracks-hero__divider {
-    width: min(100%, 420px);
-    height: 1px;
+    width: min(100%, 220px);
+    height: 2px;
     border: 0;
     margin: 0;
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--accent) 78%, var(--border)) 0 48%,
-      color-mix(in srgb, var(--border) 86%, var(--accent)) 48% 100%
-    );
+    justify-self: start;
+    background: color-mix(in srgb, var(--accent) 85%, var(--border));
   }
 
   .learning-tracks-hero__description {
@@ -162,7 +159,7 @@ const learningTracksHeroStyles = `
     }
 
     .learning-tracks-hero__divider {
-      width: 100%;
+      width: min(100%, 180px);
     }
 
     .learning-tracks-hero__description {
