@@ -89,60 +89,73 @@ const problem = defineProblem({
     'Use this pattern when a string problem has equal-length target pieces and validity depends on matching a multiset of tokens.',
   invariant:
     'Within one offset scan, token boundaries stay aligned, currentCounts never exceeds requiredCounts after overflow repair, and matchedWords equals the number of tokens inside the active window.',
-  language: 'javascript',
-  solutionCode: `export function findSubstring(s, words) {
-  if (!s || !Array.isArray(words) || words.length === 0) return [];
+  language: 'java',
+  solutionCode: `import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-  const wordLength = words[0].length;
-  const totalWords = words.length;
-  const totalLength = wordLength * totalWords;
+class Solution {
+    public List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> result = new ArrayList<>();
 
-  if (wordLength === 0 || totalLength > s.length) return [];
+        if (s == null || words == null || words.length == 0) {
+            return result;
+        }
 
-  const required = new Map();
-  for (const word of words) {
-    required.set(word, (required.get(word) || 0) + 1);
-  }
+        int wordLength = words[0].length();
+        int totalWords = words.length;
+        int totalLength = wordLength * totalWords;
 
-  const result = [];
+        if (wordLength == 0 || totalLength > s.length()) {
+            return result;
+        }
 
-  for (let offset = 0; offset < wordLength; offset += 1) {
-    let left = offset;
-    let matchedWords = 0;
-    const current = new Map();
+        Map<String, Integer> required = new HashMap<>();
+        for (String word : words) {
+            required.put(word, required.getOrDefault(word, 0) + 1);
+        }
 
-    for (let right = offset; right + wordLength <= s.length; right += wordLength) {
-      const token = s.slice(right, right + wordLength);
+        for (int offset = 0; offset < wordLength; offset++) {
+            int left = offset;
+            int matchedWords = 0;
+            Map<String, Integer> current = new HashMap<>();
 
-      if (!required.has(token)) {
-        current.clear();
-        matchedWords = 0;
-        left = right + wordLength;
-        continue;
-      }
+            for (int right = offset; right + wordLength <= s.length(); right += wordLength) {
+                String token = s.substring(right, right + wordLength);
 
-      current.set(token, (current.get(token) || 0) + 1);
-      matchedWords += 1;
+                if (!required.containsKey(token)) {
+                    current.clear();
+                    matchedWords = 0;
+                    left = right + wordLength;
+                    continue;
+                }
 
-      while (current.get(token) > required.get(token)) {
-        const leftToken = s.slice(left, left + wordLength);
-        current.set(leftToken, current.get(leftToken) - 1);
-        matchedWords -= 1;
-        left += wordLength;
-      }
+                current.put(token, current.getOrDefault(token, 0) + 1);
+                matchedWords++;
 
-      if (matchedWords === totalWords) {
-        result.push(left);
+                while (current.get(token) > required.get(token)) {
+                    String leftToken = s.substring(left, left + wordLength);
+                    current.put(leftToken, current.get(leftToken) - 1);
+                    matchedWords--;
+                    left += wordLength;
+                }
 
-        const leftToken = s.slice(left, left + wordLength);
-        current.set(leftToken, current.get(leftToken) - 1);
-        matchedWords -= 1;
-        left += wordLength;
-      }
+                if (matchedWords == totalWords) {
+                    result.add(left);
+
+                    String leftToken = s.substring(left, left + wordLength);
+                    current.put(leftToken, current.get(leftToken) - 1);
+                    matchedWords--;
+                    left += wordLength;
+                }
+            }
+        }
+
+        Collections.sort(result);
+        return result;
     }
-  }
-
-  return result.sort((a, b) => a - b);
 }`,
   solution:
     'Scan by token offsets. For each offset, maintain left, right, currentCounts, and matchedWords. Valid tokens extend the window. Overflow shrinks from the left. Invalid tokens reset the window. Exact-count windows record left. Final sorting normalizes the order across different offset scans.',
