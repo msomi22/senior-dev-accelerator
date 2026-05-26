@@ -14,7 +14,8 @@
 @media (min-width: 761px) and (max-width: 1280px) {
   :root,
   :root[data-theme="light"],
-  :root[data-theme="dark"] {
+  :root[data-theme="dark"],
+  .app-shell {
     --sidebar-width: 0px !important;
     --page-padding: 20px;
   }
@@ -24,6 +25,7 @@
   }
 
   .app-shell,
+  .app-shell .layout,
   .layout {
     width: 100%;
     height: 100vh;
@@ -32,18 +34,21 @@
     overflow: hidden;
   }
 
+  .app-shell .layout,
   .layout {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     padding-top: 0 !important;
   }
 
+  .app-shell .nav,
+  .app-shell .navbar,
   .nav,
   .navbar,
   .topbar {
     inset: 0 0 auto 0 !important;
     height: var(--nav-height);
-    padding: 0 18px 0 74px;
+    padding: 0 18px 0 74px !important;
     gap: 14px;
   }
 
@@ -106,6 +111,7 @@
     display: block;
   }
 
+  .app-shell .sidebar,
   .sidebar,
   .app-sidebar {
     position: fixed !important;
@@ -137,6 +143,7 @@
     scrollbar-width: thin;
   }
 
+  .app-shell .app-sidebar.is-floating-open,
   .app-sidebar.is-floating-open {
     transform: translateX(0);
     opacity: 1;
@@ -212,24 +219,31 @@
     border: 0 !important;
   }
 
+  .app-shell .page-wrap,
+  .app-shell .main-content,
   .page-wrap,
   .main-content {
-    grid-column: 1 !important;
-    width: 100%;
-    height: 100vh;
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100vh !important;
     min-width: 0;
     min-height: 0;
+    margin-left: 0 !important;
+    transform: none !important;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: calc(var(--nav-height) + var(--page-padding)) var(--page-padding) calc(44px + var(--footer-height));
+    padding: calc(var(--nav-height) + var(--page-padding)) var(--page-padding) calc(44px + var(--footer-height)) !important;
   }
 
+  .app-shell .page,
   .page,
   .learning-dashboard-page {
     max-width: 100%;
     min-width: 0;
   }
 
+  .app-shell .status-bar,
   .status-bar {
     left: 0 !important;
     padding: 0 var(--page-padding);
