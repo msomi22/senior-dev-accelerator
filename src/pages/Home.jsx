@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
+import '../styles/dashboard-hero.css';
 import {
   getAllTopicsWithCounts,
   getCategoriesWithCounts,
@@ -61,9 +62,9 @@ function DashboardCard({ eyebrow, title, children, action }) {
   );
 }
 
-function StartHereTrack({ nextTopic }) {
+function StartHereTrack({ nextTopic, className = '' }) {
   return (
-    <div style={{ marginTop: 20 }}>
+    <div className={className}>
       <p className="eyebrow" style={{ marginBottom: 10 }}>Recommended starting path</p>
       <div className="start-here-track">
         {START_HERE_STEPS.map((step, i) => (
@@ -147,23 +148,26 @@ export default function Home() {
 
   return (
     <div className="learning-dashboard-page">
-      <section className="hero-card glass learning-hero">
-        <div>
-          <p className="eyebrow">Senior developer learning platform</p>
-          <h1>
+      <section className="hero-card glass learning-hero dashboard-hero">
+        <div className="dashboard-hero__main">
+          <div className="dashboard-hero__identity">
+            <p className="eyebrow dashboard-hero__eyebrow">Senior developer learning platform</p>
+          </div>
+
+          <h1 className="dashboard-hero__title">
             {isNewUser
               ? 'Go from mid-level to senior — one pattern at a time.'
               : 'Master DSA, algorithms, system design, and backend engineering.'}
           </h1>
 
           {/* Value prop — tells new users why this beats raw LeetCode */}
-          <p className="hero-value-prop">
+          <p className="hero-value-prop dashboard-hero__description">
             {isNewUser
               ? 'Pattern-based DSA and system design, structured like a curriculum — not a random problem dump. Start with Sliding Window and build up from there.'
               : 'Senior Dev Accelerator helps developers prepare for coding interviews, strengthen computer science fundamentals, and build practical senior-level engineering skills.'}
           </p>
 
-          <div className="hero-actions">
+          <div className="hero-actions dashboard-hero__actions">
             <Link className="btn" to={nextTopic ? `/category/${nextTopic.category}` : '/random'}>
               {isNewUser ? 'Start learning' : 'Continue recommended path'}
             </Link>
@@ -172,10 +176,12 @@ export default function Home() {
           </div>
 
           {/* Start Here track — shown to new users or those with low progress */}
-          {summary.percent < 20 && <StartHereTrack nextTopic={nextTopic} />}
+          {summary.percent < 20 && (
+            <StartHereTrack nextTopic={nextTopic} className="dashboard-hero__path" />
+          )}
         </div>
 
-        <div className="learning-hero-panel glass-lite">
+        <div className="learning-hero-panel glass-lite dashboard-hero__stage-panel">
           <span>Current stage</span>
           <strong>{learningStage.label}</strong>
           <p>{learningStage.description}</p>
