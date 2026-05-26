@@ -119,6 +119,30 @@
     pointer-events: auto !important;
   }
 
+  .app-shell aside.sidebar.app-sidebar > a.sidebar-logo,
+  .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo,
+  .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo {
+    justify-content: center !important;
+    width: 100% !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    padding: 0 12px 14px !important;
+    border-bottom: 1px solid var(--sidebar-border) !important;
+  }
+
+  .app-shell aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo,
+  .app-shell.light aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo,
+  .app-shell.dark aside.sidebar.app-sidebar > a.sidebar-logo > .brand-logo {
+    width: auto !important;
+    max-width: 132px !important;
+    height: auto !important;
+    max-height: 38px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    margin: 0 auto !important;
+  }
+
   .app-shell .status-bar,
   .app-shell.light .status-bar,
   .app-shell.dark .status-bar {
