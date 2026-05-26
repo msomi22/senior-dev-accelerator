@@ -22,6 +22,8 @@ import './styles/rich-problem.css';
 import './styles/ide-code-block.css';
 import './styles/mobile-first-rich-problem-ui.css';
 import './styles/mobile-first-topic-library-fix.css';
+import './styles/ux-improvements.css';
+import './styles/mobile-home-overflow-fix.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

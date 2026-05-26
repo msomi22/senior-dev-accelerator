@@ -6,7 +6,9 @@ import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import StatusBar from './components/StatusBar.jsx';
-import LoadingCard from './components/LoadingCard.jsx';
+import BottomNav from './components/BottomNav.jsx';
+import OnboardingOverlay from './components/OnboardingOverlay.jsx';
+import PageSkeleton from './components/PageSkeleton.jsx';
 import { useContentProtection } from './hooks/useContentProtection.js';
 import { usePreferences } from './hooks/usePreferences.js';
 
@@ -57,11 +59,17 @@ export default function App() {
   return (
     <div className={`app-shell ${theme}`}>
       <RouteScrollReset theme={theme} />
+
+      {/* First-visit onboarding — shows once, stores dismissal in localStorage */}
+      <OnboardingOverlay />
+
       <Navbar />
       <div className="layout">
         <Sidebar />
         <main className="page-wrap protect-content">
-          <Suspense fallback={<LoadingCard label="Loading page…" />}>
+          {/* PageSkeleton replaces the blank LoadingCard for a better
+              perceived-performance experience on route transitions */}
+          <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/categories" element={<CategoriesPage />} />
@@ -73,11 +81,24 @@ export default function App() {
               <Route path="/progress" element={<ProgressPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/problem/:questionId" element={<ProblemPage />} />
-              <Route path="*" element={<section className="hero-card"><h1>Page not found</h1><p>Use the navigation to continue learning.</p><NavLink className="btn" to="/">Go home</NavLink></section>} />
+              <Route
+                path="*"
+                element={
+                  <section className="hero-card">
+                    <h1>Page not found</h1>
+                    <p>Use the navigation to continue learning.</p>
+                    <NavLink className="btn" to="/">Go home</NavLink>
+                  </section>
+                }
+              />
             </Routes>
           </Suspense>
         </main>
       </div>
+
+      {/* Bottom navigation bar — visible on mobile only (CSS controls display) */}
+      <BottomNav />
+
       <StatusBar />
     </div>
   );
