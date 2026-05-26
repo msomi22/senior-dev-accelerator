@@ -41,7 +41,7 @@ const learningTracksHeroStyles = `
   .learning-tracks-hero__content {
     display: grid;
     gap: 16px;
-    max-width: 820px;
+    width: min(100%, 820px);
   }
 
   .learning-tracks-hero__identity {
@@ -99,12 +99,12 @@ const learningTracksHeroStyles = `
   }
 
   .learning-tracks-hero__divider {
-    width: min(100%, 220px);
-    height: 2px;
+    width: 100%;
+    height: 1px;
     border: 0;
     margin: 0;
-    justify-self: start;
-    background: color-mix(in srgb, var(--accent) 85%, var(--border));
+    justify-self: stretch;
+    background: color-mix(in srgb, var(--accent) 58%, var(--border));
   }
 
   .learning-tracks-hero__description {
@@ -156,10 +156,6 @@ const learningTracksHeroStyles = `
     .learning-tracks-hero__title {
       font-size: clamp(1.85rem, 9vw, 2.35rem);
       letter-spacing: -0.035em;
-    }
-
-    .learning-tracks-hero__divider {
-      width: min(100%, 180px);
     }
 
     .learning-tracks-hero__description {
