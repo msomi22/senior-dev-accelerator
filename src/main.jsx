@@ -25,6 +25,7 @@ import './styles/mobile-first-topic-library-fix.css';
 import './styles/ux-improvements.css';
 import './styles/mobile-home-overflow-fix.css';
 import './styles/responsive-sidebar-layout.css';
+import './styles/responsive-topic-library-cards.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
