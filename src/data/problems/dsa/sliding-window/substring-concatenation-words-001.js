@@ -209,135 +209,90 @@ class Solution {
     diagram: {
       type: 'array',
       variant: 'sliding-window',
-      title: 'Example walkthrough: s = "barfoofoofoobar", words = ["foo", "bar", "foo"]',
+      title: 'Candidate windows for s = "barfoofoofoobar"',
       description:
-        'Word length is 3, so read the string as complete tokens: 0:bar, 3:foo, 6:foo, 9:foo, 12:bar. The target count is { foo: 2, bar: 1 }, so a valid window must contain exactly three tokens with those counts.',
-      values: ['0:bar', '3:foo', '6:foo', '9:foo', '12:bar'],
-      stateTitle: 'Current example state',
+        'words = ["foo", "bar", "foo"], so each candidate must contain exactly 3 tokens. Since each word has length 3, offset 0 reads tokens at character starts 0, 3, 6, 9, and 12: bar, foo, foo, foo, bar.',
+      values: [
+        'start 0: bar | foo | foo',
+        'start 3: foo | foo | foo',
+        'start 6: foo | foo | bar'
+      ],
+      stateTitle: 'Candidate check',
       stateDescription:
-        'Track the required counts, the current window counts, the left start index, and the answer list.',
+        'Each card is one possible 3-token window. We compare its word counts with required = { foo: 2, bar: 1 }.',
       frames: [
         {
-          title: 'Start at index 0 with token "bar"',
+          title: 'Check the 3-token window starting at character index 0',
           activeRange: [0, 0],
-          items: [{ index: 0, role: 'current' }],
+          items: [{ index: 0, role: 'answer' }],
           state: {
-            label: 'Read token at index 0',
+            label: 'start = 0',
             values: {
-              required: '{ foo: 2, bar: 1 }',
-              window: 'bar',
-              currentCounts: '{ bar: 1 }',
-              left: 0,
-              answers: []
-            },
-            helper: 'bar is part of the required word list, so keep it in the window.'
-          },
-          description:
-            'We are not reading characters one by one. We read the whole token "bar" because every word has length 3.'
-        },
-        {
-          title: 'Add token "foo" at index 3',
-          activeRange: [0, 1],
-          items: [
-            { index: 0, role: 'window' },
-            { index: 1, role: 'current' }
-          ],
-          state: {
-            label: 'Window is growing',
-            values: {
-              window: 'bar | foo',
-              currentCounts: '{ bar: 1, foo: 1 }',
-              needed: '{ bar: 1, foo: 2 }',
-              answers: []
-            },
-            helper: 'The window is still missing one more foo.'
-          },
-          description:
-            'The counts are legal, but the window does not yet contain all three required words.'
-        },
-        {
-          title: 'Add token "foo" at index 6: record answer 0',
-          activeRange: [0, 2],
-          items: [
-            { index: 0, role: 'answer' },
-            { index: 1, role: 'window' },
-            { index: 2, role: 'current' }
-          ],
-          state: {
-            label: 'Exact match',
-            values: {
-              substring: 'barfoofoo',
+              candidate: 'bar | foo | foo',
               currentCounts: '{ bar: 1, foo: 2 }',
               required: '{ bar: 1, foo: 2 }',
               action: 'record 0',
               answers: [0]
             },
-            helper: 'The window has exactly the required words, so start index 0 is valid.'
+            helper: 'This is exactly the required bag of words.'
           },
           description:
-            'This is the first full valid block: "bar" + "foo" + "foo".'
+            'The substring "barfoofoo" uses bar once and foo twice, so index 0 is valid.'
         },
         {
-          title: 'Move forward, then token "foo" at index 9 causes overflow',
-          activeRange: [1, 3],
-          items: [
-            { index: 1, role: 'window' },
-            { index: 2, role: 'window' },
-            { index: 3, role: 'warning' }
-          ],
+          title: 'Slide by one word to the candidate starting at character index 3',
+          activeRange: [1, 1],
+          items: [{ index: 1, role: 'warning' }],
           state: {
-            label: 'Too many foo tokens',
+            label: 'start = 3',
             values: {
-              window: 'foo | foo | foo',
+              candidate: 'foo | foo | foo',
               currentCounts: '{ foo: 3 }',
-              allowed: '{ foo: 2 }',
-              action: 'remove tokens from the left'
+              required: '{ foo: 2, bar: 1 }',
+              action: 'too many foo tokens; shrink from the left',
+              answers: [0]
             },
-            helper: 'Do not throw away the whole scan. Shrink from the left until foo is no longer over-counted.'
+            helper: 'This is not a valid answer because it is missing bar and has one extra foo.'
           },
           description:
-            'The new token is valid, but there are now too many copies of it.'
+            'This is the overflow moment. The window is repaired by moving the left side forward by whole words, not by single characters.'
         },
         {
-          title: 'After shrinking, add "bar" at index 12: record answer 6',
-          activeRange: [2, 4],
-          items: [
-            { index: 2, role: 'answer' },
-            { index: 3, role: 'window' },
-            { index: 4, role: 'current' }
-          ],
+          title: 'After the overflow repair, check the candidate starting at character index 6',
+          activeRange: [2, 2],
+          items: [{ index: 2, role: 'answer' }],
           state: {
-            label: 'Second exact match',
+            label: 'start = 6',
             values: {
-              substring: 'foofoobar',
+              candidate: 'foo | foo | bar',
               currentCounts: '{ foo: 2, bar: 1 }',
               required: '{ foo: 2, bar: 1 }',
               action: 'record 6',
               answers: [0, 6]
             },
-            helper: 'The repaired window still leads to a valid block.'
+            helper: 'This is the next exact match.'
           },
           description:
-            'Starting at index 6 gives "foo" + "foo" + "bar", so 6 is valid.'
+            'The substring "foofoobar" uses foo twice and bar once, so index 6 is valid.'
         },
         {
-          title: 'Return the collected starts in increasing order',
-          activeRange: [0, 4],
+          title: 'Return the valid starting indices',
+          activeRange: [0, 2],
           items: [
             { index: 0, role: 'answer' },
             { index: 2, role: 'answer' }
           ],
           state: {
-            label: 'Final answer',
+            label: 'final output',
             values: {
-              foundStarts: [0, 6],
+              validStarts: [0, 6],
               output: [0, 6],
-              reminder: 'sort before returning when multiple offsets are scanned'
+              note: 'other offsets are scanned too, then results are sorted'
             },
-            helper: 'This example stays ordered, but other examples such as s = "aaaa", words = ["aa"] need final ordering normalization.'
+            helper: 'The answer contains character start indices, not token-card numbers.'
           },
           description:
-            'The visual example ends with the expected result: [0, 6].'
+            'The final result for this example is [0, 6].'
         }
       ]
     }
