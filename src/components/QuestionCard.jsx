@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from './Button.jsx';
 import ProblemBodyRenderer from './rich-problem/ProblemBodyRenderer.jsx';
@@ -43,9 +43,10 @@ function getDifficultyClass(difficulty) {
   return 'difficulty-pill';
 }
 
-function getTimeLimitSeconds(question) {
+function getDisplayTime(question) {
+  if (question.estimatedTime) return question.estimatedTime;
   const seconds = Number(question.estimatedTimeSeconds ?? question.metadata?.estimatedTimeSeconds);
-  return Number.isFinite(seconds) && seconds > 0 ? seconds : 0;
+  return Number.isFinite(seconds) && seconds > 0 ? `${seconds}s timed quiz` : '10 min';
 }
 
 function ListBlock({ title, items, ordered = false }) {
@@ -145,11 +146,10 @@ function VisualWalkthrough({ question }) {
   );
 }
 
-function McqBlock({ question, selected, onSelect, showExplanation, disabled, timedAttempt }) {
+function McqBlock({ question, selected, onSelect, showExplanation, disabled }) {
   if (!question.options?.length) return null;
 
   const answered = selected !== null;
-  const missedByTimer = timedAttempt?.status === 'timeout';
   const isCorrect = selected === question.correctAnswer;
   const correctLabel = question.options?.[question.correctAnswer]
     ? `${optionLetter(question.correctAnswer)}. ${question.options[question.correctAnswer]}`
@@ -161,7 +161,7 @@ function McqBlock({ question, selected, onSelect, showExplanation, disabled, tim
         {question.options.map((option, index) => {
           const chosen = selected === index;
           const correct = question.correctAnswer === index;
-          const reveal = answered || showExplanation || missedByTimer;
+          const reveal = answered || showExplanation;
           const className = [
             'option-btn',
             chosen ? 'selected' : '',
@@ -178,11 +178,7 @@ function McqBlock({ question, selected, onSelect, showExplanation, disabled, tim
         })}
       </div>
 
-      {missedByTimer ? (
-        <div className="answer-banner wrong" role="status">
-          Time ended before an option was selected. Best answer: <strong>{correctLabel}</strong>
-        </div>
-      ) : answered ? (
+      {answered ? (
         <div className={`answer-banner ${isCorrect ? 'correct' : 'wrong'}`}>
           {isCorrect ? 'Correct.' : 'Not quite.'} Best answer: <strong>{correctLabel}</strong>
         </div>
@@ -193,17 +189,11 @@ function McqBlock({ question, selected, onSelect, showExplanation, disabled, tim
 
 function QuestionCard({ question, completed, onToggle, disableCardNavigation = false, compact = false }) {
   const [selected, setSelected] = useState(() => storageService.getSelectedAnswer(question.id));
-  const [timedAttempt, setTimedAttempt] = useState(() => storageService.getTimedQuestionAttempt(question.id));
-  const [remainingSeconds, setRemainingSeconds] = useState(() => getTimeLimitSeconds(question));
   const [activePanel, setActivePanel] = useState(null);
-  const lastCompletedQuestionId = useRef(completed ? question.id : '');
   const navigate = useNavigate();
 
   const isMcq = question.type === 'mcq' && question.options?.length;
-  const timeLimitSeconds = getTimeLimitSeconds(question);
-  const isTimedMcq = isMcq && timeLimitSeconds > 0;
-  const timedAttemptComplete = Boolean(timedAttempt?.status);
-  const quizLocked = isTimedMcq && (completed || timedAttemptComplete || remainingSeconds <= 0);
+  const quizLocked = Boolean(completed);
   const showHints = activePanel === 'hints';
   const showThinking = activePanel === 'thinking';
   const showSolution = activePanel === 'solution';
@@ -214,41 +204,8 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
   const summary = getProblemSummary(question);
 
   useEffect(() => {
-    const storedSelected = storageService.getSelectedAnswer(question.id);
-    const storedAttempt = storageService.getTimedQuestionAttempt(question.id);
-    setSelected(storedSelected);
-    setTimedAttempt(storedAttempt);
-    setRemainingSeconds(storedAttempt?.status || storedSelected !== null ? 0 : getTimeLimitSeconds(question));
-    lastCompletedQuestionId.current = completed ? question.id : '';
+    setSelected(storageService.getSelectedAnswer(question.id));
   }, [question.id]);
-
-  useEffect(() => {
-    if (!isTimedMcq || completed || timedAttemptComplete || selected !== null || remainingSeconds <= 0) return undefined;
-
-    const timer = window.setTimeout(() => {
-      setRemainingSeconds((current) => Math.max(0, current - 1));
-    }, 1000);
-
-    return () => window.clearTimeout(timer);
-  }, [completed, isTimedMcq, remainingSeconds, selected, timedAttemptComplete]);
-
-  useEffect(() => {
-    if (!isTimedMcq || completed || timedAttemptComplete || selected !== null || remainingSeconds !== 0) return;
-
-    const attempt = storageService.setTimedQuestionAttempt(question.id, {
-      status: 'timeout',
-      selectedAnswer: null,
-      correctAnswer: question.correctAnswer,
-      completedAt: new Date().toISOString()
-    });
-
-    setTimedAttempt(attempt);
-
-    if (lastCompletedQuestionId.current !== question.id) {
-      lastCompletedQuestionId.current = question.id;
-      onToggle?.(question.id);
-    }
-  }, [completed, isTimedMcq, onToggle, question.correctAnswer, question.id, remainingSeconds, selected, timedAttemptComplete]);
 
   function togglePanel(panel) {
     setActivePanel((current) => (current === panel ? null : panel));
@@ -260,19 +217,7 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
     setSelected(index);
     storageService.setSelectedAnswer(question.id, index);
 
-    if (isTimedMcq) {
-      const attempt = storageService.setTimedQuestionAttempt(question.id, {
-        status: index === question.correctAnswer ? 'correct' : 'incorrect',
-        selectedAnswer: index,
-        correctAnswer: question.correctAnswer,
-        completedAt: new Date().toISOString()
-      });
-      setTimedAttempt(attempt);
-      setRemainingSeconds(0);
-    }
-
-    if (!completed && lastCompletedQuestionId.current !== question.id) {
-      lastCompletedQuestionId.current = question.id;
+    if (!completed) {
       onToggle?.(question.id);
     }
   }
@@ -323,18 +268,10 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
         <div className="meta-strip">
           <span className={`pill type-pill ${typeClass}`}>{typeLabel}</span>
           <span className={`pill ${difficultyClass}`}>{question.difficulty}</span>
-          <span className="time-pill">⏱ {isTimedMcq ? `${Math.max(0, remainingSeconds)}s left` : question.estimatedTime || '10 min'}</span>
-          {isTimedMcq && timedAttempt?.status ? <span className="pill">{timedAttempt.status === 'correct' ? 'Passed' : 'Failed'}</span> : null}
+          <span className="time-pill">⏱ {getDisplayTime(question)}</span>
         </div>
         <button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Reset progress' : 'Mark complete'}</button>
       </div>
-
-      {isTimedMcq ? (
-        <div className="practice-mode-banner" role="status">
-          <strong>Timed quiz:</strong>
-          <span> Select an answer before the timer reaches 0. After completion, use Reset progress to try again.</span>
-        </div>
-      ) : null}
 
       <h3>{question.title}</h3>
       <TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>
@@ -344,7 +281,7 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
       <TextBlock title="Think first" className="think-box">{question.starterThought}</TextBlock>
 
       {isMcq ? (
-        <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} showExplanation={showSolution} disabled={quizLocked} timedAttempt={timedAttempt} />
+        <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} showExplanation={showSolution} disabled={quizLocked} />
       ) : (
         <div className="practice-mode-banner"><strong>No answer input needed.</strong><span> Pause, reason through the approach, then reveal hints and the explanation journey.</span></div>
       )}
@@ -367,7 +304,7 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
         </section>
       ) : null}
 
-      {showSolution || timedAttempt?.status === 'timeout' ? (
+      {showSolution ? (
         <section className="learning-panel explanation-panel">
           <div className="solution-header">
             <span className="mini-label">Final mental model</span>
