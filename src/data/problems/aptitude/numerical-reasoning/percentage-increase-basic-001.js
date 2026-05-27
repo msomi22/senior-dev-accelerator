@@ -11,6 +11,8 @@ const problem = defineMcqProblem({
   estimatedTimeSeconds: 20,
   tags: [
     'aptitude',
+    'cognitive',
+    'cognitive-ability',
     'numerical-reasoning',
     'percentages',
     'percentage-increase',
@@ -18,6 +20,8 @@ const problem = defineMcqProblem({
   ],
   prompt: question,
   question,
+  scenario: 'Timed cognitive aptitude practice for numerical reasoning.',
+  finalPattern: 'Cognitive aptitude — Numerical Reasoning',
   options: [
     '20%',
     '25%',
@@ -31,6 +35,8 @@ const problem = defineMcqProblem({
     'Percentage increase uses the original value as the denominator.'
   ],
   relatedConcepts: [
+    'aptitude test',
+    'cognitive ability',
     'percentage increase',
     'original value',
     'numerical reasoning'
