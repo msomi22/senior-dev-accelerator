@@ -17,8 +17,20 @@ const problem = defineProblem({
     'frequency-map',
     'token-window'
   ],
-  scenario:
-    'You are solving Substring with Concatenation of All Words. The string should be viewed as word-sized bricks, not loose characters. For example, with s = "barfoofoobarthefoobarman" and words = ["bar", "foo", "the"], each brick has length 3. A valid answer starts where the next three bricks contain exactly bar, foo, and the in any order. That is why starts 6, 9, and 12 are valid.',
+  scenario: `We are given s = "barfoofoobarthefoobarman" and words = ["bar", "foo", "the"].
+
+First, look at the string by character index:
+
+Index:  0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+s:      b a r f o o f o o b  a  r  t  h  e  f  o  o  b  a  r  m  a  n
+
+Every word has length 3, so we check word-sized blocks of 3 characters. The required words are bar, foo, and the. A valid answer starts where the next 9 characters can be split into exactly those 3 words in any order.
+
+Starting at index 6 gives "foobarthe" = "foo" + "bar" + "the".
+Starting at index 9 gives "barthefoo" = "bar" + "the" + "foo".
+Starting at index 12 gives "thefoobar" = "the" + "foo" + "bar".
+
+So the answer is [6, 9, 12].`,
   prompt:
     'Given a string s and an array words, where every word in words has the same length, return all starting indices of substrings in s that are formed by concatenating every word in words exactly once, in any order, without extra characters between them. If a word appears more than once in words, it must appear the same number of times in the substring. Return the indices in increasing order.',
   question:
@@ -53,7 +65,7 @@ const problem = defineProblem({
     }
   ],
   starterThought:
-    'Before writing code, stop thinking character-by-character. The important unit is one whole word. The invariant is: within one offset scan, the active window contains only complete word tokens, currentCounts never exceeds requiredCounts after repair, and matchedWords equals the number of tokens currently inside the window.',
+    'Before writing code, stop thinking character-by-character. The important unit is one whole word. Within one offset scan, the active window contains only complete word tokens, currentCounts never exceeds requiredCounts after repair, and matchedWords equals the number of tokens currently inside the window.',
   plainLanguageExplanation:
     'A valid answer is a block of exact word-sized pieces. If words = ["bar", "foo", "the"], then "foobarthe", "barthefoo", and "thefoobar" all work because each uses the same three words exactly once. "foofoofoo" does not work because it repeats foo and misses bar and the. With duplicates, counts matter: ["foo", "foo", "bar"] requires two foo tokens, not just one.',
   mentalPicture:
