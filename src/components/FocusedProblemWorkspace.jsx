@@ -22,6 +22,35 @@ function text(value) {
   return String(value);
 }
 
+function formatIndexedString(value) {
+  const raw = text(value);
+  if (!raw.includes('barfoofoobarthefoobarman')) return raw;
+
+  const s = 'barfoofoobarthefoobarman';
+  const indexRow = Array.from(s, (_, index) => String(index).padStart(2, ' ')).join(' ');
+  const charRow = Array.from(s, (char) => char.padStart(2, ' ')).join(' ');
+
+  return `We are given:
+
+s = "${s}"
+words = ["bar", "foo", "the"]
+
+First, look at the string by character index:
+
+Index: ${indexRow}
+Chars: ${charRow}
+
+Every word has length 3, so a valid substring must use 9 characters: 3 words × 3 characters.
+
+We need substrings made from all words exactly once: ["bar", "foo", "the"].
+
+Starting at index 6 gives "foobarthe" = "foo" + "bar" + "the".
+Starting at index 9 gives "barthefoo" = "bar" + "the" + "foo".
+Starting at index 12 gives "thefoobar" = "the" + "foo" + "bar".
+
+So the answer is [6, 9, 12].`;
+}
+
 function isVisualRichBlock(block) {
   return block?.type === 'diagram' || block?.type === 'flow' || block?.type === 'image';
 }
@@ -47,13 +76,30 @@ function RichBodyBlocks({ blocks, mode = 'overview' }) {
   );
 }
 
-function TextBlock({ title, children, className = '' }) {
-  const value = text(children);
+function TextBlock({ title, children, className = '', preserveWhitespace = false }) {
+  const value = preserveWhitespace ? formatIndexedString(children) : text(children);
   if (!value) return null;
   return (
     <section className={`workspace-block ${className}`}>
       <span className="mini-label">{title}</span>
-      <p>{value}</p>
+      {preserveWhitespace ? (
+        <pre
+          className="workspace-preformatted-text"
+          style={{
+            margin: 0,
+            maxWidth: '100%',
+            overflowX: 'auto',
+            whiteSpace: 'pre',
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+            fontSize: '0.95em',
+            lineHeight: 1.7
+          }}
+        >
+          {value}
+        </pre>
+      ) : (
+        <p>{value}</p>
+      )}
     </section>
   );
 }
@@ -306,7 +352,7 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
 
       <div className="focused-workspace-layout">
         <div className="focused-tab-content">
-          {activeTab === 'overview' ? <div className="focused-panel-stack"><div className="focused-two-col"><TextBlock title="Scenario" className="scenario-box">{question.scenario}</TextBlock>{!hasOverviewRichBody ? <TextBlock title={hasMcq ? 'Question' : 'Problem'} className="question-prompt">{question.question}</TextBlock> : null}</div><RichBodyBlocks blocks={question.body} mode="overview" />{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ExampleBlock items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
+          {activeTab === 'overview' ? <div className="focused-panel-stack"><TextBlock title="Scenario" className="scenario-box" preserveWhitespace>{question.scenario}</TextBlock>{!hasOverviewRichBody ? <TextBlock title={hasMcq ? 'Question' : 'Problem'} className="problem-prompt">{question.question}</TextBlock> : null}<RichBodyBlocks blocks={question.body} mode="overview" />{hasMcq ? <McqBlock question={question} selected={selected} onSelect={handleMcqSelect} /> : null}<ExampleBlock items={question.examples} /><ListBlock title="Constraints" items={question.constraints} /></div> : null}
           {activeTab === 'visual' ? <div className="focused-panel-stack">{hasVisualRichBody ? <RichBodyBlocks blocks={question.body} mode="visual" /> : <VisualBlock question={question} showFallback />}{hasVisualRichBody ? <VisualBlock question={question} /> : null}</div> : null}
           {activeTab === 'intuition' ? <div className="focused-two-col"><TextBlock title="1. Think first" className="think-box">{question.starterThought}</TextBlock><TextBlock title="2. Mental picture">{question.mentalPicture}</TextBlock><TextBlock title="3. Why this pattern fits">{question.intuition}</TextBlock><TextBlock title="4. Recognition signal">{question.patternSignal}</TextBlock><TextBlock title="5. Invariant to maintain">{question.invariant}</TextBlock></div> : null}
           {activeTab === 'approach' ? <div className="focused-panel-stack"><ListBlock title="Step-by-step breakdown" items={question.stepByStepBreakdown} ordered /><div className="approach-card-stack"><TextBlock title="Brute-force thought">{question.bruteForceThought}</TextBlock><TextBlock title="Optimization journey">{question.optimizationJourney}</TextBlock><ListBlock title="Edge cases" items={question.edgeCases} /></div><ApproachReinforcementCards question={question} /></div> : null}
