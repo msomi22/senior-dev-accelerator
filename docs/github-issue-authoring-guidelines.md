@@ -101,15 +101,33 @@ Name the relevant area in the issue summary and references.
 
 ## Branch naming guidance
 
-Use the repository branch naming style. Prefer approved prefixes such as `feature/`, `fix/`, `bugfix/`, `refactor/`, or another prefix already accepted by the project.
+Branch naming is enforced by `.github/workflows/branch-name.yml`. Keep issue branch suggestions aligned with that workflow so contributors do not open PRs that fail the branch-name check.
 
-For documentation work in this repo, use the maintainer-approved feature-style prefix when requested, for example:
+Allowed branch prefixes are:
 
 ```text
-feature/add-github-issue-authoring-guidelines
+feature/
+bugfix/
+hotfix/
+release/
+docs/
 ```
 
-Do not use unsupported prefixes such as `docs/` when they are not part of the repo convention.
+Use a short, lowercase, hyphenated name after the prefix. The workflow also allows letters, numbers, dots, underscores, and hyphens, but prefer lowercase hyphenated names for readability.
+
+Recommended usage:
+
+| Prefix | Use when | Example |
+| --- | --- | --- |
+| `feature/` | New product capability, content area, or meaningful behavior. | `feature/add-aptitude-test-category` |
+| `bugfix/` | Normal bug fixes and regressions. | `bugfix/fix-random-practice-loading` |
+| `hotfix/` | Urgent production fixes. | `hotfix/restore-production-routing` |
+| `release/` | Release preparation or version branches. | `release/1.0.0` |
+| `docs/` | Documentation-only changes. | `docs/update-github-issue-authoring-guidelines` |
+
+For documentation-only issues, prefer `docs/<short-doc-task>` once the workflow supports it. For mixed documentation and implementation work, use `feature/`, `bugfix/`, or another appropriate implementation prefix.
+
+Do not suggest unsupported prefixes such as `fix/`, `refactor/`, `test/`, or `chore/` unless the branch-name workflow is updated first.
 
 ## Required issue sections
 
@@ -149,7 +167,7 @@ Record what was checked: open issues, closed issues, related PRs, docs, and sour
 
 ### Suggested branch name
 
-Use a short lowercase hyphenated branch with the correct repo prefix.
+Use a short lowercase hyphenated branch with a prefix allowed by `.github/workflows/branch-name.yml`.
 
 ### Scope
 
@@ -252,7 +270,13 @@ Read before implementation:
 
 ## Suggested branch name
 
-`feature/<short-hyphenated-name>`
+`<allowed-prefix>/<short-hyphenated-name>`
+
+Examples:
+
+- `feature/add-aptitude-test-category`
+- `bugfix/fix-random-practice-loading`
+- `docs/update-github-issue-authoring-guidelines`
 
 ## Scope
 
@@ -405,7 +429,7 @@ Before submitting an issue, confirm:
 - [ ] summary explains the outcome;
 - [ ] motivation explains why the work matters;
 - [ ] required docs, files, issues, and PRs are referenced;
-- [ ] branch name follows repo convention;
+- [ ] branch name follows `.github/workflows/branch-name.yml`;
 - [ ] scope and non-goals are explicit;
 - [ ] likely files are listed;
 - [ ] implementation requirements are specific;
