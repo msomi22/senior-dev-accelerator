@@ -192,7 +192,7 @@ export default function Home() {
         <ProgressChart {...summary} />
         <div className="glass stat"><h2>{categories.length}</h2><p>categories</p></div>
         <div className="glass stat"><h2>{topicCount}</h2><p>topic banks</p></div>
-        <div className="glass stat"><h2>{loadingStats ? '…' : summary.total}</h2><p>real questions</p></div>
+        <div className="glass stat"><h2>{loadingStats ? '…' : summary.total}</h2><p>practice questions</p></div>
       </section>
 
       <section className="learning-dashboard-grid">
