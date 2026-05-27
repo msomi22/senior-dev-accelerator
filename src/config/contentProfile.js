@@ -26,7 +26,8 @@ const APPROVED_PROD_TOPIC_IDS = new Set([
   'databases',
   'java-core',
   'numerical-reasoning',
-  'ml-foundations'
+  'ml-foundations',
+  'management-track'
 ]);
 
 function resolveProfile(options = {}) {
