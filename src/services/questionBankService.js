@@ -256,6 +256,7 @@ export const systemDesignTopics = filterTopicsForActiveProfile(getTopicsByCatego
 export const javaTopics = filterTopicsForActiveProfile(getTopicsByCategory('java'));
 export const aptitudeTopics = filterTopicsForActiveProfile(getTopicsByCategory('aptitude'));
 export const mlAiTopics = filterTopicsForActiveProfile(getTopicsByCategory('ml-ai'));
+export const engineeringLeadershipTopics = filterTopicsForActiveProfile(getTopicsByCategory('engineering-leadership'));
 
 export function getCategory(categoryId) {
   return categories.find((category) => category.id === categoryId);
@@ -439,7 +440,6 @@ export async function progressSummary(completed = {}, options = {}) {
   }
 
   const done = Object.keys(completed).filter((id) => completed[id] && visibleQuestionIds.has(id)).length;
-
   return { total, done, percent: total ? Math.round((done / total) * 100) : 0 };
 }
 
