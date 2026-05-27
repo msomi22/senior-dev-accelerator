@@ -323,7 +323,7 @@ function ApproachReinforcementCards({ question }) {
 
 function TimedQuizStatus({ seconds, locked }) {
   return (
-    <span className={`time-pill ${locked ? 'locked' : ''}`} aria-live="polite">
+    <span className={`time-pill ${locked ? 'locked' : ''}`} aria-live="polite" title="Quiz countdown">
       ⏱ {Math.max(0, seconds)}s
     </span>
   );
@@ -429,14 +429,17 @@ export default function FocusedProblemWorkspace({ question, completed, onToggle,
         <div className="focused-problem-topline">
           <div className="meta-strip">
             <span className="pill">{question.difficulty}</span>
-            {isTimedMcq ? <TimedQuizStatus seconds={remainingSeconds} locked={quizLocked} /> : <span className="time-pill">Time: {question.estimatedTime || '10 min'}</span>}
+            {!isTimedMcq ? <span className="time-pill">Time: {question.estimatedTime || '10 min'}</span> : null}
           </div>
           <button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Reset progress' : 'Mark complete'}</button>
         </div>
       ) : null}
       <div className="focused-tabs-wrap">
         <div className="focused-tabs" role="tablist" aria-label="Problem learning sections">{tabs.map(([id, label]) => <button key={id} type="button" className={`focused-tab-btn ${activeTab === id ? 'active' : ''}`} role="tab" aria-selected={activeTab === id} onClick={() => setActiveTab(id)}>{label}</button>)}</div>
-        <button type="button" className={`focus-mode-toggle ${focusMode ? 'active' : ''}`} aria-pressed={focusMode} onClick={() => setFocusMode((current) => !current)}>{focusMode ? 'Exit focus' : 'Focus mode'}</button>
+        <div className="focused-tabs-actions">
+          {isTimedMcq ? <TimedQuizStatus seconds={remainingSeconds} locked={quizLocked} /> : null}
+          <button type="button" className={`focus-mode-toggle ${focusMode ? 'active' : ''}`} aria-pressed={focusMode} onClick={() => setFocusMode((current) => !current)}>{focusMode ? 'Exit focus' : 'Focus mode'}</button>
+        </div>
       </div>
 
       <div className="focused-workspace-layout">
