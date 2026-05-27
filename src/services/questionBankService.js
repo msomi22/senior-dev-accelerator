@@ -41,6 +41,14 @@ function hasCustomBankSourceOptions(options = {}) {
   );
 }
 
+function resolveCategory(categoryOrId, options = {}) {
+  if (categoryOrId && typeof categoryOrId === 'object') return categoryOrId;
+
+  return getCategory(categoryOrId)
+    || (options.categories || []).find((category) => category.id === categoryOrId)
+    || null;
+}
+
 export function getOptionalBankPath(topic, modules = bankModules) {
   if (!topic?.category || !topic?.id) return null;
 
@@ -337,11 +345,11 @@ export async function getCategorySummaries(options = {}) {
   }));
 }
 
-export async function getCategoryWithCounts(categoryId, completed = {}, options = {}) {
-  const category = getCategory(categoryId);
+export async function getCategoryWithCounts(categoryOrId, completed = {}, options = {}) {
+  const category = resolveCategory(categoryOrId, options);
   if (!category) return null;
 
-  const topics = await getTopicsWithCounts(categoryId, options);
+  const topics = await getTopicsWithCounts(category.id, options);
   if (!topics.length) return null;
 
   const quizCount = topics.reduce((sum, topic) => sum + topic.count, 0);
@@ -358,7 +366,7 @@ export async function getCategoryWithCounts(categoryId, completed = {}, options 
 
 export async function getCategoriesWithCounts(completed = {}, options = {}) {
   const summaries = await getCategorySummaries(options);
-  const enriched = await Promise.all(summaries.map((category) => getCategoryWithCounts(category.id, completed, options)));
+  const enriched = await Promise.all(summaries.map((category) => getCategoryWithCounts(category, completed, options)));
   return enriched.filter(Boolean);
 }
 
