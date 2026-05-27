@@ -322,9 +322,12 @@ function ApproachReinforcementCards({ question }) {
 }
 
 function TimedQuizStatus({ seconds, locked }) {
+  const safeSeconds = Math.max(0, seconds);
+  const label = locked && safeSeconds === 0 ? 'Quiz closed' : 'Time left';
+
   return (
-    <span className={`time-pill ${locked ? 'locked' : ''}`} aria-live="polite" title="Quiz countdown">
-      ⏱ {Math.max(0, seconds)}s
+    <span className={`time-pill quiz-timer-pill ${locked ? 'locked' : ''}`} aria-live="polite" title="Quiz countdown">
+      <strong>⏱ {label}:</strong> {safeSeconds}s
     </span>
   );
 }
