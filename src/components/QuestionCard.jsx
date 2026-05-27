@@ -220,16 +220,16 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
     setTimedAttempt(storedAttempt);
     setRemainingSeconds(storedAttempt?.status || storedSelected !== null ? 0 : getTimeLimitSeconds(question));
     lastCompletedQuestionId.current = completed ? question.id : '';
-  }, [completed, question]);
+  }, [question.id]);
 
   useEffect(() => {
     if (!isTimedMcq || completed || timedAttemptComplete || selected !== null || remainingSeconds <= 0) return undefined;
 
-    const timer = window.setInterval(() => {
+    const timer = window.setTimeout(() => {
       setRemainingSeconds((current) => Math.max(0, current - 1));
     }, 1000);
 
-    return () => window.clearInterval(timer);
+    return () => window.clearTimeout(timer);
   }, [completed, isTimedMcq, remainingSeconds, selected, timedAttemptComplete]);
 
   useEffect(() => {
@@ -324,7 +324,7 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
           <span className={`pill type-pill ${typeClass}`}>{typeLabel}</span>
           <span className={`pill ${difficultyClass}`}>{question.difficulty}</span>
           <span className="time-pill">⏱ {isTimedMcq ? `${Math.max(0, remainingSeconds)}s left` : question.estimatedTime || '10 min'}</span>
-          {isTimedMcq && timedAttempt?.status ? <span className="pill">{timedAttempt.status === 'correct' ? 'Passed' : 'Incomplete'}</span> : null}
+          {isTimedMcq && timedAttempt?.status ? <span className="pill">{timedAttempt.status === 'correct' ? 'Passed' : 'Failed'}</span> : null}
         </div>
         <button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Reset progress' : 'Mark complete'}</button>
       </div>
