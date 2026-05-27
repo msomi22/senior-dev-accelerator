@@ -1,45 +1,48 @@
 import { defineLearningProblem } from '../../../../problems/problemAuthoring.js';
 
+const prompt = 'A team says, “Our model performed well during training, so production predictions should automatically be reliable.” What important difference between training and inference are they overlooking?';
+
 const problem = defineLearningProblem({
-  id: 'ml-foundations-training-vs-inference-001',
+  id: 'ml-foundations-training-vs-inference-learning-001',
   category: 'ml-ai',
   topicId: 'ml-foundations',
-  title: 'Training vs inference in the ML lifecycle',
+  title: 'Training vs Inference',
   difficulty: 'Easy',
   estimatedTimeSeconds: 180,
   tags: [
-    'ml-ai',
-    'machine-learning',
     'ml-foundations',
     'training',
     'inference',
-    'model-lifecycle'
+    'model-lifecycle',
+    'production-ml',
+    'model-evaluation'
   ],
-  prompt: 'Explain the difference between training and inference in a machine learning system, and why a model that looks strong while being built can still behave poorly after release.',
-  question: 'What is the practical difference between training and inference in a machine learning system?',
+  prompt,
+  question: prompt,
   body: [
-    'Training is the phase where the model learns from historical examples. It compares outputs with known answers and updates its internal parameters so future outputs become better.',
-    'Inference is the phase where the trained model is used on new input. During inference, the model does not learn from the current request; it applies the parameters it already learned during training.',
-    'A model can look strong while being built but behave poorly after release when evaluation is weak, the data changes, preprocessing differs between building and serving, or the model memorizes examples instead of learning a pattern that generalizes.'
+    'Training is the learning phase. The model sees historical examples, compares its output with known answers, and updates its internal parameters so it can make better future outputs.',
+    'Inference is the usage phase. The trained model receives new input and applies what it already learned. A normal production prediction should not automatically update the model just because one request arrived.',
+    'Good training performance is not a guarantee of reliable production behavior. The model may have memorized training examples, evaluation data may not represent real traffic, input data may change, or production preprocessing may differ from the training pipeline.'
   ],
-  explanation: 'Training updates model parameters using historical examples and feedback from known answers. Inference applies those learned parameters to new data. Strong training results are not enough: production behavior depends on clean evaluation, matching preprocessing, stable data assumptions, and whether the model generalizes beyond the examples it saw while learning.',
-  starterThought: 'Ask whether the model is still learning from labeled examples, or whether it is only applying what it already learned.',
+  explanation: 'The team is mixing up training with inference. Training is where the model learns and changes. Inference is where the model uses learned parameters on new data. Production reliability still requires evaluation on data that resembles real usage, checks for data drift, and consistency between training-time and serving-time preprocessing.',
+  starterThought: 'Ask whether the model is still learning from labeled examples or only applying what it already learned.',
   hints: [
-    'Training changes the model. Inference uses the model.',
-    'A production request normally should not update the model parameters immediately.',
-    'High training accuracy can hide memorization or data mismatch.'
+    'Training changes the model; inference uses the model.',
+    'High training performance can hide memorization or weak evaluation.',
+    'Production inputs may not behave like the training dataset.'
   ],
   relatedConcepts: [
-    'model lifecycle',
-    'training data',
-    'model parameters',
+    'training',
     'inference',
     'generalization',
-    'data drift'
+    'overfitting',
+    'training-serving skew',
+    'data drift',
+    'production ML'
   ],
   followUpQuestions: [
-    'What checks would you add before trusting a trained model after release?',
-    'How can preprocessing differences cause training-serving skew?'
+    'What validation data would make this team more confident before release?',
+    'What monitoring would you add after the model starts serving production traffic?'
   ],
   metadata: {
     reviewStatus: 'approved',
