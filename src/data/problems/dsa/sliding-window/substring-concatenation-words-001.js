@@ -17,14 +17,28 @@ const problem = defineProblem({
     'frequency-map',
     'token-window'
   ],
-  scenario: `We are given s = "barfoofoobarthefoobarman" and words = ["bar", "foo", "the"].
+  scenario: `We are given:
+
+s = "barfoofoobarthefoobarman"
+words = ["bar", "foo", "the"]
 
 First, look at the string by character index:
 
-Index:  0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
-s:      b a r f o o f o o b  a  r  t  h  e  f  o  o  b  a  r  m  a  n
+Index:  00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+Chars:   b  a  r  f  o  o  f  o  o  b  a  r  t  h  e  f  o  o  b  a  r  m  a  n
 
-Every word has length 3, so we check word-sized blocks of 3 characters. The required words are bar, foo, and the. A valid answer starts where the next 9 characters can be split into exactly those 3 words in any order.
+Every word has length 3, so we check word-sized blocks of 3 characters.
+
+Start 0   -> "bar"
+Start 3   -> "foo"
+Start 6   -> "foo"
+Start 9   -> "bar"
+Start 12  -> "the"
+Start 15  -> "foo"
+Start 18  -> "bar"
+Start 21  -> "man"
+
+We need substrings made from all words exactly once: ["bar", "foo", "the"].
 
 Starting at index 6 gives "foobarthe" = "foo" + "bar" + "the".
 Starting at index 9 gives "barthefoo" = "bar" + "the" + "foo".
@@ -45,12 +59,6 @@ So the answer is [6, 9, 12].`,
     'Return starting indices in increasing order, even though offset-based scans may discover them grouped by token alignment.'
   ],
   examples: [
-    {
-      input: 's = "barfoofoobarthefoobarman", words = ["bar", "foo", "the"]',
-      output: '[6, 9, 12]',
-      explanation:
-        'The substring starting at 6 is "foobarthe" = "foo" + "bar" + "the". The substring starting at 9 is "barthefoo" = "bar" + "the" + "foo". The substring starting at 12 is "thefoobar" = "the" + "foo" + "bar".'
-    },
     {
       input: 's = "barfoothefoobarman", words = ["foo", "bar"]',
       output: '[0, 9]',
