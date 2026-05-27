@@ -66,7 +66,8 @@ npm run preview
 
 ## Documentation
 
-Problem authoring guide: `docs/problem-authoring.md`
+- Problem authoring guide: `docs/problem-authoring.md`
+- GitHub issue authoring guide: `docs/github-issue-authoring-guidelines.md`
 
 ## Configure the PayPal coffee button
 
