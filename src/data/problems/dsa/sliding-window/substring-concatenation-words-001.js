@@ -237,7 +237,7 @@ class Solution {
       ],
       stateTitle: 'Candidate check',
       stateDescription:
-        'The required words are bar, foo, and the. A candidate is valid only when its 3 pieces contain those same words exactly once, in any order.',
+        'The required counts are bar = 1, foo = 1, and the = 1. A candidate is valid only when its own counts match those required counts exactly.',
       frames: [
         {
           title: 'Start 0 is not valid',
@@ -248,14 +248,16 @@ class Solution {
             values: {
               input: 's = "barfoofoobarthefoobarman"',
               words: '["bar", "foo", "the"]',
+              requiredCounts: 'bar = 1, foo = 1, the = 1',
               candidate: 'bar | foo | foo',
-              reason: 'foo appears twice and the is missing',
+              candidateCounts: 'bar = 1, foo = 2, the = 0',
+              decision: 'invalid: foo appears twice and the is missing',
               answers: []
             },
-            helper: 'This window has the right length, but it does not contain the required words exactly once.'
+            helper: 'Same length is not enough. The word counts must match exactly.'
           },
           description:
-            'Starting at index 0 gives "barfoofoo" = "bar" + "foo" + "foo". It is rejected because "the" is missing.'
+            'Starting at index 0 gives "barfoofoo" = "bar" + "foo" + "foo". It has 2 foo words and 0 the words, so it is rejected.'
         },
         {
           title: 'Start 3 is not valid',
@@ -266,14 +268,16 @@ class Solution {
             values: {
               input: 's = "barfoofoobarthefoobarman"',
               words: '["bar", "foo", "the"]',
+              requiredCounts: 'bar = 1, foo = 1, the = 1',
               candidate: 'foo | foo | bar',
-              reason: 'foo appears twice and the is missing',
+              candidateCounts: 'bar = 1, foo = 2, the = 0',
+              decision: 'invalid: foo appears twice and the is missing',
               answers: []
             },
             helper: 'This is the second candidate window. It is checked before moving to start 6.'
           },
           description:
-            'Starting at index 3 gives "foofoobar" = "foo" + "foo" + "bar". It is also rejected because "the" is missing.'
+            'Starting at index 3 gives "foofoobar" = "foo" + "foo" + "bar". It also has 2 foo words and 0 the words, so it is rejected.'
         },
         {
           title: 'Start 6 is valid',
@@ -284,14 +288,16 @@ class Solution {
             values: {
               input: 's = "barfoofoobarthefoobarman"',
               words: '["bar", "foo", "the"]',
+              requiredCounts: 'bar = 1, foo = 1, the = 1',
               candidate: 'foo | bar | the',
-              reason: 'all required words appear exactly once',
+              candidateCounts: 'bar = 1, foo = 1, the = 1',
+              decision: 'valid: all required counts match',
               answers: [6]
             },
             helper: 'The order is allowed to change. This candidate contains foo, bar, and the exactly once.'
           },
           description:
-            'Starting at index 6 gives "foobarthe" = "foo" + "bar" + "the", so 6 is recorded.'
+            'Starting at index 6 gives "foobarthe" = "foo" + "bar" + "the". Its counts match the required counts, so 6 is recorded.'
         },
         {
           title: 'Start 9 is valid',
@@ -300,15 +306,17 @@ class Solution {
           state: {
             label: 'start = 9',
             values: {
-              candidate: 'bar | the | foo',
               words: '["bar", "foo", "the"]',
-              reason: 'same words, different order',
+              requiredCounts: 'bar = 1, foo = 1, the = 1',
+              candidate: 'bar | the | foo',
+              candidateCounts: 'bar = 1, foo = 1, the = 1',
+              decision: 'valid: same counts, different order',
               answers: [6, 9]
             },
             helper: 'The candidate does not need to match the order inside words. It only needs the same word counts.'
           },
           description:
-            'Starting at index 9 gives "barthefoo" = "bar" + "the" + "foo", so 9 is recorded.'
+            'Starting at index 9 gives "barthefoo" = "bar" + "the" + "foo". Its counts match the required counts, so 9 is recorded.'
         },
         {
           title: 'Start 12 is valid',
@@ -317,15 +325,17 @@ class Solution {
           state: {
             label: 'start = 12',
             values: {
-              candidate: 'the | foo | bar',
               words: '["bar", "foo", "the"]',
-              reason: 'same required words exactly once',
+              requiredCounts: 'bar = 1, foo = 1, the = 1',
+              candidate: 'the | foo | bar',
+              candidateCounts: 'bar = 1, foo = 1, the = 1',
+              decision: 'valid: same required counts exactly once',
               answers: [6, 9, 12]
             },
             helper: 'This is another valid ordering of the same three words.'
           },
           description:
-            'Starting at index 12 gives "thefoobar" = "the" + "foo" + "bar", so 12 is recorded.'
+            'Starting at index 12 gives "thefoobar" = "the" + "foo" + "bar". Its counts match the required counts, so 12 is recorded.'
         },
         {
           title: 'Start 15 is not valid, so the final answer is complete',
@@ -334,15 +344,17 @@ class Solution {
           state: {
             label: 'start = 15',
             values: {
-              candidate: 'foo | bar | man',
               words: '["bar", "foo", "the"]',
-              reason: 'man is not required and the is missing',
+              requiredCounts: 'bar = 1, foo = 1, the = 1',
+              candidate: 'foo | bar | man',
+              candidateCounts: 'bar = 1, foo = 1, the = 0, man = 1',
+              decision: 'invalid: man is not required and the is missing',
               output: [6, 9, 12]
             },
             helper: 'A candidate containing a word outside the required list cannot be a valid answer.'
           },
           description:
-            'Starting at index 15 gives "foobarman" = "foo" + "bar" + "man". Because "man" is not required, the final answer remains [6, 9, 12].'
+            'Starting at index 15 gives "foobarman" = "foo" + "bar" + "man". Because "man" is not required and "the" is missing, the final answer remains [6, 9, 12].'
         }
       ]
     }
