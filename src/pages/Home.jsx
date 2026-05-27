@@ -9,40 +9,16 @@ import {
 } from '../services/questionBankService.js';
 import { getDashboardQuestionSummary } from '../services/visibleQuestionInventoryService.js';
 import { buildCategorySearchParams, categoryPath } from '../services/categoryNavigationService.js';
+import {
+  getRecommendedStartTopics,
+  getTopicDisplayName,
+  getTopicLearningTitle
+} from '../services/dashboardLearningPathService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 import ProgressChart from '../components/ProgressChart.jsx';
 import BuyCoffeeButton from '../components/BuyCoffeeButton.jsx';
 
 const emptySummary = { total: 0, done: 0, percent: 0 };
-
-// The 4-step "Start Here" learning path surfaced on the dashboard.
-// Topics are ordered by recommended learning sequence.
-const START_HERE_STEPS = [
-  {
-    topicId: 'sliding-window',
-    category: 'dsa',
-    label: 'Sliding Window',
-    title: 'Learn fixed and variable windows'
-  },
-  {
-    topicId: 'two-pointers',
-    category: 'dsa',
-    label: 'Two Pointers',
-    title: 'Master the PAIR pattern'
-  },
-  {
-    topicId: 'binary-search',
-    category: 'dsa',
-    label: 'Binary Search',
-    title: 'Understand the SEAR template'
-  },
-  {
-    topicId: 'dynamic-programming',
-    category: 'dsa',
-    label: 'Dynamic Programming',
-    title: 'Tackle the STATE pattern'
-  }
-];
 
 function getTopicLearningPath(topic) {
   if (!topic?.category || !topic?.id) return '/random';
@@ -95,29 +71,31 @@ function DashboardCard({ eyebrow, title, children, action }) {
   );
 }
 
-function StartHereTrack({ topicCountsById, className = '' }) {
+function StartHereTrack({ topics, className = '' }) {
   return (
     <div className={className}>
       <p className="eyebrow" style={{ marginBottom: 10 }}>Recommended starting path</p>
       <div className="start-here-track">
-        {START_HERE_STEPS.map((step, i) => {
-          const count = topicCountsById[step.topicId] ?? 0;
-          const to = getTopicLearningPath({ id: step.topicId, category: step.category });
+        {topics.map((topic, i) => {
+          const count = topic.count ?? 0;
+          const label = getTopicDisplayName(topic);
+          const title = getTopicLearningTitle(topic);
+          const to = getTopicLearningPath(topic);
 
           return (
-            <div key={step.topicId} className="start-here-step">
+            <div key={topic.id} className="start-here-step">
               <Link
                 to={to}
                 className="start-here-step-card"
-                title={`${step.title}. ${count} ${count === 1 ? 'quiz' : 'quizzes'} available.`}
+                title={`${title}. ${count} ${count === 1 ? 'quiz' : 'quizzes'} available.`}
               >
                 <span className="step-num">{i + 1}</span>
-                <span className="start-here-step-label">{step.label}</span>
+                <span className="start-here-step-label">{label}</span>
                 <span className="start-here-step-count">
                   {count} {count === 1 ? 'quiz' : 'quizzes'}
                 </span>
               </Link>
-              {i < START_HERE_STEPS.length - 1 && (
+              {i < topics.length - 1 && (
                 <div className="start-here-connector" aria-hidden="true" />
               )}
             </div>
@@ -163,13 +141,15 @@ export default function Home() {
   const topicCount = categories.reduce((sum, category) => sum + (category.topicCount || 0), 0);
   const remainingQuestions = Math.max(summary.total - summary.done, 0);
   const learningStage = buildLearningStage(summary.percent);
-  const topicCountsById = useMemo(() => Object.fromEntries(
-    topics.map((topic) => [topic.id, topic.count || 0])
-  ), [topics]);
 
   const topicProgressRows = useMemo(() => topics
     .map((topic) => ({ ...topic, progress: topicProgress(topic, completed) }))
     .filter((topic) => topic.progress.total > 0), [topics, completed]);
+
+  const recommendedStartTopics = useMemo(
+    () => getRecommendedStartTopics(topicProgressRows),
+    [topicProgressRows]
+  );
 
   const nextTopic = useMemo(() => {
     const unfinished = topicProgressRows.filter((topic) => topic.progress.percent < 100);
@@ -208,7 +188,7 @@ export default function Home() {
           {/* Value prop — tells new users why this beats raw LeetCode */}
           <p className="hero-value-prop dashboard-hero__description">
             {isNewUser
-              ? 'Pattern-based DSA and system design, structured like a curriculum — not a random problem dump. Start with Sliding Window and build up from there.'
+              ? 'Pattern-based DSA and system design, structured like a curriculum — not a random problem dump. Start with the highest-signal topics and build up from there.'
               : 'Senior Dev Accelerator helps developers prepare for coding interviews, strengthen computer science fundamentals, and build practical senior-level engineering skills.'}
           </p>
 
@@ -221,8 +201,8 @@ export default function Home() {
           </div>
 
           {/* Start Here track — shown to new users or those with low progress */}
-          {summary.percent < 20 && (
-            <StartHereTrack topicCountsById={topicCountsById} className="dashboard-hero__path" />
+          {summary.percent < 20 && recommendedStartTopics.length > 0 && (
+            <StartHereTrack topics={recommendedStartTopics} className="dashboard-hero__path" />
           )}
         </div>
 
