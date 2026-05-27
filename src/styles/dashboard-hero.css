@@ -108,9 +108,28 @@
 }
 
 .dashboard-hero .start-here-step-card {
-  min-width: 140px;
-  min-height: 76px;
+  min-width: 150px;
+  min-height: 92px;
   border-radius: 14px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.dashboard-hero .start-here-step-label {
+  display: block;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.dashboard-hero .start-here-step-count {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .dashboard-hero .start-here-connector {
@@ -213,6 +232,6 @@
   }
 
   .dashboard-hero .start-here-step-card {
-    min-width: 132px;
+    min-width: 142px;
   }
 }
