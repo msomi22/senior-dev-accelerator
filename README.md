@@ -118,3 +118,20 @@ The UI will automatically support progress, random practice, topic navigation, a
 The app includes mild right-click, selection, and shortcut blocking. This is useful for casual friction, but no browser-based protection can fully prevent a determined developer from inspecting client-side content.
 
 ## Performance architecture
+
+This version avoids the earlier runtime slowdown by:
+
+- Lazy loading each route.
+- Lazy loading each topic quiz bank independently.
+- Rendering only the first few questions for the selected topic, then revealing more on demand.
+- Keeping performance knobs in `.env` instead of hardcoding them.
+- Avoiding expensive backdrop blur on repeated cards.
+- Removing React StrictMode double-mount behavior in local development.
+
+Tune these values in `.env`:
+
+```bash
+VITE_INITIAL_VISIBLE_QUESTIONS=5
+VITE_VISIBLE_QUESTIONS_STEP=5
+VITE_ENABLE_TOPIC_ORBIT=true
+```
