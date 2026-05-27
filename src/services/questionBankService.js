@@ -255,6 +255,7 @@ export const dsaTopics = filterTopicsForActiveProfile(getTopicsByCategory('dsa')
 export const systemDesignTopics = filterTopicsForActiveProfile(getTopicsByCategory('system'));
 export const javaTopics = filterTopicsForActiveProfile(getTopicsByCategory('java'));
 export const aptitudeTopics = filterTopicsForActiveProfile(getTopicsByCategory('aptitude'));
+export const mlAiTopics = filterTopicsForActiveProfile(getTopicsByCategory('ml-ai'));
 
 export function getCategory(categoryId) {
   return categories.find((category) => category.id === categoryId);
@@ -392,62 +393,18 @@ export async function getRandomQuestion(filters = {}, options = {}) {
     return true;
   });
 
-  for (const pickedTopic of candidates.sort(() => Math.random() - 0.5)) {
-    const bank = await loadTopicBank(pickedTopic.id, options);
-    if (!bank.questions.length) continue;
+  const banks = await loadTopicBanks(candidates.map((topic) => topic.id), options);
+  const questions = banks.flatMap((bank) => bank.questions || []);
 
-    const question = bank.questions[Math.floor(Math.random() * bank.questions.length)];
-    return { ...question, parentTopic: bank.name, category: bank.category };
-  }
+  if (!questions.length) return null;
 
-  throw new Error('No questions available for the selected filters.');
-}
-
-export async function findQuestionById(questionId) {
-  const topics = await getVisibleTopics();
-
-  for (const topic of topics) {
-    const bank = await loadTopicBank(topic.id);
-    const question = bank.questions.find((item) => item.id === questionId);
-
-    if (question) {
-      const category = getCategory(topic.category);
-      return {
-        question,
-        topic: { ...topic, count: bank.questions.length },
-        bank,
-        category,
-        categoryName: category?.name || topic.category
-      };
-    }
-  }
-
-  return null;
-}
-
-export async function progressSummary(completed = {}, options = {}) {
-  const topicsWithCounts = await getAllTopicsWithCounts(options);
-  const total = topicsWithCounts.reduce((sum, topic) => sum + topic.count, 0);
-  const visibleQuestionIds = new Set();
-
-  for (const topic of topicsWithCounts) {
-    const bank = await loadTopicBank(topic.id, options);
-    for (const question of bank.questions || []) {
-      visibleQuestionIds.add(question.id);
-    }
-  }
-
-  const done = Object.keys(completed).filter((id) => completed[id] && visibleQuestionIds.has(id)).length;
-
-  return { total, done, percent: total ? Math.round((done / total) * 100) : 0 };
+  return questions[Math.floor(Math.random() * questions.length)];
 }
 
 export function topicProgress(topic, completed = {}) {
-  const total = Number(topic.count ?? 0);
-  const prefix = `${topic.id}-`;
-  const done = Object.keys(completed).filter((id) => completed[id] && id.startsWith(prefix)).length;
-
-  return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
+  const ids = Object.keys(completed || {});
+  const done = ids.filter((id) => id.startsWith(`${topic.id}-`)).length;
+  return { done };
 }
 
-export { getProblemValidationResult };
+export { getTopicsByCategoryFrom, getProblemValidationResult };
