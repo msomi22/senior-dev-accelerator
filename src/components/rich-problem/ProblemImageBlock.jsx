@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const DEFAULT_MIN_ZOOM = 0.75;
 const DEFAULT_MAX_ZOOM = 3;
@@ -32,7 +32,7 @@ function isLargeDiagramBlock(block) {
   return searchableText.includes('diagram') || searchableText.includes('architecture');
 }
 
-function ImageViewer({ alt, block, canExpand, expanded = false, onClose, src }) {
+function ImageViewer({ alt, block, canExpand, expanded = false, onClose, onExpand, src }) {
   const minZoom = readZoomNumber(block.minZoom, DEFAULT_MIN_ZOOM);
   const maxZoom = Math.max(minZoom, readZoomNumber(block.maxZoom, DEFAULT_MAX_ZOOM));
   const zoomStep = readZoomNumber(block.zoomStep, DEFAULT_ZOOM_STEP);
@@ -58,7 +58,7 @@ function ImageViewer({ alt, block, canExpand, expanded = false, onClose, src }) 
         <span aria-live="polite">{zoomPercentage}</span>
         <button aria-label="Zoom in" disabled={!canZoomIn} onClick={() => updateScale(scale + zoomStep)} type="button">+</button>
         <button disabled={scale === initialZoom} onClick={resetScale} type="button">Reset</button>
-        {canExpand && !expanded ? <button onClick={onClose} type="button">Fullscreen</button> : null}
+        {canExpand && !expanded ? <button onClick={onExpand} type="button">Fullscreen</button> : null}
         {expanded ? <button onClick={onClose} type="button">Close</button> : null}
       </div>
       <div className={`problem-image-zoom-frame${expanded ? ' problem-image-zoom-frame-expanded' : ''}`}>
@@ -76,6 +76,17 @@ function ImageViewer({ alt, block, canExpand, expanded = false, onClose, src }) 
 export default function ProblemImageBlock({ block }) {
   const [expanded, setExpanded] = useState(false);
 
+  useEffect(() => {
+    if (!expanded) return undefined;
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') setExpanded(false);
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [expanded]);
+
   if (!isTrustedStaticImageSrc(block.src)) {
     return (
       <section className="workspace-block problem-rich-block problem-rich-empty">
@@ -89,23 +100,12 @@ export default function ProblemImageBlock({ block }) {
   const alt = block.alt || block.caption || block.title || 'Problem visual';
   const canZoom = block.zoomable === true || isLargeDiagramBlock(block);
   const canExpand = block.fullscreen !== false;
-  const figureClassName = useMemo(() => [
+  const figureClassName = [
     'workspace-block',
     'problem-rich-block',
     'problem-image-block',
     canZoom ? 'problem-image-zoomable' : ''
-  ].filter(Boolean).join(' '), [canZoom]);
-
-  useEffect(() => {
-    if (!expanded) return undefined;
-
-    function handleKeyDown(event) {
-      if (event.key === 'Escape') setExpanded(false);
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [expanded]);
+  ].filter(Boolean).join(' ');
 
   return (
     <figure className={figureClassName}>
@@ -115,7 +115,8 @@ export default function ProblemImageBlock({ block }) {
           alt={alt}
           block={block}
           canExpand={canExpand}
-          onClose={() => setExpanded(true)}
+          onClose={() => setExpanded(false)}
+          onExpand={() => setExpanded(true)}
           src={src}
         />
       ) : (
