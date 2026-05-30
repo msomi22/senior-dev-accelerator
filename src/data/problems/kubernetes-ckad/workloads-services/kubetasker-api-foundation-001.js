@@ -13,7 +13,7 @@ const problem = defineLearningProblem({
   id: 'kubetasker-api-foundation-001',
   category: 'kubernetes-ckad',
   topicId: 'workloads-services',
-  title: 'KubeTasker API Foundation: Workloads and Services',
+  title: 'Step 1: KubeTasker API Foundation',
   difficulty: 'Easy',
   estimatedTimeSeconds: 1200,
   estimatedTime: '20 min',
@@ -21,13 +21,13 @@ const problem = defineLearningProblem({
   rendering: { variant: 'deep-dive', density: 'comfortable', accent: 'green' },
   prompt,
   question: prompt,
-  scenario: 'You are onboarding KubeTasker, a small task-management API used for CKAD practice. Your job is to run the API in Kubernetes, give it a stable internal name, and prove that another pod can call it through that name.',
+  scenario: 'Start here. You are onboarding KubeTasker, a small task-management API used for CKAD practice. Your job is to run the API in Kubernetes, give it a stable internal name, and prove that another pod can call it through that name.',
   starterThought: 'Do not rush to commands. First understand the chain: Deployment creates the Pod, Service finds the Pod, DNS gives the Service a name, and a client pod proves the path works.',
   intuition: 'A Pod is temporary. A Service gives other pods a stable way to reach it. A Deployment keeps the Pod alive when Kubernetes has to replace it.',
   mentalPicture: 'Think of the namespace as a practice room, the Deployment as the manager, the ReplicaSet as the assistant that keeps one worker present, the Pod as the worker running the API, and the Service as the front desk name that other workers use.',
   patternSignal: 'Use a Deployment plus a ClusterIP Service when one application inside the cluster must call another application inside the same cluster.',
   invariant: 'The Service selector must match the Pod label app=kube-tasker-api. If it does not match, the Service exists but has no backend Pod to send traffic to.',
-  finalPattern: 'Run an internal Kubernetes workload and verify it through Service DNS from another Pod.',
+  finalPattern: 'Step 1 of 2: Run the API with direct Kubernetes commands and verify Service DNS.',
   commonMistake: 'Do not use localhost from the client pod. localhost means the client pod itself, not the API Pod.',
   commonMistakes: [
     'Forgetting -n kubetasker and accidentally checking the default namespace.',
@@ -125,6 +125,7 @@ const problem = defineLearningProblem({
       type: 'checklist',
       title: 'Objective',
       items: [
+        'Start the Workloads and Services learning path with direct Kubernetes commands.',
         'Create a dedicated namespace for the KubeTasker demo API.',
         'Deploy KubeTasker as the first application workload.',
         'Expose the API inside the cluster using a ClusterIP Service.',
@@ -132,6 +133,12 @@ const problem = defineLearningProblem({
         'Verify the API through Kubernetes DNS.',
         'Inspect the Deployment, ReplicaSet, Pod, Service, and Endpoints.'
       ]
+    },
+    {
+      type: 'callout',
+      tone: 'info',
+      title: 'Learning order',
+      content: 'This is Step 1 of 2 in this topic. Complete this lesson before opening the YAML files lesson, because the next lesson modifies the same workload using manifest files.'
     },
     {
       type: 'section',
