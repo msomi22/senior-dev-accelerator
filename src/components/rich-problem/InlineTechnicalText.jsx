@@ -1,6 +1,6 @@
 const markdownLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
 const urlPattern = /(https?:\/\/[^\s]+)/g;
-const inlineTokenPattern = /`([^`]+)`/g;
+const inlineSyntaxPattern = /(`([^`]+)`|\*\*([^*]+)\*\*)/g;
 
 function TechnicalToken({ children, index }) {
   return (
@@ -18,14 +18,20 @@ function TokenizedText({ text }) {
   let match;
   let tokenIndex = 0;
 
-  inlineTokenPattern.lastIndex = 0;
-  while ((match = inlineTokenPattern.exec(text)) !== null) {
-    const [fullMatch, token] = match;
+  inlineSyntaxPattern.lastIndex = 0;
+  while ((match = inlineSyntaxPattern.exec(text)) !== null) {
+    const [fullMatch, , inlineToken, boldText] = match;
     if (match.index > lastIndex) {
       nodes.push(<span key={`plain-${lastIndex}`}>{text.slice(lastIndex, match.index)}</span>);
     }
-    nodes.push(<TechnicalToken index={tokenIndex} key={`token-${match.index}`}>{token}</TechnicalToken>);
-    tokenIndex += 1;
+
+    if (inlineToken) {
+      nodes.push(<TechnicalToken index={tokenIndex} key={`token-${match.index}`}>{inlineToken}</TechnicalToken>);
+      tokenIndex += 1;
+    } else if (boldText) {
+      nodes.push(<strong key={`strong-${match.index}`}>{boldText}</strong>);
+    }
+
     lastIndex = match.index + fullMatch.length;
   }
 
