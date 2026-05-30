@@ -244,18 +244,18 @@ const problem = defineLearningProblem({
           body: [
             { type: 'section', title: 'When to use this path', content: 'Use this as the preferred CKAD practice path when you want VM-based Kubernetes practice with kubeadm and direct node access. The lab uses Cilium only as the Kubernetes networking layer.' },
             { type: 'section', title: 'Create an AWS account', content: 'Create or sign in to an AWS account here: https://portal.aws.amazon.com/billing/signup. After the account is ready, open AWS CloudShell or authenticate the AWS CLI locally.' },
-            { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CloudShell access, or AWS CLI installed locally and authenticated with aws configure.', 'Permission to create CloudFormation, EC2, VPC, subnet, route table, internet gateway, security group, and EBS resources.', 'An existing EC2 key pair in the target AWS region.', 'The matching private key file on your machine, for example demo-app-2026.pem.', 'Your public IP address in CIDR format, for example 203.0.113.10/32.', 'For this AWS EC2 path, run kubectl/k after SSH into the EC2 instance. kubectl is installed automatically on that instance; local kubectl is only needed if you choose to copy kubeconfig and manage the cluster from your own machine.'] },
+            { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CloudShell access, or AWS CLI installed locally and authenticated with aws configure.', 'Permission to create CloudFormation, EC2, VPC, subnet, route table, internet gateway, security group, and EBS resources.', 'An existing EC2 key pair in the target AWS region. In this guide, the AWS key pair name is demo-app-2026.', 'The matching private key file on your machine, for example demo-app-2026.pem.', 'Your public IP address in CIDR format, for example 203.0.113.10/32.', 'For this AWS EC2 path, run kubectl/k after SSH into the EC2 instance. kubectl is installed automatically on that instance; local kubectl is only needed if you choose to copy kubeconfig and manage the cluster from your own machine.'] },
             { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 35-45/month for one t3.medium style single-node lab. Cost can increase with EBS storage, AWS public IPv4 charges, NAT, and data transfer. This lab does not create Elastic IPs. Delete the stack when finished.' },
             ...command('Set AWS region', 'Sets Oregon as the AWS region where CloudFormation and EC2 resources will be created.', 'export AWS_REGION=us-west-2'),
             ...command('Set stack name', 'Gives the CloudFormation stack a predictable name that is reused by later commands.', 'export STACK_NAME=kubetasker-ckad'),
-            ...command('Set EC2 key pair name', 'Uses an existing EC2 key pair from the selected AWS region. Replace the placeholder with your real key pair name.', 'export KEY_NAME=YOUR_EXISTING_EC2_KEY_PAIR'),
-            ...command('Set private key path', 'Points SSH to the local private key file that matches the EC2 key pair. The example file name is demo-app-2026.pem.', 'export KEY_PATH=~/Downloads/demo-app-2026.pem'),
+            ...command('Set EC2 key pair name', 'Sets the AWS EC2 key pair name. This is the key pair name in AWS and does not include the .pem extension.', 'export KEY_NAME=demo-app-2026'),
+            ...command('Set private key path', 'Points SSH to the local private key file that matches the EC2 key pair. This file path must include the .pem extension.', 'export KEY_PATH=~/Downloads/demo-app-2026.pem'),
             ...command('Restrict private key permissions', 'Makes the private key acceptable to SSH on Linux and macOS. SSH commonly rejects keys that are too open.', 'chmod 400 "$KEY_PATH"'),
             ...command('Set SSH access CIDR', 'Detects your current public IP and restricts SSH, Kubernetes API, and NodePort access to that IP only.', 'export ACCESS_CIDR=$(curl -fsSL https://checkip.amazonaws.com)/32'),
             ...command('Create lab folder', 'Creates a local folder to keep the CloudFormation template for this lab.', 'mkdir -p ~/kubetasker-ckad-lab'),
             ...command('Enter lab folder', 'Moves your shell into the lab folder so the template file is created and used from the same location.', 'cd ~/kubetasker-ckad-lab'),
             ...command('Create CloudFormation template file', 'Writes the AWS infrastructure template into a local YAML file. This is one copy block because the heredoc is one file-creation command.', `cat > kubetasker-ckad-aws-cloudformation.yaml <<'CFN_YAML'\n${awsCloudFormationTemplate}CFN_YAML`),
-            ...command('Create CloudFormation stack', 'Starts the AWS EC2 kubeadm + Cilium lab using the template file and the variables you already set.', `aws cloudformation create-stack \
+            ...command('Create CloudFormation stack', 'Starts the AWS EC2 kubeadm + Cilium lab using the template file and the variables you already set. KEY_NAME is the AWS key pair name, not the .pem file path.', `aws cloudformation create-stack \
   --stack-name "$STACK_NAME" \
   --region "$AWS_REGION" \
   --template-body file://kubetasker-ckad-aws-cloudformation.yaml \
@@ -274,8 +274,9 @@ const problem = defineLearningProblem({
   --region "$AWS_REGION" \
   --query "Stacks[0].Outputs[?OutputKey=='ControlPlanePublicIp'].OutputValue" \
   --output text)`),
-            ...command('Print SSH command', 'Prints the exact SSH command with the private key path and public IP before connecting.', 'echo "ssh -i $KEY_PATH ubuntu@$PUBLIC_IP"'),
-            ...command('SSH into the lab', 'Connects to the EC2 control-plane instance using the private key file. Run the Kubernetes commands after you are inside this SSH session.', 'ssh -i "$KEY_PATH" ubuntu@"$PUBLIC_IP"'),
+            ...command('Print SSH command', 'Prints the exact SSH command before connecting. KEY_PATH must point to the local .pem file, for example ~/Downloads/demo-app-2026.pem.', 'echo "ssh -i $KEY_PATH ubuntu@$PUBLIC_IP"'),
+            ...command('SSH into the lab', 'Connects to the EC2 control-plane instance using the local .pem private key file. Run the Kubernetes commands after you are inside this SSH session.', 'ssh -i "$KEY_PATH" ubuntu@"$PUBLIC_IP"'),
+            ...command('Enable kubectl shorthand', 'Defines k as a shortcut for kubectl in the current SSH session. Run this after SSH before using any k commands.', 'alias k=kubectl'),
             ...command('Verify nodes', 'Confirms the Kubernetes node is registered and shows its readiness status.', 'k get nodes -o wide'),
             ...command('Verify all pods', 'Lists pods across all namespaces so you can confirm the system components are coming up.', 'k get pods -A'),
             ...command('Verify Cilium status', 'Confirms Cilium is installed and healthy before continuing with application practice.', 'cilium status --wait'),
@@ -309,6 +310,7 @@ const problem = defineLearningProblem({
   --size "$DO_NODE_SIZE" \
   --count "$DO_NODE_COUNT" \
   --wait`),
+            ...command('Enable kubectl shorthand', 'Defines k as a shortcut for kubectl in the current terminal session before using any k commands.', 'alias k=kubectl'),
             ...command('Verify DigitalOcean nodes', 'Confirms kubectl can reach the cluster and shows node readiness.', 'k get nodes -o wide'),
             ...kubeTaskerCommandBlocks(),
             ...command('Clean up application resources', 'Deletes only the KubeTasker namespace and its practice resources.', 'k delete namespace kubetasker --ignore-not-found'),
@@ -333,6 +335,7 @@ const problem = defineLearningProblem({
   --size "$CIVO_NODE_SIZE" \
   --wait`),
             ...command('Save Civo kubeconfig', 'Saves the Civo cluster kubeconfig so kubectl can target the new cluster.', 'civo kubernetes config "$CIVO_CLUSTER_NAME" --region "$CIVO_REGION" --save'),
+            ...command('Enable kubectl shorthand', 'Defines k as a shortcut for kubectl in the current terminal session before using any k commands.', 'alias k=kubectl'),
             ...command('Verify Civo nodes', 'Confirms kubectl can reach the cluster and shows node readiness.', 'k get nodes -o wide'),
             ...kubeTaskerCommandBlocks(),
             ...command('Clean up application resources', 'Deletes only the KubeTasker namespace and its practice resources.', 'k delete namespace kubetasker --ignore-not-found'),
@@ -355,6 +358,7 @@ const problem = defineLearningProblem({
   --nodes 1 \
   --node-type t3.small \
   --managed`),
+            ...command('Enable kubectl shorthand', 'Defines k as a shortcut for kubectl in the current terminal session before using any k commands.', 'alias k=kubectl'),
             ...command('Verify EKS nodes', 'Confirms kubectl can reach the EKS cluster and shows node readiness.', 'k get nodes -o wide'),
             ...kubeTaskerCommandBlocks(),
             ...command('Clean up application resources', 'Deletes only the KubeTasker namespace and its practice resources.', 'k delete namespace kubetasker --ignore-not-found'),
