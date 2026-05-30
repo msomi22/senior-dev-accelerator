@@ -231,6 +231,7 @@ const problem = defineLearningProblem({
   prompt,
   question: prompt,
   body: [
+    { type: 'section', title: 'Objective', content: 'I can create a Kubernetes practice environment, connect to it with `k`, verify that the control-plane node is ready, choose the right provider path, and clean up the lab safely when I am done.' },
     { type: 'section', title: 'Why this lab exists', content: 'CKAD practice works best when the learner can repeatedly create Kubernetes objects, inspect them, break them, fix them, and clean up without guessing the infrastructure setup. Pick one provider tab below and follow only that setup path.' },
     { type: 'callout', tone: 'warning', title: 'Cost cleanup warning', content: 'Do not leave cloud Kubernetes labs running after practice. Delete the lab immediately when finished. This AWS EC2 path does not create Elastic IPs; it uses the normal auto-assigned EC2 public IPv4 from the public subnet.' },
     {
