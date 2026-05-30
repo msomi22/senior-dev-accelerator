@@ -32,6 +32,39 @@ function hasListItems(items) {
   return Array.isArray(items) && items.length > 0;
 }
 
+function getFiniteSequenceValue(value) {
+  if (value === null || value === undefined || value === '') return null;
+
+  const numericValue = Number(value);
+
+  return Number.isFinite(numericValue) ? numericValue : null;
+}
+
+function getProblemSequence(question) {
+  const sequence = getFiniteSequenceValue(
+    question?.metadata?.sequence ??
+      question?.sequence ??
+      question?.metadata?.order ??
+      question?.order
+  );
+
+  return sequence ?? Number.MAX_SAFE_INTEGER;
+}
+
+function compareProblemFallback(a, b) {
+  const titleDelta = String(a?.title || '').localeCompare(String(b?.title || ''));
+  if (titleDelta !== 0) return titleDelta;
+
+  return String(a?.id || '').localeCompare(String(b?.id || ''));
+}
+
+function compareProblemsBySequence(a, b) {
+  const sequenceDelta = getProblemSequence(a) - getProblemSequence(b);
+  if (sequenceDelta !== 0) return sequenceDelta;
+
+  return compareProblemFallback(a, b);
+}
+
 function TopicMetadataList({ className, items }) {
   if (!hasListItems(items)) return null;
 
@@ -189,9 +222,13 @@ function TopicSection({
   const isControlled = typeof currentPage === 'number';
 
   const safeQuestions = questions || topic.questions || [];
+  const orderedQuestions = useMemo(
+    () => [...safeQuestions].sort(compareProblemsBySequence),
+    [safeQuestions]
+  );
 
   const pageSize = Math.max(1, performanceConfig.questionsPerPage);
-  const totalQuestions = safeQuestions.length;
+  const totalQuestions = orderedQuestions.length;
   const totalPages = Math.max(1, Math.ceil(totalQuestions / pageSize));
   const rawPage = isControlled ? currentPage : internalPage;
   const safePage = clampPage(rawPage, totalPages);
@@ -229,8 +266,8 @@ function TopicSection({
   const pageEnd = Math.min(pageStart + pageSize, totalQuestions);
 
   const visibleQuestions = useMemo(
-    () => safeQuestions.slice(pageStart, pageEnd),
-    [safeQuestions, pageStart, pageEnd]
+    () => orderedQuestions.slice(pageStart, pageEnd),
+    [orderedQuestions, pageStart, pageEnd]
   );
 
   const pageNumbers = useMemo(
