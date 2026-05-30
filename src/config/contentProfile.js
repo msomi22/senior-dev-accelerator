@@ -26,7 +26,7 @@ const APPROVED_PROD_TOPIC_IDS = new Set([
   'databases',
   'java-core',
   'ckad-preparation',
-  'ckad-stage-1',
+  'workloads-services',
   'numerical-reasoning',
   'ml-foundations',
   'management-track'
