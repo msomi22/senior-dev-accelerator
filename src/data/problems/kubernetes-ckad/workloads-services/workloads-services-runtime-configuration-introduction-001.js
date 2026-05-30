@@ -99,7 +99,6 @@ spec:
     spec:
       containers:
         - name: api
-          # Required image for this quiz.
           image: msomi22/kubetasker-api:0.2.0
           ports:
             - containerPort: 8080
@@ -209,7 +208,6 @@ spec:
     spec:
       containers:
         - name: api
-          # Required image for this quiz.
           image: msomi22/kubetasker-api:0.2.0
           # Overrides the image startup command.
           # Used by KubeTasker only when this is the supported app startup shape.
@@ -299,7 +297,7 @@ const problem = defineLearningProblem({
   prompt,
   question: prompt,
   scenario: 'KubeTasker now runs as a workload and is reachable through a Service. This quiz uses runtime configuration to change app behavior, then verifies the result from the running app.',
-  starterThought: 'Do not only check that a Kubernetes object exists. Apply the manifests, confirm the Deployment image required by this quiz, then verify behavior from KubeTasker endpoints and logs.',
+  starterThought: 'Do not only check that a Kubernetes object exists. Apply the manifests, confirm the Deployment uses the image shown in the YAML, then verify behavior from KubeTasker endpoints and logs.',
   intuition: 'Runtime configuration is useful only when the app consumes it. Kubernetes stores, injects, or mounts values; KubeTasker proves those values are active through /config/status, /ready, /tasks/stats, root output, and logs.',
   mentalPicture: 'Think of each manifest as a contract: comments say what KubeTasker expects, kubectl applies the contract, and app endpoints prove the contract is working.',
   patternSignal: 'Use this sequence: create config objects, deploy the app, expose the Service, then verify from KubeTasker.',
@@ -346,7 +344,7 @@ const problem = defineLearningProblem({
         'I can read YAML comments to understand what KubeTasker uses from each manifest.',
         'I can apply each manifest with kubectl.',
         'I can verify Kubernetes wiring with get and describe commands.',
-        'I can verify the Deployment is using the required image for this quiz.',
+        'I can verify the Deployment is using the image shown in the manifest.',
         'I can verify app behavior from /config/status, /ready, /tasks/stats, /, and logs.',
         'I can avoid leaking Secret values while still proving the app received a Secret.'
       ]
@@ -355,7 +353,7 @@ const problem = defineLearningProblem({
       type: 'callout',
       tone: 'info',
       title: 'Quiz image rule',
-      content: 'Use the image shown in the Deployment manifest for runnable KubeTasker examples in this quiz. Only use another version if a step explicitly says it is a comparison and the comparison does not require the newly added runtime-configuration features.'
+      content: 'Use the image shown in the Deployment manifest for runnable KubeTasker examples in this quiz. Only use another image if a step explicitly says it is a comparison and the comparison does not require the newly added runtime-configuration features.'
     },
     ...yamlExample('1. Namespace manifest', 'The namespace keeps all KubeTasker runtime configuration resources together. Read the YAML comments, then apply it.', 'namespace.yaml', namespaceYaml),
     ...command('Apply the namespace', 'Create the namespace used by all later manifests.', 'k apply -f namespace.yaml'),
@@ -374,8 +372,8 @@ k -n kubetasker describe secret kube-tasker-api-secret`),
     ...command('Apply the mounted file ConfigMap', 'Create or update the ConfigMap that will later be mounted as /etc/kubetasker/app-config.yaml.', 'k apply -f file-config-configmap.yaml'),
     ...command('Verify the file ConfigMap exists', 'Kubernetes proof: confirm the ConfigMap contains app-config.yaml.', 'k -n kubetasker describe configmap kube-tasker-file-config'),
 
-    ...yamlExample('5. Deployment manifest', 'The Deployment is the point where app verification becomes valid because it wires the required image, ConfigMap values, Secret values, and mounted config file into the Pod.', 'deployment.yaml', deploymentYaml),
-    ...command('Apply the Deployment', 'Create or update the KubeTasker API Deployment using the image required by this quiz.', `k apply -f deployment.yaml
+    ...yamlExample('5. Deployment manifest', 'The Deployment is the point where app verification becomes valid because it wires the image, ConfigMap values, Secret values, and mounted config file into the Pod.', 'deployment.yaml', deploymentYaml),
+    ...command('Apply the Deployment', 'Create or update the KubeTasker API Deployment.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api`),
     ...command('Verify the Deployment image and wiring', 'Kubernetes proof: confirm the Deployment uses the expected image and has the expected selector, labels, env refs, Secret refs, volume, and mount.', `k -n kubetasker get deploy kube-tasker-api -o=jsonpath='{.spec.template.spec.containers[0].image}{"\\n"}'
 k -n kubetasker describe deploy kube-tasker-api
@@ -398,7 +396,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/`),
 
     ...jsonExample('Expected /config/status response', 'This is the kind of safe app-level proof expected after the Deployment, Service, and client Pod are applied. Secret values are never shown.', 'config-status-response.json', configStatusJson),
 
-    ...command('Later: apply config changes to the confirmed app', 'Use rollout restart only after the Deployment image is already confirmed. This prevents restarting an older app version that cannot prove the runtime-config behavior required by this quiz.', `k apply -f configmap.yaml
+    ...command('Later: apply config changes to the confirmed app', 'Use rollout restart only after the Deployment image is already confirmed. This prevents restarting an older app image that cannot prove the runtime-config behavior required by this quiz.', `k apply -f configmap.yaml
 k -n kubetasker get deploy kube-tasker-api -o=jsonpath='{.spec.template.spec.containers[0].image}{"\\n"}'
 k -n kubetasker rollout restart deploy/kube-tasker-api
 k -n kubetasker rollout status deploy/kube-tasker-api
@@ -415,7 +413,7 @@ k -n kubetasker logs deploy/kube-tasker-api`),
       type: 'comparison',
       title: 'Debugging pattern',
       items: [
-        { label: 'If app verification endpoints are missing', content: 'First confirm the Deployment image matches the image required by this quiz.' },
+        { label: 'If app verification endpoints are missing', content: 'First confirm the Deployment image matches the image shown in the manifest.' },
         { label: 'If Kubernetes object is missing', content: 'Use get/describe first, then re-apply the YAML in the correct namespace.' },
         { label: 'If the object exists but the app shows old values', content: 'Confirm the Deployment image, restart or roll the Deployment, then call /config/status again.' },
         { label: 'If Secret exists but app says token is missing', content: 'Check secretKeyRef name/key in the Deployment. Do not print the token value.' },
@@ -426,7 +424,7 @@ k -n kubetasker logs deploy/kube-tasker-api`),
     {
       type: 'section',
       title: 'Final takeaway',
-      content: 'For this quiz style, the YAML carries its own explanation through comments. Apply the config objects, run the Deployment using the image shown in the manifest, then verify from the app. Only use another image version for an explicit comparison that does not depend on newly added runtime-configuration features.'
+      content: 'For this quiz style, the YAML carries its own explanation through comments. Apply the config objects, run the Deployment using the image shown in the manifest, then verify from the app. Only use another image for an explicit comparison that does not depend on newly added runtime-configuration features.'
     }
   ]
 });
