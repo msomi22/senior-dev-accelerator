@@ -73,7 +73,28 @@ const problem = defineLearningProblem({
     {
       type: 'section',
       title: 'Download the lab scripts',
-      content: 'The scripts are served from /downloads/ckad/. Download them into your terminal or cloud shell before creating the lab. The most important files are aws-create-kubetasker-lab.sh, aws-status-kubetasker-lab.sh, aws-delete-kubetasker-lab.sh, do-create-kubetasker-lab.sh, civo-create-kubetasker-lab.sh, and k8s-stage-01-commands.sh.'
+      content: 'Use the links below to download the setup, status, cleanup, and Stage 1 command files directly from the site.'
+    },
+    {
+      type: 'table',
+      title: 'Explicit download links',
+      columns: ['File', 'Download link', 'Purpose'],
+      rows: [
+        ['AWS CloudFormation template', '[/downloads/ckad/kubetasker-ckad-aws-cloudformation.yaml](/downloads/ckad/kubetasker-ckad-aws-cloudformation.yaml)', 'Creates the AWS EC2 kubeadm + Cilium lab infrastructure.'],
+        ['AWS create script', '[/downloads/ckad/aws-create-kubetasker-lab.sh](/downloads/ckad/aws-create-kubetasker-lab.sh)', 'Creates the AWS CloudFormation stack.'],
+        ['AWS status script', '[/downloads/ckad/aws-status-kubetasker-lab.sh](/downloads/ckad/aws-status-kubetasker-lab.sh)', 'Shows stack status, outputs, recent events, and lab instances.'],
+        ['AWS list script', '[/downloads/ckad/aws-list-kubetasker-lab.sh](/downloads/ckad/aws-list-kubetasker-lab.sh)', 'Lists EC2 instances tagged for the lab.'],
+        ['AWS stop script', '[/downloads/ckad/aws-stop-kubetasker-lab.sh](/downloads/ckad/aws-stop-kubetasker-lab.sh)', 'Stops AWS lab instances to pause compute cost.'],
+        ['AWS start script', '[/downloads/ckad/aws-start-kubetasker-lab.sh](/downloads/ckad/aws-start-kubetasker-lab.sh)', 'Starts stopped AWS lab instances.'],
+        ['AWS delete script', '[/downloads/ckad/aws-delete-kubetasker-lab.sh](/downloads/ckad/aws-delete-kubetasker-lab.sh)', 'Deletes the AWS CloudFormation stack.'],
+        ['DigitalOcean create script', '[/downloads/ckad/do-create-kubetasker-lab.sh](/downloads/ckad/do-create-kubetasker-lab.sh)', 'Creates a small DigitalOcean Kubernetes cluster.'],
+        ['DigitalOcean delete script', '[/downloads/ckad/do-delete-kubetasker-lab.sh](/downloads/ckad/do-delete-kubetasker-lab.sh)', 'Deletes the DigitalOcean Kubernetes cluster.'],
+        ['Civo create script', '[/downloads/ckad/civo-create-kubetasker-lab.sh](/downloads/ckad/civo-create-kubetasker-lab.sh)', 'Creates a small Civo Kubernetes cluster.'],
+        ['Civo delete script', '[/downloads/ckad/civo-delete-kubetasker-lab.sh](/downloads/ckad/civo-delete-kubetasker-lab.sh)', 'Deletes the Civo Kubernetes cluster.'],
+        ['Optional EKS create script', '[/downloads/ckad/eks-create-kubetasker-lab.sh](/downloads/ckad/eks-create-kubetasker-lab.sh)', 'Creates the optional EKS lab.'],
+        ['Optional EKS delete script', '[/downloads/ckad/eks-delete-kubetasker-lab.sh](/downloads/ckad/eks-delete-kubetasker-lab.sh)', 'Deletes the optional EKS lab.'],
+        ['Stage 1 command reference', '[/downloads/ckad/k8s-stage-01-commands.sh](/downloads/ckad/k8s-stage-01-commands.sh)', 'Copy/paste commands for the first KubeTasker API deployment.']
+      ]
     },
     {
       type: 'code',
