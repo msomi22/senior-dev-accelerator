@@ -38,12 +38,12 @@ const problem = defineLearningProblem({
     {
       type: 'table',
       title: 'Prerequisite checklist by path',
-      columns: ['Path', 'Required tools', 'Required cloud setup'],
+      columns: ['Path', 'Required tools', 'Required cloud setup', 'Estimated monthly cost'],
       rows: [
-        ['AWS EC2 + kubeadm + Cilium', 'aws and bash. kubectl is installed on the EC2 instance automatically.', 'AWS account, EC2 key pair, and permission to create CloudFormation, EC2, VPC, and security group resources.'],
-        ['DigitalOcean Kubernetes', 'doctl, kubectl, bash.', 'DigitalOcean account and authenticated doctl CLI.'],
-        ['Civo Kubernetes', 'civo, kubectl, bash.', 'Civo account and authenticated civo CLI.'],
-        ['AWS EKS', 'aws, eksctl, kubectl, bash.', 'AWS account and permission to create EKS, EC2, IAM, and VPC resources.']
+        ['AWS EC2 + kubeadm + Cilium', 'aws and bash. kubectl is installed on the EC2 instance automatically.', 'AWS account, EC2 key pair, and permission to create CloudFormation, EC2, VPC, and security group resources.', '~USD 35-45/month for one t3.medium style single-node lab; more with worker nodes, EBS, public IPv4, and data transfer.'],
+        ['DigitalOcean Kubernetes', 'doctl, kubectl, bash.', 'DigitalOcean account and authenticated doctl CLI.', '~USD 24/month for one s-2vcpu-4gb node; storage and load balancers cost extra.'],
+        ['Civo Kubernetes', 'civo, kubectl, bash.', 'Civo account and authenticated civo CLI.', '~USD 20-30/month for one small/medium node; exact cost depends on selected size and region.'],
+        ['AWS EKS', 'aws, eksctl, kubectl, bash.', 'AWS account and permission to create EKS, EC2, IAM, and VPC resources.', '~USD 110-160/month or more: EKS control plane plus worker nodes, storage, public IPv4, and network charges.']
       ]
     },
     {
