@@ -22,7 +22,7 @@ const problem = defineLearningProblem({
     {
       type: 'section',
       title: 'Why this lab exists',
-      content: 'CKAD practice works best when the learner can repeatedly create Kubernetes objects, inspect them, break them, fix them, and clean up without guessing the infrastructure setup. Pick one provider tab below, follow only that setup path, then continue to Stage 1.'
+      content: 'CKAD practice works best when the learner can repeatedly create Kubernetes objects, inspect them, break them, fix them, and clean up without guessing the infrastructure setup. Pick one provider tab below and follow only that setup path.'
     },
     {
       type: 'callout',
@@ -100,6 +100,18 @@ chmod +x *.sh
             },
             {
               type: 'code',
+              title: 'Deploy and verify KubeTasker API',
+              language: 'bash',
+              code: 'k create namespace kubetasker --dry-run=client -o yaml\nk create deployment kube-tasker-api --image=msomi22/kubetasker-api:0.1.1 -n kubetasker\nk expose deployment kube-tasker-api --name=kube-tasker-api --port=80 --target-port=8080 -n kubetasker\nk -n kubetasker run kube-tasker-client --image=busybox:1.36 --restart=Never --command -- sleep 3600\nk -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health'
+            },
+            {
+              type: 'code',
+              title: 'Clean up application resources',
+              language: 'bash',
+              code: 'k delete namespace kubetasker --ignore-not-found'
+            },
+            {
+              type: 'code',
               title: 'Delete the AWS lab after practice',
               language: 'bash',
               code: './aws-delete-kubetasker-lab.sh --stack-name kubetasker-ckad --region us-west-2'
@@ -151,6 +163,18 @@ chmod +x *.sh
 
 ./do-create-kubetasker-lab.sh
 k get nodes -o wide`
+            },
+            {
+              type: 'code',
+              title: 'Deploy and verify KubeTasker API',
+              language: 'bash',
+              code: 'k create namespace kubetasker --dry-run=client -o yaml\nk create deployment kube-tasker-api --image=msomi22/kubetasker-api:0.1.1 -n kubetasker\nk expose deployment kube-tasker-api --name=kube-tasker-api --port=80 --target-port=8080 -n kubetasker\nk -n kubetasker run kube-tasker-client --image=busybox:1.36 --restart=Never --command -- sleep 3600\nk -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health'
+            },
+            {
+              type: 'code',
+              title: 'Clean up application resources',
+              language: 'bash',
+              code: 'k delete namespace kubetasker --ignore-not-found'
             },
             {
               type: 'code',
@@ -209,6 +233,18 @@ k get nodes -o wide`
             },
             {
               type: 'code',
+              title: 'Deploy and verify KubeTasker API',
+              language: 'bash',
+              code: 'k create namespace kubetasker --dry-run=client -o yaml\nk create deployment kube-tasker-api --image=msomi22/kubetasker-api:0.1.1 -n kubetasker\nk expose deployment kube-tasker-api --name=kube-tasker-api --port=80 --target-port=8080 -n kubetasker\nk -n kubetasker run kube-tasker-client --image=busybox:1.36 --restart=Never --command -- sleep 3600\nk -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health'
+            },
+            {
+              type: 'code',
+              title: 'Clean up application resources',
+              language: 'bash',
+              code: 'k delete namespace kubetasker --ignore-not-found'
+            },
+            {
+              type: 'code',
               title: 'Delete the Civo lab after practice',
               language: 'bash',
               code: './civo-delete-kubetasker-lab.sh'
@@ -261,54 +297,35 @@ k get nodes -o wide`
             },
             {
               type: 'code',
-              title: 'Delete the EKS lab after practice',
-              language: 'bash',
-              code: './eks-delete-kubetasker-lab.sh'
-            }
-          ]
-        },
-        {
-          id: 'stage-1',
-          label: 'Stage 1',
-          body: [
-            {
-              type: 'section',
-              title: 'Deploy KubeTasker API foundation',
-              content: 'After your selected cluster is ready, use the Stage 1 command reference. It creates the kubetasker namespace, deploys the kube-tasker-api image, exposes the Service, starts a temporary client Pod, and checks the API through the Service.'
-            },
-            {
-              type: 'code',
-              title: 'Download and inspect the Stage 1 command reference',
-              language: 'bash',
-              code: `curl -fsSLO ${ACADEMY_DOWNLOADS_URL}/k8s-stage-01-commands.sh
-chmod +x k8s-stage-01-commands.sh
-less k8s-stage-01-commands.sh`
-            },
-            {
-              type: 'code',
-              title: 'Stage 1 core commands preview',
+              title: 'Deploy and verify KubeTasker API',
               language: 'bash',
               code: 'k create namespace kubetasker --dry-run=client -o yaml\nk create deployment kube-tasker-api --image=msomi22/kubetasker-api:0.1.1 -n kubetasker\nk expose deployment kube-tasker-api --name=kube-tasker-api --port=80 --target-port=8080 -n kubetasker\nk -n kubetasker run kube-tasker-client --image=busybox:1.36 --restart=Never --command -- sleep 3600\nk -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health'
             },
             {
               type: 'code',
-              title: 'Clean up Stage 1 application resources',
+              title: 'Clean up application resources',
               language: 'bash',
               code: 'k delete namespace kubetasker --ignore-not-found'
+            },
+            {
+              type: 'code',
+              title: 'Delete the EKS lab after practice',
+              language: 'bash',
+              code: './eks-delete-kubetasker-lab.sh'
             }
           ]
         }
       ]
     }
   ],
-  explanation: 'A good CKAD preparation lab starts with one clear provider choice, a ready cloud account, authenticated CLI, kubectl access, copy/paste creation commands, verification, Stage 1 practice, and cleanup. AWS EC2 with kubeadm and Cilium is the preferred VM-based path. DigitalOcean and Civo are faster managed alternatives. EKS is optional and can cost more.',
-  starterThought: 'First choose one provider tab, prepare that account and CLI, create the lab, verify the cluster, then continue to Stage 1.',
+  explanation: 'A good CKAD preparation lab starts with one clear provider choice, a ready cloud account, authenticated CLI, kubectl access, copy/paste creation commands, verification, KubeTasker API practice, and cleanup. AWS EC2 with kubeadm and Cilium is the preferred VM-based path. DigitalOcean and Civo are faster managed alternatives. EKS is optional and can cost more.',
+  starterThought: 'First choose one provider tab, prepare that account and CLI, create the lab, verify the cluster, deploy KubeTasker API, then clean up.',
   hints: [
     'Use k as shorthand for kubectl throughout the lessons.',
     'Every provider path must have a cleanup command.',
     'For the AWS kubeadm path, verify Cilium with cilium status --wait before continuing.',
-    'Do not continue to Stage 1 until k get nodes works.',
-    'Stage 1 commands are available at /downloads/ckad/k8s-stage-01-commands.sh.'
+    'Do not deploy KubeTasker until k get nodes works.',
+    'The command reference is available at /downloads/ckad/k8s-stage-01-commands.sh.'
   ],
   relatedConcepts: ['kubectl', 'kubeadm', 'Cilium', 'CloudFormation', 'managed Kubernetes', 'cleanup', 'KubeTasker'],
   followUpQuestions: [
@@ -316,7 +333,7 @@ less k8s-stage-01-commands.sh`
     'How will you confirm that the cluster is ready before deploying KubeTasker?',
     'Which command destroys the full cloud environment when you finish?'
   ],
-  finalTakeaway: 'Choose one provider path, create the lab with the provided commands, verify the cluster, practice Stage 1 with k, then clean up the application and delete the cloud environment when done.',
+  finalTakeaway: 'Choose one provider path, create the lab with the provided commands, verify the cluster, deploy KubeTasker API with k, then clean up the application and delete the cloud environment when done.',
   metadata: {
     reviewStatus: 'approved',
     visibility: ['dev', 'prod'],
