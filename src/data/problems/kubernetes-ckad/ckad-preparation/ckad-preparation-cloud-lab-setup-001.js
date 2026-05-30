@@ -60,7 +60,7 @@ const problem = defineLearningProblem({
               type: 'callout',
               tone: 'info',
               title: 'Estimated monthly cost',
-              content: 'Approximate cost: USD 35-45/month for one t3.medium style single-node lab. Cost can increase with worker nodes, EBS storage, public IPv4, NAT, and data transfer. Delete the stack when finished.'
+              content: 'Approximate cost: USD 35-45/month for one t3.medium style single-node lab. Cost can increase with worker nodes, EBS storage, public IPv4 addresses, Elastic IPs, NAT, and data transfer. Delete the stack when finished.'
             },
             {
               type: 'code',
@@ -275,7 +275,7 @@ k get nodes -o wide`
               type: 'callout',
               tone: 'warning',
               title: 'Estimated monthly cost',
-              content: 'Approximate cost: USD 110-160/month or more because EKS includes a managed control plane plus worker nodes, storage, public IPv4, and network charges. Delete the cluster when finished.'
+              content: 'Approximate cost: USD 110-160/month or more because EKS includes a managed control plane plus worker nodes, storage, public IPv4 addresses, possible Elastic IPs, and network charges. Delete the cluster when finished.'
             },
             {
               type: 'code',
