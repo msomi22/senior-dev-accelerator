@@ -78,15 +78,16 @@ const problem = defineLearningProblem({
 export KEY_NAME=YOUR_EXISTING_EC2_KEY_PAIR
 export ACCESS_CIDR=YOUR_PUBLIC_IP/32
 export STACK_NAME=kubetasker-ckad
+export BASE_URL="${DOWNLOADS_URL}"
 
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
 
-curl -fL -o kubetasker-ckad-aws-cloudformation.yaml ${DOWNLOADS_URL}/kubetasker-ckad-aws-cloudformation.yaml
-curl -fL -o aws-create-kubetasker-lab.sh ${DOWNLOADS_URL}/aws-create-kubetasker-lab.sh
-curl -fL -o aws-status-kubetasker-lab.sh ${DOWNLOADS_URL}/aws-status-kubetasker-lab.sh
-curl -fL -o aws-delete-kubetasker-lab.sh ${DOWNLOADS_URL}/aws-delete-kubetasker-lab.sh
-curl -fL -o k8s-stage-01-commands.sh ${DOWNLOADS_URL}/k8s-stage-01-commands.sh
+curl -fL -o kubetasker-ckad-aws-cloudformation.yaml "$BASE_URL/kubetasker-ckad-aws-cloudformation.yaml"
+curl -fL -o aws-create-kubetasker-lab.sh "$BASE_URL/aws-create-kubetasker-lab.sh"
+curl -fL -o aws-status-kubetasker-lab.sh "$BASE_URL/aws-status-kubetasker-lab.sh"
+curl -fL -o aws-delete-kubetasker-lab.sh "$BASE_URL/aws-delete-kubetasker-lab.sh"
+curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
 
 head -n 1 aws-create-kubetasker-lab.sh
@@ -109,24 +110,9 @@ bash -n aws-create-kubetasker-lab.sh
               language: 'bash',
               code: 'ssh ubuntu@PUBLIC_IP\n\nk get nodes -o wide\nk get pods -A\ncilium status --wait\nk -n kube-system get pods -l k8s-app=cilium'
             },
-            {
-              type: 'code',
-              title: 'Deploy and verify KubeTasker API',
-              language: 'bash',
-              code: deployKubeTaskerCommands
-            },
-            {
-              type: 'code',
-              title: 'Clean up application resources',
-              language: 'bash',
-              code: 'k delete namespace kubetasker --ignore-not-found'
-            },
-            {
-              type: 'code',
-              title: 'Delete the AWS lab after practice',
-              language: 'bash',
-              code: './aws-delete-kubetasker-lab.sh --stack-name kubetasker-ckad --region us-west-2'
-            }
+            { type: 'code', title: 'Deploy and verify KubeTasker API', language: 'bash', code: deployKubeTaskerCommands },
+            { type: 'code', title: 'Clean up application resources', language: 'bash', code: 'k delete namespace kubetasker --ignore-not-found' },
+            { type: 'code', title: 'Delete the AWS lab after practice', language: 'bash', code: './aws-delete-kubetasker-lab.sh --stack-name kubetasker-ckad --region us-west-2' }
           ]
         },
         {
@@ -148,13 +134,14 @@ bash -n aws-create-kubetasker-lab.sh
 export DO_REGION=nyc1
 export DO_NODE_SIZE=s-2vcpu-4gb
 export DO_NODE_COUNT=1
+export BASE_URL="${DOWNLOADS_URL}"
 
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
 
-curl -fL -o do-create-kubetasker-lab.sh ${DOWNLOADS_URL}/do-create-kubetasker-lab.sh
-curl -fL -o do-delete-kubetasker-lab.sh ${DOWNLOADS_URL}/do-delete-kubetasker-lab.sh
-curl -fL -o k8s-stage-01-commands.sh ${DOWNLOADS_URL}/k8s-stage-01-commands.sh
+curl -fL -o do-create-kubetasker-lab.sh "$BASE_URL/do-create-kubetasker-lab.sh"
+curl -fL -o do-delete-kubetasker-lab.sh "$BASE_URL/do-delete-kubetasker-lab.sh"
+curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
 
 ./do-create-kubetasker-lab.sh
@@ -184,13 +171,14 @@ k get nodes -o wide`
 export CIVO_REGION=LON1
 export CIVO_NODE_SIZE=g4s.kube.medium
 export CIVO_NODE_COUNT=1
+export BASE_URL="${DOWNLOADS_URL}"
 
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
 
-curl -fL -o civo-create-kubetasker-lab.sh ${DOWNLOADS_URL}/civo-create-kubetasker-lab.sh
-curl -fL -o civo-delete-kubetasker-lab.sh ${DOWNLOADS_URL}/civo-delete-kubetasker-lab.sh
-curl -fL -o k8s-stage-01-commands.sh ${DOWNLOADS_URL}/k8s-stage-01-commands.sh
+curl -fL -o civo-create-kubetasker-lab.sh "$BASE_URL/civo-create-kubetasker-lab.sh"
+curl -fL -o civo-delete-kubetasker-lab.sh "$BASE_URL/civo-delete-kubetasker-lab.sh"
+curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
 
 ./civo-create-kubetasker-lab.sh
@@ -218,13 +206,14 @@ k get nodes -o wide`
               language: 'bash',
               code: `export EKS_CLUSTER_NAME=kubetasker-ckad
 export AWS_REGION=us-west-2
+export BASE_URL="${DOWNLOADS_URL}"
 
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
 
-curl -fL -o eks-create-kubetasker-lab.sh ${DOWNLOADS_URL}/eks-create-kubetasker-lab.sh
-curl -fL -o eks-delete-kubetasker-lab.sh ${DOWNLOADS_URL}/eks-delete-kubetasker-lab.sh
-curl -fL -o k8s-stage-01-commands.sh ${DOWNLOADS_URL}/k8s-stage-01-commands.sh
+curl -fL -o eks-create-kubetasker-lab.sh "$BASE_URL/eks-create-kubetasker-lab.sh"
+curl -fL -o eks-delete-kubetasker-lab.sh "$BASE_URL/eks-delete-kubetasker-lab.sh"
+curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
 
 ./eks-create-kubetasker-lab.sh
