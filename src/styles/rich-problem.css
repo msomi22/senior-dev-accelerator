@@ -18,6 +18,41 @@
   margin: 0;
 }
 
+.problem-rich-block a,
+.problem-tabs-description a,
+.problem-checklist a,
+.problem-rich-caption a {
+  color: #2563eb;
+  font-weight: 850;
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.problem-rich-block a:visited,
+.problem-tabs-description a:visited,
+.problem-checklist a:visited,
+.problem-rich-caption a:visited {
+  color: #7c3aed;
+}
+
+.problem-rich-block a:hover,
+.problem-tabs-description a:hover,
+.problem-checklist a:hover,
+.problem-rich-caption a:hover {
+  color: #1d4ed8;
+  text-decoration-thickness: 3px;
+}
+
+.problem-rich-block a:focus-visible,
+.problem-tabs-description a:focus-visible,
+.problem-checklist a:focus-visible,
+.problem-rich-caption a:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
+}
+
 /* Rendering metadata variants */
 
 .problem-rich-variant-architecture-case-study {
