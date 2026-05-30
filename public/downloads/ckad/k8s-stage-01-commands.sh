@@ -15,7 +15,7 @@ k get nodes -o wide
 k get pods -A
 
 # Namespace
-k create namespace kubetasker --dry-run=client -o yaml
+k create namespace kubetasker --dry-run=client -o yaml | k apply -f -
 k get namespaces
 k config set-context --current --namespace=kubetasker
 
