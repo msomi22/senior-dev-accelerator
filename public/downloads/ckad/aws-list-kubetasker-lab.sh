@@ -4,11 +4,23 @@ set -euo pipefail
 REGION="${AWS_REGION:-us-west-2}"
 LAB_TAG="${LAB_TAG:-kubetasker-ckad}"
 
+usage() {
+  cat <<'EOF'
+Usage: ./aws-list-kubetasker-lab.sh [options]
+
+Options:
+  --region REGION         AWS region. Default: AWS_REGION or us-west-2
+  --lab-tag TAG           EC2 Lab tag value. Default: LAB_TAG or kubetasker-ckad
+  -h, --help              Show this help.
+EOF
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --region) REGION="$2"; shift 2 ;;
     --lab-tag) LAB_TAG="$2"; shift 2 ;;
-    *) echo "Unknown option: $1" >&2; exit 1 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
   esac
 done
 
