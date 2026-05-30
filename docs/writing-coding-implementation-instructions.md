@@ -191,6 +191,19 @@ For problem-authoring tasks, include:
 
 Every new quiz/problem must include a learner-facing `Objective` section near the top of the content. The Objective should answer: `What should the learner be able to do after completing this problem?` Prefer concise `I can...` wording. For CKAD problems, this is required from now onward and should appear before scenario, story, or explanatory sections such as `Why this lab exists`.
 
+For CKAD and Kubernetes lessons, every command block must follow the command authoring standard:
+
+- one command block must contain one executable command only;
+- every command must have its own learner-facing explanation immediately before it;
+- the explanation must say what the command checks or changes, why it is being run, and what the learner should notice;
+- do not stack multiple unrelated commands in one block;
+- do not hide cleanup commands inside normal text or fenced Markdown inside a section;
+- use a real `code` block for every executable command;
+- avoid grouped Kubernetes resource lists unless the grouped form is itself the exact concept being taught;
+- when grouping is used, explain the grouping and keep Kubernetes comma syntax tight, for example `deploy,rs`, not `deploy, rs`;
+- prefer independent inspection commands for beginner lessons, even when experienced users would combine them;
+- code blocks may scroll horizontally on small screens, but normal explanatory text must wrap on desktop.
+
 For any new question/problem, include a visual walkthrough requirement whenever possible. Make it explicit instead of only linking `docs/visual-schema.md`.
 
 Use this wording unless the task has a clear reason not to include one:
@@ -288,6 +301,7 @@ Before posting implementation instructions, confirm:
 - [ ] Required docs are linked.
 - [ ] `docs/visual-schema.md` is linked for new question/problem work where visual learning may apply.
 - [ ] Every new quiz/problem includes a learner-facing Objective section near the top of the content.
+- [ ] CKAD/Kubernetes command content follows the command authoring standard: one command block, one command, one immediate explanation.
 - [ ] Exact file paths are provided.
 - [ ] Existing reference files are provided.
 - [ ] A visual walkthrough is explicitly required where the question has state, movement, decisions, transitions, or learner-visible steps.
@@ -338,131 +352,3 @@ When producing the final answer in chat, first write the required ChatGPT chat n
 
     - #<target issue>
     - #<parent epic>
-    - #<quality standard>
-    - `docs/adding-new-problems.md`
-    - `docs/visual-schema.md`
-    - `docs/writing-coding-implementation-instructions.md`
-    - `<reference-file-1>`
-    - `<reference-file-with-visual-walkthrough>`
-
-    ---
-
-    ## 4. Branch Instructions
-
-    The branch already exists. Do not create a new branch.
-
-    Run:
-
-        git fetch origin
-        git checkout <branch-name>
-        git pull --ff-only
-
-    ---
-
-    ## 5. Files to Create or Edit
-
-    ### Create
-
-    - `<new-file-path>`
-
-    ### Edit if needed
-
-    - `<test-file-path>`
-
-    ### Do not edit
-
-    - `<legacy-file-or-unrelated-area>`
-
-    ---
-
-    ## 6. Implementation Requirements
-
-    - <requirement 1>
-    - <requirement 2>
-    - Every new quiz/problem must include a learner-facing Objective section near the top of the content.
-    - Add a config-driven `visualWalkthrough` where the problem shows state, movement, decisions, or transitions. Use supported visual schema types and semantic roles only. Do not add raw HTML/CSS or one-off React renderers.
-
-    ---
-
-    ## 7. Content Quality Requirements
-
-    - <quality requirement 1>
-    - <quality requirement 2>
-    - The Objective must clearly state what the learner should be able to do after completing the problem.
-    - The visual walkthrough must teach the important state change, invariant, or answer update, not just decorate the page.
-
-    ---
-
-    ## 8. Testing and Validation
-
-    Run:
-
-        npm run test:unit
-        npm run build
-
-    Manual verification:
-
-    1. <manual check 1>
-    2. Confirm the learner-facing Objective section is visible near the top of the problem content.
-    3. Confirm the visual walkthrough renders correctly, frames are ordered, and the page remains mobile-readable.
-    4. Check the browser console for visual/rendering errors.
-
-    ---
-
-    ## 9. Pull Request Requirements
-
-    Open a PR into `main` from `<branch-name>`.
-
-    The PR must include:
-
-    - summary
-    - validation results
-    - screenshots or manual verification notes when UI is affected
-    - visual walkthrough notes, or a reason if it was intentionally omitted
-    - `Closes #<issue-number>` when complete
-
-    ---
-
-    ## 10. Non-goals
-
-    Do not:
-
-    - <non-goal 1>
-    - add raw HTML/CSS to problem config
-    - create one-off visual renderers for a single problem
-
-    ---
-
-    ## 11. Done Means
-
-    The task is complete only when:
-
-    - <done criterion 1>
-    - the learner-facing Objective section is present where quiz/problem content is created or changed
-    - `npm run test:unit` passes
-    - `npm run build` passes
-    - visual walkthrough behavior is manually verified where included
-    ```
-
-## Common mistakes to avoid
-
-- Giving a high-level plan but no exact file paths.
-- Splitting the final instruction across several code blocks instead of one copy-ready block.
-- Pushing a coding-instruction file when the user asked for instructions in chat.
-- Forgetting to make the required ChatGPT chat name the first generated line.
-- Treating chat naming as optional or background context during execution.
-- Calling GitHub tools, reading issues, checking branches, searching files, or starting repository work before surfacing the required ChatGPT chat name.
-- Forgetting to tell the user to rename the ChatGPT conversation manually when the assistant cannot rename it directly.
-- Forgetting to make chat naming the first section inside the Markdown instruction.
-- Naming chats generically instead of using `#<issue-number> — <short description>`.
-- Asking the implementer to create a branch that already exists.
-- Forgetting to link the parent epic or quality standard.
-- Mixing app registration instructions with discovery-based problem loading.
-- Forgetting validation commands.
-- Forgetting manual UI checks for visual content.
-- Forgetting to include a clear learner-facing Objective section for a new quiz/problem.
-- Forgetting to explicitly require a visual walkthrough where a problem has state, movement, decisions, transitions, or learner-visible steps.
-- Treating `docs/visual-schema.md` as enough without saying whether the specific task must include a visual walkthrough.
-- Adding raw HTML/CSS or one-off React components instead of config-driven visual schema.
-- Allowing renderer-specific data shapes that are known to break components.
-- Saying to close the issue before all acceptance criteria are satisfied.
