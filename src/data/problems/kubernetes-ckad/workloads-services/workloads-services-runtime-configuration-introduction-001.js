@@ -16,6 +16,13 @@ function yamlExample(title, explanation, filename, code) {
   ];
 }
 
+function jsonExample(title, explanation, filename, code) {
+  return [
+    { type: 'section', title, content: explanation },
+    { type: 'code', title: filename, filename, language: 'json', code }
+  ];
+}
+
 const configMapYaml = `apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -27,6 +34,17 @@ data:
   TASK_MODE: learning
   ENABLE_SAMPLE_TASKS: 'true'
   WELCOME_MESSAGE: Welcome to KubeTasker Runtime Configuration`;
+
+const configStatusJson = `{
+  "appMode": "learning",
+  "taskMode": "learning",
+  "logLevel": "info",
+  "sampleTasksEnabled": true,
+  "welcomeMessage": "Welcome to KubeTasker Runtime Configuration",
+  "apiTokenConfigured": true,
+  "mountedConfigLoaded": true,
+  "ready": true
+}`;
 
 const secretYaml = `apiVersion: v1
 kind: Secret
@@ -48,11 +66,21 @@ const configMapEnvYaml = `env:
       configMapKeyRef:
         name: kube-tasker-api-config
         key: APP_MODE
+  - name: TASK_MODE
+    valueFrom:
+      configMapKeyRef:
+        name: kube-tasker-api-config
+        key: TASK_MODE
   - name: ENABLE_SAMPLE_TASKS
     valueFrom:
       configMapKeyRef:
         name: kube-tasker-api-config
-        key: ENABLE_SAMPLE_TASKS`;
+        key: ENABLE_SAMPLE_TASKS
+  - name: WELCOME_MESSAGE
+    valueFrom:
+      configMapKeyRef:
+        name: kube-tasker-api-config
+        key: WELCOME_MESSAGE`;
 
 const secretEnvYaml = `env:
   - name: API_TOKEN
@@ -115,11 +143,21 @@ spec:
                 configMapKeyRef:
                   name: kube-tasker-api-config
                   key: APP_MODE
+            - name: TASK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
             - name: ENABLE_SAMPLE_TASKS
               valueFrom:
                 configMapKeyRef:
                   name: kube-tasker-api-config
                   key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE
             - name: API_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -336,7 +374,19 @@ const problem = defineLearningProblem({
       title: 'Command and args explanation',
       content: 'command and args control how the container process starts. They are powerful because they can override the image default startup behavior. In CKAD tasks, use them carefully and verify KubeTasker still starts the intended API process.'
     },
-    ...yamlExample('ConfigMap example', 'This ConfigMap stores non-sensitive KubeTasker behavior. Changing these values should affect safe application output such as /config/status, welcome text, task mode, sample task behavior, or logging level.', 'configmap.yaml', configMapYaml),
+    ...yamlExample('ConfigMap example', 'This ConfigMap stores non-sensitive KubeTasker behavior. The key point is not only that these values exist, but that each one changes something observable in the running app.', 'configmap.yaml', configMapYaml),
+    {
+      type: 'comparison',
+      title: 'ConfigMap values: why they exist, how KubeTasker uses them, and how to verify them',
+      items: [
+        { label: 'LOG_LEVEL', content: 'Why: control application logging without rebuilding the image. App usage: KubeTasker configures its logger using this value. Verify: check startup logs and /config/status for logLevel.' },
+        { label: 'APP_MODE', content: 'Why: tell the same image which environment style it is running in. App usage: KubeTasker can enable learning-friendly behavior and messages when APP_MODE is learning. Verify: call /config/status and confirm appMode is learning.' },
+        { label: 'TASK_MODE', content: 'Why: control how task behavior should run during the lab. App usage: KubeTasker uses this to choose learning-oriented task behavior instead of hard-coded defaults. Verify: call /config/status and confirm taskMode.' },
+        { label: 'ENABLE_SAMPLE_TASKS', content: 'Why: decide whether the app should load demo tasks for learners. App usage: when true, KubeTasker exposes seeded/sample task behavior for practice. Verify: call /tasks/stats or the task listing endpoint and confirm sample tasks are present.' },
+        { label: 'WELCOME_MESSAGE', content: 'Why: prove visible app behavior can change from Kubernetes config. App usage: KubeTasker returns or displays this message from the running configuration. Verify: call /config/status or the root endpoint and confirm the message changed.' }
+      ]
+    },
+    ...jsonExample('Expected safe config status response', 'After the Deployment injects ConfigMap and Secret values, KubeTasker should expose safe verification output. Notice that the Secret value is not shown; only apiTokenConfigured is reported.', 'config-status-response.json', configStatusJson),
     ...yamlExample('Secret example', 'This Secret stores a placeholder token for the learning lab. KubeTasker can report that the token is configured, but it must never return or log the token value.', 'secret.yaml', secretYaml),
     ...yamlExample('Mounted config file example', 'This ConfigMap provides a file named app-config.yaml. When mounted into /etc/kubetasker, KubeTasker can load structured file-based settings and report mountedConfigLoaded through /config/status.', 'file-config-configmap.yaml', mountedConfigFileYaml),
     ...yamlExample('ConfigMap values as environment variables', 'This snippet injects ConfigMap keys into the KubeTasker container environment. The Deployment must reference the correct ConfigMap name and keys.', 'configmap-env-snippet.yaml', configMapEnvYaml),
@@ -357,9 +407,10 @@ const problem = defineLearningProblem({
     ...command('5. Show Pods', 'This checks whether Pods were created and whether they are Running, Pending, not Ready, or restarting. Configuration problems often appear as waiting, crash, or readiness symptoms.', 'k -n kubetasker get pods -o wide'),
     ...command('6. Inspect Pod events', 'This checks detailed Pod events and container state. Replace the placeholder with the real Pod name from the previous command, then look for missing ConfigMap, missing Secret, missing key, mount, or startup errors.', 'k -n kubetasker describe pod <pod-name>'),
     ...command('7. Read application logs', 'This checks what KubeTasker reported during startup. Replace the placeholder with the real Pod name and look for configuration parsing, missing file, or invalid startup argument messages.', 'k -n kubetasker logs <pod-name>'),
-    ...command('8. Verify KubeTasker config status safely', 'This calls the app status endpoint through the Service. The response should show non-sensitive config and whether the token and mounted config are present, without exposing secret values.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status'),
+    ...command('8. Verify KubeTasker config status safely', 'This calls the app status endpoint through the Service. The response should show logLevel, appMode, taskMode, sampleTasksEnabled, welcomeMessage, token presence, mounted config status, and readiness without exposing secret values.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status'),
     ...command('9. Verify KubeTasker readiness', 'This confirms whether KubeTasker considers the runtime configuration valid enough to receive traffic.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/ready'),
-    ...command('10. Inspect a non-sensitive environment value', 'This checks one safe environment variable from inside the Pod. Only use this approach for non-sensitive values such as log level, never for tokens or passwords.', 'k -n kubetasker exec <pod-name> -- printenv LOG_LEVEL'),
+    ...command('10. Verify sample task behavior', 'This confirms whether ENABLE_SAMPLE_TASKS changed visible task behavior. The exact output depends on the app implementation, but sample task counts should be visible through task stats or listing endpoints.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/tasks/stats'),
+    ...command('11. Inspect a non-sensitive environment value', 'This checks one safe environment variable from inside the Pod. Only use this approach for non-sensitive values such as log level, never for tokens or passwords.', 'k -n kubetasker exec <pod-name> -- printenv LOG_LEVEL'),
     {
       type: 'comparison',
       title: 'Failure interpretation',
