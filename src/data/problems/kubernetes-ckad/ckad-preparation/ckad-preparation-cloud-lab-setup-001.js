@@ -243,6 +243,7 @@ const problem = defineLearningProblem({
           label: 'AWS EC2 + kubeadm + Cilium',
           body: [
             { type: 'section', title: 'When to use this path', content: 'Use this as the preferred CKAD practice path when you want VM-based Kubernetes practice with kubeadm and direct node access. The lab uses Cilium only as the Kubernetes networking layer.' },
+            { type: 'section', title: 'Create an AWS account', content: 'Create or sign in to an AWS account here: https://portal.aws.amazon.com/billing/signup. After the account is ready, open AWS CloudShell or authenticate the AWS CLI locally.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CloudShell access, or AWS CLI installed locally and authenticated with aws configure.', 'Permission to create CloudFormation, EC2, VPC, subnet, route table, internet gateway, security group, and EBS resources.', 'An existing EC2 key pair in the target AWS region.', 'The matching private key file on your machine, for example demo-app-2026.pem.', 'Your public IP address in CIDR format, for example 203.0.113.10/32.', 'For this AWS EC2 path, run kubectl/k after SSH into the EC2 instance. kubectl is installed automatically on that instance; local kubectl is only needed if you choose to copy kubeconfig and manage the cluster from your own machine.'] },
             { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 35-45/month for one t3.medium style single-node lab. Cost can increase with EBS storage, AWS public IPv4 charges, NAT, and data transfer. This lab does not create Elastic IPs. Delete the stack when finished.' },
             ...command('Set AWS region', 'Sets Oregon as the AWS region where CloudFormation and EC2 resources will be created.', 'export AWS_REGION=us-west-2'),
@@ -296,6 +297,7 @@ const problem = defineLearningProblem({
           label: 'DigitalOcean',
           body: [
             { type: 'section', title: 'When to use this path', content: 'Use this path when you want a fast managed Kubernetes cluster and want to focus mainly on kubectl practice rather than node bootstrap details.' },
+            { type: 'section', title: 'Create a DigitalOcean account', content: 'Create or sign in to a DigitalOcean account here: https://cloud.digitalocean.com/registrations/new. After the account is ready, create a personal access token and authenticate doctl.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['DigitalOcean account with billing enabled.', 'Personal access token created from the DigitalOcean dashboard.', 'doctl installed and authenticated with the personal access token.', 'kubectl installed locally.', 'bash available in your terminal or cloud shell.'] },
             { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 24/month for one s-2vcpu-4gb node. Storage and load balancers cost extra. Delete the cluster when finished.' },
             ...command('Set DigitalOcean cluster name', 'Names the DigitalOcean Kubernetes cluster.', 'export DO_CLUSTER_NAME=kubetasker-ckad'),
@@ -318,6 +320,7 @@ const problem = defineLearningProblem({
           label: 'Civo',
           body: [
             { type: 'section', title: 'When to use this path', content: 'Use this path when Civo is available in your region and you want a lightweight managed Kubernetes setup for quick practice.' },
+            { type: 'section', title: 'Create a Civo account', content: 'Create or sign in to a Civo account here: https://dashboard.civo.com/signup. After the account is ready, create an API key and authenticate the civo CLI.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['Civo account with billing enabled.', 'Civo API key created from the Civo dashboard.', 'civo CLI installed and authenticated with the API key.', 'A supported Civo region and node size selected.', 'kubectl installed locally.', 'bash available in your terminal or cloud shell.'] },
             { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 20-30/month for one small or medium node. Exact cost depends on region and node size. Delete the cluster when finished.' },
             ...command('Set Civo cluster name', 'Names the Civo Kubernetes cluster.', 'export CIVO_CLUSTER_NAME=kubetasker-ckad'),
@@ -341,6 +344,7 @@ const problem = defineLearningProblem({
           label: 'AWS EKS optional',
           body: [
             { type: 'section', title: 'When to use this path', content: 'Use EKS only when you specifically want AWS-managed Kubernetes experience. It is useful later, but it is not the main CKAD preparation path because it adds more AWS-specific machinery and normally costs more.' },
+            { type: 'section', title: 'Create an AWS account', content: 'Create or sign in to an AWS account here: https://portal.aws.amazon.com/billing/signup. After the account is ready, open AWS CloudShell or authenticate the AWS CLI locally.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CLI installed and authenticated, or AWS CloudShell access.', 'eksctl installed.', 'kubectl installed locally.', 'Permission to create EKS clusters, IAM roles, EC2 nodes, VPC resources, and security groups.'] },
             { type: 'callout', tone: 'warning', title: 'Estimated monthly cost', content: 'Approximate cost: USD 110-160/month or more because EKS includes a managed control plane plus worker nodes, storage, AWS public IPv4 charges, and network charges. Delete the cluster when finished.' },
             ...command('Set EKS cluster name', 'Names the optional EKS cluster.', 'export EKS_CLUSTER_NAME=kubetasker-ckad'),
