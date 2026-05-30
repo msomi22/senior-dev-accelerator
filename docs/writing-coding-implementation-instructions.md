@@ -185,8 +185,11 @@ For problem-authoring tasks, include:
 - language
 - difficulty
 - required fields
+- learner-facing Objective section
 - visual walkthrough requirements
 - metadata visibility
+
+Every new quiz/problem must include a learner-facing `Objective` section near the top of the content. The Objective should answer: `What should the learner be able to do after completing this problem?` Prefer concise `I can...` wording. For CKAD problems, this is required from now onward and should appear before scenario, story, or explanatory sections such as `Why this lab exists`.
 
 For any new question/problem, include a visual walkthrough requirement whenever possible. Make it explicit instead of only linking `docs/visual-schema.md`.
 
@@ -202,6 +205,7 @@ Reference #131 and convert it into task-specific checks.
 
 Include checks for:
 
+- a clear learner-facing Objective section near the top of every new quiz/problem
 - clarity before code
 - intuition before formula
 - concrete example before abstraction
@@ -210,6 +214,17 @@ Include checks for:
 - section-specific responsibilities
 - visuals that teach state changes
 - visual frames that show the important invariant, state transition, and answer update where applicable
+
+For quiz/problem content, prefer this learner-facing order where supported:
+
+1. Objective
+2. Scenario / why this exists
+3. Current state / starting point
+4. Tasks
+5. Verification
+6. Explanation
+7. Common mistakes
+8. Cleanup, if applicable
 
 ### 8. Testing and validation
 
@@ -272,6 +287,7 @@ Before posting implementation instructions, confirm:
 - [ ] The parent epic is linked when relevant.
 - [ ] Required docs are linked.
 - [ ] `docs/visual-schema.md` is linked for new question/problem work where visual learning may apply.
+- [ ] Every new quiz/problem includes a learner-facing Objective section near the top of the content.
 - [ ] Exact file paths are provided.
 - [ ] Existing reference files are provided.
 - [ ] A visual walkthrough is explicitly required where the question has state, movement, decisions, transitions, or learner-visible steps.
@@ -363,6 +379,7 @@ When producing the final answer in chat, first write the required ChatGPT chat n
 
     - <requirement 1>
     - <requirement 2>
+    - Every new quiz/problem must include a learner-facing Objective section near the top of the content.
     - Add a config-driven `visualWalkthrough` where the problem shows state, movement, decisions, or transitions. Use supported visual schema types and semantic roles only. Do not add raw HTML/CSS or one-off React renderers.
 
     ---
@@ -371,6 +388,7 @@ When producing the final answer in chat, first write the required ChatGPT chat n
 
     - <quality requirement 1>
     - <quality requirement 2>
+    - The Objective must clearly state what the learner should be able to do after completing the problem.
     - The visual walkthrough must teach the important state change, invariant, or answer update, not just decorate the page.
 
     ---
@@ -385,8 +403,9 @@ When producing the final answer in chat, first write the required ChatGPT chat n
     Manual verification:
 
     1. <manual check 1>
-    2. Confirm the visual walkthrough renders correctly, frames are ordered, and the page remains mobile-readable.
-    3. Check the browser console for visual/rendering errors.
+    2. Confirm the learner-facing Objective section is visible near the top of the problem content.
+    3. Confirm the visual walkthrough renders correctly, frames are ordered, and the page remains mobile-readable.
+    4. Check the browser console for visual/rendering errors.
 
     ---
 
@@ -419,6 +438,7 @@ When producing the final answer in chat, first write the required ChatGPT chat n
     The task is complete only when:
 
     - <done criterion 1>
+    - the learner-facing Objective section is present where quiz/problem content is created or changed
     - `npm run test:unit` passes
     - `npm run build` passes
     - visual walkthrough behavior is manually verified where included
@@ -440,6 +460,7 @@ When producing the final answer in chat, first write the required ChatGPT chat n
 - Mixing app registration instructions with discovery-based problem loading.
 - Forgetting validation commands.
 - Forgetting manual UI checks for visual content.
+- Forgetting to include a clear learner-facing Objective section for a new quiz/problem.
 - Forgetting to explicitly require a visual walkthrough where a problem has state, movement, decisions, transitions, or learner-visible steps.
 - Treating `docs/visual-schema.md` as enough without saying whether the specific task must include a visual walkthrough.
 - Adding raw HTML/CSS or one-off React components instead of config-driven visual schema.
