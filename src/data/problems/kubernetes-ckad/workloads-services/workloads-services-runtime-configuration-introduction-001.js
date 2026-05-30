@@ -1,6 +1,6 @@
 import { defineLearningProblem } from '../../../../problems/problemAuthoring.js';
 
-const prompt = 'Explain how KubeTasker uses Kubernetes runtime configuration through ConfigMaps, Secrets, environment variables, mounted files, command, and args.';
+const prompt = 'Configure KubeTasker at runtime using ConfigMaps, Secrets, environment variables, mounted files, command, and args.';
 
 function command(title, explanation, code, language = 'bash') {
   return [
@@ -23,7 +23,10 @@ metadata:
   namespace: kubetasker
 data:
   LOG_LEVEL: info
-  TASK_MODE: learning`;
+  APP_MODE: learning
+  TASK_MODE: learning
+  ENABLE_SAMPLE_TASKS: 'true'
+  WELCOME_MESSAGE: Welcome to KubeTasker Runtime Configuration`;
 
 const secretYaml = `apiVersion: v1
 kind: Secret
@@ -39,7 +42,17 @@ const configMapEnvYaml = `env:
     valueFrom:
       configMapKeyRef:
         name: kube-tasker-api-config
-        key: LOG_LEVEL`;
+        key: LOG_LEVEL
+  - name: APP_MODE
+    valueFrom:
+      configMapKeyRef:
+        name: kube-tasker-api-config
+        key: APP_MODE
+  - name: ENABLE_SAMPLE_TASKS
+    valueFrom:
+      configMapKeyRef:
+        name: kube-tasker-api-config
+        key: ENABLE_SAMPLE_TASKS`;
 
 const secretEnvYaml = `env:
   - name: API_TOKEN
@@ -48,14 +61,25 @@ const secretEnvYaml = `env:
         name: kube-tasker-api-secret
         key: API_TOKEN`;
 
+const mountedConfigFileYaml = `apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-tasker-file-config
+  namespace: kubetasker
+data:
+  app-config.yaml: |
+    taskMode: learning
+    welcomeMessage: Mounted config is active
+    requireRuntimeConfig: false`;
+
 const configFileMountYaml = `volumeMounts:
-  - name: app-config
+  - name: app-config-file
     mountPath: /etc/kubetasker
     readOnly: true
 volumes:
-  - name: app-config
+  - name: app-config-file
     configMap:
-      name: kube-tasker-api-config`;
+      name: kube-tasker-file-config`;
 
 const commandArgsYaml = `command: ['python']
 args: ['-m', 'uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', '8080']`;
@@ -77,26 +101,38 @@ spec:
     spec:
       containers:
         - name: api
-          image: msomi22/kubetasker-api:0.1.1
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
           env:
             - name: LOG_LEVEL
               valueFrom:
                 configMapKeyRef:
                   name: kube-tasker-api-config
                   key: LOG_LEVEL
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: ENABLE_SAMPLE_TASKS
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
             - name: API_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: kube-tasker-api-secret
                   key: API_TOKEN
           volumeMounts:
-            - name: app-config
+            - name: app-config-file
               mountPath: /etc/kubetasker
               readOnly: true
       volumes:
-        - name: app-config
+        - name: app-config-file
           configMap:
-            name: kube-tasker-api-config`;
+            name: kube-tasker-file-config`;
 
 const problem = defineLearningProblem({
   id: 'workloads-services-runtime-configuration-introduction-001',
@@ -115,6 +151,7 @@ const problem = defineLearningProblem({
     'environment-variables',
     'volume-mounts',
     'command-args',
+    'readiness',
     'debugging',
     'workloads-services',
     'kubetasker'
@@ -126,61 +163,64 @@ const problem = defineLearningProblem({
   rendering: { variant: 'deep-dive', density: 'comfortable', accent: 'green' },
   prompt,
   question: prompt,
-  scenario: 'KubeTasker now runs as a workload and is reachable through a Service. The next CKAD skill is learning how the same container image can behave correctly in different environments by receiving configuration at runtime.',
-  starterThought: 'Do not rebuild an image just because the environment changed. Keep the image stable, then provide environment-specific values through Kubernetes objects and Pod configuration.',
-  intuition: 'Runtime configuration is the bridge between a reusable container image and the real environment where the app runs. The image contains the app. Kubernetes provides the values, files, and startup arguments that tell the app how to behave now.',
-  mentalPicture: 'Think of the container image as a sealed appliance. ConfigMaps, Secrets, environment variables, mounted files, command, and args are the switches and setup instructions applied when the appliance is started in a specific room.',
-  patternSignal: 'Use runtime configuration when the app image is correct but the behavior depends on environment, feature mode, log level, endpoint names, credentials, file paths, or startup flags.',
-  invariant: 'The container image should stay stable while environment-specific behavior comes from Kubernetes runtime configuration.',
-  finalPattern: 'Step 4: Prepare for the runtime configuration mini-project by learning the moving parts before fixing broken config in a live lab.',
-  commonMistake: 'Do not print secret values while debugging. Prove the Secret exists and is referenced correctly without exposing its sensitive content.',
+  scenario: 'KubeTasker now runs as a workload and is reachable through a Service. In this lesson, the application uses Kubernetes runtime configuration for real behavior: log level, app mode, sample task behavior, welcome message, token presence, mounted config status, and readiness.',
+  starterThought: 'Do not rebuild the KubeTasker image just because the environment changed. Keep the image stable, then use Kubernetes configuration to change how KubeTasker behaves at startup.',
+  intuition: 'Runtime configuration is the bridge between a reusable container image and the real environment where the app runs. The KubeTasker image contains the app. Kubernetes provides the values, files, and startup arguments that tell KubeTasker how to behave now.',
+  mentalPicture: 'Think of the KubeTasker image as a sealed appliance. ConfigMaps, Secrets, environment variables, mounted files, command, and args are the switches and setup instructions applied when the appliance starts in a specific cluster.',
+  patternSignal: 'Use runtime configuration when KubeTasker should keep the same image but change environment-specific behavior such as learning mode, log level, sample data, token-protected actions, file-based config, or readiness validation.',
+  invariant: 'The KubeTasker container image should stay stable while environment-specific behavior comes from Kubernetes runtime configuration.',
+  finalPattern: 'Step 4: Configure KubeTasker behavior at runtime before moving into the hands-on broken-configuration mini-project.',
+  commonMistake: 'Do not print secret values while debugging. Prove the Secret exists and is referenced correctly by checking metadata, keys, /config/status, readiness, events, and logs without exposing the token.',
   commonMistakes: [
-    'Creating the ConfigMap in the default namespace while the Deployment runs in kubetasker.',
+    'Creating the ConfigMap in the default namespace while the KubeTasker Deployment runs in kubetasker.',
     'Using a key name in the Deployment that does not exist in the ConfigMap or Secret.',
     'Referencing the wrong Secret name from the Pod template.',
-    'Mounting a config file at one path while the app reads a different path.',
-    'Overriding command or args in a way that prevents the app from starting.',
+    'Mounting the config file at one path while KubeTasker reads a different path.',
+    'Overriding command or args in a way that prevents the API server process from starting.',
     'Changing configuration but forgetting that existing Pods may need a rollout restart or replacement to pick up the reference.',
-    'Debugging by printing secret values instead of inspecting object names, keys, references, events, and logs.'
+    'Debugging by printing secret values instead of inspecting object names, keys, references, events, readiness, and safe status output.'
   ],
   edgeCases: [
     'A missing ConfigMap key can prevent Pod creation when the reference is required.',
-    'A wrong mounted-file path can let the Pod start but make the app fail at runtime.',
+    'A wrong mounted-file path can let the Pod start but make /config/status report that mounted config is not loaded.',
     'A wrong command can replace the image default startup process and make the container exit immediately.',
-    'Secret data may exist but still be unusable if the Deployment references the wrong key.'
+    'Secret data may exist but still be unusable if the Deployment references the wrong key.',
+    'KubeTasker can be alive on /health while not ready on /ready because required runtime configuration is invalid.'
   ],
-  complexityAnalysis: 'This is application configuration complexity. The learner should understand where values come from, how they enter the Pod, how the app reads them, and how Kubernetes exposes mistakes through Pod state, events, and logs.',
-  explanation: 'This introduction explains ConfigMaps, Secrets, environment variables, mounted config files, command, args, and the common ways runtime configuration mistakes appear in Kubernetes workloads.',
+  complexityAnalysis: 'This is application configuration complexity. The learner should understand where KubeTasker values come from, how they enter the Pod, how the app reports safe configuration status, and how Kubernetes exposes mistakes through readiness, Pod state, events, and logs.',
+  explanation: 'This introduction explains how KubeTasker uses ConfigMaps, Secrets, environment variables, mounted config files, command, args, /config/status, /ready, and common configuration failure signals in Kubernetes workloads.',
   stepByStepBreakdown: [
-    'Separate application code from environment-specific configuration.',
-    'Use ConfigMaps for non-sensitive values such as log level and feature mode.',
-    'Use Secrets for sensitive values such as tokens and credentials.',
-    'Inject small values as environment variables when the app expects environment input.',
-    'Mount configuration as files when the app expects a file or directory.',
+    'Separate KubeTasker application code from environment-specific configuration.',
+    'Use ConfigMaps for non-sensitive KubeTasker behavior such as log level, app mode, sample tasks, task mode, and welcome message.',
+    'Use Secrets for sensitive KubeTasker values such as API tokens.',
+    'Inject small KubeTasker settings as environment variables when the app expects environment input.',
+    'Mount configuration as files when KubeTasker should read config from /etc/kubetasker/app-config.yaml.',
     'Use command and args carefully because they can replace the image startup behavior.',
+    'Use /config/status and /ready to verify runtime configuration without leaking secrets.',
     'Inspect ConfigMaps, Secrets, Deployments, Pods, events, and logs without exposing secret values.',
-    'Prepare for a later CKAD mini-project where runtime configuration is missing or mounted incorrectly.'
+    'Prepare for a later CKAD mini-project where KubeTasker fails because runtime configuration is missing or mounted incorrectly.'
   ],
-  finalTakeaway: 'Runtime configuration lets one trusted image run safely in many environments. In CKAD practice, the job is to create the right configuration objects, reference them correctly, mount or inject them correctly, and verify the app behavior without leaking secrets.',
-  visualExplanation: 'The visual shows a stable image receiving environment-specific runtime configuration from a Deployment, ConfigMap, Secret, env vars, mounted files, command, and args before the app reaches a healthy running state.',
+  finalTakeaway: 'Runtime configuration lets one trusted KubeTasker image run safely in many environments. In CKAD practice, the job is to create the right configuration objects, reference them correctly, mount or inject them correctly, and verify KubeTasker behavior without leaking secrets.',
+  visualExplanation: 'The visual shows the stable KubeTasker image receiving environment-specific runtime configuration from a Deployment, ConfigMap, Secret, env vars, mounted files, command, and args before the app reaches a ready state.',
   visualWalkthrough: {
-    title: 'Runtime configuration flow',
-    summary: 'See how a stable image receives Kubernetes runtime configuration and becomes a correctly started Pod.',
+    title: 'KubeTasker runtime configuration flow',
+    summary: 'See how a stable KubeTasker image receives Kubernetes runtime configuration and becomes a correctly configured Pod.',
     diagram: {
       type: 'graph',
       variant: 'kubernetes-object-relationship',
-      title: 'Image to configured running Pod',
-      description: 'A beginner-friendly map for ConfigMaps, Secrets, env vars, mounted files, command, args, and failure signals.',
+      title: 'KubeTasker image to configured running Pod',
+      description: 'A beginner-friendly map for ConfigMaps, Secrets, env vars, mounted files, command, args, /config/status, readiness, and failure signals.',
       nodes: [
-        { id: 'image', label: 'Container image\napp code and defaults' },
+        { id: 'image', label: 'KubeTasker image\napp code and defaults' },
         { id: 'deployment', label: 'Deployment\nPod template references config' },
-        { id: 'configmap', label: 'ConfigMap\nnon-sensitive values' },
-        { id: 'secret', label: 'Secret\nsensitive values' },
-        { id: 'env', label: 'Environment vars\nsmall runtime values' },
-        { id: 'files', label: 'Mounted files\nconfig directory' },
+        { id: 'configmap', label: 'ConfigMap\nmode log sample message' },
+        { id: 'secret', label: 'Secret\nAPI token' },
+        { id: 'env', label: 'Environment vars\nsmall app settings' },
+        { id: 'files', label: 'Mounted config\n/etc/kubetasker' },
         { id: 'commandargs', label: 'command and args\nstartup behavior' },
         { id: 'pod', label: 'Pod\nconfigured container starts' },
-        { id: 'app', label: 'KubeTasker app\nreads runtime config' },
+        { id: 'status', label: '/config/status\nsafe verification' },
+        { id: 'ready', label: '/ready\nconfig-valid readiness' },
         { id: 'failure', label: 'Failure signal\nevents logs restart state' }
       ],
       edges: [
@@ -193,7 +233,8 @@ const problem = defineLearningProblem({
         { from: 'env', to: 'pod', label: 'available at start' },
         { from: 'files', to: 'pod', label: 'available as paths' },
         { from: 'commandargs', to: 'pod', label: 'controls process start' },
-        { from: 'pod', to: 'app', label: 'app reads configuration' },
+        { from: 'pod', to: 'status', label: 'reports safe config state' },
+        { from: 'pod', to: 'ready', label: 'reports config validity' },
         { from: 'deployment', to: 'failure', label: 'bad reference or path' },
         { from: 'pod', to: 'failure', label: 'startup or readiness issue' }
       ],
@@ -202,36 +243,36 @@ const problem = defineLearningProblem({
           title: 'Stable image first',
           activeNodes: ['image'],
           visitedNodes: [],
-          state: { label: 'Invariant', values: { image: 'app code and safe defaults', environment: 'provided later' }, helper: 'The image should not be rebuilt just to change log level, feature mode, or endpoint names.' },
-          description: 'The container image carries the reusable application. Environment-specific behavior should be supplied at runtime.'
+          state: { label: 'Invariant', values: { image: 'KubeTasker code and safe defaults', environment: 'provided later' }, helper: 'The image should not be rebuilt just to change log level, learning mode, sample data, or welcome text.' },
+          description: 'The container image carries the reusable application. Environment-specific KubeTasker behavior is supplied at runtime.'
         },
         {
-          title: 'Deployment wires configuration',
+          title: 'Deployment wires KubeTasker configuration',
           activeNodes: ['deployment', 'configmap', 'secret'],
           visitedNodes: ['image'],
-          state: { label: 'References', values: { ConfigMap: 'non-sensitive values', Secret: 'sensitive values', Deployment: 'Pod template wiring' }, helper: 'The Deployment does not store every value directly. It points the Pod template to configuration objects.' },
-          description: 'The Pod template references ConfigMaps and Secrets by name and key so values can enter the container at startup.'
+          state: { label: 'References', values: { ConfigMap: 'mode and app behavior', Secret: 'API token presence', Deployment: 'Pod template wiring' }, helper: 'The Deployment points the Pod template to configuration objects instead of baking values into the image.' },
+          description: 'The Pod template references ConfigMaps and Secrets by name and key so values can enter KubeTasker at startup.'
         },
         {
           title: 'Values enter the Pod',
           activeNodes: ['env', 'files', 'commandargs', 'pod'],
           visitedNodes: ['deployment', 'configmap', 'secret'],
-          state: { label: 'Runtime inputs', values: { env: 'small values', files: 'config documents', commandArgs: 'startup behavior' }, helper: 'Choose the input shape that matches how the app expects to read configuration.' },
+          state: { label: 'Runtime inputs', values: { env: 'LOG_LEVEL and APP_MODE', files: 'mounted app-config.yaml', commandArgs: 'startup behavior' }, helper: 'Choose the input shape that matches how KubeTasker expects to read configuration.' },
           description: 'Configuration can appear as environment variables, mounted files, or startup command and args.'
         },
         {
-          title: 'Application reads configuration',
-          activeNodes: ['pod', 'app'],
+          title: 'KubeTasker reports safe status',
+          activeNodes: ['pod', 'status', 'ready'],
           visitedNodes: ['image', 'deployment', 'env', 'files'],
-          state: { label: 'Healthy path', values: { app: 'reads expected values', pod: 'starts and becomes Ready' }, helper: 'Correct references and paths let the app start with the expected behavior.' },
-          description: 'KubeTasker starts, reads runtime configuration, and reaches a healthy state when the configuration is valid.'
+          state: { label: 'Verification', values: { configStatus: 'shows non-secret config', readiness: 'passes only when required config is valid' }, helper: 'Use app endpoints to prove behavior without leaking secret values.' },
+          description: 'KubeTasker exposes safe verification endpoints so learners can connect Kubernetes configuration to application behavior.'
         },
         {
           title: 'Bad configuration creates symptoms',
-          activeNodes: ['failure', 'deployment', 'pod'],
+          activeNodes: ['failure', 'deployment', 'pod', 'ready'],
           visitedNodes: ['configmap', 'secret', 'env', 'files', 'commandargs'],
-          state: { label: 'Debug signal', values: { events: 'missing object or key', logs: 'app startup error', status: 'CrashLoopBackOff or not Ready' }, helper: 'Use read-only inspection first. Do not expose secret values while debugging.' },
-          description: 'Wrong names, missing keys, wrong paths, or bad startup overrides usually appear in Pod events, status, and application logs.'
+          state: { label: 'Debug signal', values: { events: 'missing object or key', logs: 'app startup error', readiness: 'not ready when config is invalid' }, helper: 'Use read-only inspection first. Do not expose secret values while debugging.' },
+          description: 'Wrong names, missing keys, wrong paths, or bad startup overrides appear in Pod events, status, logs, /ready, and /config/status.'
         }
       ]
     }
@@ -241,75 +282,93 @@ const problem = defineLearningProblem({
       type: 'checklist',
       title: 'Objective',
       items: [
-        'I can explain why runtime configuration should not be baked into a container image.',
-        'I can choose when to use a ConfigMap, Secret, environment variable, or mounted file.',
-        'I can explain how command and args affect container startup behavior.',
-        'I can use Kubernetes inspection commands to identify common configuration mistakes.',
-        'I can prepare for a CKAD-style task where an app fails because runtime config is missing or mounted incorrectly.'
+        'I can explain why KubeTasker runtime behavior should not be baked into the container image.',
+        'I can use a ConfigMap to control KubeTasker log level, app mode, sample tasks, task mode, and welcome message.',
+        'I can use a Secret to provide a sensitive KubeTasker API token without exposing the token value.',
+        'I can choose when KubeTasker should read configuration from environment variables or mounted files.',
+        'I can explain how command and args affect KubeTasker startup behavior.',
+        'I can use /config/status and /ready to connect Kubernetes configuration to application behavior.',
+        'I can use Kubernetes inspection commands to identify common configuration mistakes safely.'
       ]
     },
     {
       type: 'callout',
       tone: 'info',
       title: 'Why this lesson exists',
-      content: 'The first three lessons taught workload creation, YAML-driven changes, and Kubernetes architecture. This lesson explains the configuration layer that makes the same KubeTasker image usable in different environments without rebuilding it.'
+      content: 'The first three lessons taught workload creation, YAML-driven changes, and Kubernetes architecture. This lesson explains the configuration layer by showing how Kubernetes changes KubeTasker behavior without rebuilding the image.'
     },
     {
       type: 'section',
       title: 'KubeTasker scenario',
-      content: 'KubeTasker needs small runtime decisions such as log level, learning mode, feature behavior, and token-based access to protected operations. These values should come from Kubernetes at startup, not from a new image for every environment.'
+      content: 'KubeTasker supports runtime settings for learning mode, task mode, sample task loading, welcome message, log level, API token presence, mounted config status, and readiness. That means every Kubernetes configuration object in this lesson maps to real application behavior.'
+    },
+    {
+      type: 'comparison',
+      title: 'How KubeTasker uses each Kubernetes feature',
+      items: [
+        { label: 'ConfigMap', content: 'Controls non-sensitive app behavior such as LOG_LEVEL, APP_MODE, TASK_MODE, ENABLE_SAMPLE_TASKS, and WELCOME_MESSAGE.' },
+        { label: 'Secret', content: 'Provides API_TOKEN so protected demo behavior can be enabled without showing the token in YAML output, logs, or status responses.' },
+        { label: 'Environment variables', content: 'Pass small runtime values directly into the KubeTasker process at container startup.' },
+        { label: 'Mounted config file', content: 'Provides /etc/kubetasker/app-config.yaml when KubeTasker should load structured configuration from a file path.' },
+        { label: 'command and args', content: 'Control the startup process when the lab needs to demonstrate how container entry behavior can be overridden.' },
+        { label: '/config/status', content: 'Lets the learner verify active non-sensitive config, mounted config status, and whether a token is configured without exposing the token value.' },
+        { label: '/ready', content: 'Shows whether KubeTasker considers its required runtime configuration valid enough to receive traffic.' }
+      ]
     },
     {
       type: 'section',
       title: 'Runtime configuration mental model',
-      content: 'The image answers what application code should run. Runtime configuration answers how that application should behave in this namespace, cluster, or environment. Kubernetes connects the two through the Pod template.'
+      content: 'The image answers what application code should run. Runtime configuration answers how KubeTasker should behave in this namespace, cluster, or environment. Kubernetes connects the two through the Pod template.'
     },
     {
       type: 'comparison',
       title: 'Configuration choices',
       items: [
-        { label: 'Container image', content: 'Use it for application code, dependencies, and safe defaults that should stay the same across environments.' },
-        { label: 'ConfigMap', content: 'Use it for non-sensitive configuration such as log level, feature mode, display names, and ordinary app settings.' },
-        { label: 'Secret', content: 'Use it for sensitive configuration such as tokens, passwords, and credentials. Verify references without printing values.' },
-        { label: 'Environment variable', content: 'Use it for small values that the app expects to read from the process environment.' },
-        { label: 'Mounted file', content: 'Use it when the app expects a file, a directory of config files, or a config document at a known path.' }
+        { label: 'Container image', content: 'Use it for KubeTasker code, dependencies, and safe defaults that should stay the same across environments.' },
+        { label: 'ConfigMap', content: 'Use it for non-sensitive KubeTasker configuration such as log level, feature mode, display message, and ordinary app settings.' },
+        { label: 'Secret', content: 'Use it for sensitive KubeTasker configuration such as tokens, passwords, and credentials. Verify references without printing values.' },
+        { label: 'Environment variable', content: 'Use it for small values that KubeTasker expects to read from the process environment.' },
+        { label: 'Mounted file', content: 'Use it when KubeTasker expects a file, a directory of config files, or a config document at a known path.' }
       ]
     },
     {
       type: 'section',
       title: 'Command and args explanation',
-      content: 'command and args control how the container process starts. They are powerful because they can override the image default startup behavior. In CKAD tasks, use them carefully and verify the container still starts the intended application process.'
+      content: 'command and args control how the container process starts. They are powerful because they can override the image default startup behavior. In CKAD tasks, use them carefully and verify KubeTasker still starts the intended API process.'
     },
-    ...yamlExample('ConfigMap example', 'This ConfigMap stores non-sensitive KubeTasker values. It is safe for learning values such as log level and task mode, but it should not store tokens or passwords.', 'configmap.yaml', configMapYaml),
-    ...yamlExample('Secret example', 'This Secret stores a placeholder token for the learning lab. The example uses stringData for readability, but the learner should still treat Secret values carefully.', 'secret.yaml', secretYaml),
-    ...yamlExample('ConfigMap value as an environment variable', 'This snippet injects one ConfigMap key into the container environment. The Deployment must reference the correct ConfigMap name and key.', 'configmap-env-snippet.yaml', configMapEnvYaml),
-    ...yamlExample('Secret value as an environment variable', 'This snippet injects one Secret key into the container environment. Debug the reference and object metadata without printing the sensitive value.', 'secret-env-snippet.yaml', secretEnvYaml),
-    ...yamlExample('ConfigMap mounted as files', 'This snippet mounts ConfigMap data as files under a directory. This is useful when the app reads configuration from a file path instead of environment variables.', 'configmap-file-mount-snippet.yaml', configFileMountYaml),
-    ...yamlExample('Command and args startup snippet', 'This snippet shows the shape of command and args. Only override startup behavior when the lab or application requires it, because a wrong override can stop the container from starting.', 'command-args-snippet.yaml', commandArgsYaml),
-    ...yamlExample('Small Deployment wiring example', 'This compact example is a valid apps/v1 Deployment shape. It includes selector.matchLabels and matching template.metadata.labels, then shows how the Pod template references the image, ConfigMap, Secret, and mounted config directory together.', 'deployment-runtime-config-snippet.yaml', deploymentSnippetYaml),
+    ...yamlExample('ConfigMap example', 'This ConfigMap stores non-sensitive KubeTasker behavior. Changing these values should affect safe application output such as /config/status, welcome text, task mode, sample task behavior, or logging level.', 'configmap.yaml', configMapYaml),
+    ...yamlExample('Secret example', 'This Secret stores a placeholder token for the learning lab. KubeTasker can report that the token is configured, but it must never return or log the token value.', 'secret.yaml', secretYaml),
+    ...yamlExample('Mounted config file example', 'This ConfigMap provides a file named app-config.yaml. When mounted into /etc/kubetasker, KubeTasker can load structured file-based settings and report mountedConfigLoaded through /config/status.', 'file-config-configmap.yaml', mountedConfigFileYaml),
+    ...yamlExample('ConfigMap values as environment variables', 'This snippet injects ConfigMap keys into the KubeTasker container environment. The Deployment must reference the correct ConfigMap name and keys.', 'configmap-env-snippet.yaml', configMapEnvYaml),
+    ...yamlExample('Secret value as an environment variable', 'This snippet injects the Secret key into the KubeTasker container environment. Debug the reference and object metadata without printing the sensitive value.', 'secret-env-snippet.yaml', secretEnvYaml),
+    ...yamlExample('ConfigMap mounted as files', 'This snippet mounts ConfigMap data as files under /etc/kubetasker. KubeTasker can read /etc/kubetasker/app-config.yaml from that mount.', 'configmap-file-mount-snippet.yaml', configFileMountYaml),
+    ...yamlExample('Command and args startup snippet', 'This snippet shows the shape of command and args. Only override startup behavior when the lab or application requires it, because a wrong override can stop KubeTasker from starting.', 'command-args-snippet.yaml', commandArgsYaml),
+    ...yamlExample('Small Deployment wiring example', 'This compact example is a valid apps/v1 Deployment shape. It includes selector.matchLabels and matching template.metadata.labels, then shows how the Pod template references the KubeTasker image, ConfigMap, Secret, and mounted config directory together.', 'deployment-runtime-config-snippet.yaml', deploymentSnippetYaml),
     {
       type: 'callout',
       tone: 'warning',
       title: 'Do not expose secret values while debugging',
-      content: 'For CKAD practice, prove that a Secret exists, has the expected key, and is referenced by the Deployment. Avoid commands that print sensitive values from the Secret or from the running container environment.'
+      content: 'For CKAD practice, prove that a Secret exists, has the expected key, is referenced by the Deployment, and appears as configured in /config/status. Avoid commands that print sensitive values from the Secret or from the running container environment.'
     },
-    ...command('1. Show ConfigMaps in the namespace', 'This checks whether the namespace contains ConfigMap objects. Run it first when you expect non-sensitive configuration to exist and want to confirm you are looking in the right namespace.', 'k -n kubetasker get configmaps'),
-    ...command('2. Describe the app ConfigMap', 'This checks the ConfigMap metadata and keys without requiring you to open every value. Notice whether the expected key names exist.', 'k -n kubetasker describe configmap kube-tasker-api-config'),
+    ...command('1. Show ConfigMaps in the namespace', 'This checks whether the namespace contains ConfigMap objects. Run it first when you expect non-sensitive KubeTasker configuration to exist and want to confirm you are looking in the right namespace.', 'k -n kubetasker get configmaps'),
+    ...command('2. Describe the app ConfigMap', 'This checks the ConfigMap metadata and keys without requiring you to open every value. Notice whether LOG_LEVEL, APP_MODE, TASK_MODE, ENABLE_SAMPLE_TASKS, and WELCOME_MESSAGE exist.', 'k -n kubetasker describe configmap kube-tasker-api-config'),
     ...command('3. Show Secrets safely', 'This confirms Secret objects exist in the namespace without printing secret values. Notice the Secret name and type, then compare the name with the Deployment reference.', 'k -n kubetasker get secrets'),
     ...command('4. Describe the Deployment', 'This checks how the Pod template references configuration. Look for environment variables, ConfigMap references, Secret references, volumes, volume mounts, command, args, and recent events.', 'k -n kubetasker describe deploy kube-tasker-api'),
     ...command('5. Show Pods', 'This checks whether Pods were created and whether they are Running, Pending, not Ready, or restarting. Configuration problems often appear as waiting, crash, or readiness symptoms.', 'k -n kubetasker get pods -o wide'),
     ...command('6. Inspect Pod events', 'This checks detailed Pod events and container state. Replace the placeholder with the real Pod name from the previous command, then look for missing ConfigMap, missing Secret, missing key, mount, or startup errors.', 'k -n kubetasker describe pod <pod-name>'),
-    ...command('7. Read application logs', 'This checks what the app reported during startup. Replace the placeholder with the real Pod name and look for configuration parsing, missing file, or invalid startup argument messages.', 'k -n kubetasker logs <pod-name>'),
-    ...command('8. Inspect a non-sensitive environment value', 'This checks one safe environment variable from inside the Pod. Only use this approach for non-sensitive values such as log level, never for tokens or passwords.', 'k -n kubetasker exec <pod-name> -- printenv LOG_LEVEL'),
+    ...command('7. Read application logs', 'This checks what KubeTasker reported during startup. Replace the placeholder with the real Pod name and look for configuration parsing, missing file, or invalid startup argument messages.', 'k -n kubetasker logs <pod-name>'),
+    ...command('8. Verify KubeTasker config status safely', 'This calls the app status endpoint through the Service. The response should show non-sensitive config and whether the token and mounted config are present, without exposing secret values.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status'),
+    ...command('9. Verify KubeTasker readiness', 'This confirms whether KubeTasker considers the runtime configuration valid enough to receive traffic.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/ready'),
+    ...command('10. Inspect a non-sensitive environment value', 'This checks one safe environment variable from inside the Pod. Only use this approach for non-sensitive values such as log level, never for tokens or passwords.', 'k -n kubetasker exec <pod-name> -- printenv LOG_LEVEL'),
     {
       type: 'comparison',
       title: 'Failure interpretation',
       items: [
-        { label: 'ConfigMap not found', content: 'The object may be missing, named differently, or created in another namespace.' },
+        { label: 'ConfigMap not found', content: 'The object may be missing, named differently, or created in another namespace. KubeTasker may not receive app mode, log level, or feature flags.' },
         { label: 'Key not found', content: 'The object exists, but the Deployment references a key that the ConfigMap or Secret does not contain.' },
-        { label: 'Mount path wrong', content: 'The file may be mounted successfully, but the app reads a different directory or filename.' },
-        { label: 'Container exits quickly', content: 'The app may reject a required config value, or command and args may have replaced the normal startup process incorrectly.' },
-        { label: 'Pod Running but not Ready', content: 'The app process may be alive but failing readiness because configuration makes the service unhealthy.' }
+        { label: 'Mount path wrong', content: 'The file may be mounted successfully, but KubeTasker reads a different directory or filename, so /config/status may show mountedConfigLoaded as false.' },
+        { label: 'Container exits quickly', content: 'KubeTasker may reject a required config value, or command and args may have replaced the normal startup process incorrectly.' },
+        { label: 'Pod Running but not Ready', content: 'The process may be alive on /health but failing /ready because required runtime configuration is invalid.' }
       ]
     },
     {
@@ -319,7 +378,7 @@ const problem = defineLearningProblem({
         'ConfigMap exists in the wrong namespace.',
         'Deployment key name does not match the ConfigMap or Secret key.',
         'Secret exists but the Deployment references the wrong Secret name.',
-        'Mounted file path is different from what the app expects.',
+        'Mounted file path is different from what KubeTasker expects.',
         'command or args override the image startup behavior incorrectly.',
         'Existing Pods are not restarted after a configuration reference changes.',
         'Learner prints secret values while debugging.'
@@ -329,12 +388,12 @@ const problem = defineLearningProblem({
       type: 'callout',
       tone: 'success',
       title: 'How this prepares you for the mini-project',
-      content: 'The later runtime configuration mini-project will be hands-on. You will fix an app that fails because configuration is missing, referenced incorrectly, injected in the wrong shape, or mounted at the wrong path. This lesson gives the mental model before the broken lab.'
+      content: 'The later runtime configuration mini-project will be hands-on. You will fix KubeTasker when it fails because configuration is missing, referenced incorrectly, injected in the wrong shape, mounted at the wrong path, or causing readiness to fail. This lesson gives the mental model before the broken lab.'
     },
     {
       type: 'section',
       title: 'Final takeaway',
-      content: 'A good CKAD answer does not only create a ConfigMap or Secret. It proves the object is in the right namespace, the Pod template references the right names and keys, the app receives the value in the expected shape, and debugging avoids exposing sensitive data.'
+      content: 'A good CKAD answer does not only create a ConfigMap or Secret. It proves the object is in the right namespace, the Pod template references the right names and keys, KubeTasker receives the value in the expected shape, /config/status and /ready show the correct behavior, and debugging avoids exposing sensitive data.'
     }
   ]
 });
