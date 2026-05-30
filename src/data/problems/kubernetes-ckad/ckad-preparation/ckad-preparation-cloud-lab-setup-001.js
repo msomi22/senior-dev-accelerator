@@ -3,7 +3,7 @@ import { defineLearningProblem } from '../../../../problems/problemAuthoring.js'
 const prompt = 'Before starting the KubeTasker CKAD stages, how should a learner create, verify, use, and destroy a safe cloud Kubernetes practice lab?';
 
 const awsCloudFormationTemplate = `AWSTemplateFormatVersion: '2010-09-09'
-Description: KubeTasker CKAD single-node kubeadm lab using Cilium networking.
+Description: KubeTasker CKAD single-node kubeadm lab using Cilium networking. This template does not create Elastic IPs.
 
 Parameters:
   KeyName:
@@ -193,9 +193,6 @@ Outputs:
   ControlPlanePublicIp:
     Description: SSH target for the control-plane instance.
     Value: !GetAtt ControlPlane.PublicIp
-  ControlPlaneSshCommand:
-    Description: SSH command template.
-    Value: !Sub ssh ubuntu@\${ControlPlane.PublicIp}
   KubeConfigPath:
     Description: Kubeconfig location on the control-plane instance.
     Value: /home/ubuntu/.kube/config
@@ -235,7 +232,7 @@ const problem = defineLearningProblem({
   question: prompt,
   body: [
     { type: 'section', title: 'Why this lab exists', content: 'CKAD practice works best when the learner can repeatedly create Kubernetes objects, inspect them, break them, fix them, and clean up without guessing the infrastructure setup. Pick one provider tab below and follow only that setup path.' },
-    { type: 'callout', tone: 'warning', title: 'Cost cleanup warning', content: 'Do not leave cloud Kubernetes labs running after practice. Stop or delete the lab immediately when finished. Deleting the cloud lab is the cleanest cleanup path because stopped instances, disks, public IPs, load balancers, and managed control planes may still cost money.' },
+    { type: 'callout', tone: 'warning', title: 'Cost cleanup warning', content: 'Do not leave cloud Kubernetes labs running after practice. Delete the lab immediately when finished. This AWS EC2 path does not create Elastic IPs; it uses the normal auto-assigned EC2 public IPv4 from the public subnet.' },
     {
       type: 'tabs',
       title: 'Choose your cloud lab path',
@@ -246,11 +243,13 @@ const problem = defineLearningProblem({
           label: 'AWS EC2 + kubeadm + Cilium',
           body: [
             { type: 'section', title: 'When to use this path', content: 'Use this as the preferred CKAD practice path when you want VM-based Kubernetes practice with kubeadm and direct node access. The lab uses Cilium only as the Kubernetes networking layer.' },
-            { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CloudShell access, or AWS CLI installed locally and authenticated with aws configure.', 'Permission to create CloudFormation, EC2, VPC, subnet, route table, internet gateway, security group, and EBS resources.', 'An existing EC2 key pair in the target AWS region.', 'Your public IP address in CIDR format, for example 203.0.113.10/32.', 'For this AWS EC2 path, run kubectl/k after SSH into the EC2 instance. kubectl is installed automatically on that instance; local kubectl is only needed if you choose to copy kubeconfig and manage the cluster from your own machine.'] },
-            { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 35-45/month for one t3.medium style single-node lab. Cost can increase with EBS storage, public IPv4 addresses, Elastic IPs, NAT, and data transfer. Delete the stack when finished.' },
+            { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CloudShell access, or AWS CLI installed locally and authenticated with aws configure.', 'Permission to create CloudFormation, EC2, VPC, subnet, route table, internet gateway, security group, and EBS resources.', 'An existing EC2 key pair in the target AWS region.', 'The matching private key file on your machine, for example demo-app-2026.pem.', 'Your public IP address in CIDR format, for example 203.0.113.10/32.', 'For this AWS EC2 path, run kubectl/k after SSH into the EC2 instance. kubectl is installed automatically on that instance; local kubectl is only needed if you choose to copy kubeconfig and manage the cluster from your own machine.'] },
+            { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 35-45/month for one t3.medium style single-node lab. Cost can increase with EBS storage, AWS public IPv4 charges, NAT, and data transfer. This lab does not create Elastic IPs. Delete the stack when finished.' },
             ...command('Set AWS region', 'Sets Oregon as the AWS region where CloudFormation and EC2 resources will be created.', 'export AWS_REGION=us-west-2'),
             ...command('Set stack name', 'Gives the CloudFormation stack a predictable name that is reused by later commands.', 'export STACK_NAME=kubetasker-ckad'),
             ...command('Set EC2 key pair name', 'Uses an existing EC2 key pair from the selected AWS region. Replace the placeholder with your real key pair name.', 'export KEY_NAME=YOUR_EXISTING_EC2_KEY_PAIR'),
+            ...command('Set private key path', 'Points SSH to the local private key file that matches the EC2 key pair. The example file name is demo-app-2026.pem.', 'export KEY_PATH=~/Downloads/demo-app-2026.pem'),
+            ...command('Restrict private key permissions', 'Makes the private key acceptable to SSH on Linux and macOS. SSH commonly rejects keys that are too open.', 'chmod 400 "$KEY_PATH"'),
             ...command('Set SSH access CIDR', 'Detects your current public IP and restricts SSH, Kubernetes API, and NodePort access to that IP only.', 'export ACCESS_CIDR=$(curl -fsSL https://checkip.amazonaws.com)/32'),
             ...command('Create lab folder', 'Creates a local folder to keep the CloudFormation template for this lab.', 'mkdir -p ~/kubetasker-ckad-lab'),
             ...command('Enter lab folder', 'Moves your shell into the lab folder so the template file is created and used from the same location.', 'cd ~/kubetasker-ckad-lab'),
@@ -274,8 +273,8 @@ const problem = defineLearningProblem({
   --region "$AWS_REGION" \
   --query "Stacks[0].Outputs[?OutputKey=='ControlPlanePublicIp'].OutputValue" \
   --output text)`),
-            ...command('Print SSH command', 'Prints the SSH command so the learner can see the exact host before connecting.', 'echo "ssh ubuntu@$PUBLIC_IP"'),
-            ...command('SSH into the lab', 'Connects to the EC2 control-plane instance. Run the Kubernetes commands after you are inside this SSH session.', 'ssh ubuntu@$PUBLIC_IP'),
+            ...command('Print SSH command', 'Prints the exact SSH command with the private key path and public IP before connecting.', 'echo "ssh -i $KEY_PATH ubuntu@$PUBLIC_IP"'),
+            ...command('SSH into the lab', 'Connects to the EC2 control-plane instance using the private key file. Run the Kubernetes commands after you are inside this SSH session.', 'ssh -i "$KEY_PATH" ubuntu@"$PUBLIC_IP"'),
             ...command('Verify nodes', 'Confirms the Kubernetes node is registered and shows its readiness status.', 'k get nodes -o wide'),
             ...command('Verify all pods', 'Lists pods across all namespaces so you can confirm the system components are coming up.', 'k get pods -A'),
             ...command('Verify Cilium status', 'Confirms Cilium is installed and healthy before continuing with application practice.', 'cilium status --wait'),
@@ -343,7 +342,7 @@ const problem = defineLearningProblem({
           body: [
             { type: 'section', title: 'When to use this path', content: 'Use EKS only when you specifically want AWS-managed Kubernetes experience. It is useful later, but it is not the main CKAD preparation path because it adds more AWS-specific machinery and normally costs more.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CLI installed and authenticated, or AWS CloudShell access.', 'eksctl installed.', 'kubectl installed locally.', 'Permission to create EKS clusters, IAM roles, EC2 nodes, VPC resources, and security groups.'] },
-            { type: 'callout', tone: 'warning', title: 'Estimated monthly cost', content: 'Approximate cost: USD 110-160/month or more because EKS includes a managed control plane plus worker nodes, storage, public IPv4 addresses, possible Elastic IPs, and network charges. Delete the cluster when finished.' },
+            { type: 'callout', tone: 'warning', title: 'Estimated monthly cost', content: 'Approximate cost: USD 110-160/month or more because EKS includes a managed control plane plus worker nodes, storage, AWS public IPv4 charges, and network charges. Delete the cluster when finished.' },
             ...command('Set EKS cluster name', 'Names the optional EKS cluster.', 'export EKS_CLUSTER_NAME=kubetasker-ckad'),
             ...command('Set AWS region', 'Sets Oregon as the AWS region for the EKS cluster.', 'export AWS_REGION=us-west-2'),
             ...command('Create optional EKS lab', 'Creates an AWS-managed Kubernetes cluster with one managed worker node.', `eksctl create cluster \
