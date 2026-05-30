@@ -48,7 +48,7 @@ metadata:
   name: kube-tasker-api
   namespace: kubetasker
 spec:
-  replicas: 2
+  replicas: 2 # changed here
   selector:
     matchLabels:
       app: kube-tasker-api
@@ -85,7 +85,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: wrong-label
+    app: wrong-label # changed here
   ports:
     - name: http
       port: 80
@@ -245,10 +245,10 @@ const problem = defineLearningProblem({
     ...command('14. Inspect the Pods', 'This confirms the API Pod and client pod exist inside the lesson namespace.', 'k -n kubetasker get pods -o wide'),
     ...command('15. Inspect the Service', 'This confirms the stable internal Service exists.', 'k -n kubetasker get svc kube-tasker-api'),
     ...command('16. Inspect the Endpoints', 'This confirms the Service has found matching backend Pod IPs.', 'k -n kubetasker get endpoints kube-tasker-api'),
-    ...fileBlock('17. Modify the Deployment to use two replicas', 'Edit deployment.yaml so replicas changes from one to two. The rest of the file should stay the same.', 'deployment.yaml', deploymentYamlV2),
+    ...fileBlock('17. Modify the Deployment to use two replicas', 'Edit deployment.yaml so replicas changes from one to two. The changed line is marked in the YAML comment.', 'deployment.yaml', deploymentYamlV2),
     ...command('18. Apply the modified Deployment file', 'Apply the file again. Kubernetes compares the new desired state with the live Deployment and scales the workload.', 'k apply -f deployment.yaml'),
     ...command('19. Verify two API Pods', 'This confirms the replica change affected the live cluster.', 'k -n kubetasker get pods -l app=kube-tasker-api -o wide'),
-    ...fileBlock('20. Break the Service selector deliberately', 'Edit service.yaml and change the selector to a wrong label. This is intentional so you can see how Service routing fails.', 'service.yaml', brokenServiceYaml),
+    ...fileBlock('20. Break the Service selector deliberately', 'Edit service.yaml and change the selector to a wrong label. The changed line is marked in the YAML comment so the failure point is obvious.', 'service.yaml', brokenServiceYaml),
     ...command('21. Apply the broken Service file', 'Apply the broken file so the live Service selector no longer matches the API Pod labels.', 'k apply -f service.yaml'),
     ...command('22. Inspect Endpoints after the broken selector', 'This should show no useful backend Pod IPs. The Service still exists, but it cannot find matching Pods.', 'k -n kubetasker get endpoints kube-tasker-api'),
     ...fileBlock('23. Fix the Service selector', 'Restore the correct selector so the Service can find the API Pods again.', 'service.yaml', serviceYaml),
