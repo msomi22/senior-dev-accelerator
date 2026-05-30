@@ -228,7 +228,7 @@ const problem = defineLearningProblem({
     {
       type: 'tabs',
       title: 'Choose your cloud lab path',
-      description: 'Use one tab at a time. Each provider tab includes the account requirement, setup preparation, estimated cost, copyable setup content, create command, verification command, and cleanup command.',
+      description: 'Use one tab at a time. Each provider tab breaks the setup into separately copyable commands so each block does one job.',
       tabs: [
         {
           id: 'aws-ec2-kubeadm',
@@ -237,17 +237,16 @@ const problem = defineLearningProblem({
             { type: 'section', title: 'When to use this path', content: 'Use this as the preferred CKAD practice path when you want VM-based Kubernetes practice with kubeadm and direct node access. The lab uses Cilium only as the Kubernetes networking layer.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CloudShell access, or AWS CLI installed locally and authenticated with aws configure.', 'Permission to create CloudFormation, EC2, VPC, subnet, route table, internet gateway, security group, and EBS resources.', 'An existing EC2 key pair in the target AWS region.', 'Your public IP address in CIDR format, for example 203.0.113.10/32.', 'For this AWS EC2 path, run kubectl/k after SSH into the EC2 instance. kubectl is installed automatically on that instance; local kubectl is only needed if you choose to copy kubeconfig and manage the cluster from your own machine.'] },
             { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 35-45/month for one t3.medium style single-node lab. Cost can increase with EBS storage, public IPv4 addresses, Elastic IPs, NAT, and data transfer. Delete the stack when finished.' },
+            { type: 'code', title: 'Set AWS variables', language: 'bash', code: `export AWS_REGION=us-west-2
+export STACK_NAME=kubetasker-ckad
+export KEY_NAME=YOUR_EXISTING_EC2_KEY_PAIR
+export ACCESS_CIDR=$(curl -fsSL https://checkip.amazonaws.com)/32` },
             { type: 'code', title: 'Create the CloudFormation template file', language: 'bash', code: `mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
 
 cat > kubetasker-ckad-aws-cloudformation.yaml <<'CFN_YAML'
 ${awsCloudFormationTemplate}CFN_YAML` },
-            { type: 'code', title: 'Create the AWS EC2 kubeadm + Cilium lab', language: 'bash', code: `export AWS_REGION=us-west-2
-export STACK_NAME=kubetasker-ckad
-export KEY_NAME=YOUR_EXISTING_EC2_KEY_PAIR
-export ACCESS_CIDR=$(curl -fsSL https://checkip.amazonaws.com)/32
-
-aws cloudformation create-stack \
+            { type: 'code', title: 'Create the CloudFormation stack', language: 'bash', code: `aws cloudformation create-stack \
   --stack-name "$STACK_NAME" \
   --region "$AWS_REGION" \
   --template-body file://kubetasker-ckad-aws-cloudformation.yaml \
@@ -255,29 +254,34 @@ aws cloudformation create-stack \
     "ParameterKey=KeyName,ParameterValue=$KEY_NAME" \
     "ParameterKey=SSHLocation,ParameterValue=$ACCESS_CIDR" \
     "ParameterKey=InstanceType,ParameterValue=t3.medium" \
-    "ParameterKey=LabName,ParameterValue=$STACK_NAME"
-
-aws cloudformation wait stack-create-complete \
+    "ParameterKey=LabName,ParameterValue=$STACK_NAME"` },
+            { type: 'code', title: 'Check stack status', language: 'bash', code: `aws cloudformation describe-stacks \
   --stack-name "$STACK_NAME" \
-  --region "$AWS_REGION"` },
-            { type: 'code', title: 'Get the public IP and SSH into the lab', language: 'bash', code: `PUBLIC_IP=$(aws cloudformation describe-stacks \
+  --region "$AWS_REGION" \
+  --query "Stacks[0].StackStatus" \
+  --output text` },
+            { type: 'code', title: 'Get the SSH command', language: 'bash', code: `PUBLIC_IP=$(aws cloudformation describe-stacks \
   --stack-name "$STACK_NAME" \
   --region "$AWS_REGION" \
   --query "Stacks[0].Outputs[?OutputKey=='ControlPlanePublicIp'].OutputValue" \
   --output text)
 
-echo "SSH command: ssh ubuntu@$PUBLIC_IP"
-ssh ubuntu@$PUBLIC_IP` },
-            { type: 'code', title: 'Verify Kubernetes + Cilium after SSH', language: 'bash', code: 'k get nodes -o wide\nk get pods -A\ncilium status --wait\nk -n kube-system get pods -l k8s-app=cilium' },
+echo "ssh ubuntu@$PUBLIC_IP"` },
+            { type: 'code', title: 'SSH into the lab', language: 'bash', code: 'ssh ubuntu@PUBLIC_IP' },
+            { type: 'code', title: 'Verify Kubernetes + Cilium after SSH', language: 'bash', code: 'k get nodes -o wide
+k get pods -A
+cilium status --wait
+k -n kube-system get pods -l k8s-app=cilium' },
             { type: 'code', title: 'Deploy and verify KubeTasker API', language: 'bash', code: deployKubeTaskerCommands },
             { type: 'code', title: 'Clean up application resources', language: 'bash', code: 'k delete namespace kubetasker --ignore-not-found' },
             { type: 'code', title: 'Delete the AWS lab after practice', language: 'bash', code: `aws cloudformation delete-stack \
   --stack-name "$STACK_NAME" \
-  --region "$AWS_REGION"
-
-aws cloudformation wait stack-delete-complete \
+  --region "$AWS_REGION"` },
+            { type: 'code', title: 'Check delete status', language: 'bash', code: `aws cloudformation describe-stacks \
   --stack-name "$STACK_NAME" \
-  --region "$AWS_REGION"` }
+  --region "$AWS_REGION" \
+  --query "Stacks[0].StackStatus" \
+  --output text` }
           ]
         },
         {
@@ -285,18 +289,16 @@ aws cloudformation wait stack-delete-complete \
             { type: 'section', title: 'When to use this path', content: 'Use this path when you want a fast managed Kubernetes cluster and want to focus mainly on kubectl practice rather than node bootstrap details.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['DigitalOcean account with billing enabled.', 'Personal access token created from the DigitalOcean dashboard.', 'doctl installed and authenticated with the personal access token.', 'kubectl installed locally.', 'bash available in your terminal or cloud shell.'] },
             { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 24/month for one s-2vcpu-4gb node. Storage and load balancers cost extra. Delete the cluster when finished.' },
-            { type: 'code', title: 'Create the DigitalOcean Kubernetes lab', language: 'bash', code: `export DO_CLUSTER_NAME=kubetasker-ckad
+            { type: 'code', title: 'Set DigitalOcean variables', language: 'bash', code: `export DO_CLUSTER_NAME=kubetasker-ckad
 export DO_REGION=nyc1
 export DO_NODE_SIZE=s-2vcpu-4gb
-export DO_NODE_COUNT=1
-
-doctl kubernetes cluster create "$DO_CLUSTER_NAME" \
+export DO_NODE_COUNT=1` },
+            { type: 'code', title: 'Create the DigitalOcean Kubernetes lab', language: 'bash', code: `doctl kubernetes cluster create "$DO_CLUSTER_NAME" \
   --region "$DO_REGION" \
   --size "$DO_NODE_SIZE" \
   --count "$DO_NODE_COUNT" \
-  --wait
-
-k get nodes -o wide` },
+  --wait` },
+            { type: 'code', title: 'Verify DigitalOcean nodes', language: 'bash', code: 'k get nodes -o wide' },
             { type: 'code', title: 'Deploy and verify KubeTasker API', language: 'bash', code: deployKubeTaskerCommands },
             { type: 'code', title: 'Clean up application resources', language: 'bash', code: 'k delete namespace kubetasker --ignore-not-found' },
             { type: 'code', title: 'Delete the DigitalOcean lab after practice', language: 'bash', code: 'doctl kubernetes cluster delete "$DO_CLUSTER_NAME" --force' }
@@ -307,19 +309,17 @@ k get nodes -o wide` },
             { type: 'section', title: 'When to use this path', content: 'Use this path when Civo is available in your region and you want a lightweight managed Kubernetes setup for quick practice.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['Civo account with billing enabled.', 'Civo API key created from the Civo dashboard.', 'civo CLI installed and authenticated with the API key.', 'A supported Civo region and node size selected.', 'kubectl installed locally.', 'bash available in your terminal or cloud shell.'] },
             { type: 'callout', tone: 'info', title: 'Estimated monthly cost', content: 'Approximate cost: USD 20-30/month for one small or medium node. Exact cost depends on region and node size. Delete the cluster when finished.' },
-            { type: 'code', title: 'Create the Civo Kubernetes lab', language: 'bash', code: `export CIVO_CLUSTER_NAME=kubetasker-ckad
+            { type: 'code', title: 'Set Civo variables', language: 'bash', code: `export CIVO_CLUSTER_NAME=kubetasker-ckad
 export CIVO_REGION=LON1
 export CIVO_NODE_SIZE=g4s.kube.medium
-export CIVO_NODE_COUNT=1
-
-civo kubernetes create "$CIVO_CLUSTER_NAME" \
+export CIVO_NODE_COUNT=1` },
+            { type: 'code', title: 'Create the Civo Kubernetes lab', language: 'bash', code: `civo kubernetes create "$CIVO_CLUSTER_NAME" \
   --region "$CIVO_REGION" \
   --nodes "$CIVO_NODE_COUNT" \
   --size "$CIVO_NODE_SIZE" \
-  --wait
-
-civo kubernetes config "$CIVO_CLUSTER_NAME" --region "$CIVO_REGION" --save
-k get nodes -o wide` },
+  --wait` },
+            { type: 'code', title: 'Save Civo kubeconfig', language: 'bash', code: 'civo kubernetes config "$CIVO_CLUSTER_NAME" --region "$CIVO_REGION" --save' },
+            { type: 'code', title: 'Verify Civo nodes', language: 'bash', code: 'k get nodes -o wide' },
             { type: 'code', title: 'Deploy and verify KubeTasker API', language: 'bash', code: deployKubeTaskerCommands },
             { type: 'code', title: 'Clean up application resources', language: 'bash', code: 'k delete namespace kubetasker --ignore-not-found' },
             { type: 'code', title: 'Delete the Civo lab after practice', language: 'bash', code: 'civo kubernetes remove "$CIVO_CLUSTER_NAME" --region "$CIVO_REGION" --yes' }
@@ -330,17 +330,15 @@ k get nodes -o wide` },
             { type: 'section', title: 'When to use this path', content: 'Use EKS only when you specifically want AWS-managed Kubernetes experience. It is useful later, but it is not the main CKAD preparation path because it adds more AWS-specific machinery and normally costs more.' },
             { type: 'checklist', title: 'Account and prerequisites', items: ['AWS account with billing enabled.', 'AWS CLI installed and authenticated, or AWS CloudShell access.', 'eksctl installed.', 'kubectl installed locally.', 'Permission to create EKS clusters, IAM roles, EC2 nodes, VPC resources, and security groups.'] },
             { type: 'callout', tone: 'warning', title: 'Estimated monthly cost', content: 'Approximate cost: USD 110-160/month or more because EKS includes a managed control plane plus worker nodes, storage, public IPv4 addresses, possible Elastic IPs, and network charges. Delete the cluster when finished.' },
-            { type: 'code', title: 'Create the optional EKS lab', language: 'bash', code: `export EKS_CLUSTER_NAME=kubetasker-ckad
-export AWS_REGION=us-west-2
-
-eksctl create cluster \
+            { type: 'code', title: 'Set EKS variables', language: 'bash', code: `export EKS_CLUSTER_NAME=kubetasker-ckad
+export AWS_REGION=us-west-2` },
+            { type: 'code', title: 'Create the optional EKS lab', language: 'bash', code: `eksctl create cluster \
   --name "$EKS_CLUSTER_NAME" \
   --region "$AWS_REGION" \
   --nodes 1 \
   --node-type t3.small \
-  --managed
-
-k get nodes -o wide` },
+  --managed` },
+            { type: 'code', title: 'Verify EKS nodes', language: 'bash', code: 'k get nodes -o wide' },
             { type: 'code', title: 'Deploy and verify KubeTasker API', language: 'bash', code: deployKubeTaskerCommands },
             { type: 'code', title: 'Clean up application resources', language: 'bash', code: 'k delete namespace kubetasker --ignore-not-found' },
             { type: 'code', title: 'Delete the EKS lab after practice', language: 'bash', code: 'eksctl delete cluster --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"' }
@@ -354,7 +352,7 @@ k get nodes -o wide` },
   hints: ['Use k as shorthand for kubectl throughout the lessons.', 'Every provider path must have a cleanup command.', 'For the AWS kubeadm path, verify Cilium with cilium status --wait before continuing.', 'Do not deploy KubeTasker until k get nodes works.'],
   relatedConcepts: ['kubectl', 'kubeadm', 'Cilium', 'CloudFormation', 'managed Kubernetes', 'cleanup', 'KubeTasker'],
   followUpQuestions: ['Which provider path is best for your current practice session?', 'How will you confirm that the cluster is ready before deploying KubeTasker?', 'Which command destroys the full cloud environment when you finish?'],
-  finalTakeaway: 'Choose one provider path, copy the setup content from the page, create the lab, verify the cluster, deploy KubeTasker API with k, then clean up the application and delete the cloud environment when done.',
+  finalTakeaway: 'Choose one provider path, copy each block one at a time, create the lab, verify the cluster, deploy KubeTasker API with k, then clean up the application and delete the cloud environment when done.',
   metadata: { reviewStatus: 'approved', visibility: ['dev', 'prod'], source: 'original', estimatedTimeSeconds: 420 }
 });
 
