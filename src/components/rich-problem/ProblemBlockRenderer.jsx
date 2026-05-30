@@ -6,6 +6,17 @@ import ProblemFlowBlock from './ProblemFlowBlock.jsx';
 import ProblemImageBlock, { isTrustedStaticImageSrc } from './ProblemImageBlock.jsx';
 import ProblemTableBlock from './ProblemTableBlock.jsx';
 
+const urlPattern = /(https?:\/\/[^\s]+)/g;
+
+function LinkedText({ text }) {
+  if (typeof text !== 'string') return null;
+  const parts = text.split(urlPattern);
+  return parts.map((part, index) => {
+    if (!part.match(urlPattern)) return <span key={`${part}-${index}`}>{part}</span>;
+    return <a href={part} key={`${part}-${index}`} rel="noreferrer" target="_blank">{part}</a>;
+  });
+}
+
 function UnknownBlock({ block, index }) {
   return (
     <section className="workspace-block problem-rich-block problem-rich-unknown" role="note">
@@ -21,7 +32,7 @@ function SectionBlock({ block }) {
     <section className="workspace-block problem-rich-block problem-rich-section">
       {block.label ? <span className="mini-label">{block.label}</span> : null}
       {block.title ? <h4>{block.title}</h4> : null}
-      {block.content ? <p>{block.content}</p> : null}
+      {block.content ? <p><LinkedText text={block.content} /></p> : null}
       {nestedBlocks.length ? <div className="problem-rich-nested-blocks">{nestedBlocks.map((child, index) => <ProblemBlockRenderer block={child} index={index} key={`${child?.type || 'unknown'}-${child?.title || index}`} />)}</div> : null}
     </section>
   );
@@ -35,7 +46,7 @@ function DiagramBlock({ block }) {
     <section className="workspace-block problem-rich-block problem-diagram-block">
       {block.title ? <span className="mini-label">{block.title}</span> : <span className="mini-label">Diagram</span>}
       {content ? <pre>{content}</pre> : <p>No diagram content provided.</p>}
-      {block.caption ? <p className="problem-rich-caption">{block.caption}</p> : null}
+      {block.caption ? <p className="problem-rich-caption"><LinkedText text={block.caption} /></p> : null}
     </section>
   );
 }
@@ -55,21 +66,21 @@ function RichCodeBlock({ block }) {
 
 function ChecklistBlock({ block }) {
   const items = Array.isArray(block.items) ? block.items : [];
-  return <section className="workspace-block problem-rich-block problem-checklist-block">{block.title ? <span className="mini-label">{block.title}</span> : <span className="mini-label">Checklist</span>}<ul className="problem-checklist">{items.map((item, index) => { const label = typeof item === 'string' ? item : item?.label || item?.text; const checked = typeof item === 'object' && item?.checked === true; return <li key={`${label || 'item'}-${index}`}><span aria-hidden="true">{checked ? '✓' : '•'}</span><p>{label}</p></li>; })}</ul></section>;
+  return <section className="workspace-block problem-rich-block problem-checklist-block">{block.title ? <span className="mini-label">{block.title}</span> : <span className="mini-label">Checklist</span>}<ul className="problem-checklist">{items.map((item, index) => { const label = typeof item === 'string' ? item : item?.label || item?.text; const checked = typeof item === 'object' && item?.checked === true; return <li key={`${label || 'item'}-${index}`}><span aria-hidden="true">{checked ? '✓' : '•'}</span><p><LinkedText text={label} /></p></li>; })}</ul></section>;
 }
 
 function ComparisonBlock({ block }) {
   const items = Array.isArray(block.items) ? block.items : [];
-  return <section className="workspace-block problem-rich-block problem-comparison-block">{block.title ? <span className="mini-label">{block.title}</span> : <span className="mini-label">Comparison</span>}<div className="problem-comparison-grid">{items.map((item, index) => <article key={`${item?.label || 'comparison'}-${index}`}>{item?.label ? <strong>{item.label}</strong> : null}{item?.content ? <p>{item.content}</p> : null}{Array.isArray(item?.points) ? <ul>{item.points.map((point) => <li key={point}>{point}</li>)}</ul> : null}</article>)}</div></section>;
+  return <section className="workspace-block problem-rich-block problem-comparison-block">{block.title ? <span className="mini-label">{block.title}</span> : <span className="mini-label">Comparison</span>}<div className="problem-comparison-grid">{items.map((item, index) => <article key={`${item?.label || 'comparison'}-${index}`}>{item?.label ? <strong>{item.label}</strong> : null}{item?.content ? <p><LinkedText text={item.content} /></p> : null}{Array.isArray(item?.points) ? <ul>{item.points.map((point) => <li key={point}><LinkedText text={point} /></li>)}</ul> : null}</article>)}</div></section>;
 }
 
 function List({ title, items }) {
   if (!Array.isArray(items) || !items.length) return null;
-  return <div><strong>{title}</strong><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></div>;
+  return <div><strong>{title}</strong><ul>{items.map((item) => <li key={item}><LinkedText text={item} /></li>)}</ul></div>;
 }
 
 function ArchitectureDecisionBlock({ block }) {
-  return <section className="workspace-block problem-rich-block problem-architecture-decision-block"><span className="mini-label">Architecture decision</span>{block.title ? <h4>{block.title}</h4> : null}{block.context ? <p>{block.context}</p> : null}{block.decision ? <div className="problem-decision-highlight"><strong>Decision</strong><p>{block.decision}</p></div> : null}<div className="problem-decision-grid"><List title="Accepted trade-offs" items={block.tradeoffs} /><List title="Consequences" items={block.consequences} /></div></section>;
+  return <section className="workspace-block problem-rich-block problem-architecture-decision-block"><span className="mini-label">Architecture decision</span>{block.title ? <h4>{block.title}</h4> : null}{block.context ? <p><LinkedText text={block.context} /></p> : null}{block.decision ? <div className="problem-decision-highlight"><strong>Decision</strong><p><LinkedText text={block.decision} /></p></div> : null}<div className="problem-decision-grid"><List title="Accepted trade-offs" items={block.tradeoffs} /><List title="Consequences" items={block.consequences} /></div></section>;
 }
 
 function TabsBlock({ block }) {
@@ -82,7 +93,7 @@ function TabsBlock({ block }) {
   return (
     <section className="workspace-block problem-rich-block problem-tabs-block">
       {block.title ? <span className="mini-label">{block.title}</span> : <span className="mini-label">Tabs</span>}
-      {block.description ? <p className="problem-tabs-description">{block.description}</p> : null}
+      {block.description ? <p className="problem-tabs-description"><LinkedText text={block.description} /></p> : null}
       <div className="problem-tabs-list" role="tablist" aria-label={block.title || 'Problem tabs'}>
         {tabs.map((tab, index) => {
           const tabId = tab.id || tab.label || `tab-${index}`;
