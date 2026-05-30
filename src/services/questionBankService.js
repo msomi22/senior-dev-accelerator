@@ -77,103 +77,159 @@ export function canUseVirtualBank(topic, discoveredQuestions = []) {
 export function assertCanUseVirtualBank(topic, discoveredQuestions = []) {
   if (canUseVirtualBank(topic, discoveredQuestions)) return;
 
-  throw new Error(`Topic ${topic?.id || 'unknown'} has no question bank and is not configured for discovered problems.`);
-}
-
-function mergeLegacyQuestion(question, merge) {
-  const mergedId = question.id?.startsWith(merge.idPrefixFrom)
-    ? question.id.replace(merge.idPrefixFrom, merge.idPrefixTo)
-    : `${merge.idPrefixTo}${question.id}`;
-
-  return normalizeProblem({
-    ...question,
-    id: mergedId,
-    topicId: merge.topicId,
-    category: merge.category || getTopic(merge.topicId).category,
-    finalPattern: merge.finalPattern || question.finalPattern,
-    tags: Array.from(new Set([...(question.tags || []), ...(merge.tags || [])]))
-  });
-}
-
-async function loadLegacyMergeQuestions(topic, modules = bankModules) {
-  const merges = topic?.questionBank?.legacyMerges || [];
-  const loaded = await Promise.all(
-    merges.map(async (merge) => {
-      const loader = modules[merge.path];
-      if (!loader) return [];
-      const module = await loader();
-      const exported = module?.default || module?.questions || module?.bank?.questions || [];
-      return exported.map((question) => mergeLegacyQuestion(question, merge));
-    })
+  throw new Error(
+    `Missing quiz bank file for ${topic.id}. Expected: src/data/banks/${topic.category}/${topic.id}.js. `
+    + 'Add discovered problems for this topic or set questionBank.mode to "discovered" or "empty" in topicManifest.'
   );
-
-  return loaded.flat();
 }
 
-async function getDiscoveredQuestions(topicId, options = {}) {
-  if (options.getDiscoveredQuestions) return options.getDiscoveredQuestions(topicId, options);
-  return getDiscoveredQuestionsForTopic(topicId, options);
+export async function loadLegacyBankIfPresent(topic, modules = bankModules) {
+  const path = getOptionalBankPath(topic, modules);
+  if (!path) return null;
+
+  const module = await modules[path]();
+  return applyQuestionOverrides(module.default);
 }
 
-async function getAllDiscoveredQuestions(options = {}) {
-  if (options.getAllDiscoveredQuestions) return options.getAllDiscoveredQuestions(options);
-  return discoverProblems(options);
+function normalizeSystemQuestion(question) {
+  const normalized = normalizeProblem(question);
+
+  if (normalized.type === 'complex-system-design') return normalized;
+
+  return {
+    ...normalized,
+    difficulty: 'Easy'
+  };
+}
+
+function normalizeQuestionTypes(bank) {
+  if (bank.category !== 'system') return bank;
+
+  return {
+    ...bank,
+    questions: (bank.questions || []).map((question) => normalizeSystemQuestion(question))
+  };
+}
+
+function resolveLegacyMergePath(mergeConfig) {
+  if (typeof mergeConfig === 'string') return mergeConfig;
+  return mergeConfig?.path || null;
+}
+
+function applyLegacyMergeConfig(question, mergeConfig = {}) {
+  const idPrefixFrom = mergeConfig.idPrefixFrom || '';
+  const idPrefixTo = mergeConfig.idPrefixTo || '';
+  const mergedTags = [...new Set([...(question.tags || []), ...(mergeConfig.tags || [])])];
+
+  return {
+    ...question,
+    id: idPrefixFrom ? question.id.replace(new RegExp(`^${idPrefixFrom}`), idPrefixTo) : question.id,
+    topicId: mergeConfig.topicId ?? question.topicId,
+    finalPattern: mergeConfig.finalPattern ?? question.finalPattern,
+    tags: mergedTags
+  };
+}
+
+export async function mergeLegacyQuestionSources(bank, topic, modules = bankModules) {
+  const legacyMerges = topic?.questionBank?.legacyMerges || [];
+  if (!legacyMerges.length) return bank;
+
+  let mergedQuestions = [...(bank.questions || [])];
+  const existingIds = new Set(mergedQuestions.map((question) => question.id));
+
+  for (const mergeConfig of legacyMerges) {
+    const path = resolveLegacyMergePath(mergeConfig);
+    if (!path || !modules[path]) continue;
+
+    const module = await modules[path]();
+    const sourceBank = module.default;
+    const sourceQuestions = (sourceBank.questions || [])
+      .map((question) => applyLegacyMergeConfig(question, mergeConfig))
+      .filter((question) => !existingIds.has(question.id));
+
+    for (const question of sourceQuestions) {
+      existingIds.add(question.id);
+    }
+
+    mergedQuestions = [...mergedQuestions, ...sourceQuestions];
+  }
+
+  return {
+    ...bank,
+    questions: mergedQuestions
+  };
+}
+
+export function mergeQuestionsById(primaryQuestions = [], fallbackQuestions = []) {
+  const mergedQuestions = [];
+  const seenIds = new Set();
+
+  for (const question of [...primaryQuestions, ...fallbackQuestions]) {
+    if (!question?.id || seenIds.has(question.id)) continue;
+
+    seenIds.add(question.id);
+    mergedQuestions.push(question);
+  }
+
+  return mergedQuestions;
+}
+
+function mergeDiscoveredQuestions(bank, discoveredQuestions = []) {
+  const questions = mergeQuestionsById(discoveredQuestions, bank.questions || []);
+
+  if (questions.length === (bank.questions || []).length && !discoveredQuestions.length) return bank;
+
+  return {
+    ...bank,
+    questions
+  };
+}
+
+function applyContentProfileToBank(bank, options = {}) {
+  return {
+    ...bank,
+    questions: filterQuestionsForActiveProfile(bank.questions || [], options)
+  };
+}
+
+export async function loadTopicBankFromSources(topicId, options = {}) {
+  const topic = getTopic(topicId, options.topics || topicManifest);
+  const modules = options.modules || bankModules;
+  const getDiscoveredQuestions = options.getDiscoveredQuestions || getDiscoveredQuestionsForTopic;
+
+  const discoveredQuestions = await getDiscoveredQuestions(topicId);
+  const legacyBank = await loadLegacyBankIfPresent(topic, modules);
+
+  if (!legacyBank) {
+    assertCanUseVirtualBank(topic, discoveredQuestions);
+  }
+
+  const baseBank = legacyBank || createVirtualBank(topic);
+  const withLegacySources = await mergeLegacyQuestionSources(baseBank, topic, modules);
+  const withDiscoveredQuestions = mergeDiscoveredQuestions(withLegacySources, discoveredQuestions);
+  const normalized = normalizeQuestionTypes(withDiscoveredQuestions);
+
+  return applyContentProfileToBank(normalized, options);
+}
+
+const bankCache = new Map();
+let discoveredQuestionsCache;
+let visibleTopicsCache;
+let visibleCategoriesCache;
+
+async function getAllDiscoveredQuestions() {
+  if (!discoveredQuestionsCache) {
+    discoveredQuestionsCache = discoverProblems();
+  }
+
+  return discoveredQuestionsCache;
 }
 
 async function getQuestionsForProfileOptions(options = {}) {
   if (hasExplicitQuestionsOption(options)) return options.questions || [];
-  return getAllDiscoveredQuestions(options);
+  if (options.getAllDiscoveredQuestions) return options.getAllDiscoveredQuestions();
+  return getAllDiscoveredQuestions();
 }
-
-export async function getQuestionsForTopic(topicId, options = {}) {
-  const topic = getTopic(topicId, options.topics || topicManifest);
-  const discoveredQuestions = await getDiscoveredQuestions(topicId, options);
-  const legacyMergeQuestions = await loadLegacyMergeQuestions(topic, options.modules || bankModules);
-  const questions = [...legacyMergeQuestions, ...discoveredQuestions];
-
-  if (!questions.length) assertCanUseVirtualBank(topic, discoveredQuestions);
-
-  return filterQuestionsForActiveProfile(applyQuestionOverrides(questions), options);
-}
-
-export async function getQuestionBank(topicId, options = {}) {
-  const topic = getTopic(topicId, options.topics || topicManifest);
-  const questions = await getQuestionsForTopic(topicId, options);
-  return createVirtualBank(topic, questions);
-}
-
-export async function getQuestionsForCategory(categoryId, options = {}) {
-  const topics = getTopicsByCategoryFrom(categoryId, options.topics || topicManifest);
-  const groups = await Promise.all(topics.map((topic) => getQuestionsForTopic(topic.id, options)));
-  return groups.flat();
-}
-
-export async function getQuestionBanksForCategory(categoryId, options = {}) {
-  const topics = filterTopicsForActiveProfile(
-    getTopicsByCategoryFrom(categoryId, options.topics || topicManifest),
-    await getQuestionsForProfileOptions(options),
-    options
-  );
-
-  return Promise.all(topics.map((topic) => getQuestionBank(topic.id, options)));
-}
-
-export async function getAllQuestions(options = {}) {
-  const groups = await Promise.all(
-    (options.topics || topicManifest).map((topic) => getQuestionsForTopic(topic.id, options))
-  );
-
-  return groups.flat();
-}
-
-export async function getVisibleTopicsForCategory(categoryId, options = {}) {
-  const topics = getTopicsByCategoryFrom(categoryId, options.topics || topicManifest);
-  const questions = await getQuestionsForProfileOptions(options);
-  return filterTopicsForActiveProfile(topics, questions, options);
-}
-
-let visibleTopicsCache;
-let visibleCategoriesCache;
 
 async function getVisibleTopics() {
   if (!visibleTopicsCache) {
@@ -198,7 +254,6 @@ export const allTopics = filterTopicsForActiveProfile(topicManifest);
 export const dsaTopics = filterTopicsForActiveProfile(getTopicsByCategory('dsa'));
 export const systemDesignTopics = filterTopicsForActiveProfile(getTopicsByCategory('system'));
 export const javaTopics = filterTopicsForActiveProfile(getTopicsByCategory('java'));
-export const kubernetesCkadTopics = filterTopicsForActiveProfile(getTopicsByCategory('kubernetes-ckad'));
 export const aptitudeTopics = filterTopicsForActiveProfile(getTopicsByCategory('aptitude'));
 export const mlAiTopics = filterTopicsForActiveProfile(getTopicsByCategory('ml-ai'));
 export const engineeringLeadershipTopics = filterTopicsForActiveProfile(getTopicsByCategory('engineering-leadership'));
@@ -227,14 +282,173 @@ export async function getVisibleCategoriesForActiveProfile(options = {}) {
 }
 
 export async function getVisibleTopicsForActiveProfile(options = {}) {
-  if (hasCustomBankSourceOptions(options)) {
+  if (options.topics || options.profile || hasExplicitQuestionsOption(options)) {
     const questions = await getQuestionsForProfileOptions(options);
-    return filterTopicsForActiveProfile(options.topics || topicManifest, questions, options);
+
+    return filterTopicsForActiveProfile(
+      options.topics || topicManifest,
+      questions,
+      options
+    );
   }
 
   return getVisibleTopics();
 }
 
-export async function validateLoadedProblems(options = {}) {
-  return getProblemValidationResult(options);
+export async function getVisibleTopicsForCategory(categoryId, options = {}) {
+  if (options.topics || options.profile || hasExplicitQuestionsOption(options)) {
+    const topics = await getVisibleTopicsForActiveProfile(options);
+    return topics.filter((topic) => topic.category === categoryId);
+  }
+
+  const topics = await getVisibleTopics();
+  return topics.filter((topic) => topic.category === categoryId);
 }
+
+export async function loadTopicBank(topicId, options = {}) {
+  if (hasCustomBankSourceOptions(options)) {
+    return loadTopicBankFromSources(topicId, options);
+  }
+
+  if (!bankCache.has(topicId)) {
+    bankCache.set(topicId, loadTopicBankFromSources(topicId));
+  }
+
+  return bankCache.get(topicId);
+}
+
+export async function getTopicCount(topicId, options = {}) {
+  const bank = await loadTopicBank(topicId, options);
+  return bank.questions.length;
+}
+
+export async function getTopicWithCount(topic, options = {}) {
+  const count = await getTopicCount(topic.id, options);
+  return { ...topic, count };
+}
+
+export async function getTopicsWithCounts(categoryId, options = {}) {
+  const topics = await getVisibleTopicsForCategory(categoryId, options);
+  return Promise.all(topics.map((topic) => getTopicWithCount(topic, options)));
+}
+
+export async function getAllTopicsWithCounts(options = {}) {
+  const topics = await getVisibleTopicsForActiveProfile(options);
+  return Promise.all(topics.map((topic) => getTopicWithCount(topic, options)));
+}
+
+export async function getCategorySummaries(options = {}) {
+  const visibleCategories = await getVisibleCategoriesForActiveProfile(options);
+
+  return Promise.all(visibleCategories.map(async (category) => {
+    const topics = await getVisibleTopicsForCategory(category.id, options);
+    return {
+      ...category,
+      topicCount: topics.length
+    };
+  }));
+}
+
+export async function getCategoryWithCounts(categoryOrId, completed = {}, options = {}) {
+  const category = resolveCategory(categoryOrId, options);
+  if (!category) return null;
+
+  const topics = await getTopicsWithCounts(category.id, options);
+  if (!topics.length) return null;
+
+  const quizCount = topics.reduce((sum, topic) => topic.count + sum, 0);
+  const done = topics.reduce((sum, topic) => topicProgress(topic, completed).done + sum, 0);
+
+  return {
+    ...category,
+    topicCount: topics.length,
+    quizCount,
+    done,
+    progressPercent: quizCount ? Math.round((done / quizCount) * 100) : 0
+  };
+}
+
+export async function getCategoriesWithCounts(completed = {}, options = {}) {
+  const summaries = await getCategorySummaries(options);
+  const enriched = await Promise.all(summaries.map((category) => getCategoryWithCounts(category, completed, options)));
+  return enriched.filter(Boolean);
+}
+
+export async function loadTopicBanks(topicIds, options = {}) {
+  return Promise.all(topicIds.map((topicId) => loadTopicBank(topicId, options)));
+}
+
+export function normalizeRandomQuestionFilters(filters = {}) {
+  return {
+    category: filters.category && filters.category !== 'all' ? filters.category : null,
+    topicId: filters.topicId || null
+  };
+}
+
+export async function getRandomQuestion(filters = {}, options = {}) {
+  const normalizedFilters = normalizeRandomQuestionFilters(filters);
+  const topics = await getVisibleTopicsForActiveProfile(options);
+  const candidates = topics.filter((topic) => {
+    if (normalizedFilters.category && topic.category !== normalizedFilters.category) return false;
+    if (normalizedFilters.topicId && topic.id !== normalizedFilters.topicId) return false;
+    return true;
+  });
+
+  for (const pickedTopic of candidates.sort(() => Math.random() - 0.5)) {
+    const bank = await loadTopicBank(pickedTopic.id, options);
+    if (!bank.questions.length) continue;
+
+    const question = bank.questions[Math.floor(Math.random() * bank.questions.length)];
+    return { ...question, parentTopic: bank.name, category: bank.category };
+  }
+
+  throw new Error('No questions available for the selected filters.');
+}
+
+export async function findQuestionById(questionId) {
+  const topics = await getVisibleTopics();
+
+  for (const topic of topics) {
+    const bank = await loadTopicBank(topic.id);
+    const question = bank.questions.find((item) => item.id === questionId);
+
+    if (question) {
+      const category = getCategory(topic.category);
+      return {
+        question,
+        topic: { ...topic, count: bank.questions.length },
+        bank,
+        category,
+        categoryName: category?.name || topic.category
+      };
+    }
+  }
+
+  return null;
+}
+
+export async function progressSummary(completed = {}, options = {}) {
+  const topicsWithCounts = await getAllTopicsWithCounts(options);
+  const total = topicsWithCounts.reduce((sum, topic) => sum + topic.count, 0);
+  const visibleQuestionIds = new Set();
+
+  for (const topic of topicsWithCounts) {
+    const bank = await loadTopicBank(topic.id, options);
+    for (const question of bank.questions || []) {
+      visibleQuestionIds.add(question.id);
+    }
+  }
+
+  const done = Object.keys(completed).filter((id) => completed[id] && visibleQuestionIds.has(id)).length;
+  return { total, done, percent: total ? Math.round((done / total) * 100) : 0 };
+}
+
+export function topicProgress(topic, completed = {}) {
+  const total = Number(topic.count ?? 0);
+  const prefix = `${topic.id}-`;
+  const done = Object.keys(completed).filter((id) => completed[id] && id.startsWith(prefix)).length;
+
+  return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
+}
+
+export { getProblemValidationResult };
