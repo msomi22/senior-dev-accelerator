@@ -304,9 +304,10 @@
   gap: 12px;
   padding: 16px;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(226, 232, 240, 0.42);
   border-radius: 22px;
-  background: var(--card-bg, #0f172a);
+  background: #0f172a;
+  color: #e5e7eb;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
@@ -315,7 +316,30 @@
   gap: 12px;
   align-items: center;
   justify-content: space-between;
-  color: var(--text);
+  color: #f8fafc;
+}
+
+.problem-image-expanded-panel .problem-image-zoom-controls button,
+.problem-image-expanded-panel .problem-image-expanded-header button {
+  border-color: rgba(226, 232, 240, 0.56);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
+.problem-image-expanded-panel .problem-image-zoom-controls button:hover:not(:disabled),
+.problem-image-expanded-panel .problem-image-expanded-header button:hover {
+  border-color: rgba(248, 250, 252, 0.82);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.problem-image-expanded-panel .problem-image-zoom-controls span,
+.problem-image-expanded-panel .problem-rich-caption {
+  color: #cbd5e1;
+}
+
+.problem-image-expanded-panel .problem-image-zoom-frame {
+  border-color: rgba(226, 232, 240, 0.42);
+  background: #ffffff;
 }
 
 .problem-image-zoom-frame-expanded {
