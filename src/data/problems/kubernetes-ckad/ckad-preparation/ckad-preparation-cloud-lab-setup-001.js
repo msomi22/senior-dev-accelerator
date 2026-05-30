@@ -53,7 +53,7 @@ const problem = defineLearningProblem({
                 'Permission to create CloudFormation, EC2, VPC, subnet, route table, internet gateway, security group, and EBS resources.',
                 'An existing EC2 key pair in the target AWS region.',
                 'Your public IP address in CIDR format, for example 203.0.113.10/32.',
-                'kubectl does not need to be installed locally for this path because it is installed automatically on the EC2 instance.'
+                'For this AWS EC2 path, run kubectl/k after SSH into the EC2 instance. kubectl is installed automatically on that instance; local kubectl is only needed if you choose to copy kubeconfig and manage the cluster from your own machine.'
               ]
             },
             {
