@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: KubeTasker CKAD kubeadm lab with one control-plane node and optional worker nodes.
+Description: KubeTasker CKAD kubeadm lab using Cilium networking.
 
 Parameters:
   KeyName:
@@ -8,16 +8,16 @@ Parameters:
   SSHLocation:
     Type: String
     Default: 0.0.0.0/0
-    Description: CIDR allowed to SSH and reach the Kubernetes API. Prefer your public IP with /32.
+    Description: CIDR allowed to reach SSH, Kubernetes API, and NodePort practice. Prefer your public IP with /32.
   InstanceType:
     Type: String
     Default: t3.medium
     Description: EC2 instance type for lab nodes.
   WorkerCount:
     Type: Number
-    Default: 1
+    Default: 0
     AllowedValues: [0, 1, 2]
-    Description: Number of worker nodes to create.
+    Description: Number of worker nodes to create. Use 0 for the cheapest single-node practice path.
   LabName:
     Type: String
     Default: kubetasker-ckad
@@ -145,7 +145,7 @@ Resources:
           #!/usr/bin/env bash
           set -euxo pipefail
           apt-get update
-          apt-get install -y ca-certificates curl gnupg lsb-release apt-transport-https bash-completion
+          apt-get install -y ca-certificates curl gnupg lsb-release apt-transport-https bash-completion jq
           swapoff -a
           sed -i '/ swap / s/^/#/' /etc/fstab
           modprobe overlay
@@ -180,7 +180,14 @@ Resources:
           echo 'alias k=kubectl' >>/home/ubuntu/.bashrc
           echo 'source <(kubectl completion bash)' >>/home/ubuntu/.bashrc
           echo 'complete -o default -F __start_kubectl k' >>/home/ubuntu/.bashrc
-          su - ubuntu -c 'kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml'
+          CILIUM_CLI_VERSION=$(curl -fsSL https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+          CLI_ARCH=amd64
+          if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
+          curl -fsSLO "https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz"
+          tar xzvf "cilium-linux-${CLI_ARCH}.tar.gz" -C /usr/local/bin cilium
+          rm "cilium-linux-${CLI_ARCH}.tar.gz"
+          su - ubuntu -c 'cilium install --version 1.16.6 --wait'
+          su - ubuntu -c 'cilium status --wait'
           kubeadm token create --print-join-command >/home/ubuntu/kubeadm-join-command.sh
           chmod +x /home/ubuntu/kubeadm-join-command.sh
           chown ubuntu:ubuntu /home/ubuntu/kubeadm-join-command.sh
@@ -236,7 +243,7 @@ Resources:
           sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
           systemctl restart containerd
           systemctl enable containerd kubelet
-          echo 'Worker node installed. SSH to the control-plane and run the join command manually if needed.' >/home/ubuntu/README-worker.txt
+          echo 'Worker node installed. SSH to the control-plane and run /home/ubuntu/kubeadm-join-command.sh manually if needed.' >/home/ubuntu/README-worker.txt
 
   Worker2:
     Type: AWS::EC2::Instance
@@ -288,7 +295,7 @@ Resources:
           sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
           systemctl restart containerd
           systemctl enable containerd kubelet
-          echo 'Worker node installed. SSH to the control-plane and run the join command manually if needed.' >/home/ubuntu/README-worker.txt
+          echo 'Worker node installed. SSH to the control-plane and run /home/ubuntu/kubeadm-join-command.sh manually if needed.' >/home/ubuntu/README-worker.txt
 
 Outputs:
   ControlPlanePublicIp:
@@ -303,3 +310,6 @@ Outputs:
   JoinCommandPath:
     Description: Worker join command path on the control-plane instance.
     Value: /home/ubuntu/kubeadm-join-command.sh
+  Cni:
+    Description: Cluster networking implementation.
+    Value: Cilium
