@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import CodeBlock from '../code/CodeBlock.jsx';
 import ProblemCalloutBlock from './ProblemCalloutBlock.jsx';
 import ProblemFlowBlock from './ProblemFlowBlock.jsx';
@@ -70,6 +72,42 @@ function ArchitectureDecisionBlock({ block }) {
   return <section className="workspace-block problem-rich-block problem-architecture-decision-block"><span className="mini-label">Architecture decision</span>{block.title ? <h4>{block.title}</h4> : null}{block.context ? <p>{block.context}</p> : null}{block.decision ? <div className="problem-decision-highlight"><strong>Decision</strong><p>{block.decision}</p></div> : null}<div className="problem-decision-grid"><List title="Accepted trade-offs" items={block.tradeoffs} /><List title="Consequences" items={block.consequences} /></div></section>;
 }
 
+function TabsBlock({ block }) {
+  const tabs = Array.isArray(block.tabs) ? block.tabs.filter((tab) => tab?.label && Array.isArray(tab?.body)) : [];
+  const [activeTabId, setActiveTabId] = useState(() => tabs[0]?.id || tabs[0]?.label || 'tab-0');
+  const activeTab = tabs.find((tab) => (tab.id || tab.label) === activeTabId) || tabs[0];
+
+  if (!tabs.length) return <UnknownBlock block={{ type: 'tabs' }} index={0} />;
+
+  return (
+    <section className="workspace-block problem-rich-block problem-tabs-block">
+      {block.title ? <span className="mini-label">{block.title}</span> : <span className="mini-label">Tabs</span>}
+      {block.description ? <p className="problem-tabs-description">{block.description}</p> : null}
+      <div className="problem-tabs-list" role="tablist" aria-label={block.title || 'Problem tabs'}>
+        {tabs.map((tab, index) => {
+          const tabId = tab.id || tab.label || `tab-${index}`;
+          const selected = tabId === activeTabId;
+          return (
+            <button
+              aria-selected={selected}
+              className="problem-tab-button"
+              key={tabId}
+              onClick={() => setActiveTabId(tabId)}
+              role="tab"
+              type="button"
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+      <div className="problem-tab-panel" role="tabpanel">
+        {activeTab.body.map((child, index) => <ProblemBlockRenderer block={child} index={index} key={`${child?.type || 'unknown'}-${child?.title || index}`} />)}
+      </div>
+    </section>
+  );
+}
+
 export default function ProblemBlockRenderer({ block, index = 0 }) {
   if (!block || typeof block !== 'object') return <UnknownBlock block={{ type: 'invalid' }} index={index} />;
   switch (block.type) {
@@ -83,6 +121,7 @@ export default function ProblemBlockRenderer({ block, index = 0 }) {
     case 'checklist': return <ChecklistBlock block={block} />;
     case 'comparison': return <ComparisonBlock block={block} />;
     case 'architectureDecision': return <ArchitectureDecisionBlock block={block} />;
+    case 'tabs': return <TabsBlock block={block} />;
     case 'divider': return <hr className="problem-rich-divider" aria-hidden="true" />;
     default: return <UnknownBlock block={block} index={index} />;
   }
