@@ -30,7 +30,7 @@ const problem = defineLearningProblem({
       type: 'callout',
       tone: 'warning',
       title: 'Testing download source',
-      content: 'While this branch is being tested, the copy/paste commands download scripts from GitHub raw. Do not use academy.qubitel.net/downloads/ckad until the production deployment is confirmed to serve the real files instead of the web app HTML fallback.'
+      content: 'While this branch is being tested, the copy/paste commands download scripts from GitHub raw. Before merge, switch BASE_URL back to https://academy.qubitel.net/downloads/ckad only after that domain returns real files whose first line is #!/usr/bin/env bash, not the web app HTML fallback.'
     },
     {
       type: 'callout',
@@ -83,6 +83,10 @@ export BASE_URL="${DOWNLOADS_URL}"
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
 
+# Always remove old downloads first. If a previous download returned HTML,
+# rerunning chmod is not enough because the bad files remain on disk.
+rm -f *.sh kubetasker-ckad-aws-cloudformation.yaml
+
 curl -fL -o kubetasker-ckad-aws-cloudformation.yaml "$BASE_URL/kubetasker-ckad-aws-cloudformation.yaml"
 curl -fL -o aws-create-kubetasker-lab.sh "$BASE_URL/aws-create-kubetasker-lab.sh"
 curl -fL -o aws-status-kubetasker-lab.sh "$BASE_URL/aws-status-kubetasker-lab.sh"
@@ -90,8 +94,28 @@ curl -fL -o aws-delete-kubetasker-lab.sh "$BASE_URL/aws-delete-kubetasker-lab.sh
 curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
 
+# Validate downloads before creating paid cloud resources.
 head -n 1 aws-create-kubetasker-lab.sh
+head -n 1 kubetasker-ckad-aws-cloudformation.yaml
+grep -R "<!doctype html>" . && echo "Bad HTML download found" && exit 1
 bash -n aws-create-kubetasker-lab.sh
+bash -n aws-status-kubetasker-lab.sh
+bash -n aws-delete-kubetasker-lab.sh
+bash -n k8s-stage-01-commands.sh
+grep -n 'CILIUM_CLI_VERSION\\|CLI_ARCH' kubetasker-ckad-aws-cloudformation.yaml
+
+# If an earlier failed stack exists, delete only failed/rolled-back stacks before retrying.
+EXISTING_STATUS=$(aws cloudformation describe-stacks \
+  --stack-name "$STACK_NAME" \
+  --region "$AWS_REGION" \
+  --query 'Stacks[0].StackStatus' \
+  --output text 2>/dev/null || true)
+
+if [[ "$EXISTING_STATUS" == "ROLLBACK_COMPLETE" || "$EXISTING_STATUS" == "CREATE_FAILED" || "$EXISTING_STATUS" == "ROLLBACK_FAILED" ]]; then
+  echo "Deleting failed stack before retry: $STACK_NAME ($EXISTING_STATUS)"
+  aws cloudformation delete-stack --stack-name "$STACK_NAME" --region "$AWS_REGION"
+  aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME" --region "$AWS_REGION"
+fi
 
 ./aws-create-kubetasker-lab.sh \
   --stack-name "$STACK_NAME" \
@@ -138,11 +162,17 @@ export BASE_URL="${DOWNLOADS_URL}"
 
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
+rm -f *.sh
 
 curl -fL -o do-create-kubetasker-lab.sh "$BASE_URL/do-create-kubetasker-lab.sh"
 curl -fL -o do-delete-kubetasker-lab.sh "$BASE_URL/do-delete-kubetasker-lab.sh"
 curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
+
+grep -R "<!doctype html>" . && echo "Bad HTML download found" && exit 1
+bash -n do-create-kubetasker-lab.sh
+bash -n do-delete-kubetasker-lab.sh
+bash -n k8s-stage-01-commands.sh
 
 ./do-create-kubetasker-lab.sh
 k get nodes -o wide`
@@ -175,11 +205,17 @@ export BASE_URL="${DOWNLOADS_URL}"
 
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
+rm -f *.sh
 
 curl -fL -o civo-create-kubetasker-lab.sh "$BASE_URL/civo-create-kubetasker-lab.sh"
 curl -fL -o civo-delete-kubetasker-lab.sh "$BASE_URL/civo-delete-kubetasker-lab.sh"
 curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
+
+grep -R "<!doctype html>" . && echo "Bad HTML download found" && exit 1
+bash -n civo-create-kubetasker-lab.sh
+bash -n civo-delete-kubetasker-lab.sh
+bash -n k8s-stage-01-commands.sh
 
 ./civo-create-kubetasker-lab.sh
 k get nodes -o wide`
@@ -210,11 +246,17 @@ export BASE_URL="${DOWNLOADS_URL}"
 
 mkdir -p ~/kubetasker-ckad-lab
 cd ~/kubetasker-ckad-lab
+rm -f *.sh
 
 curl -fL -o eks-create-kubetasker-lab.sh "$BASE_URL/eks-create-kubetasker-lab.sh"
 curl -fL -o eks-delete-kubetasker-lab.sh "$BASE_URL/eks-delete-kubetasker-lab.sh"
 curl -fL -o k8s-stage-01-commands.sh "$BASE_URL/k8s-stage-01-commands.sh"
 chmod +x *.sh
+
+grep -R "<!doctype html>" . && echo "Bad HTML download found" && exit 1
+bash -n eks-create-kubetasker-lab.sh
+bash -n eks-delete-kubetasker-lab.sh
+bash -n k8s-stage-01-commands.sh
 
 ./eks-create-kubetasker-lab.sh
 k get nodes -o wide`
