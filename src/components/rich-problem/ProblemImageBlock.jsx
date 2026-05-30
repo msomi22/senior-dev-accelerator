@@ -44,7 +44,11 @@ function ImageViewer({ alt, block, canExpand, expanded = false, onClose, onExpan
   const canZoomIn = scale < maxZoom;
 
   function updateScale(nextScale) {
-    setScale(clampZoom(nextScale, minZoom, maxZoom));
+    setScale((currentScale) => clampZoom(
+      typeof nextScale === 'function' ? nextScale(currentScale) : nextScale,
+      minZoom,
+      maxZoom
+    ));
   }
 
   function resetScale() {
@@ -54,20 +58,20 @@ function ImageViewer({ alt, block, canExpand, expanded = false, onClose, onExpan
   return (
     <>
       <div className="problem-image-zoom-controls" aria-label={`${block.title || 'Image'} zoom controls`}>
-        <button aria-label="Zoom out" disabled={!canZoomOut} onClick={() => updateScale(scale - zoomStep)} type="button">−</button>
+        <button aria-label="Zoom out" disabled={!canZoomOut} onClick={() => updateScale((currentScale) => currentScale - zoomStep)} type="button">−</button>
         <span aria-live="polite">{zoomPercentage}</span>
-        <button aria-label="Zoom in" disabled={!canZoomIn} onClick={() => updateScale(scale + zoomStep)} type="button">+</button>
+        <button aria-label="Zoom in" disabled={!canZoomIn} onClick={() => updateScale((currentScale) => currentScale + zoomStep)} type="button">+</button>
         <button disabled={scale === initialZoom} onClick={resetScale} type="button">Reset</button>
         {canExpand && !expanded ? <button onClick={onExpand} type="button">Fullscreen</button> : null}
         {expanded ? <button onClick={onClose} type="button">Close</button> : null}
       </div>
       <div className={`problem-image-zoom-frame${expanded ? ' problem-image-zoom-frame-expanded' : ''}`}>
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
+        <div
+          className="problem-image-zoom-canvas"
           style={{ width: `${scale * 100}%` }}
-        />
+        >
+          <img src={src} alt={alt} loading="lazy" />
+        </div>
       </div>
     </>
   );
