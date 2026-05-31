@@ -9,9 +9,11 @@ function command(title, explanation, code, language = 'bash') {
   ];
 }
 
-function yamlExample(title, explanation, filename, code) {
+function vimFileStep(title, explanation, filename, code) {
   return [
-    { type: 'section', title, content: explanation },
+    { type: 'section', title: `${title}: open ${filename} with vim`, content: `Run this command first to create or edit ${filename}. Paste the content shown in the next block, then save with :wq.` },
+    { type: 'code', title: `${title}: open ${filename} with vim`, language: 'bash', code: `vim ${filename}` },
+    { type: 'section', title: `${title}: copy this content into ${filename}`, content: explanation },
     { type: 'code', title: filename, filename, language: 'yaml', code }
   ];
 }
@@ -212,24 +214,30 @@ const problem = defineLearningProblem({
       title: 'What you will do next',
       content: `Create runtime configuration, update the KubeTasker Deployment to the runtime-config version, then verify the app from inside the cluster. Need the earlier base files? Open the ${previousQuestionLink}.`
     },
+    {
+      type: 'callout',
+      tone: 'info',
+      title: 'How to save files in this lesson',
+      content: 'For each file, run the vim command shown, press i to enter insert mode, paste the content from the next block, press Esc, type :wq, and press Enter. The same save pattern applies to every file in this lesson.'
+    },
 
     ...command('0. Ensure the namespace exists', 'Start with namespace.yaml only. If you do not have this file yet, open the previous question from the link above and create it there first.', `k apply -f namespace.yaml
 k get ns kubetasker`),
 
-    ...yamlExample('1. Create the ConfigMap manifest', 'Create configmap.yaml. This file stores non-sensitive runtime settings that KubeTasker will read through environment variables.', 'configmap.yaml', configMapYaml),
+    ...vimFileStep('1. Create the ConfigMap manifest', 'This file stores non-sensitive runtime settings that KubeTasker will read through environment variables.', 'configmap.yaml', configMapYaml),
     ...command('Apply the ConfigMap', 'Create or update the non-sensitive runtime settings.', 'k apply -f configmap.yaml'),
     ...command('Verify the ConfigMap exists', 'Confirm the object and keys exist in the correct namespace.', 'k -n kubetasker describe configmap kube-tasker-api-config'),
 
-    ...yamlExample('2. Create the Secret manifest', 'Create secret.yaml. This file stores a sensitive runtime value. Verify that the Secret exists, but do not print the token value.', 'secret.yaml', secretYaml),
+    ...vimFileStep('2. Create the Secret manifest', 'This file stores a sensitive runtime value. Verify that the Secret exists, but do not print the token value.', 'secret.yaml', secretYaml),
     ...command('Apply the Secret', 'Create or update the sensitive runtime value.', 'k apply -f secret.yaml'),
     ...command('Verify the Secret exists without printing it', 'Confirm the Secret exists and has data without revealing the value.', `k -n kubetasker get secret kube-tasker-api-secret
 k -n kubetasker describe secret kube-tasker-api-secret`),
 
-    ...yamlExample('3. Create the mounted config file manifest', 'Create file-config-configmap.yaml. This file becomes a config file mounted inside the KubeTasker container.', 'file-config-configmap.yaml', mountedConfigFileYaml),
+    ...vimFileStep('3. Create the mounted config file manifest', 'This file becomes a config file mounted inside the KubeTasker container.', 'file-config-configmap.yaml', mountedConfigFileYaml),
     ...command('Apply the mounted file ConfigMap', 'Create or update the ConfigMap that will later be mounted as /etc/kubetasker/app-config.yaml.', 'k apply -f file-config-configmap.yaml'),
     ...command('Verify the file ConfigMap exists', 'Confirm the ConfigMap contains app-config.yaml.', 'k -n kubetasker describe configmap kube-tasker-file-config'),
 
-    ...yamlExample('4. Update the existing Deployment manifest', 'Open deployment.yaml. Do not replace the whole file. Update the image, then add only the env, volumeMounts, and volumes blocks shown here in the correct YAML locations.', 'deployment-runtime-config-snippet.yaml', deploymentRuntimeConfigPatchYaml),
+    ...vimFileStep('4. Update the existing Deployment manifest', 'Do not replace the whole file. Update the image, then add only the env, volumeMounts, and volumes blocks shown here in the correct YAML locations.', 'deployment.yaml', deploymentRuntimeConfigPatchYaml),
     ...command('Apply the updated Deployment', 'Apply deployment.yaml after adding only the runtime-configuration fields shown above.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api`),
     ...command('Verify the Deployment wiring', 'Confirm the Deployment has the new image, expected env refs, Secret ref, volume, and mount.', `k -n kubetasker describe deploy kube-tasker-api
@@ -254,7 +262,7 @@ k -n kubetasker rollout restart deploy/kube-tasker-api
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
 
-    ...yamlExample('5. Optional command and args amendment', 'Use this only when the question asks for command/args. Do not replace the Deployment. Add only these fields under the existing api container.', 'command-args-snippet.yaml', commandArgsPatchYaml),
+    ...vimFileStep('5. Optional command and args amendment', 'Use this only when the question asks for command/args. Do not replace the Deployment. Add only these fields under the existing api container.', 'deployment.yaml', commandArgsPatchYaml),
     ...command('Apply and verify command/args amendment', 'If command or args are wrong, /health and /ready will fail and logs will show startup errors.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health
