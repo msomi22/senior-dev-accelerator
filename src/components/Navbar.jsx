@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import GlobalSearch from './GlobalSearch.jsx';
+import BuyCoffeeButton from './BuyCoffeeButton.jsx';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { categories } from '../services/questionBankService.js';
 
@@ -92,6 +93,7 @@ export default function Navbar() {
             {item.label}
           </NavLink>
         ))}
+        <BuyCoffeeButton className="mobile-coffee-link" />
       </nav>
     </>
   );
