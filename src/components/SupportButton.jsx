@@ -1,28 +1,34 @@
-import { siteConfig } from '../config/siteConfig.js';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
-function paypalUrl() {
-  const { hostedButtonId, currencyCode } = siteConfig.paypal;
-  const url = new URL('https://www.paypal.com/donate/');
-  url.searchParams.set('hosted_button_id', hostedButtonId);
-  url.searchParams.set('currency_code', currencyCode);
-  return url.toString();
-}
+import { siteConfig } from '../config/siteConfig.js';
+import { getEnabledSupportMethods } from '../services/supportPaymentService.js';
+import SupportOptionsModal from './SupportOptionsModal.jsx';
 
 export default function SupportButton({ className = 'support-link' }) {
-  if (!siteConfig.paypal.enabled) return null;
+  const [open, setOpen] = useState(false);
+  const methods = getEnabledSupportMethods();
+
+  if (methods.length === 0) return null;
 
   const { label, title, tooltip } = siteConfig.support;
+  const shouldRenderModal = open && typeof document !== 'undefined';
 
   return (
-    <a
-      href={paypalUrl()}
-      target="_blank"
-      rel="noreferrer"
-      className={className}
-      aria-label={title}
-      title={tooltip}
-    >
-      {label}
-    </a>
+    <>
+      <button
+        aria-haspopup="dialog"
+        className={className}
+        onClick={() => setOpen(true)}
+        title={tooltip}
+        type="button"
+      >
+        <span className="sr-only">{title}</span>
+        {label}
+      </button>
+      {shouldRenderModal
+        ? createPortal(<SupportOptionsModal onClose={() => setOpen(false)} />, document.body)
+        : null}
+    </>
   );
 }
