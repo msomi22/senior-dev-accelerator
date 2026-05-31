@@ -2,13 +2,6 @@ import { defineLearningProblem } from '../../../../problems/problemAuthoring.js'
 
 const prompt = 'Explain how Kubernetes architecture turns a Deployment manifest into a running Pod and a reachable Service.';
 
-function command(title, explanation, code, language = 'bash') {
-  return [
-    { type: 'section', title, content: explanation },
-    { type: 'code', title, language, code }
-  ];
-}
-
 function yamlExample(title, explanation, filename, code) {
   return [
     { type: 'section', title, content: explanation },
@@ -205,7 +198,7 @@ const problem = defineLearningProblem({
     'Expose the workload through a Service and Endpoints.',
     'Resolve the Service name through CoreDNS.',
     'Understand Ingress for inbound HTTP and egress for outbound traffic.',
-    'Use read-only commands to inspect each part of the system safely.'
+    'Use architecture clues to identify which part of the system is failing.'
   ],
   finalTakeaway: 'Kubernetes is not magic. It is a set of control loops around one source of truth. You submit desired state to the API server, Kubernetes stores it, controllers and nodes act on it, and you verify the actual state with read-only commands.',
   visualExplanation: 'The static diagram gives the big picture. The walkthrough traces the life of one Deployment request from kubectl to the API server, into desired state, through controllers and scheduling, onto a worker node, and finally through Service DNS and networking.',
@@ -351,12 +344,12 @@ const problem = defineLearningProblem({
       type: 'comparison',
       title: 'User side: kubectl, kubeconfig, contexts',
       items: [
-        { label: 'kubectl', content: 'The command-line client. It sends requests to the API server. It does not start containers directly and it does not bypass the control plane.' },
-        { label: 'kubeconfig', content: 'The local configuration file that stores cluster endpoint, user credentials, and contexts. It tells kubectl which API server and identity to use.' },
-        { label: 'context', content: 'A named combination of cluster, user, and optional namespace. Many mistakes come from using the wrong current context.' }
+        { label: 'kubectl', content: 'The command-line client. It runs on your machine, reads your local kubeconfig, and sends requests to the API server. It does not start containers directly and it does not bypass the control plane.' },
+        { label: 'kubeconfig', content: 'A local configuration file on your machine, usually under your home directory. It stores cluster endpoint, user credentials, and contexts. It is not a Kubernetes object running inside the cluster.' },
+        { label: 'context', content: 'A named combination of cluster, user, and optional namespace selected from your local kubeconfig. Many mistakes come from using the wrong current context.' }
       ]
     },
-    ...yamlExample('Example kubeconfig shape', 'This example shows why context matters. The current context points kubectl to a cluster, user identity, and default namespace. In real clusters, credentials are sensitive and should not be shared.', 'kubeconfig-example.yaml', kubeconfigExample),
+    ...yamlExample('Example kubeconfig shape', 'This is a local client configuration shape, not a manifest you apply to the cluster. It shows how kubectl knows which API server, user identity, and default namespace to use. In real clusters, credentials are sensitive and should not be shared.', 'kubeconfig-example.yaml', kubeconfigExample),
     {
       type: 'comparison',
       title: 'Control plane components',
@@ -404,7 +397,7 @@ const problem = defineLearningProblem({
     {
       type: 'section',
       title: 'Request flow from manifest apply to running Pod',
-      content: 'When you apply a Deployment manifest, kubectl reads kubeconfig and sends the object to the API server. The API server validates and stores desired state through etcd. Controllers notice the Deployment and create related ReplicaSet and Pod state. The scheduler notices a Pod without a node and assigns it. The kubelet on that node starts the container through the runtime. The Pod reports status back through the API server.'
+      content: 'When you apply a Deployment manifest, kubectl reads kubeconfig from your machine and sends the object to the API server. The API server validates and stores desired state through etcd. Controllers notice the Deployment and create related ReplicaSet and Pod state. The scheduler notices a Pod without a node and assigns it. The kubelet on that node starts the container through the runtime. The Pod reports status back through the API server.'
     },
     {
       type: 'comparison',
@@ -422,21 +415,11 @@ const problem = defineLearningProblem({
     ...yamlExample('Secret example', 'This object carries sensitive values. In real work, avoid committing real credentials to Git and avoid exposing Secret contents in logs.', 'secret.yaml', secretExample),
     ...yamlExample('Job example', 'This object runs finite work until completion. It is useful for tasks such as one-time backfills or migrations in a lab.', 'job.yaml', jobExample),
     ...yamlExample('CronJob example', 'This object creates Jobs on a schedule. It is useful for recurring work such as periodic summaries or cleanup tasks.', 'cronjob.yaml', cronJobExample),
-    ...command('Read-only command: show current context', 'This command checks which context kubectl is using. Run it before changing resources so you know which cluster your terminal is targeting.', 'k config current-context'),
-    ...command('Read-only command: show the selected kubeconfig view', 'This command prints the active kubeconfig view without modifying the cluster. It helps you confirm the cluster, user, and namespace selected by the current context.', 'k config view --minify'),
-    ...command('Read-only command: list nodes', 'This command asks the API server for node information. It proves your client can reach the cluster and shows the worker nodes available for scheduling.', 'k get nodes -o wide'),
-    ...command('Read-only command: list system Pods', 'This command shows control-plane and system workloads in the kube-system namespace. It helps you notice components such as CoreDNS and networking Pods in many clusters.', 'k -n kube-system get pods -o wide'),
-    ...command('Read-only command: list Deployments', 'This command reads Deployment objects in the KubeTasker namespace. It is safe because it only inspects state.', 'k -n kubetasker get deploy'),
-    ...command('Read-only command: describe the API Deployment', 'This command gives detailed Deployment events, selectors, rollout status, and related state. Use it when the workload does not look available.', 'k -n kubetasker describe deploy kube-tasker-api'),
-    ...command('Read-only command: list Pods with labels', 'This command shows Pod names, node placement, IPs, and labels. It helps connect Deployment labels to Service selectors.', 'k -n kubetasker get pods -o wide --show-labels'),
-    ...command('Read-only command: list Services', 'This command shows Service names, types, cluster IPs, and ports. It helps you confirm the stable internal access point exists.', 'k -n kubetasker get svc -o wide'),
-    ...command('Read-only command: inspect Endpoints', 'This command checks which backend Pod IPs are currently behind the Service. Empty output is a strong signal that selector matching or readiness is wrong.', 'k -n kubetasker get endpoints kube-tasker-api -o wide'),
-    ...command('Read-only command: inspect CoreDNS', 'This command checks whether CoreDNS Pods are present. If Service names do not resolve, CoreDNS health is one useful clue.', 'k -n kube-system get pods -l k8s-app=kube-dns -o wide'),
     {
       type: 'comparison',
       title: 'Failure and debugging interpretation',
       items: [
-        { label: 'kubectl cannot connect', content: 'Check current context, kubeconfig, network access, credentials, and API server endpoint.' },
+        { label: 'kubectl cannot connect', content: 'Check current context, kubeconfig, network access, credentials, and API server endpoint on the machine where kubectl is running.' },
         { label: 'Deployment exists but Pods are missing', content: 'Check ReplicaSet, events, quotas, selectors, and whether the Deployment controller has created related objects.' },
         { label: 'Pod is Pending', content: 'Check scheduling events, node capacity, taints, tolerations, affinity, storage, and resource requests.' },
         { label: 'Pod is not Running', content: 'Check image pull errors, container command, environment, Secret or ConfigMap references, and application startup logs.' },
@@ -450,7 +433,8 @@ const problem = defineLearningProblem({
       type: 'checklist',
       title: 'Summary checklist',
       items: [
-        'kubectl sends requests to the API server using kubeconfig and the active context.',
+        'kubectl runs on your machine and sends requests to the API server using kubeconfig and the active context.',
+        'kubeconfig is local client configuration, not a Kubernetes object applied inside the cluster.',
         'The API server is the main coordination point for the cluster.',
         'etcd stores cluster state behind the API server.',
         'Controllers watch the API server and reconcile desired state with actual state.',
@@ -459,15 +443,14 @@ const problem = defineLearningProblem({
         'Deployments, ReplicaSets, and Pods describe and run workload state.',
         'Services, Endpoints, and CoreDNS make Pods easier to reach inside the cluster.',
         'Ingress handles inbound HTTP routing when a controller is installed.',
-        'Egress is outbound Pod traffic and may be controlled by policy or infrastructure.',
-        'Read-only commands help locate which part of the architecture is failing.'
+        'Egress is outbound Pod traffic and may be controlled by policy or infrastructure.'
       ]
     },
     {
       type: 'callout',
       tone: 'success',
       title: 'Final takeaway',
-      content: 'The safest way to understand Kubernetes is to trace one object through the system. Start with kubectl and kubeconfig, follow the API server and etcd, watch controllers and the scheduler react, then verify kubelet, runtime, Pod status, Service endpoints, DNS, and network paths.'
+      content: 'The safest way to understand Kubernetes is to trace one object through the system. Start with kubectl and local kubeconfig, follow the API server and etcd, watch controllers and the scheduler react, then verify kubelet, runtime, Pod status, Service endpoints, DNS, and network paths.'
     }
   ],
   relatedConcepts: [
