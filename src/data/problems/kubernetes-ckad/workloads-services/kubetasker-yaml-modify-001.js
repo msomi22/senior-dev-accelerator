@@ -19,7 +19,7 @@ function fileBlock(title, explanation, filename, code) {
 function vimCommand(step, filename, action = 'create or edit') {
   return command(
     `${step}. Open ${filename} with vim`,
-    `Run this command to ${action} ${filename} inside the kubetasker-manifests folder. Press i to enter insert mode, paste the YAML shown in the next block, then save using :wq as explained above.`,
+    `Run this command to ${action} ${filename} inside the kubetasker-manifests folder. Press i to enter insert mode, make only the change requested in the next step, then save using :wq as explained above.`,
     `vim ${filename}`
   );
 }
@@ -250,7 +250,7 @@ const problem = defineLearningProblem({
       type: 'callout',
       tone: 'warning',
       title: 'Important: read this before creating YAML files',
-      content: 'Do not skip this step. Every YAML block below must be saved into the exact file named in the step. For each file, run the vim command shown, press i to enter insert mode, copy the YAML content from the next block, paste it into the file, press Esc, type :wq, and press Enter to save and close the file. Later steps reuse the same save pattern.'
+      content: 'Do not skip this step. Every YAML block below must be saved into the exact file named in the step. For each new file, run the vim command shown, press i to enter insert mode, copy the YAML content from the next block, paste it into the file, press Esc, type :wq, and press Enter to save and close the file. For edit steps, do not replace the whole file unless asked. Open the file, update only the required line or field, then save with the same :wq pattern.'
     },
     ...vimCommand('3', 'namespace.yaml', 'create'),
     ...fileBlock('4. Paste the namespace manifest', 'Paste this content into namespace.yaml. This file describes the workspace where the KubeTasker resources will live.', 'namespace.yaml', namespaceYaml),
@@ -271,15 +271,15 @@ const problem = defineLearningProblem({
     ...command('19. Inspect the Service', 'This confirms the stable internal Service exists.', 'k -n kubetasker get svc kube-tasker-api'),
     ...command('20. Inspect the Endpoints', 'This confirms the Service has found matching backend Pod IPs.', 'k -n kubetasker get endpoints kube-tasker-api'),
     ...vimCommand('21', 'deployment.yaml', 'edit'),
-    ...fileBlock('22. Modify the Deployment to use two replicas', 'Replace the existing deployment.yaml content with this version so replicas changes from one to two. The changed line is marked in the YAML comment.', 'deployment.yaml', deploymentYamlV2),
+    ...fileBlock('22. Modify the Deployment to use two replicas', 'In deployment.yaml, update only the replicas value from 1 to 2. Do not replace the whole file. The changed line is marked in the YAML comment so you can confirm the exact field to edit.', 'deployment.yaml', deploymentYamlV2),
     ...command('23. Apply the modified Deployment file', 'Apply the file again. Kubernetes compares the new desired state with the live Deployment and scales the workload.', 'k apply -f deployment.yaml'),
     ...command('24. Verify two API Pods', 'This confirms the replica change affected the live cluster.', 'k -n kubetasker get pods -l app=kube-tasker-api -o wide'),
     ...vimCommand('25', 'service.yaml', 'edit'),
-    ...fileBlock('26. Break the Service selector deliberately', 'Replace the existing service.yaml content with this version so the selector intentionally uses a wrong label. The changed line is marked in the YAML comment so the failure point is obvious.', 'service.yaml', brokenServiceYaml),
+    ...fileBlock('26. Break the Service selector deliberately', 'In service.yaml, update only spec.selector.app from kube-tasker-api to wrong-label. Do not replace the whole file. This deliberate mistake helps you see how a selector mismatch breaks Endpoints.', 'service.yaml', brokenServiceYaml),
     ...command('27. Apply the broken Service file', 'Apply the broken file so the live Service selector no longer matches the API Pod labels.', 'k apply -f service.yaml'),
     ...command('28. Inspect Endpoints after the broken selector', 'This should show no useful backend Pod IPs. The Service still exists, but it cannot find matching Pods.', 'k -n kubetasker get endpoints kube-tasker-api'),
     ...vimCommand('29', 'service.yaml', 'edit'),
-    ...fileBlock('30. Fix the Service selector', 'Replace the existing service.yaml content with this corrected version so the Service can find the API Pods again.', 'service.yaml', serviceYaml),
+    ...fileBlock('30. Fix the Service selector', 'In service.yaml, update only spec.selector.app from wrong-label back to kube-tasker-api. Do not replace the whole file. This restores the Service selector so it can find the API Pods again.', 'service.yaml', serviceYaml),
     ...command('31. Apply the fixed Service file', 'Apply the corrected file so the live Service selector matches the API Pod labels again.', 'k apply -f service.yaml'),
     ...command('32. Verify Endpoints after the fix', 'This confirms the Service has reconnected to the API Pods.', 'k -n kubetasker get endpoints kube-tasker-api'),
     ...command('33. Wait for the client pod', 'Wait until the client pod is Ready before running the DNS verification command inside it.', 'k -n kubetasker wait --for=condition=Ready pod/kube-tasker-client --timeout=90s'),
