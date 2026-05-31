@@ -44,7 +44,7 @@ export default function GlossaryTerm({ children, term }) {
       >
         {children}
       </button>
-      {open ? <GlossaryPopover id={popoverId} term={term} /> : null}
+      {open ? <GlossaryPopover id={popoverId} onClose={close} term={term} /> : null}
     </span>
   );
 }
