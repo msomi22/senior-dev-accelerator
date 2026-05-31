@@ -98,8 +98,8 @@ type: Opaque
 stringData:
   api-token.txt: mounted-secret-token-for-lab`;
 
-const imageUpdateSnippet = `# This is the deployment.yaml file from the previous question.
-# Change only the image line marked below.
+const imageUpdateSnippet = `# Current deployment.yaml after this change.
+# Only the image line changes from the previous question.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -121,152 +121,588 @@ spec:
           ports:
             - containerPort: 8080`;
 
-const directEnvSnippet = `# Find the existing api container in deployment.yaml.
-# Add env under the same container, aligned with image and ports.
-containers:
-  - name: api
-    image: msomi22/kubetasker-api:0.2.0
-    ports:
-      - containerPort: 8080
-    env:
-      - name: DIRECT_MESSAGE
-        value: Direct environment variable is active`;
-
-const updatedDirectEnvSnippet = `# In the same env list, change only DIRECT_MESSAGE.
-# Do not move the env block and do not recreate the Deployment.
-env:
-  - name: DIRECT_MESSAGE
-    value: Direct environment variable was updated`;
-
-const configMapEnvSnippet = `# Keep the DIRECT_MESSAGE entry from Scenario 1.
-# Append these entries under the same env list.
-# Do not create a second env block.
-env:
-  - name: DIRECT_MESSAGE
-    value: Direct environment variable was updated
-  - name: LOG_LEVEL
-    valueFrom:
-      configMapKeyRef:
-        name: kube-tasker-api-config
-        key: LOG_LEVEL
-  - name: APP_MODE
-    valueFrom:
-      configMapKeyRef:
-        name: kube-tasker-api-config
-        key: APP_MODE
-  - name: TASK_MODE
-    valueFrom:
-      configMapKeyRef:
-        name: kube-tasker-api-config
-        key: TASK_MODE
-  - name: ENABLE_SAMPLE_TASKS
-    valueFrom:
-      configMapKeyRef:
-        name: kube-tasker-api-config
-        key: ENABLE_SAMPLE_TASKS
-  - name: WELCOME_MESSAGE
-    valueFrom:
-      configMapKeyRef:
-        name: kube-tasker-api-config
-        key: WELCOME_MESSAGE`;
-
-const secretEnvSnippet = `# Keep the existing env entries.
-# Append this Secret entry under the same env list.
-# Do not print the Secret value during verification.
-env:
-  - name: API_TOKEN
-    valueFrom:
-      secretKeyRef:
-        name: kube-tasker-api-secret
-        key: API_TOKEN`;
-
-const mountedConfigSnippet = `# Find the existing api container in deployment.yaml.
-# Add volumeMounts under the same container, aligned with image, ports, and env.
-containers:
-  - name: api
-    image: msomi22/kubetasker-api:0.2.0
-    volumeMounts:
-      - name: app-config-file
-        mountPath: /etc/kubetasker
-        readOnly: true
-
-# Then find spec.template.spec and add volumes aligned with containers.
+const directEnvSnippet = `# Current deployment.yaml after adding the direct env value.
+# New part in this step: env with DIRECT_MESSAGE under the api container.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
 spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
   template:
+    metadata:
+      labels:
+        app: kube-tasker-api
     spec:
       containers:
         - name: api
           image: msomi22/kubetasker-api:0.2.0
-      volumes:
+          ports:
+            - containerPort: 8080
+          env: # added here
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable is active`;
+
+const updatedDirectEnvSnippet = `# Current deployment.yaml after updating the direct env value.
+# New part in this step: only the DIRECT_MESSAGE value changes.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated # changed here`;
+
+const configMapEnvSnippet = `# Current deployment.yaml after adding ConfigMap env references.
+# Previous direct env remains. New part: ConfigMap-backed values under the same env list.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated
+            - name: LOG_LEVEL # added here
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: LOG_LEVEL
+            - name: APP_MODE # added here
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: TASK_MODE # added here
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
+            - name: ENABLE_SAMPLE_TASKS # added here
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE # added here
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE`;
+
+const secretEnvSnippet = `# Current deployment.yaml after adding a Secret env reference.
+# Previous direct env and ConfigMap env remain. New part: API_TOKEN from Secret.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: LOG_LEVEL
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: TASK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
+            - name: ENABLE_SAMPLE_TASKS
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE
+            - name: API_TOKEN # added here
+              valueFrom:
+                secretKeyRef:
+                  name: kube-tasker-api-secret
+                  key: API_TOKEN`;
+
+const mountedConfigSnippet = `# Current deployment.yaml after mounting ConfigMap data as a file.
+# Previous env values remain. New parts: volumeMounts and volumes for kube-tasker-file-config.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: LOG_LEVEL
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: TASK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
+            - name: ENABLE_SAMPLE_TASKS
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kube-tasker-api-secret
+                  key: API_TOKEN
+          volumeMounts: # added here
+            - name: app-config-file
+              mountPath: /etc/kubetasker
+              readOnly: true
+      volumes: # added here
         - name: app-config-file
           configMap:
             name: kube-tasker-file-config`;
 
-const mountedSecretSnippet = `# Append this item under the existing volumeMounts list.
-# Do not create a second volumeMounts block.
-volumeMounts:
-  - name: app-config-file
-    mountPath: /etc/kubetasker
-    readOnly: true
-  - name: api-secret-file
-    mountPath: /etc/kubetasker-secret
-    readOnly: true
+const mountedSecretSnippet = `# Current deployment.yaml after mounting Secret data as a file.
+# Previous env values and ConfigMap mount remain. New parts: api-secret-file mount and volume.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: LOG_LEVEL
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: TASK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
+            - name: ENABLE_SAMPLE_TASKS
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kube-tasker-api-secret
+                  key: API_TOKEN
+          volumeMounts:
+            - name: app-config-file
+              mountPath: /etc/kubetasker
+              readOnly: true
+            - name: api-secret-file # added here
+              mountPath: /etc/kubetasker-secret
+              readOnly: true
+      volumes:
+        - name: app-config-file
+          configMap:
+            name: kube-tasker-file-config
+        - name: api-secret-file # added here
+          secret:
+            secretName: kube-tasker-file-secret`;
 
-# Append this item under the existing volumes list.
-# Do not print the mounted Secret file content during verification.
-volumes:
-  - name: app-config-file
-    configMap:
-      name: kube-tasker-file-config
-  - name: api-secret-file
-    secret:
-      secretName: kube-tasker-file-secret`;
+const downwardApiSnippet = `# Current deployment.yaml after adding Downward API env values.
+# Previous env and mounted files remain. New part: Pod metadata values under env.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: LOG_LEVEL
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: TASK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
+            - name: ENABLE_SAMPLE_TASKS
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kube-tasker-api-secret
+                  key: API_TOKEN
+            - name: POD_NAME # added here
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE # added here
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP # added here
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME # added here
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: app-config-file
+              mountPath: /etc/kubetasker
+              readOnly: true
+            - name: api-secret-file
+              mountPath: /etc/kubetasker-secret
+              readOnly: true
+      volumes:
+        - name: app-config-file
+          configMap:
+            name: kube-tasker-file-config
+        - name: api-secret-file
+          secret:
+            secretName: kube-tasker-file-secret`;
 
-const downwardApiSnippet = `# Append these entries under the existing env list.
-# These values come from the Pod metadata/status at runtime.
-env:
-  - name: POD_NAME
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.name
-  - name: POD_NAMESPACE
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.namespace
-  - name: POD_IP
-    valueFrom:
-      fieldRef:
-        fieldPath: status.podIP
-  - name: NODE_NAME
-    valueFrom:
-      fieldRef:
-        fieldPath: spec.nodeName`;
+const resourcesAndResourceFieldSnippet = `# Current deployment.yaml after adding resources and resourceFieldRef env values.
+# Previous env and mounted files remain. New parts: resources plus CPU_LIMIT and MEMORY_LIMIT env values.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: LOG_LEVEL
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: TASK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
+            - name: ENABLE_SAMPLE_TASKS
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kube-tasker-api-secret
+                  key: API_TOKEN
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CPU_LIMIT # added here
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu
+            - name: MEMORY_LIMIT # added here
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory
+          resources: # added here
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: app-config-file
+              mountPath: /etc/kubetasker
+              readOnly: true
+            - name: api-secret-file
+              mountPath: /etc/kubetasker-secret
+              readOnly: true
+      volumes:
+        - name: app-config-file
+          configMap:
+            name: kube-tasker-file-config
+        - name: api-secret-file
+          secret:
+            secretName: kube-tasker-file-secret`;
 
-const resourcesAndResourceFieldSnippet = `# Add resources under the existing api container.
-# It must be aligned with image, ports, env, and volumeMounts.
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 256Mi
-
-# Then append these entries under the existing env list.
-env:
-  - name: CPU_LIMIT
-    valueFrom:
-      resourceFieldRef:
-        resource: limits.cpu
-  - name: MEMORY_LIMIT
-    valueFrom:
-      resourceFieldRef:
-        resource: limits.memory`;
-
-const commandArgsPatchYaml = `# Add this under the existing api container only if the question asks for command/args.
-# Keep the rest of deployment.yaml unchanged.
-command: ['python']
-args: ['-m', 'uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', '8080']`;
+const commandArgsPatchYaml = `# Current deployment.yaml after adding command and args.
+# Previous env, resources, and mounted files remain. New part: command and args under the api container.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-tasker-api
+  namespace: kubetasker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-tasker-api
+  template:
+    metadata:
+      labels:
+        app: kube-tasker-api
+    spec:
+      containers:
+        - name: api
+          image: msomi22/kubetasker-api:0.2.0
+          command: ['python'] # added here
+          args: ['-m', 'uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', '8080'] # added here
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DIRECT_MESSAGE
+              value: Direct environment variable was updated
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: LOG_LEVEL
+            - name: APP_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: APP_MODE
+            - name: TASK_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: TASK_MODE
+            - name: ENABLE_SAMPLE_TASKS
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: ENABLE_SAMPLE_TASKS
+            - name: WELCOME_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: kube-tasker-api-config
+                  key: WELCOME_MESSAGE
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: kube-tasker-api-secret
+                  key: API_TOKEN
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CPU_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu
+            - name: MEMORY_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: app-config-file
+              mountPath: /etc/kubetasker
+              readOnly: true
+            - name: api-secret-file
+              mountPath: /etc/kubetasker-secret
+              readOnly: true
+      volumes:
+        - name: app-config-file
+          configMap:
+            name: kube-tasker-file-config
+        - name: api-secret-file
+          secret:
+            secretName: kube-tasker-file-secret`;
 
 const directEnvStatusJson = `{
   "runtimeConfigVersion": "v0.2.0",
@@ -462,7 +898,7 @@ const problem = defineLearningProblem({
     ...command('0. Ensure the namespace exists', 'Start with namespace.yaml only. If you do not have this file yet, open the previous question from the link above and create it there first.', `k apply -f namespace.yaml
 k get ns kubetasker`),
 
-    ...editFileWithVim('1. Update the app image for runtime configuration', 'Open deployment.yaml. Replace the existing file with the same content, but change only the image line marked with changed here to use v0.2.0. This prepares the app for all verification steps in this lesson.', 'deployment.yaml', imageUpdateSnippet, 'deployment.yaml with image update'),
+    ...editFileWithVim('1. Update the app image for runtime configuration', 'Open deployment.yaml. Keep the file structure from the previous question, set replicas to 1 for this focused lab, and change only the image line marked below to use v0.2.0.', 'deployment.yaml', imageUpdateSnippet, 'deployment.yaml after image update'),
     ...command('Apply the image update', 'Apply deployment.yaml after changing only the image line.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api`),
 
@@ -472,7 +908,7 @@ k -n kubetasker rollout status deploy/kube-tasker-api`),
       title: 'Scenario 1: Direct environment variable',
       content: 'Start with the simplest configuration method. The value lives directly in deployment.yaml, so no ConfigMap or Secret is needed yet.'
     },
-    ...editFileWithVim('2. Add a direct env value to the Deployment', 'Open deployment.yaml. Find the api container. Add env under that same container, aligned with image and ports. This shows the exact place where environment variables belong.', 'deployment.yaml', directEnvSnippet, 'direct env change in deployment.yaml'),
+    ...editFileWithVim('2. Add a direct env value to the Deployment', 'Open deployment.yaml. Build on the image-updated file from step 1. Add only the env block shown under the api container; the full file below shows exactly where it belongs.', 'deployment.yaml', directEnvSnippet, 'deployment.yaml after direct env'),
     ...command('Apply the direct env change', 'Apply deployment.yaml and wait for the new Pod to roll out.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api`),
     ...command('Create the verification path once', 'Create or refresh the existing Service and client Pod from the previous question. This is done here because this is the first time the lesson verifies the app through the cluster. Later scenarios reuse this path unless it is missing.', `k apply -f service.yaml
@@ -482,7 +918,7 @@ k -n kubetasker get endpoints kube-tasker-api
 k -n kubetasker get pod kube-tasker-client`),
     ...command('Verify the direct env value from the app', 'Call the app through the existing Service/client path and confirm the direct env value reached KubeTasker.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status'),
     ...jsonExample('Expected /config/status after adding direct env', 'The app should show that the direct environment variable was received.', 'config-status-direct-env-response.json', directEnvStatusJson),
-    ...editFileWithVim('3. Update the direct env value', 'Open deployment.yaml again. Change only the DIRECT_MESSAGE value. This proves that Deployment env changes require a rollout before the app sees the new value.', 'deployment.yaml', updatedDirectEnvSnippet, 'direct env update in deployment.yaml'),
+    ...editFileWithVim('3. Update the direct env value', 'Open deployment.yaml again. Build on the file from step 2. Change only the DIRECT_MESSAGE value marked below.', 'deployment.yaml', updatedDirectEnvSnippet, 'deployment.yaml after direct env update'),
     ...command('Apply and verify the updated direct env value', 'Apply deployment.yaml again, wait for rollout, then call the same endpoint. The Service and client Pod are not changed, so do not recreate their YAML.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
@@ -497,7 +933,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/conf
     ...createFileWithVim('4. Create the ConfigMap manifest', 'This file stores non-sensitive runtime settings that KubeTasker will read through environment variables.', 'configmap.yaml', configMapYaml),
     ...command('Apply and inspect the ConfigMap', 'Create the ConfigMap and confirm the keys exist in the kubetasker namespace.', `k apply -f configmap.yaml
 k -n kubetasker describe configmap kube-tasker-api-config`),
-    ...editFileWithVim('5. Add ConfigMap env refs to the Deployment', 'Open deployment.yaml. Keep DIRECT_MESSAGE from Scenario 1. Append the ConfigMap entries under the same env list. Do not create a second env block.', 'deployment.yaml', configMapEnvSnippet, 'ConfigMap env change in deployment.yaml'),
+    ...editFileWithVim('5. Add ConfigMap env refs to the Deployment', 'Open deployment.yaml. Build on the file from step 3. Keep DIRECT_MESSAGE and append the ConfigMap entries under the same env list. Do not create a second env block.', 'deployment.yaml', configMapEnvSnippet, 'deployment.yaml after ConfigMap env'),
     ...command('Apply and verify ConfigMap env values', 'Apply deployment.yaml, wait for rollout, then verify the ConfigMap values from the app. The Service and client Pod are reused.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
@@ -519,7 +955,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/conf
     ...command('Apply and inspect the Secret safely', 'Create the Secret and confirm it exists without revealing the value.', `k apply -f secret.yaml
 k -n kubetasker get secret kube-tasker-api-secret
 k -n kubetasker describe secret kube-tasker-api-secret`),
-    ...editFileWithVim('8. Add the Secret env ref to the Deployment', 'Open deployment.yaml. Append the Secret entry under the existing env list. Keep the direct env and ConfigMap env entries.', 'deployment.yaml', secretEnvSnippet, 'Secret env change in deployment.yaml'),
+    ...editFileWithVim('8. Add the Secret env ref to the Deployment', 'Open deployment.yaml. Build on the file from step 5. Append the Secret entry under the existing env list. Keep the direct env and ConfigMap env entries.', 'deployment.yaml', secretEnvSnippet, 'deployment.yaml after Secret env'),
     ...command('Apply and verify Secret env value safely', 'Apply deployment.yaml, wait for rollout, then verify only that the app received a token. Do not print the Secret value.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
@@ -534,7 +970,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/conf
     ...createFileWithVim('9. Create the mounted ConfigMap manifest', 'This file becomes /etc/kubetasker/app-config.yaml inside the KubeTasker container.', 'file-config-configmap.yaml', mountedConfigFileYaml),
     ...command('Apply and inspect the mounted ConfigMap', 'Create the ConfigMap and confirm it contains app-config.yaml.', `k apply -f file-config-configmap.yaml
 k -n kubetasker describe configmap kube-tasker-file-config`),
-    ...editFileWithVim('10. Add the mounted ConfigMap file to the Deployment', 'Open deployment.yaml. Add volumeMounts under the api container, then add volumes under spec.template.spec. Keep the existing env list unchanged.', 'deployment.yaml', mountedConfigSnippet, 'mounted ConfigMap change in deployment.yaml'),
+    ...editFileWithVim('10. Add the mounted ConfigMap file to the Deployment', 'Open deployment.yaml. Build on the file from step 8. Keep the existing env list unchanged, then add volumeMounts under the api container and volumes under spec.template.spec.', 'deployment.yaml', mountedConfigSnippet, 'deployment.yaml after mounted ConfigMap'),
     ...command('Apply and verify mounted ConfigMap config', 'Apply deployment.yaml, wait for rollout, then confirm the app loaded the mounted config file.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status
@@ -557,7 +993,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/conf
     ...command('Apply and inspect the mounted Secret safely', 'Create the Secret and confirm it exists. Do not decode or print the Secret value.', `k apply -f file-secret.yaml
 k -n kubetasker get secret kube-tasker-file-secret
 k -n kubetasker describe secret kube-tasker-file-secret`),
-    ...editFileWithVim('13. Add the mounted Secret file to the Deployment', 'Open deployment.yaml. Append one item under the existing volumeMounts list and one item under the existing volumes list. Do not create duplicate blocks.', 'deployment.yaml', mountedSecretSnippet, 'mounted Secret change in deployment.yaml'),
+    ...editFileWithVim('13. Add the mounted Secret file to the Deployment', 'Open deployment.yaml. Build on the file from step 10. Append one item under the existing volumeMounts list and one item under the existing volumes list. Do not create duplicate blocks.', 'deployment.yaml', mountedSecretSnippet, 'deployment.yaml after mounted Secret'),
     ...command('Apply and verify mounted Secret config safely', 'Apply deployment.yaml, wait for rollout, then verify only that the Secret file was loaded.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
@@ -569,7 +1005,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/conf
       title: 'Scenario 6: Downward API values',
       content: 'The Downward API lets the app receive information about its own Pod, such as Pod name, namespace, Pod IP, and node name.'
     },
-    ...editFileWithVim('14. Add Downward API env values to the Deployment', 'Open deployment.yaml. Append these entries under the existing env list. These values are filled by Kubernetes when the Pod starts.', 'deployment.yaml', downwardApiSnippet, 'Downward API change in deployment.yaml'),
+    ...editFileWithVim('14. Add Downward API env values to the Deployment', 'Open deployment.yaml. Build on the file from step 13. Append the Pod metadata entries under the existing env list. These values are filled by Kubernetes when the Pod starts.', 'deployment.yaml', downwardApiSnippet, 'deployment.yaml after Downward API env'),
     ...command('Apply and verify Downward API values', 'Apply deployment.yaml, wait for rollout, then verify that the app received Pod metadata.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
@@ -581,7 +1017,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/conf
       title: 'Scenario 7: Resource field references',
       content: 'resourceFieldRef lets the app receive selected CPU or memory request/limit values. This is useful when apps tune behavior based on assigned resources.'
     },
-    ...editFileWithVim('15. Add resources and resourceFieldRef values', 'Open deployment.yaml. Add resources under the api container, then append CPU_LIMIT and MEMORY_LIMIT under the existing env list.', 'deployment.yaml', resourcesAndResourceFieldSnippet, 'resourceFieldRef change in deployment.yaml'),
+    ...editFileWithVim('15. Add resources and resourceFieldRef values', 'Open deployment.yaml. Build on the file from step 14. Add resources under the api container, then append CPU_LIMIT and MEMORY_LIMIT under the existing env list.', 'deployment.yaml', resourcesAndResourceFieldSnippet, 'deployment.yaml after resourceFieldRef'),
     ...command('Apply and verify resource field values', 'Apply deployment.yaml, wait for rollout, then verify that resource values are available to the app.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
@@ -593,7 +1029,7 @@ k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/conf
       title: 'Scenario 8: Command and args',
       content: 'command and args are startup configuration. They do not inject values like ConfigMaps or Secrets, but they change how the container process starts.'
     },
-    ...editFileWithVim('16. Optional command and args amendment', 'Use this only when a question asks you to override the container startup command. Do not replace the Deployment. Add only these fields under the existing api container.', 'deployment.yaml', commandArgsPatchYaml, 'command and args change in deployment.yaml'),
+    ...editFileWithVim('16. Optional command and args amendment', 'Use this only when a question asks you to override the container startup command. Build on the file from step 15 and add only command and args under the existing api container.', 'deployment.yaml', commandArgsPatchYaml, 'deployment.yaml after command and args'),
     ...command('Apply and verify command/args amendment', 'If command or args are wrong, /health and /ready will fail and logs will show startup errors.', `k apply -f deployment.yaml
 k -n kubetasker rollout status deploy/kube-tasker-api
 k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health
