@@ -247,9 +247,10 @@ const problem = defineLearningProblem({
     ...command('1. Create a manifest folder', 'Create a small folder to keep the files for this lesson together. The files are normal text files that describe Kubernetes desired state.', 'mkdir -p kubetasker-manifests'),
     ...command('2. Enter the manifest folder', 'Move into the folder so each file you create belongs to this lesson.', 'cd kubetasker-manifests'),
     {
-      type: 'section',
-      title: 'How to create and save YAML files in this lesson',
-      content: 'For each YAML file, run the vim command shown, press i to enter insert mode, copy the YAML content from the next block, paste it into the file, press Esc, type :wq, and press Enter to save and close the file. You only need to learn this save pattern once; the later steps reuse it.'
+      type: 'callout',
+      tone: 'warning',
+      title: 'Important: read this before creating YAML files',
+      content: 'Do not skip this step. Every YAML block below must be saved into the exact file named in the step. For each file, run the vim command shown, press i to enter insert mode, copy the YAML content from the next block, paste it into the file, press Esc, type :wq, and press Enter to save and close the file. Later steps reuse the same save pattern.'
     },
     ...vimCommand('3', 'namespace.yaml', 'create'),
     ...fileBlock('4. Paste the namespace manifest', 'Paste this content into namespace.yaml. This file describes the workspace where the KubeTasker resources will live.', 'namespace.yaml', namespaceYaml),
