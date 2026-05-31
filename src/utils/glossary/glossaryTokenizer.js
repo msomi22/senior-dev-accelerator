@@ -28,13 +28,27 @@ function appendTextToken(tokens, value) {
   tokens.push({ type: 'text', value });
 }
 
+function isEntireTextProtected(text, protectedRanges = []) {
+  const trimmedStart = text.search(/\S/u);
+  if (trimmedStart === -1) return false;
+
+  const trimmedEnd = text.search(/\s*$/u);
+  const contentEnd = trimmedEnd === -1 ? text.length : trimmedEnd;
+
+  return protectedRanges.some((range) => range.start <= trimmedStart && range.end >= contentEnd);
+}
+
 export function tokenizeGlossaryText(text, options = {}) {
   if (typeof text !== 'string' || !text) return [];
   if (options.enabled === false) return [{ type: 'text', value: text }];
-  if (isLikelyExecutableOrCodeText(text)) return [{ type: 'text', value: text }];
 
   const matcher = options.matcher || getDefaultGlossaryMatcher();
   const protectedRanges = options.protectedRanges || getProtectedTextRanges(text);
+
+  if (isEntireTextProtected(text, protectedRanges) || (isLikelyExecutableOrCodeText(text) && protectedRanges.length === 0)) {
+    return [{ type: 'text', value: text }];
+  }
+
   const matches = matcher.findMatches(text)
     .filter((match) => !rangeOverlapsProtectedRange(match, protectedRanges));
 
