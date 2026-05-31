@@ -35,17 +35,31 @@ export const glossaryTerms = [
     category: 'backend'
   },
   {
+    id: 'service',
+    term: 'Service',
+    aliases: ['Services'],
+    definition: 'A Kubernetes object that gives Pods a stable network address so other parts of the app can reach them.',
+    category: 'kubernetes-ckad'
+  },
+  {
     id: 'deployment',
     term: 'Deployment',
     aliases: ['Deployments'],
-    definition: 'The process or Kubernetes object that rolls an application version out to running environments.',
+    definition: 'A Kubernetes object that manages rolling out and updating copies of an application.',
     category: 'kubernetes-ckad'
   },
   {
     id: 'replicaset',
     term: 'ReplicaSet',
-    aliases: ['ReplicaSets'],
-    definition: 'A Kubernetes controller that keeps the requested number of matching Pods running.',
+    aliases: ['ReplicaSets', 'Replica Set', 'Replica Sets'],
+    definition: 'A Kubernetes object that keeps the requested number of matching Pods running.',
+    category: 'kubernetes-ckad'
+  },
+  {
+    id: 'daemonset',
+    term: 'DaemonSet',
+    aliases: ['DaemonSets', 'Daemon Set', 'Daemon Sets'],
+    definition: 'A Kubernetes object that runs a copy of a Pod on selected nodes, often for node-level tools like logging or monitoring.',
     category: 'kubernetes-ckad'
   },
   {
