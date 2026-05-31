@@ -106,7 +106,7 @@ metadata:
   name: kube-tasker-api
   namespace: kubetasker
 spec:
-  replicas: 2 # changed here
+  replicas: 1
   selector:
     matchLabels:
       app: kube-tasker-api
