@@ -527,6 +527,129 @@ const resourceFieldStatusJson = `{
   "ready": true
 }`;
 
+const setupBody = [
+  ...command('0. Ensure the namespace exists', 'Start with namespace.yaml only. If you do not have this file yet, open the previous question from the link above and create it there first.', `k apply -f namespace.yaml
+k get ns kubetasker`),
+  ...editFileWithVim('1. Update the app image for runtime configuration', 'Open deployment.yaml. Keep the file structure from the previous question, set replicas to 1 for this focused lab, and change only the image line marked below to use v0.2.0.', 'deployment.yaml', imageUpdateSnippet, 'deployment.yaml after image update'),
+  ...command('Apply the image update', 'Apply deployment.yaml after changing only the image line.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api`)
+];
+
+const directEnvBody = [
+  { type: 'section', title: 'Scenario 1: Direct environment variable', content: 'Start with the simplest configuration method. The value lives directly in deployment.yaml, so no ConfigMap or Secret is needed yet.' },
+  ...editFileWithVim('2. Add a direct env value to the Deployment', 'Open deployment.yaml. Build on the image-updated file from Setup. Add only the env block shown under the api container; the full file below shows exactly where it belongs.', 'deployment.yaml', directEnvSnippet, 'deployment.yaml after direct env'),
+  ...command('Apply the direct env change', 'Apply deployment.yaml and wait for the new Pod to roll out.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api`),
+  ...command('Create the verification path', 'Create or refresh the existing Service and client Pod from the previous question. This is done here because this is the first time the lesson verifies the app through the cluster. Later scenarios reuse this path unless it is missing.', `k apply -f service.yaml
+k apply -f client-pod.yaml
+k -n kubetasker get svc kube-tasker-api
+k -n kubetasker get endpoints kube-tasker-api
+k -n kubetasker get pod kube-tasker-client`),
+  ...command('Verify the direct env value from the app', 'Call the app through the existing Service/client path and confirm the direct env value reached KubeTasker.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status'),
+  ...jsonExample('Expected /config/status after adding direct env', 'The app should show that the direct environment variable was received.', 'config-status-direct-env-response.json', directEnvStatusJson),
+  ...editFileWithVim('3. Update the direct env value', 'Open deployment.yaml again. Build on the previous file in this tab. Change only the DIRECT_MESSAGE value marked below.', 'deployment.yaml', updatedDirectEnvSnippet, 'deployment.yaml after direct env update'),
+  ...command('Apply and verify the updated direct env value', 'Apply deployment.yaml again, wait for rollout, then call the same endpoint. The Service and client Pod are not changed, so do not recreate their YAML.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after updating direct env', 'The app should now show the updated direct value.', 'config-status-direct-env-updated-response.json', updatedDirectEnvStatusJson),
+  ...editFileWithVim('4. Practice with other direct env values', 'Before using ConfigMaps, add the other non-sensitive runtime values directly in deployment.yaml. This lets you see the app consume several env values before you move those values into a ConfigMap.', 'deployment.yaml', moreDirectEnvSnippet, 'deployment.yaml after more direct env values'),
+  ...command('Apply and verify the extra direct env values', 'Apply deployment.yaml again and confirm the app receives each direct value. The Service and client Pod are still reused.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after adding more direct env values', 'The app should show each non-sensitive value supplied directly from deployment.yaml.', 'config-status-direct-env-more-values-response.json', moreDirectEnvStatusJson)
+];
+
+const configMapEnvBody = [
+  { type: 'section', title: 'Scenario 2: ConfigMap as environment variables', content: 'Now externalize non-sensitive values. You already tested these as direct env values; next, store them in a ConfigMap and reference the ConfigMap keys from deployment.yaml.' },
+  ...createFileWithVim('5. Create the ConfigMap manifest', 'This file stores non-sensitive runtime settings that KubeTasker will read through environment variables.', 'configmap.yaml', configMapYaml),
+  ...command('Apply and inspect the ConfigMap', 'Create the ConfigMap and confirm the keys exist in the kubetasker namespace.', `k apply -f configmap.yaml
+k -n kubetasker describe configmap kube-tasker-api-config`),
+  ...editFileWithVim('6. Move non-sensitive env values to ConfigMap refs', 'Open deployment.yaml. Build on the direct-env file. Replace the direct APP_MODE, TASK_MODE, ENABLE_SAMPLE_TASKS, and WELCOME_MESSAGE values with ConfigMap references, then add LOG_LEVEL from the same ConfigMap. Keep DIRECT_MESSAGE as a direct env value.', 'deployment.yaml', configMapEnvSnippet, 'deployment.yaml after ConfigMap env'),
+  ...command('Apply and verify ConfigMap env values', 'Apply deployment.yaml, wait for rollout, then verify the ConfigMap values from the app. The Service and client Pod are reused.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after ConfigMap env', 'The app should show the non-sensitive values from the ConfigMap.', 'config-status-configmap-env-response.json', configMapEnvStatusJson),
+  ...createFileWithVim('7. Update the ConfigMap values', 'Edit configmap.yaml and change only the values shown here. This proves that the source object can change independently from the Deployment.', 'configmap.yaml', updatedConfigMapYaml),
+  ...command('Apply the ConfigMap update and restart the app Pods', 'Environment variables are set when the Pod starts. After changing a ConfigMap used as env, restart the Deployment so the app receives the new values.', `k apply -f configmap.yaml
+k -n kubetasker rollout restart deploy/kube-tasker-api
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after ConfigMap update', 'The app should show the updated ConfigMap values after the Deployment restart.', 'config-status-configmap-env-updated-response.json', updatedConfigMapEnvStatusJson)
+];
+
+const secretEnvBody = [
+  { type: 'section', title: 'Scenario 3: Secret as environment variable', content: 'Use a Secret when the value is sensitive. The app can prove the value exists, but the lesson must not print the Secret value.' },
+  ...createFileWithVim('8. Create the Secret manifest', 'This file stores a sensitive runtime value. Verify that the Secret exists, but do not print or decode the token value.', 'secret.yaml', secretYaml),
+  ...command('Apply and inspect the Secret safely', 'Create the Secret and confirm it exists without revealing the value.', `k apply -f secret.yaml
+k -n kubetasker get secret kube-tasker-api-secret
+k -n kubetasker describe secret kube-tasker-api-secret`),
+  ...editFileWithVim('9. Add the Secret env ref to the Deployment', 'Open deployment.yaml. Build on the ConfigMap-env file. Append the Secret entry under the existing env list. Keep the direct env and ConfigMap env entries.', 'deployment.yaml', secretEnvSnippet, 'deployment.yaml after Secret env'),
+  ...command('Apply and verify Secret env value safely', 'Apply deployment.yaml, wait for rollout, then verify only that the app received a token. Do not print the Secret value.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after Secret env', 'The app should confirm that the token is configured without exposing the token itself.', 'config-status-secret-env-response.json', secretEnvStatusJson)
+];
+
+const configMapFileBody = [
+  { type: 'section', title: 'Scenario 4: ConfigMap mounted as a file', content: 'Some apps read config from files instead of env vars. Here, a ConfigMap key becomes a file inside the container.' },
+  ...createFileWithVim('10. Create the mounted ConfigMap manifest', 'This file becomes /etc/kubetasker/app-config.yaml inside the KubeTasker container.', 'file-config-configmap.yaml', mountedConfigFileYaml),
+  ...command('Apply and inspect the mounted ConfigMap', 'Create the ConfigMap and confirm it contains app-config.yaml.', `k apply -f file-config-configmap.yaml
+k -n kubetasker describe configmap kube-tasker-file-config`),
+  ...editFileWithVim('11. Add the mounted ConfigMap file to the Deployment', 'Open deployment.yaml. Build on the Secret-env file. Keep the existing env list unchanged, then add volumeMounts under the api container and volumes under spec.template.spec.', 'deployment.yaml', mountedConfigSnippet, 'deployment.yaml after mounted ConfigMap'),
+  ...command('Apply and verify mounted ConfigMap config', 'Apply deployment.yaml, wait for rollout, then confirm the app loaded the mounted config file.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/ready`),
+  ...jsonExample('Expected /config/status after mounted ConfigMap', 'The app should confirm that the mounted ConfigMap file was loaded.', 'config-status-mounted-configmap-response.json', mountedConfigStatusJson),
+  ...createFileWithVim('12. Update the mounted ConfigMap file', 'Edit file-config-configmap.yaml and change only the file content. This shows how file-based config can change separately from the Deployment.', 'file-config-configmap.yaml', updatedMountedConfigFileYaml),
+  ...command('Apply and verify the mounted ConfigMap update', 'Apply the ConfigMap update. Then restart the Deployment to make the app reload the mounted-file settings for this lesson.', `k apply -f file-config-configmap.yaml
+k -n kubetasker rollout restart deploy/kube-tasker-api
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after mounted ConfigMap update', 'The app should show the updated mounted-file values after the restart.', 'config-status-mounted-configmap-updated-response.json', updatedMountedConfigStatusJson)
+];
+
+const secretFileBody = [
+  { type: 'section', title: 'Scenario 5: Secret mounted as a file', content: 'Secrets can also be mounted as files. This is common for tokens, certificates, keys, and credentials.' },
+  ...createFileWithVim('13. Create the mounted Secret manifest', 'This Secret will be mounted as a file inside the container. The Secret value should not be printed during verification.', 'file-secret.yaml', mountedSecretYaml),
+  ...command('Apply and inspect the mounted Secret safely', 'Create the Secret and confirm it exists. Do not decode or print the Secret value.', `k apply -f file-secret.yaml
+k -n kubetasker get secret kube-tasker-file-secret
+k -n kubetasker describe secret kube-tasker-file-secret`),
+  ...editFileWithVim('14. Add the mounted Secret file to the Deployment', 'Open deployment.yaml. Build on the mounted-ConfigMap file. Append one item under the existing volumeMounts list and one item under the existing volumes list. Do not create duplicate blocks.', 'deployment.yaml', mountedSecretSnippet, 'deployment.yaml after mounted Secret'),
+  ...command('Apply and verify mounted Secret config safely', 'Apply deployment.yaml, wait for rollout, then verify only that the Secret file was loaded.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after mounted Secret', 'The app should confirm that the mounted Secret file was loaded without exposing the Secret content.', 'config-status-mounted-secret-response.json', mountedSecretStatusJson)
+];
+
+const downwardApiBody = [
+  { type: 'section', title: 'Scenario 6: Downward API values', content: 'The Downward API lets the app receive information about its own Pod, such as Pod name, namespace, Pod IP, and node name.' },
+  ...editFileWithVim('15. Add Downward API env values to the Deployment', 'Open deployment.yaml. Build on the mounted-Secret file. Append the Pod metadata entries under the existing env list. These values are filled by Kubernetes when the Pod starts.', 'deployment.yaml', downwardApiSnippet, 'deployment.yaml after Downward API env'),
+  ...command('Apply and verify Downward API values', 'Apply deployment.yaml, wait for rollout, then verify that the app received Pod metadata.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after Downward API', 'The app should confirm that Pod metadata was injected.', 'config-status-downward-api-response.json', downwardApiStatusJson)
+];
+
+const resourcesBody = [
+  { type: 'section', title: 'Scenario 7: Resource field references', content: 'resourceFieldRef lets the app receive selected CPU or memory request/limit values. This is useful when apps tune behavior based on assigned resources.' },
+  ...editFileWithVim('16. Add resources and resourceFieldRef values', 'Open deployment.yaml. Build on the Downward API file. Add resources under the api container, then append CPU_LIMIT and MEMORY_LIMIT under the existing env list.', 'deployment.yaml', resourcesAndResourceFieldSnippet, 'deployment.yaml after resourceFieldRef'),
+  ...command('Apply and verify resource field values', 'Apply deployment.yaml, wait for rollout, then verify that resource values are available to the app.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
+  ...jsonExample('Expected /config/status after resourceFieldRef', 'The app should confirm that CPU and memory values are configured.', 'config-status-resourcefield-response.json', resourceFieldStatusJson)
+];
+
+const commandArgsBody = [
+  { type: 'section', title: 'Scenario 8: Command and args', content: 'command and args are startup configuration. They do not inject values like ConfigMaps or Secrets, but they change how the container process starts.' },
+  ...editFileWithVim('17. Optional command and args amendment', 'Use this only when a question asks you to override the container startup command. Build on the resourceFieldRef file and add only command and args under the existing api container.', 'deployment.yaml', commandArgsPatchYaml, 'deployment.yaml after command and args'),
+  ...command('Apply and verify command/args amendment', 'If command or args are wrong, /health and /ready will fail and logs will show startup errors.', `k apply -f deployment.yaml
+k -n kubetasker rollout status deploy/kube-tasker-api
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health
+k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/ready
+k -n kubetasker logs deploy/kube-tasker-api`)
+];
+
 const problem = defineLearningProblem({
   id: 'workloads-services-runtime-configuration-introduction-001',
   category: 'kubernetes-ckad',
@@ -609,120 +732,22 @@ const problem = defineLearningProblem({
     ] },
     { type: 'callout', tone: 'info', title: 'What you will do next', content: `Build runtime configuration knowledge step by step. Start with direct env values, verify them from the app, then externalize values using ConfigMaps, Secrets, mounted files, and Kubernetes-provided metadata. Need the earlier base files? Open the ${previousQuestionLink}.` },
     { type: 'callout', tone: 'info', title: 'How to save files in this lesson', content: 'For each file, run the vim command shown, press i to enter insert mode, paste or edit the content from the next block, press Esc, type :wq, and press Enter. The same save pattern applies to every file in this lesson.' },
-
-    ...command('0. Ensure the namespace exists', 'Start with namespace.yaml only. If you do not have this file yet, open the previous question from the link above and create it there first.', `k apply -f namespace.yaml
-k get ns kubetasker`),
-    ...editFileWithVim('1. Update the app image for runtime configuration', 'Open deployment.yaml. Keep the file structure from the previous question, set replicas to 1 for this focused lab, and change only the image line marked below to use v0.2.0.', 'deployment.yaml', imageUpdateSnippet, 'deployment.yaml after image update'),
-    ...command('Apply the image update', 'Apply deployment.yaml after changing only the image line.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api`),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 1: Direct environment variable', content: 'Start with the simplest configuration method. The value lives directly in deployment.yaml, so no ConfigMap or Secret is needed yet.' },
-    ...editFileWithVim('2. Add a direct env value to the Deployment', 'Open deployment.yaml. Build on the image-updated file from step 1. Add only the env block shown under the api container; the full file below shows exactly where it belongs.', 'deployment.yaml', directEnvSnippet, 'deployment.yaml after direct env'),
-    ...command('Apply the direct env change', 'Apply deployment.yaml and wait for the new Pod to roll out.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api`),
-    ...command('Create the verification path', 'Create or refresh the existing Service and client Pod from the previous question. This is done here because this is the first time the lesson verifies the app through the cluster. Later scenarios reuse this path unless it is missing.', `k apply -f service.yaml
-k apply -f client-pod.yaml
-k -n kubetasker get svc kube-tasker-api
-k -n kubetasker get endpoints kube-tasker-api
-k -n kubetasker get pod kube-tasker-client`),
-    ...command('Verify the direct env value from the app', 'Call the app through the existing Service/client path and confirm the direct env value reached KubeTasker.', 'k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status'),
-    ...jsonExample('Expected /config/status after adding direct env', 'The app should show that the direct environment variable was received.', 'config-status-direct-env-response.json', directEnvStatusJson),
-    ...editFileWithVim('3. Update the direct env value', 'Open deployment.yaml again. Build on the file from step 2. Change only the DIRECT_MESSAGE value marked below.', 'deployment.yaml', updatedDirectEnvSnippet, 'deployment.yaml after direct env update'),
-    ...command('Apply and verify the updated direct env value', 'Apply deployment.yaml again, wait for rollout, then call the same endpoint. The Service and client Pod are not changed, so do not recreate their YAML.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after updating direct env', 'The app should now show the updated direct value.', 'config-status-direct-env-updated-response.json', updatedDirectEnvStatusJson),
-    ...editFileWithVim('4. Practice with other direct env values', 'Before using ConfigMaps, add the other non-sensitive runtime values directly in deployment.yaml. This lets you see the app consume several env values before you move those values into a ConfigMap.', 'deployment.yaml', moreDirectEnvSnippet, 'deployment.yaml after more direct env values'),
-    ...command('Apply and verify the extra direct env values', 'Apply deployment.yaml again and confirm the app receives each direct value. The Service and client Pod are still reused.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after adding more direct env values', 'The app should show each non-sensitive value supplied directly from deployment.yaml.', 'config-status-direct-env-more-values-response.json', moreDirectEnvStatusJson),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 2: ConfigMap as environment variables', content: 'Now externalize non-sensitive values. You already tested these as direct env values; next, store them in a ConfigMap and reference the ConfigMap keys from deployment.yaml.' },
-    ...createFileWithVim('5. Create the ConfigMap manifest', 'This file stores non-sensitive runtime settings that KubeTasker will read through environment variables.', 'configmap.yaml', configMapYaml),
-    ...command('Apply and inspect the ConfigMap', 'Create the ConfigMap and confirm the keys exist in the kubetasker namespace.', `k apply -f configmap.yaml
-k -n kubetasker describe configmap kube-tasker-api-config`),
-    ...editFileWithVim('6. Move non-sensitive env values to ConfigMap refs', 'Open deployment.yaml. Build on the file from step 4. Replace the direct APP_MODE, TASK_MODE, ENABLE_SAMPLE_TASKS, and WELCOME_MESSAGE values with ConfigMap references, then add LOG_LEVEL from the same ConfigMap. Keep DIRECT_MESSAGE as a direct env value.', 'deployment.yaml', configMapEnvSnippet, 'deployment.yaml after ConfigMap env'),
-    ...command('Apply and verify ConfigMap env values', 'Apply deployment.yaml, wait for rollout, then verify the ConfigMap values from the app. The Service and client Pod are reused.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after ConfigMap env', 'The app should show the non-sensitive values from the ConfigMap.', 'config-status-configmap-env-response.json', configMapEnvStatusJson),
-    ...createFileWithVim('7. Update the ConfigMap values', 'Edit configmap.yaml and change only the values shown here. This proves that the source object can change independently from the Deployment.', 'configmap.yaml', updatedConfigMapYaml),
-    ...command('Apply the ConfigMap update and restart the app Pods', 'Environment variables are set when the Pod starts. After changing a ConfigMap used as env, restart the Deployment so the app receives the new values.', `k apply -f configmap.yaml
-k -n kubetasker rollout restart deploy/kube-tasker-api
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after ConfigMap update', 'The app should show the updated ConfigMap values after the Deployment restart.', 'config-status-configmap-env-updated-response.json', updatedConfigMapEnvStatusJson),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 3: Secret as environment variable', content: 'Use a Secret when the value is sensitive. The app can prove the value exists, but the lesson must not print the Secret value.' },
-    ...createFileWithVim('8. Create the Secret manifest', 'This file stores a sensitive runtime value. Verify that the Secret exists, but do not print or decode the token value.', 'secret.yaml', secretYaml),
-    ...command('Apply and inspect the Secret safely', 'Create the Secret and confirm it exists without revealing the value.', `k apply -f secret.yaml
-k -n kubetasker get secret kube-tasker-api-secret
-k -n kubetasker describe secret kube-tasker-api-secret`),
-    ...editFileWithVim('9. Add the Secret env ref to the Deployment', 'Open deployment.yaml. Build on the file from step 6. Append the Secret entry under the existing env list. Keep the direct env and ConfigMap env entries.', 'deployment.yaml', secretEnvSnippet, 'deployment.yaml after Secret env'),
-    ...command('Apply and verify Secret env value safely', 'Apply deployment.yaml, wait for rollout, then verify only that the app received a token. Do not print the Secret value.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after Secret env', 'The app should confirm that the token is configured without exposing the token itself.', 'config-status-secret-env-response.json', secretEnvStatusJson),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 4: ConfigMap mounted as a file', content: 'Some apps read config from files instead of env vars. Here, a ConfigMap key becomes a file inside the container.' },
-    ...createFileWithVim('10. Create the mounted ConfigMap manifest', 'This file becomes /etc/kubetasker/app-config.yaml inside the KubeTasker container.', 'file-config-configmap.yaml', mountedConfigFileYaml),
-    ...command('Apply and inspect the mounted ConfigMap', 'Create the ConfigMap and confirm it contains app-config.yaml.', `k apply -f file-config-configmap.yaml
-k -n kubetasker describe configmap kube-tasker-file-config`),
-    ...editFileWithVim('11. Add the mounted ConfigMap file to the Deployment', 'Open deployment.yaml. Build on the file from step 9. Keep the existing env list unchanged, then add volumeMounts under the api container and volumes under spec.template.spec.', 'deployment.yaml', mountedConfigSnippet, 'deployment.yaml after mounted ConfigMap'),
-    ...command('Apply and verify mounted ConfigMap config', 'Apply deployment.yaml, wait for rollout, then confirm the app loaded the mounted config file.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/ready`),
-    ...jsonExample('Expected /config/status after mounted ConfigMap', 'The app should confirm that the mounted ConfigMap file was loaded.', 'config-status-mounted-configmap-response.json', mountedConfigStatusJson),
-    ...createFileWithVim('12. Update the mounted ConfigMap file', 'Edit file-config-configmap.yaml and change only the file content. This shows how file-based config can change separately from the Deployment.', 'file-config-configmap.yaml', updatedMountedConfigFileYaml),
-    ...command('Apply and verify the mounted ConfigMap update', 'Apply the ConfigMap update. Then restart the Deployment to make the app reload the mounted-file settings for this lesson.', `k apply -f file-config-configmap.yaml
-k -n kubetasker rollout restart deploy/kube-tasker-api
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after mounted ConfigMap update', 'The app should show the updated mounted-file values after the restart.', 'config-status-mounted-configmap-updated-response.json', updatedMountedConfigStatusJson),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 5: Secret mounted as a file', content: 'Secrets can also be mounted as files. This is common for tokens, certificates, keys, and credentials.' },
-    ...createFileWithVim('13. Create the mounted Secret manifest', 'This Secret will be mounted as a file inside the container. The Secret value should not be printed during verification.', 'file-secret.yaml', mountedSecretYaml),
-    ...command('Apply and inspect the mounted Secret safely', 'Create the Secret and confirm it exists. Do not decode or print the Secret value.', `k apply -f file-secret.yaml
-k -n kubetasker get secret kube-tasker-file-secret
-k -n kubetasker describe secret kube-tasker-file-secret`),
-    ...editFileWithVim('14. Add the mounted Secret file to the Deployment', 'Open deployment.yaml. Build on the file from step 11. Append one item under the existing volumeMounts list and one item under the existing volumes list. Do not create duplicate blocks.', 'deployment.yaml', mountedSecretSnippet, 'deployment.yaml after mounted Secret'),
-    ...command('Apply and verify mounted Secret config safely', 'Apply deployment.yaml, wait for rollout, then verify only that the Secret file was loaded.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after mounted Secret', 'The app should confirm that the mounted Secret file was loaded without exposing the Secret content.', 'config-status-mounted-secret-response.json', mountedSecretStatusJson),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 6: Downward API values', content: 'The Downward API lets the app receive information about its own Pod, such as Pod name, namespace, Pod IP, and node name.' },
-    ...editFileWithVim('15. Add Downward API env values to the Deployment', 'Open deployment.yaml. Build on the file from step 14. Append the Pod metadata entries under the existing env list. These values are filled by Kubernetes when the Pod starts.', 'deployment.yaml', downwardApiSnippet, 'deployment.yaml after Downward API env'),
-    ...command('Apply and verify Downward API values', 'Apply deployment.yaml, wait for rollout, then verify that the app received Pod metadata.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after Downward API', 'The app should confirm that Pod metadata was injected.', 'config-status-downward-api-response.json', downwardApiStatusJson),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 7: Resource field references', content: 'resourceFieldRef lets the app receive selected CPU or memory request/limit values. This is useful when apps tune behavior based on assigned resources.' },
-    ...editFileWithVim('16. Add resources and resourceFieldRef values', 'Open deployment.yaml. Build on the file from step 15. Add resources under the api container, then append CPU_LIMIT and MEMORY_LIMIT under the existing env list.', 'deployment.yaml', resourcesAndResourceFieldSnippet, 'deployment.yaml after resourceFieldRef'),
-    ...command('Apply and verify resource field values', 'Apply deployment.yaml, wait for rollout, then verify that resource values are available to the app.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/config/status`),
-    ...jsonExample('Expected /config/status after resourceFieldRef', 'The app should confirm that CPU and memory values are configured.', 'config-status-resourcefield-response.json', resourceFieldStatusJson),
-
-    { type: 'divider' },
-    { type: 'section', title: 'Scenario 8: Command and args', content: 'command and args are startup configuration. They do not inject values like ConfigMaps or Secrets, but they change how the container process starts.' },
-    ...editFileWithVim('17. Optional command and args amendment', 'Use this only when a question asks you to override the container startup command. Build on the file from step 16 and add only command and args under the existing api container.', 'deployment.yaml', commandArgsPatchYaml, 'deployment.yaml after command and args'),
-    ...command('Apply and verify command/args amendment', 'If command or args are wrong, /health and /ready will fail and logs will show startup errors.', `k apply -f deployment.yaml
-k -n kubetasker rollout status deploy/kube-tasker-api
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/health
-k -n kubetasker exec kube-tasker-client -- wget -qO- http://kube-tasker-api/ready
-k -n kubetasker logs deploy/kube-tasker-api`),
-
+    {
+      type: 'tabs',
+      title: 'Choose one runtime configuration scenario',
+      description: 'Use one tab at a time. Each scenario contains only the instructions, YAML changes, apply commands, and verification commands needed for that part of the journey.',
+      tabs: [
+        { id: 'setup', label: 'Setup', body: setupBody },
+        { id: 'direct-env', label: 'Direct env', body: directEnvBody },
+        { id: 'configmap-env', label: 'ConfigMap env', body: configMapEnvBody },
+        { id: 'secret-env', label: 'Secret env', body: secretEnvBody },
+        { id: 'configmap-file', label: 'ConfigMap file', body: configMapFileBody },
+        { id: 'secret-file', label: 'Secret file', body: secretFileBody },
+        { id: 'downward-api', label: 'Downward API', body: downwardApiBody },
+        { id: 'resources', label: 'Resources', body: resourcesBody },
+        { id: 'command-args', label: 'Command & args', body: commandArgsBody }
+      ]
+    },
     { type: 'comparison', title: 'Debugging pattern', items: [
       { label: 'If direct env is missing', content: 'Check that env is under the api container, aligned with image and ports.' },
       { label: 'If ConfigMap values do not change', content: 'Remember that env values are captured when the Pod starts. Restart or roll the Deployment after changing the ConfigMap.' },
