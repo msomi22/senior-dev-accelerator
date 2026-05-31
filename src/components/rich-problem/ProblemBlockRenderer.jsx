@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import CodeBlock from '../code/CodeBlock.jsx';
 import ProblemCalloutBlock from './ProblemCalloutBlock.jsx';
@@ -77,12 +77,29 @@ function ArchitectureDecisionBlock({ block }) {
   return <section className="workspace-block problem-rich-block problem-architecture-decision-block"><span className="mini-label">Architecture decision</span>{block.title ? <h4>{block.title}</h4> : null}{block.context ? <p><LinkedText text={block.context} /></p> : null}{block.decision ? <div className="problem-decision-highlight"><strong>Decision</strong><p><LinkedText text={block.decision} /></p></div> : null}<div className="problem-decision-grid"><List title="Accepted trade-offs" items={block.tradeoffs} /><List title="Consequences" items={block.consequences} /></div></section>;
 }
 
+function getTabId(tab, index) {
+  return tab?.id || tab?.label || `tab-${index}`;
+}
+
 function TabsBlock({ block }) {
-  const tabs = Array.isArray(block.tabs) ? block.tabs.filter((tab) => tab?.label && Array.isArray(tab?.body)) : [];
-  const [activeTabId, setActiveTabId] = useState(() => tabs[0]?.id || tabs[0]?.label || 'tab-0');
-  const activeTab = tabs.find((tab) => (tab.id || tab.label) === activeTabId) || tabs[0];
+  const tabs = useMemo(
+    () => (Array.isArray(block.tabs) ? block.tabs.filter((tab) => tab?.label && Array.isArray(tab?.body)) : []),
+    [block.tabs]
+  );
+  const firstTabId = tabs.length ? getTabId(tabs[0], 0) : 'tab-0';
+  const [activeTabId, setActiveTabId] = useState(firstTabId);
+
+  useEffect(() => {
+    const activeTabStillExists = tabs.some((tab, index) => getTabId(tab, index) === activeTabId);
+    if (!activeTabStillExists) setActiveTabId(firstTabId);
+  }, [activeTabId, firstTabId, tabs]);
 
   if (!tabs.length) return <UnknownBlock block={{ type: 'tabs' }} index={0} />;
+
+  const activeTabIndex = Math.max(0, tabs.findIndex((tab, index) => getTabId(tab, index) === activeTabId));
+  const activeTab = tabs[activeTabIndex] || tabs[0];
+  const resolvedActiveTabId = getTabId(activeTab, activeTabIndex);
+  const panelId = `problem-tab-panel-${resolvedActiveTabId}`;
 
   return (
     <section className="workspace-block problem-rich-block problem-tabs-block">
@@ -90,15 +107,18 @@ function TabsBlock({ block }) {
       {block.description ? <p className="problem-tabs-description"><LinkedText text={block.description} /></p> : null}
       <div className="problem-tabs-list" role="tablist" aria-label={block.title || 'Problem tabs'}>
         {tabs.map((tab, index) => {
-          const tabId = tab.id || tab.label || `tab-${index}`;
-          const selected = tabId === activeTabId;
+          const tabId = getTabId(tab, index);
+          const selected = tabId === resolvedActiveTabId;
           return (
             <button
+              aria-controls={panelId}
               aria-selected={selected}
               className="problem-tab-button"
+              id={`problem-tab-${tabId}`}
               key={tabId}
               onClick={() => setActiveTabId(tabId)}
               role="tab"
+              tabIndex={selected ? 0 : -1}
               type="button"
             >
               {tab.label}
@@ -106,8 +126,20 @@ function TabsBlock({ block }) {
           );
         })}
       </div>
-      <div className="problem-tab-panel" role="tabpanel">
-        {activeTab.body.map((child, index) => <ProblemBlockRenderer block={child} index={index} key={`${child?.type || 'unknown'}-${child?.title || index}`} />)}
+      <div
+        aria-labelledby={`problem-tab-${resolvedActiveTabId}`}
+        className="problem-tab-panel"
+        id={panelId}
+        key={resolvedActiveTabId}
+        role="tabpanel"
+      >
+        {activeTab.body.map((child, index) => (
+          <ProblemBlockRenderer
+            block={child}
+            index={index}
+            key={`${resolvedActiveTabId}-${child?.type || 'unknown'}-${child?.title || child?.filename || index}`}
+          />
+        ))}
       </div>
     </section>
   );
