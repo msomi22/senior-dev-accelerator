@@ -1,3 +1,5 @@
+const defaultPaystackSupportLink = 'https://paystack.shop/pay/1lrvz0bahb';
+
 export const siteConfig = {
   appName: import.meta.env.VITE_APP_NAME || 'Senior Dev Accelerator',
   tagline: import.meta.env.VITE_APP_TAGLINE || 'DSA + System Design mastery for junior and mid-level developers',
@@ -21,8 +23,8 @@ export const siteConfig = {
         label: 'Card / Mobile Money',
         description: 'Support using card, bank, or mobile money through Paystack where available.',
         type: 'external',
-        url: import.meta.env.VITE_PAYSTACK_SUPPORT_LINK || '',
-        enabled: Boolean(import.meta.env.VITE_PAYSTACK_SUPPORT_LINK)
+        url: import.meta.env.VITE_PAYSTACK_SUPPORT_LINK || defaultPaystackSupportLink,
+        enabled: Boolean(import.meta.env.VITE_PAYSTACK_SUPPORT_LINK || defaultPaystackSupportLink)
       }
     ]
   },
