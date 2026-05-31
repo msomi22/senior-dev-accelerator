@@ -77,20 +77,6 @@ export const glossaryTerms = [
     category: 'kubernetes-ckad'
   },
   {
-    id: 'heap',
-    term: 'Heap',
-    aliases: ['Heaps'],
-    definition: 'A tree-shaped structure that keeps the smallest or largest item easy to remove first.',
-    category: 'dsa'
-  },
-  {
-    id: 'stack',
-    term: 'Stack',
-    aliases: ['Stacks'],
-    definition: 'A last-in, first-out structure, like a pile where the newest item is removed first.',
-    category: 'dsa'
-  },
-  {
     id: 'sliding-window',
     term: 'Sliding Window',
     aliases: ['Sliding Windows'],
