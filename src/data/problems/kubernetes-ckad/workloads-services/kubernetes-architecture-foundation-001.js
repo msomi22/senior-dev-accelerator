@@ -2,6 +2,25 @@ import { defineLearningProblem } from '../../../../problems/problemAuthoring.js'
 
 const prompt = 'Explain how Kubernetes architecture turns a Deployment manifest into a running Pod and a reachable Service.';
 
+const kubeconfigExample = `apiVersion: v1
+kind: Config
+current-context: kubetasker-lab
+clusters:
+  - name: kubetasker-lab
+    cluster:
+      server: https://api.example.k8s.local:6443
+users:
+  - name: learner
+    user:
+      client-certificate-data: REDACTED
+      client-key-data: REDACTED
+contexts:
+  - name: kubetasker-lab
+    context:
+      cluster: kubetasker-lab
+      user: learner
+      namespace: kubetasker`;
+
 const problem = defineLearningProblem({
   id: 'kubernetes-architecture-foundation-001',
   category: 'kubernetes-ckad',
@@ -199,6 +218,18 @@ const problem = defineLearningProblem({
         { label: 'kubeconfig', content: 'A local configuration file on your machine, usually under your home directory. It stores cluster endpoint, user credentials, and contexts. It is not a Kubernetes object running inside the cluster.' },
         { label: 'context', content: 'A named combination of cluster, user, and optional namespace selected from your local kubeconfig. Many mistakes come from using the wrong current context.' }
       ]
+    },
+    {
+      type: 'section',
+      title: 'Sample local kubeconfig shape',
+      content: 'This is an example of local client configuration, often stored at ~/.kube/config on the machine where kubectl runs. It is shown to explain the architecture flow only; do not apply this file to the Kubernetes cluster.'
+    },
+    {
+      type: 'code',
+      title: 'kubeconfig example',
+      filename: 'kubeconfig-example.yaml',
+      language: 'yaml',
+      code: kubeconfigExample
     },
     {
       type: 'comparison',
