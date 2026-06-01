@@ -83,8 +83,7 @@ function makeInitialRuntimeState() {
     nodes: new Map(),
     childrenByParent: new Map(),
     stack: [],
-    activeId: null,
-    status: 'System ready. Click Next Step to push the first Fibonacci call to memory.'
+    activeId: null
   };
 }
 
@@ -125,9 +124,6 @@ function buildRuntimeState(steps, activeIndex) {
 
       runtime.stack.push({ id: step.id, n: step.n, status: 'Executing...', phase: 'active' });
       runtime.activeId = step.id;
-      runtime.status = step.n > 1
-        ? `PUSH: Called fib(${step.n}). It does not know the answer yet, so it creates the equation fib(${step.n - 1}) + fib(${step.n - 2}).`
-        : `PUSH: Called fib(${step.n}). This is a base case, so the answer is already known.`;
     }
 
     if (step.type === 'RESUME') {
@@ -150,9 +146,6 @@ function buildRuntimeState(steps, activeIndex) {
       }
 
       runtime.activeId = step.id;
-      runtime.status = step.state === 'left_done'
-        ? `SUBSTITUTE: fib(${step.n}) wakes up and replaces the left side with ${step.leftValue}. Now it must call the right side.`
-        : `SUBSTITUTE: fib(${step.n}) wakes up and replaces the right side with ${step.rightValue}. Now both values are ready to add.`;
     }
 
     if (step.type === 'RETURN') {
@@ -169,7 +162,6 @@ function buildRuntimeState(steps, activeIndex) {
 
       runtime.stack.pop();
       runtime.activeId = step.id;
-      runtime.status = `POP / RETURN: fib(${step.n}) resolves to ${step.value}. Its stack frame is removed and the number is handed back to the waiting parent.`;
     }
   }
 
@@ -280,10 +272,6 @@ export default function RecursionBranchingVisualizer({ diagram }) {
           </div>
           <div className="recursion-branching-stack-label is-bottom">Bottom of Stack</div>
         </aside>
-      </div>
-
-      <div className="recursion-branching-status" role="status">
-        {runtime.status}
       </div>
     </section>
   );
