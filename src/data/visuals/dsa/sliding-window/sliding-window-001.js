@@ -9,12 +9,6 @@ const visualWalkthrough = {
     values: [2, 1, 5, 1, 3, 2],
     stateTitle: 'What the computer remembers',
     stateDescription: 'Instead of remembering every previous subarray, the algorithm keeps only the current window, the rolling sum, and the best sum seen so far.',
-    legend: [
-      { role: 'window', marker: '▣', label: 'Inside the current 3-slot frame' },
-      { role: 'remove', marker: '−', label: 'Value leaving the frame' },
-      { role: 'current', marker: '+', label: 'Value entering the frame' },
-      { role: 'answer', marker: '✓', label: 'Best window found so far' }
-    ],
     frames: [
       {
         title: 'Mental picture: fixed 3-slot frame',
