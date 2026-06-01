@@ -1,6 +1,7 @@
 .recursion-factorial-shell {
-  max-width: 980px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 1.25rem 0 0;
   border-radius: 18px;
   background: #ffffff;
   color: #333333;
@@ -11,14 +12,15 @@
 
 .recursion-factorial-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2.4rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem;
 }
 
 .recursion-factorial-column {
   display: flex;
   flex-direction: column;
   gap: 0.95rem;
+  min-width: 0;
 }
 
 .recursion-factorial-return-list {
