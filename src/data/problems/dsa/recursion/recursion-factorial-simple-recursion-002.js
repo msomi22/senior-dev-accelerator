@@ -67,84 +67,41 @@ const problem = defineLearningProblem({
 }`,
   finalTakeaway: 'Factorial is the simplest recursion exercise: see the calls going down, see the answers coming back up, and connect both with the push/pop behavior of the call stack.',
   selfExplanationPrompt: 'Before reading the solution, draw fact(4) on paper exactly this way: left side for calls going down, right side for returns coming up, and a stack-of-plates note beside it for push and pop actions.',
-  visualExplanation: 'The Visual Walkthrough uses an animated picture first, then an interactive step trace. Learners should see the bigger recursion shape before studying individual frames.',
+  visualExplanation: 'The Visual Walkthrough is now a real step-by-step interaction, not a static final image. Click Next to reveal one recursion box at a time.',
   visualWalkthrough: {
-    title: 'Factorial recursion animation - calls go down, returns come back up',
-    summary: 'Watch the animation first. The left side builds the CALL STACK (DESCENT). The right side shows UNWINDING (RETURN). This is the paper picture students must learn to draw from memory.',
-    media: [
-      {
-        type: 'image',
-        src: '/visuals/recursion/factorial-call-stack-animation.svg',
-        alt: 'Animated diagram showing factorial calls going down and return values unwinding up',
-        caption: 'Animated mental model: calls descend down the left side, hit the base case, then return values unwind up the right side.'
-      }
-    ],
+    title: 'Factorial recursion walkthrough - call down, return up',
+    summary: 'Click Next to reveal the same paper picture students should draw: left side for call stack descent, right side for return unwinding.',
     diagram: {
-      type: 'cards',
-      title: 'Step-by-step paper trace for fact(4)',
-      description: 'Use Next to match the animation with the paper trace: push calls going down, pop calls returning up.',
-      stateTitle: 'Call stack and return state',
-      stateDescription: 'The state panel shows exactly what is on the call stack and what has already returned.',
-      legend: [
-        { role: 'current', label: 'current active call', marker: 'PUSH' },
-        { role: 'window', label: 'waiting on stack', marker: 'WAIT' },
-        { role: 'answer', label: 'base case or final answer', marker: 'OK' },
-        { role: 'success', label: 'returned during unwind', marker: 'POP' }
+      type: 'recursion-factorial',
+      title: 'Factorial recursion walkthrough - call down, return up',
+      bigIdeaTitle: '💡 Big idea',
+      bigIdea: 'Recursion breaks a problem into smaller instances of the same problem, solves the smallest one, then builds the solution back up.',
+      descentTitle: 'CALL STACK (DESCENT)',
+      descentSubtitle: 'We keep calling the function with smaller inputs.',
+      returnTitle: 'UNWINDING (RETURN)',
+      returnSubtitle: 'We return and build the result back up.',
+      descentSteps: [
+        { step: 1, label: '1. fact(4)', value: '4!', kind: 'descent' },
+        { step: 2, label: '2. fact(3)', value: '3!', kind: 'descent' },
+        { step: 3, label: '3. fact(2)', value: '2!', kind: 'descent' },
+        { step: 4, label: '✔ Base case: return 1', value: 'fact(1) = 1', kind: 'base' }
+      ],
+      returnSteps: [
+        { step: 8, label: 'fact(4) = 4 × 6', value: '= 24', kind: 'return' },
+        { step: 7, label: 'fact(3) = 3 × 2', value: '= 6', kind: 'return' },
+        { step: 6, label: 'fact(2) = 2 × 1', value: '= 2', kind: 'return' },
+        { step: 5, label: 'fact(1) = 1', value: '1', kind: 'return' }
       ],
       frames: [
-        {
-          title: '1. Big picture: recursion has two directions',
-          description: 'Calls go down first. Returns come back up later. Do not mix these two phases.',
-          cards: [
-            { role: 'current', title: 'Calls going down', description: 'fact(4) -> fact(3) -> fact(2) -> fact(1)' },
-            { role: 'answer', title: 'Base case', description: 'fact(1) returns 1' },
-            { role: 'success', title: 'Returns going up', description: 'fact(2)=2 -> fact(3)=6 -> fact(4)=24' }
-          ],
-          state: { label: 'BIG PICTURE', role: 'answer', values: { descent: 'fact(4), fact(3), fact(2), fact(1)', baseCase: 'fact(1)=1', unwinding: 'fact(2)=2, fact(3)=6, fact(4)=24' }, helper: 'This is the mental picture students should copy on paper.' }
-        },
-        {
-          title: '2. PUSH fact(4)',
-          description: 'fact(4) cannot answer immediately. It must wait for fact(3).',
-          cards: [{ role: 'current', title: 'CALL STACK (DESCENT)', description: 'Push fact(4). It calls fact(3).' }],
-          state: { label: 'PUSH', values: { stack: '[fact(4)]', waitingFor: 'fact(3)', returned: 'nothing yet' }, helper: 'A call is pushed when it starts and cannot finish yet.' }
-        },
-        {
-          title: '3. PUSH fact(3)',
-          description: 'fact(4) is paused. fact(3) is now active and calls fact(2).',
-          cards: [{ role: 'window', title: 'fact(4)', description: 'waiting' }, { role: 'current', title: 'fact(3)', description: 'active: calls fact(2)' }],
-          state: { label: 'PUSH', values: { stack: '[fact(4), fact(3)]', waitingFor: 'fact(2)', returned: 'nothing yet' }, helper: 'The newest call sits on top of the stack.' }
-        },
-        {
-          title: '4. PUSH fact(2)',
-          description: 'fact(3) pauses. fact(2) is active and calls fact(1).',
-          cards: [{ role: 'window', title: 'fact(4)', description: 'waiting' }, { role: 'window', title: 'fact(3)', description: 'waiting' }, { role: 'current', title: 'fact(2)', description: 'active: calls fact(1)' }],
-          state: { label: 'PUSH', values: { stack: '[fact(4), fact(3), fact(2)]', waitingFor: 'fact(1)', returned: 'nothing yet' }, helper: 'The stack is growing downward in the drawing.' }
-        },
-        {
-          title: '5. BASE CASE: fact(1) returns 1',
-          description: 'This is the turning point. Calls stop going down. Returns begin going up.',
-          cards: [{ role: 'window', title: 'fact(4)', description: 'waiting' }, { role: 'window', title: 'fact(3)', description: 'waiting' }, { role: 'window', title: 'fact(2)', description: 'waiting' }, { role: 'answer', title: 'fact(1)', description: 'base case: return 1' }],
-          state: { label: 'BASE CASE', role: 'answer', values: { stack: '[fact(4), fact(3), fact(2), fact(1)]', returned: 'fact(1)=1', next: 'unwind to fact(2)' }, helper: 'A correct recursive function must always reach a base case.' }
-        },
-        {
-          title: '6. POP fact(1), finish fact(2)',
-          description: 'fact(2) receives 1, so it returns 2 * 1 = 2.',
-          cards: [{ role: 'window', title: 'fact(4)', description: 'waiting' }, { role: 'window', title: 'fact(3)', description: 'waiting' }, { role: 'success', title: 'fact(2)', description: '2 * 1 = 2' }],
-          state: { label: 'POP', values: { stack: '[fact(4), fact(3), fact(2)]', returned: 'fact(2)=2', next: 'unwind to fact(3)' }, helper: 'The returned answer climbs one level upward.' }
-        },
-        {
-          title: '7. POP fact(2), finish fact(3)',
-          description: 'fact(3) receives 2, so it returns 3 * 2 = 6.',
-          cards: [{ role: 'window', title: 'fact(4)', description: 'waiting' }, { role: 'success', title: 'fact(3)', description: '3 * 2 = 6' }],
-          state: { label: 'POP', values: { stack: '[fact(4), fact(3)]', returned: 'fact(3)=6', next: 'unwind to fact(4)' }, helper: 'The right side of the drawing is now being built upward.' }
-        },
-        {
-          title: '8. POP fact(3), finish fact(4)',
-          description: 'fact(4) receives 6, so it returns 4 * 6 = 24.',
-          cards: [{ role: 'answer', title: 'fact(4)', description: '4 * 6 = 24' }],
-          state: { label: 'FINAL ANSWER', role: 'answer', values: { stack: '[]', returned: 'fact(4)=24', complete: 'all calls popped' }, helper: 'The original call now has the final answer.' },
-          finalResult: { title: 'Final answer', body: 'fact(4) returns 24.' }
-        }
+        { title: 'Ready', description: 'Click Next to begin calling fact(4).' },
+        { title: 'Push fact(4)', description: 'Push fact(4) to the call stack.' },
+        { title: 'Push fact(3)', description: 'fact(4) needs fact(3). Push fact(3) to the stack.' },
+        { title: 'Push fact(2)', description: 'fact(3) needs fact(2). Push fact(2) to the stack.' },
+        { title: 'Base case', description: 'fact(2) needs fact(1). Base case reached! Return 1.' },
+        { title: 'Return fact(1)', description: 'Pop fact(1) off the stack. It returned 1.' },
+        { title: 'Return fact(2)', description: 'Pop fact(2). Calculate 2 × 1 = 2 and return it.' },
+        { title: 'Return fact(3)', description: 'Pop fact(3). Calculate 3 × 2 = 6 and return it.' },
+        { title: 'Return fact(4)', description: 'Pop fact(4). Calculate 4 × 6 = 24. Done!', finalResult: { title: 'Final answer', body: 'fact(4) returns 24.' } }
       ]
     }
   },
