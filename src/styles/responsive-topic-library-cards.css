@@ -2,8 +2,8 @@
    Responsive category topic library cards
    ------------------------------------------------------------------------
    Keeps the category topic selector compact so quiz content is visible sooner.
-   Larger screens use a denser elegant grid; small screens use horizontal
-   scrolling instead of a tall stacked list.
+   Larger screens use a denser elegant grid; small screens use a clean single
+   column to avoid broken half-cards on phones.
    ======================================================================== */
 
 .category-page .topic-library {
@@ -261,34 +261,27 @@
 
   .category-page .topic-picker.scalable-topic-picker {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(232px, 82vw);
-    grid-template-columns: none !important;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: minmax(0, 1fr) !important;
     width: 100%;
     max-width: 100%;
     min-width: 0;
     gap: 10px;
-    overflow-x: auto !important;
-    overflow-y: hidden;
+    overflow: hidden !important;
     padding: 2px 2px 8px;
-    scroll-padding-inline: 2px;
-    scroll-snap-type: x proximity;
-    scrollbar-width: thin;
-  }
-
-  .category-page .topic-picker.scalable-topic-picker::-webkit-scrollbar {
-    height: 6px;
+    scroll-snap-type: none;
   }
 
   .category-page .topic-tab {
-    width: auto !important;
-    max-width: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
     min-width: 0;
     min-height: 0;
     align-content: start;
     padding: 12px;
     gap: 5px;
-    scroll-snap-align: start;
+    scroll-snap-align: none;
   }
 
   .category-page .topic-tab .eyebrow {
