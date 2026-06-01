@@ -26,17 +26,17 @@ const problem = defineLearningProblem({
   ],
   starterThought: 'Factorial has a natural smaller problem: n! = n * (n - 1)!. The smallest direct answer is 0! = 1 or 1! = 1.',
   intuition: 'Factorial is beginner-friendly because it has one clear job: multiply the current number by the factorial of the number just below it. To compute 5!, first find 4!, then multiply that answer by 5. This continues until the base case returns 1.',
-  plainLanguageExplanation: 'The symbol n! is read as n factorial. It means multiply n by every whole number below it until 1. So 4! means 4 * 3 * 2 * 1 = 24. Recursion works here because 4! can be written as 4 * 3!, and 3! can be written as 3 * 2!.',
-  mentalPicture: 'See the whole picture first. Calls go down: fact(4) -> fact(3) -> fact(2) -> fact(1). Then answers come back up: fact(1) = 1, fact(2) = 2, fact(3) = 6, fact(4) = 24. Picture a stack of plates: each new call is pushed on top during descent, and each completed call is popped during return.',
+  plainLanguageExplanation: 'The symbol n! is read as n factorial. It means multiply n by every whole number below it until 1. So 5! means 5 * 4 * 3 * 2 * 1 = 120. Recursion works here because 5! can be written as 5 * 4!, and 4! can be written as 4 * 3!.',
+  mentalPicture: 'See the whole picture first. Calls go down: fact(5) -> fact(4) -> fact(3) -> fact(2) -> fact(1). Then answers come back up: fact(1) = 1, fact(2) = 2, fact(3) = 6, fact(4) = 24, fact(5) = 120. Picture a stack of plates: each new call is pushed on top during descent, and each completed call is popped during return.',
   patternSignal: 'Use simple recursion when the problem can be expressed as the current value plus the same problem on a smaller input.',
   invariant: 'Every recursive call must reduce n, so the function eventually reaches n == 0 or n == 1.',
   bruteForceThought: 'An iterative loop can multiply from 1 to n, but this exercise is about learning how recursive calls pause and return.',
   optimizationJourney: 'There is no overlapping subproblem here, so memoization is unnecessary. The goal is to master the call stack before moving to harder recursion.',
   stepByStepBreakdown: [
     'Start with the bigger picture: calls go down, returns come back up.',
-    'Draw the left column for CALL STACK (DESCENT): fact(4), fact(3), fact(2), fact(1).',
+    'Draw the left column for CALL STACK (DESCENT): fact(5), fact(4), fact(3), fact(2), fact(1).',
     'Mark the bottom base case: return 1.',
-    'Draw the right column for UNWINDING (RETURN): fact(1) = 1, fact(2) = 2, fact(3) = 6, fact(4) = 24.',
+    'Draw the right column for UNWINDING (RETURN): fact(1) = 1, fact(2) = 2, fact(3) = 6, fact(4) = 24, fact(5) = 120.',
     'Use the stack-of-plates mental model: push one call for each descent step.',
     'Then pop one call for each return step.',
     'Practice this paper trace until the downward and upward flow feels automatic.'
@@ -55,7 +55,7 @@ const problem = defineLearningProblem({
     'Large n can exceed numeric limits or stack depth, but that is outside this beginner exercise.'
   ],
   complexityAnalysis: 'Time is O(n) because the function makes one recursive call for each value from n down to 1. Space is O(n) because each call waits on the call stack until the base case returns.',
-  explanation: 'For fact(4), recursion first descends through smaller calls: fact(4), fact(3), fact(2), and fact(1). That is the downward phase. Then the base case returns 1, and the solution unwinds upward: fact(2) returns 2, fact(3) returns 6, and fact(4) returns 24.',
+  explanation: 'For fact(5), recursion first descends through smaller calls: fact(5), fact(4), fact(3), fact(2), and fact(1). That is the downward phase. Then the base case returns 1, and the solution unwinds upward: fact(2) returns 2, fact(3) returns 6, fact(4) returns 24, and fact(5) returns 120.',
   solutionCode: `class Solution {
     public long factorial(int n) {
         if (n == 0 || n == 1) {
@@ -66,42 +66,44 @@ const problem = defineLearningProblem({
     }
 }`,
   finalTakeaway: 'Factorial is the simplest recursion exercise: see the calls going down, see the answers coming back up, and connect both with the push/pop behavior of the call stack.',
-  selfExplanationPrompt: 'Before reading the solution, draw fact(4) on paper exactly this way: left side for calls going down, right side for returns coming up, and a stack-of-plates note beside it for push and pop actions.',
-  visualExplanation: 'The Visual Walkthrough is now a real step-by-step interaction, not a static final image. Click Next to reveal one recursion box at a time.',
+  selfExplanationPrompt: 'Before reading the solution, draw fact(5) on paper exactly this way: left side for calls going down, right side for returns coming up, and a stack-of-plates note beside it for push and pop actions.',
+  visualExplanation: 'Trace the example factorial(5). The method calls smaller factorials until fact(1), then returns upward to build 120.',
   visualWalkthrough: {
-    title: 'Factorial recursion walkthrough - call down, return up',
-    summary: 'Click Next to reveal the same paper picture students should draw: left side for call stack descent, right side for return unwinding.',
+    title: 'Factorial recursion walkthrough - factorial(5)',
+    summary: 'Example: factorial(5) returns 120 because 5! = 5 * 4 * 3 * 2 * 1. Use Next to see each call and return.',
     diagram: {
       type: 'recursion-factorial',
-      title: 'Factorial recursion walkthrough - call down, return up',
-      bigIdeaTitle: '💡 Big idea',
-      bigIdea: 'Recursion breaks a problem into smaller instances of the same problem, solves the smallest one, then builds the solution back up.',
+      title: 'Factorial recursion walkthrough - factorial(5)',
       descentTitle: 'CALL STACK (DESCENT)',
-      descentSubtitle: 'We keep calling the function with smaller inputs.',
+      descentSubtitle: 'The method keeps calling itself with smaller inputs.',
       returnTitle: 'UNWINDING (RETURN)',
-      returnSubtitle: 'We return and build the result back up.',
+      returnSubtitle: 'Each waiting call receives an answer and returns upward.',
       descentSteps: [
-        { step: 1, label: '1. fact(4)', value: '4!', kind: 'descent' },
-        { step: 2, label: '2. fact(3)', value: '3!', kind: 'descent' },
-        { step: 3, label: '3. fact(2)', value: '2!', kind: 'descent' },
-        { step: 4, label: '✔ Base case: return 1', value: 'fact(1) = 1', kind: 'base' }
+        { step: 1, label: '1. fact(5)', value: '5!', kind: 'descent' },
+        { step: 2, label: '2. fact(4)', value: '4!', kind: 'descent' },
+        { step: 3, label: '3. fact(3)', value: '3!', kind: 'descent' },
+        { step: 4, label: '4. fact(2)', value: '2!', kind: 'descent' },
+        { step: 5, label: '✔ Base case: return 1', value: 'fact(1) = 1', kind: 'base' }
       ],
       returnSteps: [
-        { step: 8, label: 'fact(4) = 4 × 6', value: '= 24', kind: 'return' },
-        { step: 7, label: 'fact(3) = 3 × 2', value: '= 6', kind: 'return' },
-        { step: 6, label: 'fact(2) = 2 × 1', value: '= 2', kind: 'return' },
-        { step: 5, label: 'fact(1) = 1', value: '1', kind: 'return' }
+        { step: 10, label: 'fact(5) = 5 × 24', value: '= 120', kind: 'return' },
+        { step: 9, label: 'fact(4) = 4 × 6', value: '= 24', kind: 'return' },
+        { step: 8, label: 'fact(3) = 3 × 2', value: '= 6', kind: 'return' },
+        { step: 7, label: 'fact(2) = 2 × 1', value: '= 2', kind: 'return' },
+        { step: 6, label: 'fact(1) = 1', value: '1', kind: 'return' }
       ],
       frames: [
-        { title: 'Ready', description: 'Click Next to begin calling fact(4).' },
-        { title: 'Push fact(4)', description: 'Push fact(4) to the call stack.' },
-        { title: 'Push fact(3)', description: 'fact(4) needs fact(3). Push fact(3) to the stack.' },
-        { title: 'Push fact(2)', description: 'fact(3) needs fact(2). Push fact(2) to the stack.' },
-        { title: 'Base case', description: 'fact(2) needs fact(1). Base case reached! Return 1.' },
+        { title: 'Ready', description: 'We will trace factorial(5), which should return 120.' },
+        { title: 'Push fact(5)', description: 'Push fact(5) to the call stack. It needs fact(4).' },
+        { title: 'Push fact(4)', description: 'fact(5) waits. Push fact(4), which needs fact(3).' },
+        { title: 'Push fact(3)', description: 'fact(4) waits. Push fact(3), which needs fact(2).' },
+        { title: 'Push fact(2)', description: 'fact(3) waits. Push fact(2), which needs fact(1).' },
+        { title: 'Base case', description: 'fact(1) is the stopping answer. Return 1.' },
         { title: 'Return fact(1)', description: 'Pop fact(1) off the stack. It returned 1.' },
         { title: 'Return fact(2)', description: 'Pop fact(2). Calculate 2 × 1 = 2 and return it.' },
         { title: 'Return fact(3)', description: 'Pop fact(3). Calculate 3 × 2 = 6 and return it.' },
-        { title: 'Return fact(4)', description: 'Pop fact(4). Calculate 4 × 6 = 24. Done!', finalResult: { title: 'Final answer', body: 'fact(4) returns 24.' } }
+        { title: 'Return fact(4)', description: 'Pop fact(4). Calculate 4 × 6 = 24 and return it.' },
+        { title: 'Return fact(5)', description: 'Pop fact(5). Calculate 5 × 24 = 120. Done!', finalResult: { title: 'Final answer', body: 'fact(5) returns 120.' } }
       ]
     }
   },
@@ -114,13 +116,14 @@ const problem = defineLearningProblem({
   solutionBody: [
     {
       type: 'table',
-      title: 'Paper return table for fact(4)',
+      title: 'Paper return table for fact(5)',
       columns: ['Return step', 'What you write on the return side', 'Stack after pop'],
       rows: [
-        ['fact(1)', 'base case: fact(1) = 1', '[fact(4), fact(3), fact(2)]'],
-        ['fact(2)', 'fact(2) = 2 * 1 = 2', '[fact(4), fact(3)]'],
-        ['fact(3)', 'fact(3) = 3 * 2 = 6', '[fact(4)]'],
-        ['fact(4)', 'fact(4) = 4 * 6 = 24', '[]']
+        ['fact(1)', 'base case: fact(1) = 1', '[fact(5), fact(4), fact(3), fact(2)]'],
+        ['fact(2)', 'fact(2) = 2 * 1 = 2', '[fact(5), fact(4), fact(3)]'],
+        ['fact(3)', 'fact(3) = 3 * 2 = 6', '[fact(5), fact(4)]'],
+        ['fact(4)', 'fact(4) = 4 * 6 = 24', '[fact(5)]'],
+        ['fact(5)', 'fact(5) = 5 * 24 = 120', '[]']
       ]
     }
   ],
@@ -128,7 +131,7 @@ const problem = defineLearningProblem({
   followUpQuestions: [
     'Why is factorial(0) equal to 1?',
     'What happens if the recursive call uses factorial(n) instead of factorial(n - 1)?',
-    'How many stack frames are created for fact(4)?',
+    'How many stack frames are created for fact(5)?',
     'Why is factorial not a dynamic programming problem in this basic form?'
   ],
   metadata: { sequence: 2, reviewStatus: 'approved', visibility: ['dev', 'prod'], source: 'original', estimatedTimeSeconds: 600 }
