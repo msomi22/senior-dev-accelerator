@@ -36,7 +36,7 @@ const problem = defineLearningProblem({
     'Start with the bigger picture: calls go down, returns come back up.',
     'Draw the left column for CALL STACK (DESCENT): fact(5), fact(4), fact(3), fact(2), fact(1).',
     'Mark the bottom base case: return 1.',
-    'Draw the right column for UNWINDING (RETURN): fact(1) = 1, fact(2) = 2, fact(3) = 6, fact(4) = 24, fact(5) = 120.',
+    'Draw the right column for UNWINDING (RETURN): fact(1) = 1, fact(2) = 2 * fact(1) = 2, fact(3) = 3 * fact(2) = 6, fact(4) = 4 * fact(3) = 24, fact(5) = 5 * fact(4) = 120.',
     'Use the stack-of-plates mental model: push one call for each descent step.',
     'Then pop one call for each return step.',
     'Practice this paper trace until the downward and upward flow feels automatic.'
@@ -55,7 +55,7 @@ const problem = defineLearningProblem({
     'Large n can exceed numeric limits or stack depth, but that is outside this beginner exercise.'
   ],
   complexityAnalysis: 'Time is O(n) because the function makes one recursive call for each value from n down to 1. Space is O(n) because each call waits on the call stack until the base case returns.',
-  explanation: 'For fact(5), recursion first descends through smaller calls: fact(5), fact(4), fact(3), fact(2), and fact(1). That is the downward phase. Then the base case returns 1, and the solution unwinds upward: fact(2) returns 2, fact(3) returns 6, fact(4) returns 24, and fact(5) returns 120.',
+  explanation: 'For fact(5), recursion first descends through smaller calls: fact(5), fact(4), fact(3), fact(2), and fact(1). That is the downward phase. Then the base case returns 1, and the solution unwinds upward: fact(2) uses the returned fact(1) value, fact(3) uses the returned fact(2) value, fact(4) uses the returned fact(3) value, and fact(5) uses the returned fact(4) value.',
   solutionCode: `class Solution {
     public long factorial(int n) {
         if (n == 0 || n == 1) {
@@ -72,6 +72,7 @@ const problem = defineLearningProblem({
     title: 'Factorial recursion walkthrough - factorial(5)',
     summary: 'Example: factorial(5) returns 120 because 5! = 5 * 4 * 3 * 2 * 1. Use Next to see each call and return.',
     diagram: {
+      id: 'recursion-factorial-simple-recursion-002-walkthrough',
       type: 'recursion-factorial',
       title: 'Factorial recursion walkthrough - factorial(5)',
       descentTitle: 'CALL STACK (DESCENT)',
@@ -86,11 +87,11 @@ const problem = defineLearningProblem({
         { step: 5, label: '✔ Base case: return 1', value: 'fact(1) = 1', kind: 'base' }
       ],
       returnSteps: [
-        { step: 10, label: 'fact(5) = 5 × 24', value: '= 120', kind: 'return' },
-        { step: 9, label: 'fact(4) = 4 × 6', value: '= 24', kind: 'return' },
-        { step: 8, label: 'fact(3) = 3 × 2', value: '= 6', kind: 'return' },
-        { step: 7, label: 'fact(2) = 2 × 1', value: '= 2', kind: 'return' },
-        { step: 6, label: 'fact(1) = 1', value: '1', kind: 'return' }
+        { step: 10, label: 'fact(5) = 5 × fact(4)', value: 'fact(4) returned 24 → 120', kind: 'return' },
+        { step: 9, label: 'fact(4) = 4 × fact(3)', value: 'fact(3) returned 6 → 24', kind: 'return' },
+        { step: 8, label: 'fact(3) = 3 × fact(2)', value: 'fact(2) returned 2 → 6', kind: 'return' },
+        { step: 7, label: 'fact(2) = 2 × fact(1)', value: 'fact(1) returned 1 → 2', kind: 'return' },
+        { step: 6, label: 'fact(1) = 1', value: 'base case returned 1', kind: 'return' }
       ],
       frames: [
         { title: 'Ready', description: 'We will trace factorial(5), which should return 120.' },
@@ -99,11 +100,11 @@ const problem = defineLearningProblem({
         { title: 'Push fact(3)', description: 'fact(4) waits. Push fact(3), which needs fact(2).' },
         { title: 'Push fact(2)', description: 'fact(3) waits. Push fact(2), which needs fact(1).' },
         { title: 'Base case', description: 'fact(1) is the stopping answer. Return 1.' },
-        { title: 'Return fact(1)', description: 'Pop fact(1) off the stack. It returned 1.' },
-        { title: 'Return fact(2)', description: 'Pop fact(2). Calculate 2 × 1 = 2 and return it.' },
-        { title: 'Return fact(3)', description: 'Pop fact(3). Calculate 3 × 2 = 6 and return it.' },
-        { title: 'Return fact(4)', description: 'Pop fact(4). Calculate 4 × 6 = 24 and return it.' },
-        { title: 'Return fact(5)', description: 'Pop fact(5). Calculate 5 × 24 = 120. Done!', finalResult: { title: 'Final answer', body: 'fact(5) returns 120.' } }
+        { title: 'Return fact(1)', description: 'Pop fact(1) off the stack. The base case returned 1.' },
+        { title: 'Return fact(2)', description: 'Pop fact(2). It receives fact(1) = 1, so 2 × 1 = 2.' },
+        { title: 'Return fact(3)', description: 'Pop fact(3). It receives fact(2) = 2, so 3 × 2 = 6.' },
+        { title: 'Return fact(4)', description: 'Pop fact(4). It receives fact(3) = 6, so 4 × 6 = 24.' },
+        { title: 'Return fact(5)', description: 'Pop fact(5). It receives fact(4) = 24, so 5 × 24 = 120. Done!', finalResult: { title: 'Final answer', body: 'fact(5) returns 120.' } }
       ]
     }
   },
@@ -120,10 +121,10 @@ const problem = defineLearningProblem({
       columns: ['Return step', 'What you write on the return side', 'Stack after pop'],
       rows: [
         ['fact(1)', 'base case: fact(1) = 1', '[fact(5), fact(4), fact(3), fact(2)]'],
-        ['fact(2)', 'fact(2) = 2 * 1 = 2', '[fact(5), fact(4), fact(3)]'],
-        ['fact(3)', 'fact(3) = 3 * 2 = 6', '[fact(5), fact(4)]'],
-        ['fact(4)', 'fact(4) = 4 * 6 = 24', '[fact(5)]'],
-        ['fact(5)', 'fact(5) = 5 * 24 = 120', '[]']
+        ['fact(2)', 'fact(2) = 2 * fact(1) = 2 * 1 = 2', '[fact(5), fact(4), fact(3)]'],
+        ['fact(3)', 'fact(3) = 3 * fact(2) = 3 * 2 = 6', '[fact(5), fact(4)]'],
+        ['fact(4)', 'fact(4) = 4 * fact(3) = 4 * 6 = 24', '[fact(5)]'],
+        ['fact(5)', 'fact(5) = 5 * fact(4) = 5 * 24 = 120', '[]']
       ]
     }
   ],
