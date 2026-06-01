@@ -34,7 +34,7 @@ const problem = defineLearningProblem({
   starterThought: 'Factorial has a natural smaller problem: n! = n × (n - 1)!. The smallest direct answer is 0! = 1 or 1! = 1.',
   intuition: 'Factorial is beginner-friendly because it has one clear job: multiply the current number by the factorial of the number just below it. To compute 5!, first find 4!, then multiply that answer by 5. To find 4!, first find 3!, then multiply by 4. This continues until the base case returns 1.',
   plainLanguageExplanation: 'The symbol n! is read as “n factorial.” It means multiply n by every whole number below it until 1. So 4! means 4 × 3 × 2 × 1 = 24. Recursion works here because 4! can be written as 4 × 3!, and 3! can be written as 3 × 2!.',
-  mentalPicture: 'Picture each call as a waiting note. factorial(5) writes “I need factorial(4), then I will multiply by 5.” The notes keep stacking until factorial(1) returns 1. Then the notes are completed from top to bottom.',
+  mentalPicture: 'Picture the call stack as plates. A new recursive call is placed on top of the stack. A completed call is removed from the top. The last call pushed is the first one that returns.',
   patternSignal: 'Use simple recursion when the problem can be expressed as the current value plus the same problem on a smaller input.',
   invariant: 'Every recursive call must reduce n, so the function eventually reaches n == 0 or n == 1.',
   bruteForceThought: 'An iterative loop can multiply from 1 to n, but this exercise is about learning how recursive calls pause and return.',
@@ -44,9 +44,9 @@ const problem = defineLearningProblem({
     'Define the base case: if n is 0 or 1, return 1.',
     'Define the recursive case: return n * factorial(n - 1).',
     'Make sure each call moves closer to the base case by subtracting 1 from n.',
-    'Trace factorial(5) as 5 * factorial(4).',
-    'Continue until factorial(1) returns 1.',
-    'Unwind the calls: 2 * 1, then 3 * 2, then 4 * 6, then 5 * 24.'
+    'Push each new recursive call onto the call stack until the base case is reached.',
+    'Pop each completed call from the stack as it returns a value.',
+    'Unwind the calls: 1, then 2 * 1, then 3 * 2, then 4 * 6, then 5 * 24.'
   ],
   finalPattern: 'Linear recursion with one smaller recursive call and one direct base case.',
   commonMistake: 'Forgetting the base case causes infinite recursion until the call stack overflows.',
@@ -62,7 +62,7 @@ const problem = defineLearningProblem({
     'Large n can overflow numeric types or exceed stack depth, but that is outside this beginner exercise.'
   ],
   complexityAnalysis: 'Time is O(n) because the function makes one recursive call for each value from n down to 1. Space is O(n) because each call waits on the call stack until the base case returns.',
-  explanation: 'For factorial(5), the function first builds a chain of waiting calls: 5 * factorial(4), 4 * factorial(3), 3 * factorial(2), and 2 * factorial(1). The base case factorial(1) returns 1. Then the stack unwinds: factorial(2) returns 2, factorial(3) returns 6, factorial(4) returns 24, and factorial(5) returns 120.',
+  explanation: 'For factorial(5), the function first pushes waiting calls onto the stack: factorial(5), factorial(4), factorial(3), factorial(2), and factorial(1). The base case factorial(1) returns 1. Then each completed call is popped from the stack: factorial(2) returns 2, factorial(3) returns 6, factorial(4) returns 24, and factorial(5) returns 120.',
   solutionCode: `class Solution {
     public long factorial(int n) {
         if (n < 0) {
@@ -76,92 +76,135 @@ const problem = defineLearningProblem({
         return n * factorial(n - 1);
     }
 }`,
-  finalTakeaway: 'Factorial is the simplest recursion exercise: define the smallest answer, call the smaller problem, and let the answer build while the stack unwinds.',
-  selfExplanationPrompt: 'Before reading the solution, trace factorial(4) on paper and write what each stack frame is waiting for.',
-  visualExplanation: 'The visual uses factorial(5). Each frame shows one call or one return. Going down, the current call asks for a smaller factorial. Coming back up, each call multiplies its number by the returned answer.',
+  finalTakeaway: 'Factorial is the simplest recursion exercise: define the smallest answer, push smaller calls until the base case, then pop completed calls as the answer unwinds.',
+  selfExplanationPrompt: 'Before reading the solution, trace factorial(4) on paper and write what gets pushed, what waits, and what gets popped.',
+  visualExplanation: 'The visual uses factorial(5). Each click shows exactly one stack action: either a call is pushed onto the stack, the base case returns, or a completed call is popped from the stack with its return value.',
   visualWalkthrough: {
-    title: 'Factorial recursion walkthrough',
-    summary: 'Build factorial(5) one call at a time, then return answers one by one until the final result is 120.',
+    title: 'Factorial call stack — push and pop walkthrough',
+    summary: 'Every frame shows the stack changing by one important action: push a call, hit the base case, then pop calls as return values are produced.',
     diagram: {
       type: 'array',
-      title: 'Call chain for factorial(5)',
-      description: 'Each cell represents one factorial call. The current call either waits for a smaller call or receives a returned value.',
-      values: ['5!', '4!', '3!', '2!', '1!'],
-      stateTitle: 'Call and return state',
-      stateDescription: 'The first frames push smaller calls. The later frames return answers back up the chain.',
+      title: 'Call stack for factorial(5)',
+      description: 'Read the array from left to right as bottom to top of the stack. The rightmost active call is the top of the stack.',
+      values: ['factorial(5)', 'factorial(4)', 'factorial(3)', 'factorial(2)', 'factorial(1)'],
+      stateTitle: 'Current stack action',
+      stateDescription: 'Each frame names exactly what was pushed, what is waiting, or what was popped.',
       legend: [
-        { role: 'current', label: 'current call', marker: 'C' },
-        { role: 'window', label: 'waiting call', marker: 'W' },
-        { role: 'success', label: 'returned value', marker: 'R' },
+        { role: 'current', label: 'just pushed / active top', marker: 'P' },
+        { role: 'window', label: 'waiting on stack', marker: 'W' },
+        { role: 'success', label: 'returned / popped', marker: 'R' },
         { role: 'answer', label: 'final answer', marker: '✓' }
       ],
       frames: [
         {
-          title: 'Start with factorial(5)',
-          description: 'factorial(5) cannot answer directly. It waits for factorial(4), then it will multiply that result by 5.',
+          title: '1. Push factorial(5)',
+          description: 'The first call enters the stack. It cannot finish until factorial(4) returns.',
           items: [
-            { index: 0, role: 'current', caption: '5 × factorial(4)' }
+            { index: 0, role: 'current', caption: 'push' }
           ],
-          state: { label: 'call 5!', values: { current: 'factorial(5)', needs: 'factorial(4)', waitingExpression: '5 × factorial(4)' }, helper: 'The problem becomes smaller because the next call uses n - 1.' }
+          state: { label: 'PUSH', values: { pushed: 'factorial(5)', stackNow: '[factorial(5)]', waitingFor: 'factorial(4)' }, helper: 'factorial(5) is paused at: 5 × factorial(4).' }
         },
         {
-          title: 'Keep moving toward the base case',
-          description: 'The same rule repeats: 4 waits for 3, 3 waits for 2, and 2 waits for 1.',
+          title: '2. Push factorial(4)',
+          description: 'factorial(5) is waiting. The new top of the stack is factorial(4).',
           items: [
-            { index: 0, role: 'window', caption: 'waits' },
-            { index: 1, role: 'window', caption: 'waits' },
-            { index: 2, role: 'window', caption: 'waits' },
-            { index: 3, role: 'current', caption: '2 × factorial(1)' }
+            { index: 0, role: 'window', caption: 'waiting' },
+            { index: 1, role: 'current', caption: 'push' }
           ],
-          state: { label: 'calls pushed', values: { chain: '5! → 4! → 3! → 2! → 1!', nextBaseCase: 'factorial(1)' }, helper: 'Each call is paused until the smaller call returns.' }
+          state: { label: 'PUSH', values: { pushed: 'factorial(4)', stackNow: '[factorial(5), factorial(4)]', waitingFor: 'factorial(3)' }, helper: 'factorial(4) is paused at: 4 × factorial(3).' }
         },
         {
-          title: 'Base case returns 1',
-          description: 'factorial(1) is the smallest direct answer, so recursion stops creating new calls here.',
+          title: '3. Push factorial(3)',
+          description: 'The stack grows because the function keeps asking for a smaller factorial.',
+          items: [
+            { index: 0, role: 'window', caption: 'waiting' },
+            { index: 1, role: 'window', caption: 'waiting' },
+            { index: 2, role: 'current', caption: 'push' }
+          ],
+          state: { label: 'PUSH', values: { pushed: 'factorial(3)', stackNow: '[factorial(5), factorial(4), factorial(3)]', waitingFor: 'factorial(2)' }, helper: 'factorial(3) is paused at: 3 × factorial(2).' }
+        },
+        {
+          title: '4. Push factorial(2)',
+          description: 'factorial(2) becomes the top frame. It still needs factorial(1).',
+          items: [
+            { index: 0, role: 'window', caption: 'waiting' },
+            { index: 1, role: 'window', caption: 'waiting' },
+            { index: 2, role: 'window', caption: 'waiting' },
+            { index: 3, role: 'current', caption: 'push' }
+          ],
+          state: { label: 'PUSH', values: { pushed: 'factorial(2)', stackNow: '[factorial(5), factorial(4), factorial(3), factorial(2)]', waitingFor: 'factorial(1)' }, helper: 'factorial(2) is paused at: 2 × factorial(1).' }
+        },
+        {
+          title: '5. Push factorial(1): base case',
+          description: 'factorial(1) reaches the base case. No more recursive calls are needed.',
           items: [
             { index: 0, role: 'window', caption: 'waiting' },
             { index: 1, role: 'window', caption: 'waiting' },
             { index: 2, role: 'window', caption: 'waiting' },
             { index: 3, role: 'window', caption: 'waiting' },
-            { index: 4, role: 'success', caption: 'returns 1' }
+            { index: 4, role: 'current', caption: 'base case' }
           ],
-          state: { label: 'base case', values: { call: 'factorial(1)', returns: 1 }, helper: 'The base case is what prevents infinite recursion.' }
+          state: { label: 'PUSH + BASE CASE', values: { pushed: 'factorial(1)', stackNow: '[factorial(5), factorial(4), factorial(3), factorial(2), factorial(1)]', returns: 1 }, helper: 'The base case stops the stack from growing forever.' }
         },
         {
-          title: 'Return to factorial(2)',
-          description: 'factorial(2) was waiting for factorial(1). Now it computes 2 × 1 = 2.',
+          title: '6. Pop factorial(1), return 1',
+          description: 'The top call is complete, so it is removed from the stack and returns 1 to factorial(2).',
           items: [
             { index: 0, role: 'window', caption: 'waiting' },
             { index: 1, role: 'window', caption: 'waiting' },
             { index: 2, role: 'window', caption: 'waiting' },
-            { index: 3, role: 'success', caption: 'returns 2' },
-            { index: 4, role: 'success', caption: '1' }
+            { index: 3, role: 'current', caption: 'receives 1' },
+            { index: 4, role: 'success', caption: 'pop 1' }
           ],
-          state: { label: 'unwind 2!', values: { expression: '2 × 1', returns: 2 }, helper: 'Unwinding means paused calls resume from the top of the stack.' }
+          state: { label: 'POP', values: { popped: 'factorial(1)', returned: 1, stackNow: '[factorial(5), factorial(4), factorial(3), factorial(2)]' }, helper: 'Now factorial(2) can continue.' }
         },
         {
-          title: 'Return through factorial(3) and factorial(4)',
-          description: 'The returned answer keeps moving upward: factorial(3) returns 6, then factorial(4) returns 24.',
+          title: '7. Pop factorial(2), return 2',
+          description: 'factorial(2) resumes, computes 2 × 1, and returns 2 to factorial(3).',
           items: [
             { index: 0, role: 'window', caption: 'waiting' },
-            { index: 1, role: 'success', caption: 'returns 24' },
-            { index: 2, role: 'success', caption: 'returns 6' },
-            { index: 3, role: 'success', caption: 'returns 2' },
-            { index: 4, role: 'success', caption: '1' }
+            { index: 1, role: 'window', caption: 'waiting' },
+            { index: 2, role: 'current', caption: 'receives 2' },
+            { index: 3, role: 'success', caption: 'pop 2' },
+            { index: 4, role: 'success', caption: 'returned 1' }
           ],
-          state: { label: 'unwind middle', values: { factorial3: '3 × 2 = 6', factorial4: '4 × 6 = 24' }, helper: 'Each call multiplies its n by the answer returned from the smaller call.' }
+          state: { label: 'POP', values: { popped: 'factorial(2)', computes: '2 × 1', returned: 2, stackNow: '[factorial(5), factorial(4), factorial(3)]' }, helper: 'A popped call passes its answer to the call below it.' }
         },
         {
-          title: 'Return the final answer',
-          description: 'factorial(5) receives 24 from factorial(4), computes 5 × 24, and returns 120.',
+          title: '8. Pop factorial(3), return 6',
+          description: 'factorial(3) resumes, computes 3 × 2, and returns 6 to factorial(4).',
           items: [
-            { index: 0, role: 'answer', caption: 'returns 120' },
-            { index: 1, role: 'success', caption: '24' },
-            { index: 2, role: 'success', caption: '6' },
-            { index: 3, role: 'success', caption: '2' },
-            { index: 4, role: 'success', caption: '1' }
+            { index: 0, role: 'window', caption: 'waiting' },
+            { index: 1, role: 'current', caption: 'receives 6' },
+            { index: 2, role: 'success', caption: 'pop 6' },
+            { index: 3, role: 'success', caption: 'returned 2' },
+            { index: 4, role: 'success', caption: 'returned 1' }
           ],
-          state: { label: 'final result', values: { expression: '5 × 24', answer: 120 }, helper: 'The original call now has its answer.' },
+          state: { label: 'POP', values: { popped: 'factorial(3)', computes: '3 × 2', returned: 6, stackNow: '[factorial(5), factorial(4)]' }, helper: 'The returned value keeps moving down the waiting stack.' }
+        },
+        {
+          title: '9. Pop factorial(4), return 24',
+          description: 'factorial(4) resumes, computes 4 × 6, and returns 24 to factorial(5).',
+          items: [
+            { index: 0, role: 'current', caption: 'receives 24' },
+            { index: 1, role: 'success', caption: 'pop 24' },
+            { index: 2, role: 'success', caption: 'returned 6' },
+            { index: 3, role: 'success', caption: 'returned 2' },
+            { index: 4, role: 'success', caption: 'returned 1' }
+          ],
+          state: { label: 'POP', values: { popped: 'factorial(4)', computes: '4 × 6', returned: 24, stackNow: '[factorial(5)]' }, helper: 'Only the original call remains waiting.' }
+        },
+        {
+          title: '10. Pop factorial(5), return 120',
+          description: 'factorial(5) resumes, computes 5 × 24, and returns the final answer.',
+          items: [
+            { index: 0, role: 'answer', caption: 'pop 120' },
+            { index: 1, role: 'success', caption: 'returned 24' },
+            { index: 2, role: 'success', caption: 'returned 6' },
+            { index: 3, role: 'success', caption: 'returned 2' },
+            { index: 4, role: 'success', caption: 'returned 1' }
+          ],
+          state: { label: 'FINAL POP', values: { popped: 'factorial(5)', computes: '5 × 24', returned: 120, stackNow: '[]' }, helper: 'The stack is empty because the original call has finished.' },
           finalResult: { title: 'Final answer', body: 'factorial(5) returns 120.' }
         }
       ]
@@ -189,7 +232,7 @@ const problem = defineLearningProblem({
     {
       type: 'table',
       title: 'factorial(5) return table',
-      columns: ['Call', 'Waiting expression', 'Returned value'],
+      columns: ['Call popped', 'Waiting expression completed', 'Returned value'],
       rows: [
         ['factorial(1)', 'base case', '1'],
         ['factorial(2)', '2 × factorial(1)', '2 × 1 = 2'],
