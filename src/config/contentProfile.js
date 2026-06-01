@@ -19,6 +19,7 @@ const APPROVED_PROD_TOPIC_IDS = new Set([
   'binary-search',
   'prefix-sum-hashing',
   'monotonic-stack-queue',
+  'recursion',
   'api-design',
   'caching',
   'messaging-queues',

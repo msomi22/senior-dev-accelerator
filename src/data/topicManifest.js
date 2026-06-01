@@ -170,6 +170,15 @@ export const topicManifest = [
     ]
   },
   {
+    "id": "recursion",
+    "name": "RECUR — Recursion",
+    "category": "dsa",
+    "description": "Practice recursive thinking, base cases, call stack tracing, return unwinding, and the foundations behind DFS, backtracking, divide-and-conquer, trees, and dynamic programming.",
+    "questionBank": {
+      "mode": "discovered"
+    }
+  },
+  {
     "id": "dynamic-programming",
     "name": "STATE — Dynamic Programming",
     "category": "dsa",
