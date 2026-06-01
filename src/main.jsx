@@ -21,11 +21,11 @@ import './styles/complex-system-design.css';
 import './styles/rich-problem.css';
 import './styles/ide-code-block.css';
 import './styles/mobile-first-rich-problem-ui.css';
-import './styles/mobile-first-topic-library-fix.css';
 import './styles/ux-improvements.css';
 import './styles/mobile-home-overflow-fix.css';
 import './styles/responsive-sidebar-layout.css';
 import './styles/responsive-topic-library-cards.css';
+import './styles/mobile-first-topic-library-fix.css';
 import './styles/focused-text-wrap-fix.css';
 import './styles/glossary.css';
 
