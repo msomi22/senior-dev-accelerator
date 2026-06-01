@@ -1,12 +1,12 @@
 import { defineLearningProblem } from '../../../../problems/problemAuthoring.js';
 
-const prompt = 'You are starting the Recursion topic. What should you study first, what goals should guide your practice, and why is recursion a gateway to DFS, trees, backtracking, divide-and-conquer, and dynamic programming?';
+const prompt = 'Recursion is the gateway to DFS, backtracking, divide-and-conquer, tree traversal, and dynamic programming. What must you understand first before moving to advanced patterns?';
 
 const problem = defineLearningProblem({
   id: 'recursion-foundation-call-stack-001',
   category: 'dsa',
   topicId: 'recursion',
-  title: 'Recursion — Foundation Study Map',
+  title: 'Recursion — The Gateway to Everything',
   difficulty: 'Easy',
   estimatedTimeSeconds: 300,
   tags: [
@@ -28,71 +28,68 @@ const problem = defineLearningProblem({
     {
       type: 'section',
       title: 'Big idea',
-      content: 'Recursion means solving a problem by reducing it into smaller versions of the same problem. Every recursive solution needs a base case, a recursive case, and clear progress toward stopping.'
+      content: 'Recursion is the foundation of DFS, backtracking, divide-and-conquer, tree traversal, and dynamic programming. If recursion feels uncomfortable, slow down and spend more time here before moving forward.'
     },
     {
       type: 'checklist',
-      title: 'Goals for this topic',
+      title: 'The Three Laws of Recursion',
       items: [
-        'Recognize when a problem can be solved by solving a smaller version of itself.',
-        'Write a clear base case before writing the recursive call.',
-        'Trace what each function call stores on the call stack.',
-        'Explain what happens when recursive calls return and unwind.',
-        'Understand why recursion is the foundation for DFS, tree traversal, backtracking, divide-and-conquer, and dynamic programming.'
+        'A recursive function must call itself.',
+        'A recursive function must have a base case that stops the recursion.',
+        'A recursive function must move toward the base case.'
+      ]
+    },
+    {
+      type: 'section',
+      title: 'The recursion mental model: the call stack',
+      content: 'When a recursive function calls itself, the current state is pushed onto the call stack. When the function returns, that state is popped. Visualize the call stack as a stack of plates: new calls go on top, and completed calls come off from the top first. Draw call trees on paper until this becomes automatic.'
+    },
+    {
+      type: 'checklist',
+      title: 'Recursion practice ladder — do these in order',
+      items: [
+        '1. Factorial(n) — simplest recursion.',
+        '2. Fibonacci(n) — introduces overlapping subproblems.',
+        '3. Power(x, n) — divide-and-conquer recursion.',
+        '4. Reverse a string — recursion on strings.',
+        '5. Check palindrome — two-pointer recursion.',
+        '6. Sum of digits — mathematical recursion.',
+        '7. Generate all subsets — recursion with choices.',
+        '8. Generate all permutations — recursion with branching.',
+        '9. Tower of Hanoi — classic recursion reasoning.',
+        '10. Binary search, recursive version — divide-and-conquer.'
       ]
     },
     {
       type: 'checklist',
-      title: 'Areas to study first',
+      title: 'Phase 0 checklist — ready for Phase 1 when you can...',
       items: [
-        'Base case: the smallest input that can be answered directly.',
-        'Recursive case: how the current problem becomes a smaller problem.',
-        'Progress: why every call moves closer to the base case.',
-        'Call stack: how function calls pause, wait, and resume.',
-        'Return unwinding: how answers are built while calls return.',
-        'Branching recursion: how one call can create multiple choices or paths.'
-      ]
-    },
-    {
-      type: 'comparison',
-      title: 'Where recursion leads next',
-      items: [
-        {
-          label: 'Trees and DFS',
-          content: 'A recursive call naturally explores child nodes or neighboring states, which is why many tree and DFS solutions feel recursive.'
-        },
-        {
-          label: 'Backtracking',
-          content: 'Recursion helps try a choice, go deeper, then return and try another choice.'
-        },
-        {
-          label: 'Divide-and-conquer',
-          content: 'Recursion can split a problem into smaller independent parts, solve them, then combine the answers.'
-        },
-        {
-          label: 'Dynamic programming',
-          content: 'When recursive subproblems repeat, memoization or tabulation can turn recursion into an efficient DP solution.'
-        }
+        'Write a Java class from scratch with fields, constructor, and methods.',
+        'Use arrays, ArrayList, HashMap, HashSet, PriorityQueue, and ArrayDeque fluently.',
+        'State the time and space complexity of any code you write.',
+        'Write and trace recursive functions on paper without IDE help.',
+        'Solve any easy LeetCode problem within 20 minutes.',
+        'Explain what happens in memory when a recursive function executes.'
       ]
     },
     {
       type: 'callout',
       tone: 'info',
-      title: 'Mental model',
-      content: 'Think of recursion as a stack of paused promises. Each call says: “I will finish after the smaller problem gives me its answer.”'
+      title: 'How to practice',
+      content: 'Do not just run recursive code in an IDE. For small inputs, draw every call, every return value, and every stack frame on paper until you can explain the full execution from memory.'
     },
     {
       type: 'section',
       title: 'Final takeaway',
-      content: 'To master recursion, do not memorize code. Learn to name the smallest answer, define the smaller problem, trace the stack, and explain how the answer returns.'
+      content: 'Recursion is not optional if you want to master advanced DSA. It teaches you how problems shrink, how state is preserved, and how answers are built as calls return.'
     }
   ],
-  explanation: 'The first goal is to build a mental model. A recursive function must know when to stop, how to reduce the problem, and what to do with the answer returned by the smaller call. This foundation prepares learners for tree traversal, DFS, backtracking, divide-and-conquer, and dynamic programming.',
-  starterThought: 'Before coding, ask: what is the smallest input I can answer immediately, and how does the current input become smaller?',
+  explanation: 'This foundation question defines recursion as the gateway to advanced patterns. A learner should understand the three laws of recursion, the call stack mental model, the ordered practice ladder, and the Phase 0 readiness checklist before moving to Phase 1.',
+  starterThought: 'Start with the base case, then ask how each call makes the problem smaller and what gets stored on the call stack.',
   hints: [
-    'Start with the base case, not the recursive call.',
-    'Trace the call stack using a tiny input before trying a large one.',
-    'Notice whether each call creates one smaller call or many branches.'
+    'If you cannot trace factorial or Fibonacci on paper, do not rush to trees or backtracking yet.',
+    'The base case prevents infinite recursion.',
+    'The call stack explains why recursive calls pause and resume.'
   ],
   relatedConcepts: [
     'base case',
@@ -100,16 +97,18 @@ const problem = defineLearningProblem({
     'call stack',
     'return unwinding',
     'DFS',
+    'tree traversal',
     'backtracking',
     'divide-and-conquer',
     'dynamic programming'
   ],
   followUpQuestions: [
-    'What can go wrong if a recursive function has no base case?',
-    'How would you explain the call stack to a beginner using factorial(3)?',
-    'When does recursion become a dynamic programming problem?'
+    'Why does every recursive function need a base case?',
+    'What happens on the call stack when factorial(3) runs?',
+    'Why does Fibonacci introduce overlapping subproblems?',
+    'Which practice ladder item prepares you for divide-and-conquer?'
   ],
-  finalTakeaway: 'Recursion is not magic. It is a smaller-problem pattern plus a stopping rule plus the call stack.',
+  finalTakeaway: 'Master the three laws, the call stack, and the practice ladder before moving to advanced recursion-based patterns.',
   metadata: {
     reviewStatus: 'approved',
     visibility: ['dev', 'prod'],
