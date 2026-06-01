@@ -3,6 +3,7 @@ import ConfigVisualizer from './ConfigVisualizer.jsx';
 import GridVisualizer from './GridVisualizer.jsx';
 import RecursionBranchingVisualizer from './RecursionBranchingVisualizer.jsx';
 import RecursionFactorialVisualizer from './RecursionFactorialVisualizer.jsx';
+import RecursionHanoiVisualizer from './RecursionHanoiVisualizer.jsx';
 import './visualTheme.css';
 import './visualDarkContrastFix.css';
 import { isGenericVisual, isGridVisual } from './visualTypes.js';
@@ -107,6 +108,10 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
 }
 
 function VisualRail({ diagram }) {
+  if (diagram?.type === 'recursion-hanoi') {
+    return <RecursionHanoiVisualizer diagram={diagram} />;
+  }
+
   if (diagram?.type === 'recursion-branching') {
     return <RecursionBranchingVisualizer diagram={diagram} />;
   }
