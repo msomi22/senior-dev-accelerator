@@ -1,54 +1,72 @@
 const visualWalkthrough = {
   title: 'Maximum Sum Subarray of Size K — visual walkthrough',
-  summary: 'Fixed-size sliding window: build the first k items once, then slide exactly one step at a time by subtracting the value leaving the window and adding the value entering it.',
+  summary: 'Think of a fixed-size sliding window as a 3-slot frame moving across the array. The frame keeps most of its old work: one value leaves, one value enters, and the rolling sum changes in O(1).',
   diagram: {
     type: 'array',
     variant: 'sliding-window',
-    title: 'Fixed-size window trace for nums = [2, 1, 5, 1, 3, 2], k = 3',
-    description: 'Each frame shows the active window, the value leaving, the value entering, and the rolling best sum.',
+    title: 'Watch the 3-slot window move across nums = [2, 1, 5, 1, 3, 2]',
+    description: 'The visual focuses on the mental picture: a fixed-width frame slides one index at a time while windowSum and bestSum travel with it.',
     values: [2, 1, 5, 1, 3, 2],
-    stateTitle: 'Rolling window state',
-    stateDescription: 'The state panel tracks the exact values reused by the fixed-size window.',
+    stateTitle: 'What the computer remembers',
+    stateDescription: 'Instead of remembering every previous subarray, the algorithm keeps only the current window, the rolling sum, and the best sum seen so far.',
     legend: [
-      { role: 'window', marker: '[]', label: 'Current size-k window' },
-      { role: 'remove', marker: '−', label: 'Outgoing value' },
-      { role: 'current', marker: '+', label: 'Incoming value' },
-      { role: 'answer', marker: '✓', label: 'Best answer so far' }
+      { role: 'window', marker: '▣', label: 'Inside the current 3-slot frame' },
+      { role: 'remove', marker: '−', label: 'Value leaving the frame' },
+      { role: 'current', marker: '+', label: 'Value entering the frame' },
+      { role: 'answer', marker: '✓', label: 'Best window found so far' }
     ],
     frames: [
       {
-        title: 'First full window',
+        title: 'Mental picture: fixed 3-slot frame',
         activeRange: [0, 2],
         items: [
-          { index: 0, role: 'window', caption: 'window' },
-          { index: 1, role: 'window', caption: 'window' },
-          { index: 2, role: 'window', caption: 'window' }
+          { index: 0, role: 'window', caption: 'slot 1' },
+          { index: 1, role: 'window', caption: 'slot 2' },
+          { index: 2, role: 'window', caption: 'slot 3' }
         ],
         state: {
-          label: 'window [0..2]',
-          values: { window: '[2, 1, 5]', windowSum: 8, bestSum: 8 },
-          helper: 'The first k values create the first valid candidate.'
+          role: 'window',
+          label: 'Invariant before we start',
+          values: { k: 3, frame: 'exactly 3 items', rule: 'slide by 1' },
+          helper: 'At every valid step, the frame must contain exactly k contiguous values. We do not grow and shrink randomly here.'
         },
-        description: 'Build the first valid window once: 2 + 1 + 5 = 8. bestSum starts at 8.'
+        description: 'Picture a 3-slot frame placed over the array. The frame can move, but its width never changes.'
       },
       {
-        title: 'Slide right once',
+        title: 'Build the first candidate once',
+        activeRange: [0, 2],
+        items: [
+          { index: 0, role: 'window', caption: '2' },
+          { index: 1, role: 'window', caption: '+ 1' },
+          { index: 2, role: 'window', caption: '+ 5' }
+        ],
+        state: {
+          role: 'answer',
+          label: 'window [0..2]',
+          values: { window: '[2, 1, 5]', formula: '2 + 1 + 5', windowSum: 8, bestSum: 8 },
+          helper: 'The first full frame is the first valid answer candidate, so bestSum starts at 8.'
+        },
+        description: 'First compute the sum of the first k values. This is the only time we add all k values from scratch.'
+      },
+      {
+        title: 'Slide right: reuse most of the work',
         activeRange: [1, 3],
         items: [
           { index: 0, role: 'remove', caption: 'remove 2' },
-          { index: 1, role: 'window', caption: 'window' },
-          { index: 2, role: 'window', caption: 'window' },
+          { index: 1, role: 'window', caption: 'keep' },
+          { index: 2, role: 'window', caption: 'keep' },
           { index: 3, role: 'current', caption: 'add 1' }
         ],
         state: {
+          role: 'window',
           label: 'window [1..3]',
-          values: { outgoing: 2, incoming: 1, windowSum: 7, bestSum: 8 },
-          helper: 'Reuse the old sum: 8 - 2 + 1 = 7. The best sum stays 8.'
+          values: { outgoing: 2, incoming: 1, formula: '8 - 2 + 1', windowSum: 7, bestSum: 8 },
+          helper: 'The middle values 1 and 5 are reused. Only the outgoing and incoming values change the sum.'
         },
-        description: 'Only one value leaves and one value enters, so the sum updates in constant time.'
+        description: 'The new frame is [1, 5, 1]. We do not recompute 1 + 5 + 1; we update the old sum: 8 - 2 + 1 = 7.'
       },
       {
-        title: 'Best window appears',
+        title: 'Slide again: the best window appears',
         activeRange: [2, 4],
         items: [
           { index: 1, role: 'remove', caption: 'remove 1' },
@@ -57,50 +75,72 @@ const visualWalkthrough = {
           { index: 4, role: 'answer', caption: 'add 3' }
         ],
         state: {
+          role: 'answer',
           label: 'window [2..4]',
-          values: { outgoing: 1, incoming: 3, windowSum: 9, bestSum: 9 },
-          helper: '7 - 1 + 3 = 9, so bestSum improves from 8 to 9.'
+          values: { outgoing: 1, incoming: 3, formula: '7 - 1 + 3', windowSum: 9, bestSum: 9 },
+          helper: 'The rolling sum becomes 9, which beats the previous best of 8. The answer candidate changes to [5, 1, 3].'
         },
-        description: 'The window [5, 1, 3] becomes the strongest candidate seen so far.'
+        description: 'This is the key moment: [5, 1, 3] has sum 9, so bestSum is upgraded from 8 to 9.'
       },
       {
-        title: 'Final slide confirms the answer',
+        title: 'Final slide: check the last valid frame',
         activeRange: [3, 5],
         items: [
           { index: 2, role: 'remove', caption: 'remove 5' },
-          { index: 3, role: 'window', caption: 'window' },
-          { index: 4, role: 'window', caption: 'window' },
+          { index: 3, role: 'window', caption: 'keep' },
+          { index: 4, role: 'window', caption: 'keep' },
           { index: 5, role: 'current', caption: 'add 2' }
         ],
         state: {
+          role: 'window',
           label: 'window [3..5]',
-          values: { outgoing: 5, incoming: 2, windowSum: 6, bestSum: 9 },
-          helper: '9 - 5 + 2 = 6. No later window beats [5, 1, 3].'
+          values: { outgoing: 5, incoming: 2, formula: '9 - 5 + 2', windowSum: 6, bestSum: 9 },
+          helper: 'The final window [1, 3, 2] gives 6, so it does not beat the best window.'
         },
-        description: 'The scan ends after the last size-k window. Return bestSum = 9.',
-        finalResult: { title: 'Final answer', body: 'Return 9.' }
+        description: 'The last valid 3-slot frame has sum 6. The best value remains 9.'
+      },
+      {
+        title: 'Return the remembered best value',
+        activeRange: [2, 4],
+        items: [
+          { index: 2, role: 'answer', caption: '5' },
+          { index: 3, role: 'answer', caption: '+ 1' },
+          { index: 4, role: 'answer', caption: '+ 3' }
+        ],
+        state: {
+          role: 'answer',
+          label: 'answer window [2..4]',
+          values: { bestWindow: '[5, 1, 3]', bestSum: 9, extraSpace: 'O(1)' },
+          helper: 'The computer never needed to store all windows. It only carried the current sum and the best sum.'
+        },
+        description: 'Return bestSum = 9 because no size-3 window produced a higher sum.',
+        finalResult: { title: 'Final answer', body: 'Return 9 from the window [5, 1, 3].' }
       }
     ]
   },
   steps: [
     {
-      title: 'Lock the window size',
-      body: 'This problem is not about growing until invalid. Every candidate must contain exactly k elements.'
+      title: '1. Freeze the frame size',
+      body: 'k = 3 means every valid candidate must contain exactly three neighboring values. This is the invariant that protects the solution from off-by-one mistakes.'
     },
     {
-      title: 'Carry the rolling sum',
-      body: 'When the window moves, one value exits and one value enters, so the new sum can be updated in constant time.'
+      title: '2. Build the first frame',
+      body: 'Add the first k values once. That gives both the first windowSum and the initial bestSum.'
     },
     {
-      title: 'Compare only valid windows',
-      body: 'Update maxSum only after the window has exactly k values. For the example, the best window is [5, 1, 3].'
+      title: '3. Slide by replacing one value',
+      body: 'For every next position, subtract the value leaving on the left and add the value entering on the right.'
+    },
+    {
+      title: '4. Keep only the best memory',
+      body: 'After each valid slide, compare windowSum with bestSum. At the end, bestSum is the answer.'
     }
   ],
   productionMapping: [
-    'Rolling transaction-volume dashboards',
-    'K-minute fraud detection thresholds',
-    'API rate-limit counters over fixed windows',
-    'Moving averages in observability pipelines'
+    'Rolling transaction-volume dashboards over the last k minutes',
+    'Fraud detection counters where only the newest event enters and the oldest event leaves',
+    'API rate-limit windows that track recent request totals',
+    'Moving averages in observability pipelines without recalculating the whole range'
   ]
 };
 
