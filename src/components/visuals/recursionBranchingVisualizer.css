@@ -313,19 +313,6 @@
   font-weight: 800;
 }
 
-.recursion-branching-status {
-  max-width: 1360px;
-  margin: 1.05rem auto 0;
-  border-radius: 10px;
-  background: #2b3035;
-  color: #e2e8f0;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
-  padding: 0.95rem 1.1rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  font-size: clamp(0.86rem, 1.55vw, 0.98rem);
-  line-height: 1.45;
-}
-
 @keyframes recursionBranchingPopIn {
   from {
     opacity: 0;
