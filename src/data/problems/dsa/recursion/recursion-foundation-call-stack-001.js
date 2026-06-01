@@ -110,6 +110,7 @@ const problem = defineLearningProblem({
   ],
   finalTakeaway: 'Master the three laws, the call stack, and the practice ladder before moving to advanced recursion-based patterns.',
   metadata: {
+    sequence: 1,
     reviewStatus: 'approved',
     visibility: ['dev', 'prod'],
     source: 'original',
