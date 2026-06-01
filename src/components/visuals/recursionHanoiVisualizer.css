@@ -15,6 +15,8 @@
   --hanoi-warning: #d97706;
   --hanoi-danger: #dc2626;
   --hanoi-border: rgba(15, 23, 42, 0.1);
+  --hanoi-tree-line: rgba(51, 65, 85, 0.72);
+  --hanoi-tree-line-glow: rgba(255, 255, 255, 0.72);
   --hanoi-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
   width: 100%;
   margin: 0.65rem 0 0;
@@ -303,28 +305,46 @@
   display: flex;
   justify-content: center;
   gap: clamp(0.36rem, 1vw, 0.72rem);
-  margin-top: 1.15rem;
+  margin-top: 1.2rem;
+  padding-top: 0.1rem;
   position: relative;
 }
 
 .recursion-hanoi-tree-children::before {
   content: '';
   position: absolute;
-  top: -0.62rem;
-  left: 12%;
-  right: 12%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(100, 116, 139, 0.5), transparent);
+  top: -0.6rem;
+  left: 7%;
+  right: 7%;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--hanoi-tree-line);
+  box-shadow: 0 0 0 1px var(--hanoi-tree-line-glow), 0 0 10px rgba(59, 130, 246, 0.16);
+}
+
+.recursion-hanoi-tree-children::after {
+  content: '';
+  position: absolute;
+  top: -1.18rem;
+  left: 50%;
+  width: 3px;
+  height: 0.62rem;
+  border-radius: 999px;
+  background: var(--hanoi-tree-line);
+  box-shadow: 0 0 0 1px var(--hanoi-tree-line-glow), 0 0 10px rgba(59, 130, 246, 0.16);
+  transform: translateX(-50%);
 }
 
 .recursion-hanoi-tree-children > .recursion-hanoi-tree-branch::before {
   content: '';
   position: absolute;
-  top: -0.62rem;
+  top: -0.7rem;
   left: 50%;
-  width: 1px;
-  height: 0.62rem;
-  background: rgba(100, 116, 139, 0.5);
+  width: 3px;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: var(--hanoi-tree-line);
+  box-shadow: 0 0 0 1px var(--hanoi-tree-line-glow), 0 0 10px rgba(59, 130, 246, 0.16);
   transform: translateX(-50%);
 }
 
@@ -510,6 +530,8 @@
   --hanoi-warning: #fbbf24;
   --hanoi-danger: #fca5a5;
   --hanoi-border: rgba(148, 163, 184, 0.22);
+  --hanoi-tree-line: rgba(203, 213, 225, 0.88);
+  --hanoi-tree-line-glow: rgba(15, 23, 42, 0.75);
   --hanoi-shadow: 0 16px 34px rgba(0, 0, 0, 0.3);
   background:
     radial-gradient(circle at top left, rgba(251, 191, 36, 0.12), transparent 30%),
