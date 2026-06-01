@@ -25,22 +25,22 @@ function makeTrace(diskCount) {
   const events = [];
   let callCounter = 0;
 
-  function visit(n, source, auxiliary, target, depth = 0) {
+  function visit(n, source, auxiliary, target, parentId = null) {
     const callId = `hanoi-call-${callCounter}`;
     callCounter += 1;
 
     events.push({
       type: 'CALL',
       callId,
+      parentId,
       n,
       source,
       auxiliary,
       target,
-      depth,
-      title: `Push hanoi(${n}, ${source}, ${auxiliary}, ${target})`,
+      title: `CALL: hanoi(${n}, ${source}, ${auxiliary}, ${target})`,
       note: n === 1
         ? `Base case: one disk can move directly from ${source} to ${target}.`
-        : `Pause this frame while it creates a smaller hanoi(${n - 1}) plan.`
+        : `Push a frame that plans: move ${n - 1} away, move disk ${n}, then rebuild ${n - 1}.`
     });
 
     if (n === 1) {
@@ -50,13 +50,13 @@ function makeTrace(diskCount) {
         disk: 1,
         from: source,
         to: target,
-        title: `Emit move ${source} → ${target}`,
+        title: `BASE CASE: move disk 1 from ${source} to ${target}`,
         note: 'The base case performs real work immediately, then returns.'
       });
       events.push({
         type: 'RETURN',
         callId,
-        title: `Pop hanoi(1, ${source}, ${auxiliary}, ${target})`,
+        title: `RETURN: pop hanoi(1, ${source}, ${auxiliary}, ${target})`,
         note: 'The smallest problem is done, so its stack frame disappears.'
       });
       return;
@@ -66,18 +66,18 @@ function makeTrace(diskCount) {
       type: 'PHASE',
       callId,
       phase: `1) Move ${n - 1} disk${n - 1 === 1 ? '' : 's'} from ${source} to ${auxiliary}`,
-      title: `Phase 1: clear disk ${n}`,
-      note: `The largest disk ${n} cannot move until the ${n - 1} smaller disk${n - 1 === 1 ? '' : 's'} move away.`
+      title: `PHASE 1: clear disk ${n}`,
+      note: `Disk ${n} is blocked. The ${n - 1} smaller disk${n - 1 === 1 ? '' : 's'} must move to ${auxiliary} first.`
     });
 
-    visit(n - 1, source, target, auxiliary, depth + 1);
+    visit(n - 1, source, target, auxiliary, callId);
 
     events.push({
       type: 'PHASE',
       callId,
       phase: `2) Move disk ${n} from ${source} to ${target}`,
-      title: 'Phase 2: move the largest disk in this frame',
-      note: `Now disk ${n} is exposed, so this waiting frame can emit its middle move.`
+      title: `RESUME: hanoi(${n}) wakes up`,
+      note: `The left child returned. Disk ${n} is now exposed and can move from ${source} to ${target}.`
     });
 
     events.push({
@@ -86,24 +86,24 @@ function makeTrace(diskCount) {
       disk: n,
       from: source,
       to: target,
-      title: `Emit move ${source} → ${target}`,
-      note: `Disk ${n} moves once the smaller tower has been moved out of the way.`
+      title: `MOVE: disk ${n} from ${source} to ${target}`,
+      note: `This is the middle move owned by hanoi(${n}).`
     });
 
     events.push({
       type: 'PHASE',
       callId,
       phase: `3) Move ${n - 1} disk${n - 1 === 1 ? '' : 's'} from ${auxiliary} to ${target}`,
-      title: `Phase 3: rebuild on top of disk ${n}`,
-      note: `The smaller tower now moves from ${auxiliary} onto ${target}.`
+      title: `PHASE 3: rebuild on ${target}`,
+      note: `Now the smaller tower moves from ${auxiliary} onto disk ${n} at ${target}.`
     });
 
-    visit(n - 1, auxiliary, source, target, depth + 1);
+    visit(n - 1, auxiliary, source, target, callId);
 
     events.push({
       type: 'RETURN',
       callId,
-      title: `Pop hanoi(${n}, ${source}, ${auxiliary}, ${target})`,
+      title: `RETURN: pop hanoi(${n}, ${source}, ${auxiliary}, ${target})`,
       note: 'This frame has completed all three phases, so control returns to its parent.'
     });
   }
@@ -120,8 +120,12 @@ function makeInitialRuntime(diskCount) {
       C: []
     },
     stack: [],
+    treeNodes: new Map(),
+    childrenByParent: new Map(),
+    rootId: null,
     completedMoves: [],
     activeEvent: null,
+    activeCallId: null,
     latestMove: null
   };
 }
@@ -134,8 +138,27 @@ function buildRuntime(events, activeIndex, diskCount) {
     if (!event) continue;
 
     runtime.activeEvent = event;
+    runtime.activeCallId = event.callId;
 
     if (event.type === 'CALL') {
+      runtime.treeNodes.set(event.callId, {
+        callId: event.callId,
+        parentId: event.parentId,
+        n: event.n,
+        source: event.source,
+        auxiliary: event.auxiliary,
+        target: event.target,
+        status: 'active',
+        action: 'pushed to stack'
+      });
+
+      if (event.parentId === null) {
+        runtime.rootId = event.callId;
+      } else {
+        const siblings = runtime.childrenByParent.get(event.parentId) || [];
+        runtime.childrenByParent.set(event.parentId, [...siblings, event.callId]);
+      }
+
       if (runtime.stack.length > 0) {
         runtime.stack[runtime.stack.length - 1] = {
           ...runtime.stack[runtime.stack.length - 1],
@@ -156,6 +179,15 @@ function buildRuntime(events, activeIndex, diskCount) {
     }
 
     if (event.type === 'PHASE') {
+      const node = runtime.treeNodes.get(event.callId);
+      if (node) {
+        runtime.treeNodes.set(event.callId, {
+          ...node,
+          status: 'active',
+          action: event.phase
+        });
+      }
+
       const frameIndex = runtime.stack.findIndex((frame) => frame.callId === event.callId);
       if (frameIndex >= 0) {
         runtime.stack[frameIndex] = {
@@ -174,6 +206,15 @@ function buildRuntime(events, activeIndex, diskCount) {
       runtime.latestMove = { ...event, disk };
       runtime.completedMoves.push(`${runtime.completedMoves.length + 1}. Disk ${disk}: ${event.from} → ${event.to}`);
 
+      const node = runtime.treeNodes.get(event.callId);
+      if (node) {
+        runtime.treeNodes.set(event.callId, {
+          ...node,
+          status: 'active',
+          action: `Moved disk ${disk}: ${event.from} → ${event.to}`
+        });
+      }
+
       const frameIndex = runtime.stack.findIndex((frame) => frame.callId === event.callId);
       if (frameIndex >= 0) {
         runtime.stack[frameIndex] = {
@@ -185,6 +226,15 @@ function buildRuntime(events, activeIndex, diskCount) {
     }
 
     if (event.type === 'RETURN') {
+      const node = runtime.treeNodes.get(event.callId);
+      if (node) {
+        runtime.treeNodes.set(event.callId, {
+          ...node,
+          status: 'returned',
+          action: node.action || 'finished'
+        });
+      }
+
       const returningIndex = runtime.stack.findIndex((frame) => frame.callId === event.callId);
       if (returningIndex >= 0) {
         runtime.stack.splice(returningIndex, 1);
@@ -243,6 +293,31 @@ function Rod({ rodId, disks, diskCount, latestMove }) {
   );
 }
 
+function TreeNode({ nodeId, runtime }) {
+  const node = runtime.treeNodes.get(nodeId);
+  if (!node) return null;
+
+  const children = runtime.childrenByParent.get(nodeId) || [];
+  const isActive = runtime.activeCallId === nodeId && node.status !== 'returned';
+  const isReturned = node.status === 'returned';
+
+  return (
+    <div className="recursion-hanoi-tree-branch">
+      <article className={`recursion-hanoi-tree-node ${isActive ? 'is-active' : ''} ${isReturned ? 'is-returned' : ''}`}>
+        <strong>hanoi({node.n})</strong>
+        <code>{node.source} → {node.target} via {node.auxiliary}</code>
+        {node.action ? <span>{node.action}</span> : null}
+      </article>
+
+      {children.length ? (
+        <div className="recursion-hanoi-tree-children">
+          {children.map((childId) => <TreeNode nodeId={childId} runtime={runtime} key={childId} />)}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function StackFrame({ frame, index, total }) {
   const isTop = index === 0;
 
@@ -270,6 +345,26 @@ function MoveList({ moves }) {
       ) : (
         <p>No move has been emitted yet. The first few clicks only build the recursive plan in memory.</p>
       )}
+    </div>
+  );
+}
+
+function StatusBar({ activeEvent, latestMove }) {
+  if (!activeEvent) {
+    return (
+      <div className="recursion-hanoi-status-bar">
+        <strong>System ready.</strong> Click Next Step to call hanoi(3, A, B, C). All disks are waiting on Rod A.
+      </div>
+    );
+  }
+
+  const latestMoveText = latestMove
+    ? ` Latest physical move: disk ${latestMove.disk}, ${latestMove.from} → ${latestMove.to}.`
+    : '';
+
+  return (
+    <div className="recursion-hanoi-status-bar">
+      <strong>{activeEvent.title}</strong> {activeEvent.note}{latestMoveText}
     </div>
   );
 }
@@ -317,34 +412,36 @@ export default function RecursionHanoiVisualizer({ diagram }) {
         <span>Step {activeIndex + 1 <= 0 ? 0 : activeIndex + 1} of {events.length}</span>
       </div>
 
-      <div className="recursion-hanoi-current-card">
-        <strong>{activeEvent?.title || 'Ready: click Next Step to push the first stack frame.'}</strong>
-        <p>{activeEvent?.note || 'The computer begins with all disks on Rod A. Nothing has moved yet because no function call has started.'}</p>
-        {runtime.latestMove ? (
-          <code>Latest move: Disk {runtime.latestMove.disk} from {runtime.latestMove.from} to {runtime.latestMove.to}</code>
-        ) : (
-          <code>Latest move: none yet</code>
-        )}
-      </div>
+      <section className="recursion-hanoi-board-card is-wide">
+        <h4>Physical Towers</h4>
+        <div className="recursion-hanoi-rods">
+          {Object.entries(runtime.rods).map(([rodId, disks]) => (
+            <Rod
+              rodId={rodId}
+              disks={disks}
+              diskCount={diskCount}
+              latestMove={runtime.latestMove}
+              key={rodId}
+            />
+          ))}
+        </div>
+      </section>
 
-      <div className="recursion-hanoi-layout">
-        <section className="recursion-hanoi-board-card">
-          <h4>Rods and Disks</h4>
-          <div className="recursion-hanoi-rods">
-            {Object.entries(runtime.rods).map(([rodId, disks]) => (
-              <Rod
-                rodId={rodId}
-                disks={disks}
-                diskCount={diskCount}
-                latestMove={runtime.latestMove}
-                key={rodId}
-              />
-            ))}
+      <div className="recursion-hanoi-lower-layout">
+        <section className="recursion-hanoi-tree-card">
+          <h4>Recursion Tree</h4>
+          <div className="recursion-hanoi-tree-scroll">
+            <div className="recursion-hanoi-tree-root">
+              {runtime.rootId ? <TreeNode nodeId={runtime.rootId} runtime={runtime} /> : (
+                <p className="recursion-hanoi-empty">Click Next Step to create the first recursion-tree node.</p>
+              )}
+            </div>
           </div>
         </section>
 
         <aside className="recursion-hanoi-memory-card">
-          <h4>Call Stack (Top First)</h4>
+          <h4>Call Stack (Memory)</h4>
+          <div className="recursion-hanoi-stack-label">Top of Stack</div>
           <div className="recursion-hanoi-stack">
             {stackTopFirst.length ? (
               stackTopFirst.map((frame, index) => (
@@ -354,10 +451,13 @@ export default function RecursionHanoiVisualizer({ diagram }) {
               <p className="recursion-hanoi-empty">Stack is empty. The full plan has returned.</p>
             )}
           </div>
+          <div className="recursion-hanoi-stack-label is-bottom">Bottom of Stack</div>
 
           <MoveList moves={runtime.completedMoves} />
         </aside>
       </div>
+
+      <StatusBar activeEvent={activeEvent} latestMove={runtime.latestMove} />
     </section>
   );
 }
