@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ConfigVisualizer from './ConfigVisualizer.jsx';
 import GridVisualizer from './GridVisualizer.jsx';
+import RecursionBranchingVisualizer from './RecursionBranchingVisualizer.jsx';
 import RecursionFactorialVisualizer from './RecursionFactorialVisualizer.jsx';
 import './visualTheme.css';
 import './visualDarkContrastFix.css';
@@ -106,6 +107,10 @@ function PlaybackControls({ activeIndex, frameCount, playing, onPrevious, onNext
 }
 
 function VisualRail({ diagram }) {
+  if (diagram?.type === 'recursion-branching') {
+    return <RecursionBranchingVisualizer diagram={diagram} />;
+  }
+
   if (diagram?.type === 'recursion-factorial') {
     return <RecursionFactorialVisualizer diagram={diagram} />;
   }
