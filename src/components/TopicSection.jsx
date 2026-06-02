@@ -101,7 +101,7 @@ function TopicLearningGuide({ topic }) {
 
   return (
     <details
-      className="question-card topic-learning-guide"
+      className="question-card topic-learning-guide premium-topic-learning-guide"
       style={{
         marginTop: 12,
         maxWidth: '100%',
@@ -211,6 +211,7 @@ function TopicSection({
   completed,
   onToggle,
   activeDifficulty = 'all',
+  searchQuery = '',
   currentPage,
   onPageChange,
   returnContext
@@ -234,7 +235,7 @@ function TopicSection({
   const safePage = clampPage(rawPage, totalPages);
 
   useEffect(() => {
-    const topicKey = `${topic.id}:${activeDifficulty}`;
+    const topicKey = `${topic.id}:${activeDifficulty}:${searchQuery}`;
     const hadPreviousTopic = Boolean(previousTopicKey.current);
 
     if (!isControlled) {
@@ -249,7 +250,7 @@ function TopicSection({
     }
 
     previousTopicKey.current = topicKey;
-  }, [topic.id, activeDifficulty, isControlled]);
+  }, [topic.id, activeDifficulty, searchQuery, isControlled]);
 
   useEffect(() => {
     if (safePage === rawPage) return;
@@ -317,12 +318,10 @@ function TopicSection({
   }
 
   return (
-    <section className="topic-section" ref={sectionRef}>
-      <div className="section-head">
+    <section className="topic-section premium-question-section" ref={sectionRef}>
+      <div className="section-head premium-question-section-head">
         <div>
-          <p className="eyebrow">
-            {totalQuestions} problems
-          </p>
+          <p className="eyebrow">Question grid</p>
 
           <h2>{topic.name}</h2>
 
@@ -332,33 +331,26 @@ function TopicSection({
             {activeDifficulty !== 'all'
               ? `Showing ${activeDifficulty} questions only. `
               : ''}
+            {searchQuery ? `Matching "${searchQuery}". ` : ''}
             Showing {totalQuestions ? pageStart + 1 : 0}-{pageEnd} of{' '}
-            {totalQuestions} problems.
+            {totalQuestions} questions.
           </p>
         </div>
-
-        {performanceConfig.enableAnimatedTopicOrbit ? (
-          <div className="topic-orbit" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        ) : null}
       </div>
 
       {totalQuestions === 0 ? (
-        <div className="empty-state glass-lite">
+        <div className="empty-state glass-lite premium-question-empty">
           <h3>No questions found</h3>
-          <p>Try another difficulty or clear the filter.</p>
+          <p>Try another search, difficulty, or status filter.</p>
         </div>
       ) : (
-        <div className="card-grid compact-grid problem-list-grid">
+        <div className="card-grid compact-grid problem-list-grid premium-question-grid">
           {visibleQuestions.map((question) => (
             <div
               key={question.id}
               role="button"
               tabIndex={0}
-              className="clickable-problem-card-shell"
+              className="clickable-problem-card-shell premium-question-card-shell"
               aria-label={`Open ${question.title} in focused workspace`}
               onClick={(event) => {
                 if (shouldIgnoreCardNavigation(event)) return;
@@ -384,7 +376,7 @@ function TopicSection({
 
       {totalPages > 1 ? (
         <nav
-          className="pagination glass-lite"
+          className="pagination glass-lite premium-question-pagination"
           aria-label={`${topic.name} question pages`}
         >
           <div className="pagination-summary">
@@ -410,7 +402,7 @@ function TopicSection({
             </Button>
 
             {pageNumbers[0] > 1 ? (
-              <span className="pagination-gap">…</span>
+              <span className="pagination-gap">...</span>
             ) : null}
 
             {pageNumbers.map((page) => (
@@ -428,7 +420,7 @@ function TopicSection({
             ))}
 
             {pageNumbers.at(-1) < totalPages ? (
-              <span className="pagination-gap">…</span>
+              <span className="pagination-gap">...</span>
             ) : null}
 
             <Button
