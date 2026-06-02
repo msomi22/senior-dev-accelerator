@@ -24,7 +24,7 @@ function optionLetter(index) {
 
 function compactText(value, limit = SUMMARY_LIMIT) {
   const normalized = String(value || '').replace(/\s+/g, ' ').trim();
-  return normalized.length > limit ? `${normalized.slice(0, limit - 1).trim()}…` : normalized;
+  return normalized.length > limit ? `${normalized.slice(0, limit - 1).trim()}...` : normalized;
 }
 
 function getPrimaryPattern(question) {
@@ -257,7 +257,10 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
         </div>
         <h3>{question.title}</h3>
         {summary ? <p className="question-text">{summary}</p> : null}
-        <div className="meta-strip" aria-label="Problem type"><span className="time-pill">{typeLabel}</span></div>
+        <div className="compact-problem-card__footer" aria-label="Problem type and action">
+          <span className="time-pill">{typeLabel}</span>
+          <span className="open-question-pill" aria-hidden="true">Open</span>
+        </div>
       </article>
     );
   }
@@ -268,7 +271,7 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
         <div className="meta-strip">
           <span className={`pill type-pill ${typeClass}`}>{typeLabel}</span>
           <span className={`pill ${difficultyClass}`}>{question.difficulty}</span>
-          <span className="time-pill">⏱ {getDisplayTime(question)}</span>
+          <span className="time-pill">Clock {getDisplayTime(question)}</span>
         </div>
         <button className="mark" onClick={() => onToggle?.(question.id)}>{completed ? 'Reset progress' : 'Mark complete'}</button>
       </div>
@@ -287,9 +290,9 @@ function QuestionCard({ question, completed, onToggle, disableCardNavigation = f
       )}
 
       <div className="question-actions">
-        <Button className={showHints ? 'ghost active-action' : 'ghost'} onClick={() => togglePanel('hints')}>{showHints ? '✓ Hints active' : 'Show hints'}</Button>
-        <Button className={showThinking ? 'ghost active-action' : 'ghost'} onClick={() => togglePanel('thinking')}>{showThinking ? '✓ Thinking active' : primaryActionLabel}</Button>
-        <Button className={showSolution ? 'ghost active-action' : 'ghost'} onClick={() => togglePanel('solution')}>{showSolution ? '✓ Explanation active' : 'Reveal full explanation'}</Button>
+        <Button className={showHints ? 'ghost active-action' : 'ghost'} onClick={() => togglePanel('hints')}>{showHints ? 'Hints active' : 'Show hints'}</Button>
+        <Button className={showThinking ? 'ghost active-action' : 'ghost'} onClick={() => togglePanel('thinking')}>{showThinking ? 'Thinking active' : primaryActionLabel}</Button>
+        <Button className={showSolution ? 'ghost active-action' : 'ghost'} onClick={() => togglePanel('solution')}>{showSolution ? 'Explanation active' : 'Reveal full explanation'}</Button>
       </div>
 
       {showHints ? <ListBlock title="Hints" items={question.hints} ordered /> : null}
