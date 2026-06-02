@@ -14,6 +14,7 @@ import {
   buildCategorySearchParams,
   readCategorySearchState
 } from '../services/categoryNavigationService.js';
+import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 
 import {
@@ -21,6 +22,37 @@ import {
   getVisibleTopicsForCategory,
   loadTopicBank
 } from '../services/questionBankService.js';
+
+function normalizeSearchText(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function questionMatchesSearch(question, query) {
+  const normalizedQuery = normalizeSearchText(query);
+  if (!normalizedQuery) return true;
+
+  const haystack = [
+    question.title,
+    question.summary,
+    question.shortSummary,
+    question.scenario,
+    question.question,
+    question.prompt,
+    question.starterThought,
+    question.primaryPattern,
+    question.finalPattern,
+    question.pattern,
+    question.category,
+    question.type,
+    question.difficulty,
+    ...(question.tags || [])
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  return haystack.includes(normalizedQuery);
+}
 
 export default function CategoryPage({ fixedCategoryId }) {
   const params = useParams();
@@ -45,10 +77,13 @@ export default function CategoryPage({ fixedCategoryId }) {
 
   const [topicDifficulty, setTopicDifficulty] = useState(searchState.difficulty || ALL_FILTER);
   const [completionFilter, setCompletionFilter] = useState(searchState.completionFilter || 'all');
+  const [questionSearch, setQuestionSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(searchState.page || 1);
 
   const [loadingTopics, setLoadingTopics] = useState(true);
   const [loadingBanks, setLoadingBanks] = useState(true);
+
+  const debouncedQuestionSearch = useDebouncedValue(questionSearch, 160);
 
   useEffect(() => {
     setTopicDifficulty(searchState.difficulty || ALL_FILTER);
@@ -65,6 +100,7 @@ export default function CategoryPage({ fixedCategoryId }) {
 
     setLoadingTopics(true);
     setLoadingBanks(true);
+    setQuestionSearch('');
 
     getVisibleTopicsForCategory(categoryId)
       .then(async (nextTopics) => {
@@ -138,6 +174,10 @@ export default function CategoryPage({ fixedCategoryId }) {
     topicDifficulty
   ]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedQuestionSearch]);
+
   const topicsWithBanks = useMemo(() => {
     return topics.map((topic) => {
       const bank = topicBanks[topic.id];
@@ -180,6 +220,8 @@ export default function CategoryPage({ fixedCategoryId }) {
           completed,
           topicDifficulty,
           completionFilter
+        ).filter((question) =>
+          questionMatchesSearch(question, debouncedQuestionSearch)
         );
 
         return {
@@ -189,7 +231,7 @@ export default function CategoryPage({ fixedCategoryId }) {
         };
       })
       .filter((topic) => topic.filteredCount > 0);
-  }, [topicsWithBanks, topicDifficulty, completionFilter, completed]);
+  }, [topicsWithBanks, topicDifficulty, completionFilter, completed, debouncedQuestionSearch]);
 
   const selectedTopic = useMemo(() => {
     return filteredTopics.find((topic) => topic.id === selectedId);
@@ -241,6 +283,18 @@ export default function CategoryPage({ fixedCategoryId }) {
     setCompleted(storageService.markComplete(id));
   };
 
+  const categoryProgress = useMemo(() => {
+    const allQuestions = topicsWithBanks.flatMap((topic) => topic.questions || []);
+    const total = allQuestions.length;
+    const done = allQuestions.filter((question) => completed[question.id]).length;
+
+    return {
+      done,
+      total,
+      percent: total ? Math.round((done / total) * 100) : 0
+    };
+  }, [topicsWithBanks, completed]);
+
   const returnContext = useMemo(() => ({
     categoryId,
     topicId: selectedId,
@@ -265,15 +319,23 @@ export default function CategoryPage({ fixedCategoryId }) {
   }
 
   return (
-    <main className="page category-page">
-      <section className="page-title">
+    <main className="page category-page premium-topic-page">
+      <section className="page-title premium-topic-header">
+        <Link className="premium-topic-back" to="/categories">
+          Back to Categories
+        </Link>
         <p className="eyebrow">{category.shortName || category.name}</p>
         <h1>{category.name}</h1>
         <p>{category.description}</p>
+        <div className="premium-topic-meta" aria-label={`${category.name} summary`}>
+          <span>{topicsWithBanks.length} {topicsWithBanks.length === 1 ? 'Topic' : 'Topics'}</span>
+          <span>{categoryProgress.total} {categoryProgress.total === 1 ? 'Question' : 'Questions'}</span>
+          <span>{categoryProgress.percent}% complete</span>
+        </div>
       </section>
 
       {loadingTopics || loadingBanks ? (
-        <LoadingCard label="Loading category topics…" />
+        <LoadingCard label="Loading category topics..." />
       ) : (
         <>
           <TopicLibrary
@@ -287,6 +349,8 @@ export default function CategoryPage({ fixedCategoryId }) {
             difficultyOptions={topicDifficultyOptions}
             completionFilter={completionFilter}
             onCompletionFilterChange={handleCompletionFilterChange}
+            questionSearch={questionSearch}
+            onQuestionSearchChange={setQuestionSearch}
           />
 
           {selectedTopic ? (
@@ -296,11 +360,17 @@ export default function CategoryPage({ fixedCategoryId }) {
               completed={completed}
               onToggle={handleCompletionClick}
               activeDifficulty={topicDifficulty}
+              searchQuery={debouncedQuestionSearch}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
               returnContext={returnContext}
             />
-          ) : null}
+          ) : (
+            <div className="empty-state glass-lite premium-question-empty">
+              <h3>No questions found</h3>
+              <p>Try a broader search or clear the difficulty and status filters.</p>
+            </div>
+          )}
 
         </>
       )}
