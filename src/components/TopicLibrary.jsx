@@ -10,7 +10,11 @@ function pluralize(count, singular, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`;
 }
 
-function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
+function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount, questionSearch) {
+  if (questionSearch?.trim()) {
+    return `${pluralize(visibleTopicCount, 'topic')} include matching questions.`;
+  }
+
   if (completionFilter === 'completed') {
     return `${pluralize(visibleTopicCount, 'topic')} contain completed questions.`;
   }
@@ -59,7 +63,9 @@ export default function TopicLibrary({
   onDifficultyChange,
   difficultyOptions,
   completionFilter,
-  onCompletionFilterChange
+  onCompletionFilterChange,
+  questionSearch = '',
+  onQuestionSearchChange
 }) {
   const [sortBy, setSortBy] = useState('recommended');
   const [currentPage, setCurrentPage] = useState(1);
@@ -119,7 +125,7 @@ export default function TopicLibrary({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [difficulty, completionFilter, sortBy, selectedId]);
+  }, [difficulty, completionFilter, sortBy, selectedId, questionSearch]);
 
   useEffect(() => {
     if (safePage === currentPage) return;
@@ -139,30 +145,45 @@ export default function TopicLibrary({
   }
 
   return (
-    <section className="topic-library glass-lite" ref={libraryRef}>
-      <div className="library-head">
+    <section className="topic-library glass-lite premium-topic-library" ref={libraryRef}>
+      <div className="library-head premium-topic-library-head">
         <div>
-          <p className="eyebrow">Topic library</p>
+          <p className="eyebrow">Topic</p>
 
-          <h2>Choose a topic</h2>
+          <h2>Compact filters</h2>
 
           <p>
             {getFilterSummary(
               completionFilter,
               filteredTopics.length,
-              allTopicsCount ?? topics.length
+              allTopicsCount ?? topics.length,
+              questionSearch
             )}
           </p>
         </div>
       </div>
 
-      <div className="topic-library-controls">
+      <div className="topic-library-controls premium-question-toolbar" aria-label="Question filters">
+        <label className="premium-question-toolbar__search">
+          <span>Search questions</span>
+
+          <input
+            type="search"
+            value={questionSearch}
+            onChange={(event) => onQuestionSearchChange?.(event.target.value)}
+            placeholder="Search questions..."
+            aria-label="Search questions in this topic"
+            autoComplete="off"
+          />
+        </label>
+
         <label>
           <span>Difficulty</span>
 
           <select
             value={difficulty}
             onChange={(event) => onDifficultyChange(event.target.value)}
+            aria-label="Filter questions by difficulty"
           >
             <option value={ALL}>All difficulties</option>
 
@@ -182,6 +203,7 @@ export default function TopicLibrary({
             onChange={(event) =>
               onCompletionFilterChange(event.target.value)
             }
+            aria-label="Filter questions by completion status"
           >
             <option value="all">All questions</option>
             <option value="completed">Completed only</option>
@@ -195,6 +217,7 @@ export default function TopicLibrary({
           <select
             value={sortBy}
             onChange={(event) => setSortBy(event.target.value)}
+            aria-label="Sort topics"
           >
             <option value="recommended">Recommended</option>
             <option value="name">Name</option>
@@ -204,7 +227,7 @@ export default function TopicLibrary({
         </label>
       </div>
 
-      <div className="topic-picker scalable-topic-picker">
+      <div className="topic-picker scalable-topic-picker premium-topic-picker">
         {visibleTopics.map((topic) => {
           const count = topic.filteredCount ?? topic.count ?? 0;
 
@@ -218,7 +241,7 @@ export default function TopicLibrary({
             <button
               key={topic.id}
               type="button"
-              className={`topic-tab glass ${
+              className={`topic-tab glass premium-topic-tab ${
                 selectedId === topic.id ? 'active' : ''
               } ${fullyCompleted ? 'done' : ''}`}
               onClick={() => onSelect(topic.id)}
@@ -251,23 +274,21 @@ export default function TopicLibrary({
                     : 'Incomplete questions only'}
                 </small>
               ) : null}
-
-              <em>{topic.description}</em>
             </button>
           );
         })}
       </div>
 
       {filteredTopics.length === 0 ? (
-        <div className="empty-state glass-lite">
+        <div className="empty-state glass-lite premium-question-empty">
           <h3>No topics found</h3>
-          <p>Try clearing the difficulty or status filters.</p>
+          <p>Try clearing the search, difficulty, or status filters.</p>
         </div>
       ) : null}
 
       {totalPages > 1 ? (
         <nav
-          className="pagination compact-pagination"
+          className="pagination compact-pagination premium-compact-pagination"
           aria-label="Topic library pages"
         >
           <div className="pagination-status">
