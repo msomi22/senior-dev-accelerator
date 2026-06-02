@@ -16,7 +16,7 @@
   gap: 8px;
   width: fit-content;
   color: var(--text, var(--text-primary));
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 850;
   line-height: 1.2;
   text-decoration: none;
@@ -42,11 +42,11 @@
 
 .premium-topic-page .premium-topic-header {
   display: grid;
-  grid-template-columns: 84px minmax(360px, 1fr) minmax(540px, 0.86fr);
+  grid-template-columns: 76px minmax(340px, 1fr) minmax(470px, 0.78fr);
   align-items: center;
-  gap: 28px;
-  min-height: 218px;
-  padding: 30px 34px;
+  gap: 24px;
+  min-height: 168px;
+  padding: 22px 26px;
   border: 1px solid color-mix(in srgb, var(--line, var(--border)) 88%, var(--premium-topic-blue) 12%);
   border-radius: 12px;
   background:
@@ -58,8 +58,8 @@
 .premium-topic-icon {
   display: grid;
   place-items: center;
-  width: 82px;
-  height: 82px;
+  width: 72px;
+  height: 72px;
   border: 1px solid color-mix(in srgb, #ffc400 58%, var(--line, var(--border)) 42%);
   border-radius: 10px;
   background: color-mix(in srgb, #ffc400 9%, transparent);
@@ -68,8 +68,8 @@
 }
 
 .premium-topic-icon svg {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;
@@ -80,7 +80,7 @@
 .premium-topic-copy {
   display: grid;
   min-width: 0;
-  gap: 10px;
+  gap: 8px;
 }
 
 .premium-topic-page .premium-topic-header .eyebrow {
@@ -92,7 +92,7 @@
   margin: 0;
   color: var(--text, var(--text-primary));
   font-family: var(--font-sans);
-  font-size: clamp(2rem, 3.15vw, 2.55rem);
+  font-size: clamp(1.9rem, 2.75vw, 2.35rem);
   font-style: normal;
   font-weight: 950;
   line-height: 1;
@@ -103,25 +103,31 @@
   max-width: 570px;
   margin: 0;
   color: color-mix(in srgb, var(--muted, var(--text-secondary)) 94%, var(--text, var(--text-primary)) 6%);
-  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-  line-height: 1.55;
+  font-size: clamp(0.9rem, 1.05vw, 1rem);
+  line-height: 1.45;
 }
 
 .premium-topic-meta {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-self: stretch;
+  grid-template-columns: repeat(3, minmax(132px, 1fr));
+  align-self: center;
   min-width: 0;
+  gap: 16px;
 }
 
-.premium-topic-meta span {
+.premium-topic-meta > span {
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 14px;
-  min-height: 156px;
-  padding: 0 24px;
-  border-left: 1px solid color-mix(in srgb, var(--line, var(--border)) 82%, transparent);
+  gap: 8px;
+  min-height: 104px;
+  padding: 16px 18px 14px;
+  border: 1px solid color-mix(in srgb, var(--line, var(--border)) 82%, var(--premium-topic-blue) 12%);
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 22% 0%, color-mix(in srgb, var(--premium-topic-accent) 9%, transparent), transparent 48%),
+    color-mix(in srgb, var(--card, var(--bg-card)) 72%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.045), 0 10px 26px rgb(0 0 0 / 0.10);
   color: var(--text, var(--text-primary));
   line-height: 1;
   text-align: center;
@@ -129,7 +135,7 @@
 
 .premium-topic-meta strong {
   color: var(--premium-topic-accent);
-  font-size: clamp(2rem, 2.6vw, 2.28rem);
+  font-size: clamp(1.55rem, 2vw, 1.9rem);
   font-weight: 950;
   letter-spacing: -0.03em;
 }
@@ -144,20 +150,28 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   color: var(--premium-topic-accent);
 }
 
 .premium-topic-stat-icon {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   flex: 0 0 auto;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.9;
+  stroke-width: 1.85;
   stroke-linecap: round;
   stroke-linejoin: round;
   filter: drop-shadow(0 0 12px color-mix(in srgb, var(--premium-topic-accent) 28%, transparent));
+}
+
+.premium-topic-progress-track {
+  stroke: color-mix(in srgb, var(--premium-topic-blue) 38%, var(--line, var(--border)) 62%);
+}
+
+.premium-topic-progress-meter {
+  stroke: var(--premium-topic-accent);
 }
 
 .premium-topic-library.topic-library {
@@ -510,12 +524,7 @@
 
   .premium-topic-meta {
     grid-column: 1 / -1;
-    border-top: 1px solid color-mix(in srgb, var(--line, var(--border)) 82%, transparent);
-    padding-top: 16px;
-  }
-
-  .premium-topic-meta span:first-child {
-    border-left: 0;
+    padding-top: 8px;
   }
 }
 
@@ -577,10 +586,11 @@
     padding-top: 10px;
   }
 
-  .premium-topic-meta span {
-    min-height: 56px;
-    gap: 6px;
-    padding: 0 8px;
+  .premium-topic-meta > span {
+    min-height: 68px;
+    gap: 5px;
+    padding: 10px 8px;
+    border-radius: 10px;
   }
 
   .premium-topic-meta strong {

@@ -303,8 +303,9 @@ export default function CategoryPage({ fixedCategoryId }) {
           <span>
             <span className="premium-topic-stat-value">
               <svg className="premium-topic-stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5V5.5Z" />
-                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20" />
+                <path d="M12 7v14" />
+                <path d="M3 18a1 1 0 0 1-1-1V5a2 2 0 0 1 2-2h6a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H3Z" />
+                <path d="M21 18h-7a3 3 0 0 0-3 3V6a3 3 0 0 1 3-3h6a2 2 0 0 1 2 2v12a1 1 0 0 1-1 1Z" />
               </svg>
               <strong>{topicsWithBanks.length}</strong>
             </span>
@@ -322,9 +323,9 @@ export default function CategoryPage({ fixedCategoryId }) {
           </span>
           <span>
             <span className="premium-topic-stat-value">
-              <svg className="premium-topic-stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <circle cx="12" cy="12" r="8" />
-                <path d="M12 4a8 8 0 0 1 8 8" />
+              <svg className="premium-topic-stat-icon premium-topic-stat-icon--progress" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="8" className="premium-topic-progress-track" />
+                <path d="M12 4a8 8 0 0 1 7.4 5" className="premium-topic-progress-meter" />
               </svg>
               <strong>{categoryProgress.percent}%</strong>
             </span>
