@@ -4,25 +4,75 @@ import { categoryLibraryConfig } from '../config/categoryLibraryConfig.js';
 import { getCategoryWithCounts } from '../services/questionBankService.js';
 import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
 
+const CATEGORY_ICON_LABELS = {
+  aptitude: 'AT',
+  dsa: 'DS',
+  kubernetes: 'K8',
+  ckad: 'K8',
+  ai: 'AI',
+  ml: 'AI',
+  system: 'SD',
+  java: 'JV',
+  leadership: 'LD'
+};
+
+function categoryIconLabel(category) {
+  const source = [category.id, category.name, category.domain].filter(Boolean).join(' ').toLowerCase();
+  const match = Object.entries(CATEGORY_ICON_LABELS).find(([key]) => source.includes(key));
+  if (match) return match[1];
+
+  return (category.shortName || category.name || 'TP')
+    .split(/\s|\/|&|-/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase();
+}
+
+function categoryAccent(category) {
+  const palette = ['sky', 'violet', 'amber', 'emerald', 'rose', 'indigo', 'cyan'];
+  const seed = `${category.id || ''}${category.name || ''}`;
+  const hash = Array.from(seed).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return palette[hash % palette.length];
+}
+
+function formatCount(value, singular, plural) {
+  if (value === undefined || value === null) return '…';
+  return `${value} ${value === 1 ? singular : plural}`;
+}
+
 function CategoryCard({ category }) {
+  const progress = typeof category.progressPercent === 'number' ? category.progressPercent : null;
+
   return (
-    <Link className="category-card scalable-category-card" to={category.route || `/category/${category.id}`}>
-      <div className="category-card-top">
-        <span className="eyebrow">{category.domain || 'Learning path'}</span>
-        {category.featured ? <small className="featured-badge">Featured</small> : null}
+    <Link
+      className={`category-card scalable-category-card premium-category-card accent-${categoryAccent(category)}`}
+      to={category.route || `/category/${category.id}`}
+    >
+      <div className="premium-category-card__head">
+        <span className="premium-category-card__icon" aria-hidden="true">
+          {categoryIconLabel(category)}
+        </span>
+        <span className="premium-category-card__title-group">
+          <strong>{category.name}</strong>
+          <small>{category.domain || 'Learning path'}</small>
+        </span>
+        {category.featured ? <em className="premium-category-card__badge">New</em> : null}
       </div>
-      <strong>{category.name}</strong>
+
       <p>{category.description}</p>
-      <div className="category-stats-row">
-        <span>{category.topicCount ?? '…'} topics</span>
-        <span>{category.quizCount ?? '…'} questions</span>
-        <span>{category.progressPercent ?? 0}% done</span>
+
+      <div className="premium-category-card__meta" aria-label={`${category.name} learning stats`}>
+        <span>{formatCount(category.topicCount, 'Topic', 'Topics')}</span>
+        <span>{formatCount(category.quizCount, 'Question', 'Questions')}</span>
+        {progress !== null ? <span className="premium-category-card__progress">{progress}%</span> : null}
       </div>
     </Link>
   );
 }
 
-export default function CategoryLibrary({ categories = [], completed = {}, title = 'Category Library' }) {
+export default function CategoryLibrary({ categories = [], completed = {} }) {
   const [query, setQuery] = useState('');
   const [domain, setDomain] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
@@ -93,7 +143,7 @@ export default function CategoryLibrary({ categories = [], completed = {}, title
         if (!alive) return;
         setCountedCategories((previous) => {
           const next = { ...previous };
-          rows.forEach((row) => { next[row.id] = row; });
+          rows.filter(Boolean).forEach((row) => { next[row.id] = row; });
           return next;
         });
       });
@@ -107,29 +157,21 @@ export default function CategoryLibrary({ categories = [], completed = {}, title
   }
 
   return (
-    <section className="category-library glass">
-      <div className="section-head compact-head">
-        <div>
-          <h2>{title}</h2>
-          <p>Search, filter, sort, and paginate categories so the UI remains clean even with 50+ learning paths.</p>
-        </div>
-        <div className="library-count-pill">{filtered.length} categories</div>
-      </div>
-
-      <div className="category-library-controls">
-        <label>
-          <span>Search categories</span>
+    <section className="category-library premium-category-library" aria-label="Topic categories">
+      <div className="category-library-controls premium-category-controls" aria-label="Topic filters">
+        <label className="premium-category-controls__search">
+          <span>Search topics</span>
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search DSA, Java, Cloud, Security…"
+            placeholder="Search topics..."
           />
         </label>
 
         <label>
           <span>Domain</span>
           <select value={domain} onChange={(event) => setDomain(event.target.value)}>
-            <option value="all">All domains</option>
+            <option value="all">All Domains</option>
             {domains.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
@@ -137,40 +179,42 @@ export default function CategoryLibrary({ categories = [], completed = {}, title
         <label>
           <span>Sort</span>
           <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-            <option value="featured">Featured first</option>
+            <option value="featured">Featured First</option>
             <option value="name">Name</option>
-            <option value="topics">Most topics</option>
-            <option value="questions">Most questions</option>
+            <option value="topics">Most Topics</option>
+            <option value="questions">Most Questions</option>
             <option value="progress">Progress</option>
           </select>
         </label>
       </div>
 
-      <div className="category-grid scalable-category-grid">
+      <div className="category-grid scalable-category-grid premium-category-grid">
         {visibleCategories.map((category) => (
           <CategoryCard key={category.id} category={countedCategories[category.id] || category} />
         ))}
       </div>
 
       {!visibleCategories.length ? (
-        <div className="empty-state glass-lite">
-          <h2>No categories found</h2>
+        <div className="empty-state glass-lite premium-category-empty">
+          <h2>No topics found</h2>
           <p>Try a broader search or clear the domain filter.</p>
         </div>
       ) : null}
 
-      <div className="pagination category-pagination glass-lite">
-        <div className="pagination-summary">
-          Page {safePage} of {totalPages}. Showing {visibleCategories.length} of {filtered.length} categories.
+      {totalPages > 1 ? (
+        <div className="pagination category-pagination glass-lite">
+          <div className="pagination-summary">
+            Page {safePage} of {totalPages}. Showing {visibleCategories.length} of {filtered.length} categories.
+          </div>
+          <div className="pagination-controls">
+            <button className="page-btn" disabled={safePage === 1} onClick={() => goToPage(1)}>First</button>
+            <button className="page-btn" disabled={safePage === 1} onClick={() => goToPage(safePage - 1)}>Prev</button>
+            <button className="page-btn active">{safePage}</button>
+            <button className="page-btn" disabled={safePage === totalPages} onClick={() => goToPage(safePage + 1)}>Next</button>
+            <button className="page-btn" disabled={safePage === totalPages} onClick={() => goToPage(totalPages)}>Last</button>
+          </div>
         </div>
-        <div className="pagination-controls">
-          <button className="page-btn" disabled={safePage === 1} onClick={() => goToPage(1)}>First</button>
-          <button className="page-btn" disabled={safePage === 1} onClick={() => goToPage(safePage - 1)}>Prev</button>
-          <button className="page-btn active">{safePage}</button>
-          <button className="page-btn" disabled={safePage === totalPages} onClick={() => goToPage(safePage + 1)}>Next</button>
-          <button className="page-btn" disabled={safePage === totalPages} onClick={() => goToPage(totalPages)}>Last</button>
-        </div>
-      </div>
+      ) : null}
     </section>
   );
 }
