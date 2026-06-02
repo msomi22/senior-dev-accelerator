@@ -362,6 +362,12 @@
 }
 
 @media (max-width: 760px) {
+  .app-shell .status-bar,
+  .app-shell.light .status-bar,
+  .app-shell.dark .status-bar {
+    display: none !important;
+  }
+
   .premium-categories-page {
     width: 100%;
     gap: 12px;
