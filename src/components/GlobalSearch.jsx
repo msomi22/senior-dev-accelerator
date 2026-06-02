@@ -98,7 +98,7 @@ export default function GlobalSearch() {
           onFocus={() => {
             if (hasQuery) setPanelOpen(true);
           }}
-          placeholder="Search problems..."
+          placeholder="Search problems, concepts, or technologies..."
           autoComplete="off"
         />
       </label>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import GlobalSearch from './GlobalSearch.jsx';
 import SupportButton from './SupportButton.jsx';
 import { usePreferences } from '../hooks/usePreferences.js';
@@ -32,6 +32,31 @@ function pageTitle(pathname) {
   return 'Senior Dev Accelerator';
 }
 
+function ThemeIcon({ theme }) {
+  if (theme === 'dark') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2.5M12 19.5V22M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M2 12h2.5M19.5 12H22M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M20.3 15.6A8 8 0 0 1 8.4 3.7 8 8 0 1 0 20.3 15.6Z" />
+    </svg>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg className="theme-toggle-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
 export default function Navbar() {
   const { theme, setTheme } = usePreferences();
   const location = useLocation();
@@ -59,14 +84,32 @@ export default function Navbar() {
 
         <span className="topbar-title">{pageTitle(location.pathname)}</span>
 
+        <Link to="/" className="topbar-brand" aria-label="Senior Dev Accelerator dashboard">
+          <img
+            className="topbar-brand-logo topbar-brand-logo-light"
+            src="/brand-logo-light.svg"
+            alt="Senior Dev Accelerator"
+          />
+          <img
+            className="topbar-brand-logo topbar-brand-logo-dark"
+            src="/brand-logo-dark.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </Link>
+
         <GlobalSearch />
 
         <button
-          className="icon-btn"
+          className="icon-btn theme-toggle"
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >
-          {theme === 'dark' ? 'Light' : 'Dark'}
+          <span className="theme-toggle-icon" aria-hidden="true">
+            <ThemeIcon theme={theme} />
+          </span>
+          <span className="theme-toggle-label">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          <ChevronDownIcon />
         </button>
       </header>
 
