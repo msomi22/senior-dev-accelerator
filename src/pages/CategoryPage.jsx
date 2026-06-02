@@ -14,7 +14,6 @@ import {
   buildCategorySearchParams,
   readCategorySearchState
 } from '../services/categoryNavigationService.js';
-import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 
 import {
@@ -22,37 +21,6 @@ import {
   getVisibleTopicsForCategory,
   loadTopicBank
 } from '../services/questionBankService.js';
-
-function normalizeSearchText(value) {
-  return String(value || '').trim().toLowerCase();
-}
-
-function questionMatchesSearch(question, query) {
-  const normalizedQuery = normalizeSearchText(query);
-  if (!normalizedQuery) return true;
-
-  const haystack = [
-    question.title,
-    question.summary,
-    question.shortSummary,
-    question.scenario,
-    question.question,
-    question.prompt,
-    question.starterThought,
-    question.primaryPattern,
-    question.finalPattern,
-    question.pattern,
-    question.category,
-    question.type,
-    question.difficulty,
-    ...(question.tags || [])
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
-
-  return haystack.includes(normalizedQuery);
-}
 
 export default function CategoryPage({ fixedCategoryId }) {
   const params = useParams();
@@ -77,13 +45,11 @@ export default function CategoryPage({ fixedCategoryId }) {
 
   const [topicDifficulty, setTopicDifficulty] = useState(searchState.difficulty || ALL_FILTER);
   const [completionFilter, setCompletionFilter] = useState(searchState.completionFilter || 'all');
-  const [questionSearch, setQuestionSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(searchState.page || 1);
 
   const [loadingTopics, setLoadingTopics] = useState(true);
   const [loadingBanks, setLoadingBanks] = useState(true);
 
-  const debouncedQuestionSearch = useDebouncedValue(questionSearch, 160);
 
   useEffect(() => {
     setTopicDifficulty(searchState.difficulty || ALL_FILTER);
@@ -100,7 +66,6 @@ export default function CategoryPage({ fixedCategoryId }) {
 
     setLoadingTopics(true);
     setLoadingBanks(true);
-    setQuestionSearch('');
 
     getVisibleTopicsForCategory(categoryId)
       .then(async (nextTopics) => {
@@ -174,9 +139,6 @@ export default function CategoryPage({ fixedCategoryId }) {
     topicDifficulty
   ]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedQuestionSearch]);
 
   const topicsWithBanks = useMemo(() => {
     return topics.map((topic) => {
@@ -220,8 +182,6 @@ export default function CategoryPage({ fixedCategoryId }) {
           completed,
           topicDifficulty,
           completionFilter
-        ).filter((question) =>
-          questionMatchesSearch(question, debouncedQuestionSearch)
         );
 
         return {
@@ -231,7 +191,7 @@ export default function CategoryPage({ fixedCategoryId }) {
         };
       })
       .filter((topic) => topic.filteredCount > 0);
-  }, [topicsWithBanks, topicDifficulty, completionFilter, completed, debouncedQuestionSearch]);
+  }, [topicsWithBanks, topicDifficulty, completionFilter, completed]);
 
   const selectedTopic = useMemo(() => {
     return filteredTopics.find((topic) => topic.id === selectedId);
@@ -341,15 +301,33 @@ export default function CategoryPage({ fixedCategoryId }) {
 
         <div className="premium-topic-meta" aria-label={`${category.name} summary`}>
           <span>
-            <strong>{topicsWithBanks.length}</strong>
+            <span className="premium-topic-stat-value">
+              <svg className="premium-topic-stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5V5.5Z" />
+                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20" />
+              </svg>
+              <strong>{topicsWithBanks.length}</strong>
+            </span>
             <small>{topicsWithBanks.length === 1 ? 'Topic' : 'Topics'}</small>
           </span>
           <span>
-            <strong>{categoryProgress.total}</strong>
+            <span className="premium-topic-stat-value">
+              <svg className="premium-topic-stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 3 19 6v5c0 4.5-2.8 8.5-7 10-4.2-1.5-7-5.5-7-10V6l7-3Z" />
+                <path d="m9 12 2 2 4-5" />
+              </svg>
+              <strong>{categoryProgress.total}</strong>
+            </span>
             <small>{categoryProgress.total === 1 ? 'Question' : 'Questions'}</small>
           </span>
           <span>
-            <strong>{categoryProgress.percent}%</strong>
+            <span className="premium-topic-stat-value">
+              <svg className="premium-topic-stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 4a8 8 0 0 1 8 8" />
+              </svg>
+              <strong>{categoryProgress.percent}%</strong>
+            </span>
             <small>Progress</small>
           </span>
         </div>
@@ -370,8 +348,6 @@ export default function CategoryPage({ fixedCategoryId }) {
             difficultyOptions={topicDifficultyOptions}
             completionFilter={completionFilter}
             onCompletionFilterChange={handleCompletionFilterChange}
-            questionSearch={questionSearch}
-            onQuestionSearchChange={setQuestionSearch}
           />
 
           {selectedTopic ? (
@@ -381,7 +357,6 @@ export default function CategoryPage({ fixedCategoryId }) {
               completed={completed}
               onToggle={handleCompletionClick}
               activeDifficulty={topicDifficulty}
-              searchQuery={debouncedQuestionSearch}
               currentPage={currentPage}
               onPageChange={setCurrentPage}
               returnContext={returnContext}
@@ -389,7 +364,7 @@ export default function CategoryPage({ fixedCategoryId }) {
           ) : (
             <div className="empty-state glass-lite premium-question-empty">
               <h3>No questions found</h3>
-              <p>Try a broader search or clear the difficulty and status filters.</p>
+              <p>Try clearing the difficulty or status filters.</p>
             </div>
           )}
 
