@@ -112,6 +112,7 @@ export default function TopicLibrary({
   );
 
   const safePage = Math.min(currentPage, totalPages);
+  const showTopicPicker = filteredTopics.length > 1;
 
   const visibleTopics = useMemo(() => {
     const start =
@@ -227,57 +228,59 @@ export default function TopicLibrary({
         </label>
       </div>
 
-      <div className="topic-picker scalable-topic-picker premium-topic-picker">
-        {visibleTopics.map((topic) => {
-          const count = topic.filteredCount ?? topic.count ?? 0;
+      {showTopicPicker ? (
+        <div className="topic-picker scalable-topic-picker premium-topic-picker">
+          {visibleTopics.map((topic) => {
+            const count = topic.filteredCount ?? topic.count ?? 0;
 
-          const progress = getVisibleTopicProgress(topic, completed);
-          const fullProgress = getFullTopicProgress(topic, completed);
+            const progress = getVisibleTopicProgress(topic, completed);
+            const fullProgress = getFullTopicProgress(topic, completed);
 
-          const fullyCompleted =
-            fullProgress.total > 0 && fullProgress.done === fullProgress.total;
+            const fullyCompleted =
+              fullProgress.total > 0 && fullProgress.done === fullProgress.total;
 
-          return (
-            <button
-              key={topic.id}
-              type="button"
-              className={`topic-tab glass premium-topic-tab ${
-                selectedId === topic.id ? 'active' : ''
-              } ${fullyCompleted ? 'done' : ''}`}
-              onClick={() => onSelect(topic.id)}
-            >
-              <span className="eyebrow">
-                {getCountLabel(count, completionFilter)}
-              </span>
+            return (
+              <button
+                key={topic.id}
+                type="button"
+                className={`topic-tab glass premium-topic-tab ${
+                  selectedId === topic.id ? 'active' : ''
+                } ${fullyCompleted ? 'done' : ''}`}
+                onClick={() => onSelect(topic.id)}
+              >
+                <span className="eyebrow">
+                  {getCountLabel(count, completionFilter)}
+                </span>
 
-              <strong>{topic.name}</strong>
+                <strong>{topic.name}</strong>
 
-              <small>
-                {progress.done}/{progress.total || count} visible complete
-              </small>
-
-              {completionFilter !== 'all' ? (
                 <small>
-                  Topic total: {fullProgress.done}/{fullProgress.total || topic.count || 0} complete
+                  {progress.done}/{progress.total || count} visible complete
                 </small>
-              ) : null}
 
-              {difficulty !== ALL ? (
-                <small>Difficulty: {difficulty}</small>
-              ) : null}
+                {completionFilter !== 'all' ? (
+                  <small>
+                    Topic total: {fullProgress.done}/{fullProgress.total || topic.count || 0} complete
+                  </small>
+                ) : null}
 
-              {completionFilter !== 'all' ? (
-                <small>
-                  Status:{' '}
-                  {completionFilter === 'completed'
-                    ? 'Completed questions only'
-                    : 'Incomplete questions only'}
-                </small>
-              ) : null}
-            </button>
-          );
-        })}
-      </div>
+                {difficulty !== ALL ? (
+                  <small>Difficulty: {difficulty}</small>
+                ) : null}
+
+                {completionFilter !== 'all' ? (
+                  <small>
+                    Status:{' '}
+                    {completionFilter === 'completed'
+                      ? 'Completed questions only'
+                      : 'Incomplete questions only'}
+                  </small>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
 
       {filteredTopics.length === 0 ? (
         <div className="empty-state glass-lite premium-question-empty">
@@ -286,7 +289,7 @@ export default function TopicLibrary({
         </div>
       ) : null}
 
-      {totalPages > 1 ? (
+      {showTopicPicker && totalPages > 1 ? (
         <nav
           className="pagination compact-pagination premium-compact-pagination"
           aria-label="Topic library pages"
