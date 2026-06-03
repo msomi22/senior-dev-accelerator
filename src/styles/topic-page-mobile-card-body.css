@@ -35,7 +35,7 @@
     grid-template-columns: minmax(0, 1fr) !important;
     place-items: center !important;
     align-self: start !important;
-    gap: 0 !important;
+    gap: 3px !important;
     width: 100% !important;
     min-width: 0 !important;
     max-width: none !important;
@@ -69,21 +69,34 @@
     line-height: 0 !important;
   }
 
-  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item::before {
-    content: attr(data-mobile-label) !important;
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item::before,
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item::after {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
     width: 100% !important;
     max-width: 100% !important;
-    color: var(--text, var(--text-primary)) !important;
-    font-size: clamp(0.54rem, 2.25vw, 0.66rem) !important;
-    font-weight: 900 !important;
-    letter-spacing: -0.02em !important;
-    line-height: 1 !important;
     text-align: center !important;
     text-overflow: clip !important;
     white-space: nowrap !important;
+  }
+
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item::before {
+    content: attr(data-mobile-code) !important;
+    color: var(--text, var(--text-primary)) !important;
+    font-size: clamp(0.72rem, 3vw, 0.86rem) !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.01em !important;
+    line-height: 1 !important;
+  }
+
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item::after {
+    content: attr(data-mobile-count) !important;
+    color: var(--muted, var(--text-secondary)) !important;
+    font-size: clamp(0.62rem, 2.55vw, 0.74rem) !important;
+    font-weight: 850 !important;
+    letter-spacing: 0 !important;
+    line-height: 1 !important;
   }
 
   .premium-topic-dashboard-shell .premium-question-row--item {
