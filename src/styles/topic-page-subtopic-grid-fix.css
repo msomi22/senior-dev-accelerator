@@ -1,0 +1,61 @@
+/* Issue #247: keep all subtopics visible on mobile. */
+
+.category-page .topic-picker.scalable-topic-picker {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  grid-auto-flow: row !important;
+  grid-auto-columns: auto !important;
+  gap: 10px !important;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  padding-bottom: 0 !important;
+  scroll-snap-type: none !important;
+}
+
+.category-page .topic-picker.scalable-topic-picker .topic-tab.glass {
+  flex: initial !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  scroll-snap-align: none !important;
+}
+
+@media (max-width: 760px) {
+  .category-page .topic-picker.scalable-topic-picker {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .category-page .topic-picker.scalable-topic-picker .topic-tab.glass {
+    min-height: 112px;
+    padding: 9px;
+  }
+
+  .category-page .topic-tab strong {
+    font-size: 0.78rem;
+    line-height: 1.14;
+  }
+
+  .category-page .topic-tab small,
+  .category-page .topic-tab em {
+    font-size: 0.62rem;
+    line-height: 1.22;
+  }
+
+  .category-page .topic-library .compact-pagination,
+  .category-page .topic-library .pagination.compact-pagination {
+    display: none !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .category-page .topic-picker.scalable-topic-picker {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .category-page .topic-picker.scalable-topic-picker .topic-tab.glass {
+    min-height: 92px;
+  }
+}
