@@ -42,32 +42,48 @@
     height: 74px !important;
     min-height: 74px !important;
     max-height: 74px !important;
-    padding: 10px 8px !important;
+    padding: 10px 6px !important;
     text-align: center !important;
     scroll-snap-align: start !important;
   }
 
-  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item > *,
-  .premium-topic-dashboard-shell .topic-tab.glass > *,
-  .premium-topic-dashboard-shell .premium-topic-rail-item > * {
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item > *,
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-copy,
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-copy *,
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item .premium-mobile-topic-card,
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item .premium-mobile-topic-card * {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
   }
 
-  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item::before,
-  .premium-topic-dashboard-shell .topic-tab.glass::before,
-  .premium-topic-dashboard-shell .premium-topic-rail-item::before {
-    content: attr(data-mobile-label);
+  html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item::before {
+    content: attr(data-mobile-label) !important;
     display: block !important;
-    overflow: visible !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
     max-width: 100% !important;
     color: var(--text, var(--text-primary)) !important;
-    font-size: clamp(0.64rem, 2.7vw, 0.76rem) !important;
+    font-size: clamp(0.54rem, 2.25vw, 0.66rem) !important;
     font-weight: 900 !important;
-    letter-spacing: -0.01em !important;
-    line-height: 1.15 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1 !important;
     text-align: center !important;
     text-overflow: clip !important;
-    white-space: normal !important;
+    white-space: nowrap !important;
   }
 
   .premium-topic-dashboard-shell .premium-question-row--item {
