@@ -36,6 +36,7 @@ import './styles/topic-page-reference-dashboard.css';
 import './styles/topic-page-mobile-two-column.css';
 import './styles/topic-page-final-rail-table-tuning.css';
 import './styles/topic-page-category-overview-controls.css';
+import './styles/topic-page-compact-density.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
