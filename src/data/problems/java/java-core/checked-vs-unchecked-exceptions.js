@@ -26,7 +26,7 @@ const problem = defineLearningProblem({
     },
     {
       type: 'callout',
-      tone: 'question',
+      tone: 'info',
       title: 'Predict before reveal',
       content: 'A method reads a file from disk. Should callers be forced to handle failure? Now compare that to a method receiving a negative withdrawal amount. Which one sounds recoverable by the caller?'
     },
@@ -100,7 +100,7 @@ const problem = defineLearningProblem({
     },
     {
       type: 'callout',
-      tone: 'question',
+      tone: 'info',
       title: 'Self-explanation prompt',
       content: 'Explain the difference using this sentence frame: checked exceptions are for failures the caller may reasonably handle; unchecked exceptions are often for violated assumptions or invalid usage.'
     },
