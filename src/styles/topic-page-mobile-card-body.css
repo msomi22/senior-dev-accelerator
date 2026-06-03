@@ -75,8 +75,14 @@
     display: grid !important;
     visibility: visible !important;
     opacity: 1 !important;
-    place-items: center !important;
-    gap: 4px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-auto-flow: row !important;
+    grid-auto-rows: max-content !important;
+    align-items: center !important;
+    justify-items: center !important;
+    align-content: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
@@ -94,6 +100,9 @@
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
+    grid-column: 1 / -1 !important;
+    justify-self: center !important;
+    align-self: center !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
@@ -105,6 +114,7 @@
   }
 
   html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-compact strong {
+    grid-row: 1 !important;
     color: var(--text, var(--text-primary)) !important;
     font-size: clamp(0.82rem, 3.3vw, 0.95rem) !important;
     font-weight: 950 !important;
@@ -113,6 +123,7 @@
   }
 
   html body .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker.premium-topic-rail-list > .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-compact small {
+    grid-row: 2 !important;
     color: var(--muted, var(--text-secondary)) !important;
     font-size: clamp(0.68rem, 2.7vw, 0.78rem) !important;
     font-weight: 850 !important;
