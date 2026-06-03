@@ -41,6 +41,7 @@ import './styles/topic-page-control-row-compact.css';
 import './styles/topic-page-view-toggle-icon-fix.css';
 import './styles/topic-page-back-link.css';
 import './styles/problem-page-timer-visibility.css';
+import './styles/topic-page-adaptive-hero-compact.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
