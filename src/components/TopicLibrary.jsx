@@ -163,9 +163,9 @@ export default function TopicLibrary({
           const progressTotal = progress.total || count;
 
           return (
-            <button key={topic.id} type="button" aria-label={`${shortLabel} — ${topic.name}, ${countLabel}, ${progress.done}/${progressTotal} complete`} className={`topic-tab glass premium-topic-rail-item icon-${getTopicIconType(topic)} ${selectedId === topic.id ? 'active' : ''} ${fullyCompleted ? 'done' : ''}`} onClick={() => onSelect(topic.id)}>
+            <button key={topic.id} type="button" data-mobile-label={`${shortLabel} / ${countLabel}`} aria-label={`${shortLabel} — ${topic.name}, ${countLabel}, ${progress.done}/${progressTotal} complete`} className={`topic-tab glass premium-topic-rail-item icon-${getTopicIconType(topic)} ${selectedId === topic.id ? 'active' : ''} ${fullyCompleted ? 'done' : ''}`} onClick={() => onSelect(topic.id)}>
               <TopicIcon topic={topic} />
-              <span className="premium-topic-rail-copy"><strong className="premium-topic-rail-title">{topic.name}</strong><strong className="premium-topic-rail-mobile-code" aria-hidden="true">{shortLabel}</strong><small>{countLabel}</small><em>{progress.done}/{progressTotal} complete</em></span>
+              <span className="premium-topic-rail-copy"><strong>{topic.name}</strong><small>{countLabel}</small><em>{progress.done}/{progressTotal} complete</em></span>
             </button>
           );
         })}
