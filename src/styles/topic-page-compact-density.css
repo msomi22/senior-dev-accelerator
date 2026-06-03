@@ -1,0 +1,350 @@
+/* Issue #247: compact density pass for the premium topic dashboard. */
+
+.premium-topic-dashboard-page {
+  gap: 10px !important;
+  max-width: 1180px;
+}
+
+.premium-category-overview-card {
+  grid-template-columns: 78px minmax(0, 1fr) !important;
+  gap: 12px 18px !important;
+  padding: 20px 28px 18px !important;
+  border-radius: 18px !important;
+}
+
+.premium-category-icon {
+  width: 64px !important;
+  height: 64px !important;
+}
+
+.premium-category-icon svg {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.premium-category-copy {
+  gap: 8px !important;
+}
+
+.premium-category-copy h1 {
+  font-size: clamp(2rem, 4.2vw, 3.55rem) !important;
+  line-height: 0.98 !important;
+}
+
+.premium-category-copy p {
+  max-width: 780px !important;
+  font-size: clamp(1rem, 2vw, 1.45rem) !important;
+  line-height: 1.42 !important;
+}
+
+.premium-category-progress-row {
+  gap: 10px !important;
+  margin-top: 2px !important;
+  font-size: clamp(0.88rem, 1.55vw, 1.08rem) !important;
+}
+
+.premium-category-progress-track {
+  height: 10px !important;
+}
+
+.premium-category-control-row {
+  gap: 12px !important;
+  grid-template-columns: minmax(128px, 0.8fr) minmax(122px, 0.7fr) minmax(210px, 1.35fr) auto !important;
+}
+
+.premium-category-control-row label {
+  min-height: 52px !important;
+  padding: 0 40px 0 18px !important;
+  border-radius: 14px !important;
+}
+
+.premium-category-control-row label span,
+.premium-category-control-row select {
+  font-size: clamp(0.82rem, 1.45vw, 1.02rem) !important;
+}
+
+.premium-category-control-row label span {
+  margin-right: 10px !important;
+}
+
+.premium-category-control-row label::after {
+  right: 16px !important;
+  font-size: 1rem !important;
+}
+
+.premium-view-toggle {
+  grid-template-columns: repeat(2, 50px) !important;
+  min-height: 52px !important;
+  border-radius: 14px !important;
+}
+
+.premium-view-toggle button.active {
+  border-radius: 13px !important;
+}
+
+.grid-icon,
+.list-icon {
+  width: 21px !important;
+  height: 21px !important;
+}
+
+.grid-icon {
+  background:
+    linear-gradient(currentColor 0 0) 0 0 / 8px 8px no-repeat,
+    linear-gradient(currentColor 0 0) 13px 0 / 8px 8px no-repeat,
+    linear-gradient(currentColor 0 0) 0 13px / 8px 8px no-repeat,
+    linear-gradient(currentColor 0 0) 13px 13px / 8px 8px no-repeat !important;
+}
+
+.premium-topic-dashboard-shell {
+  gap: 12px !important;
+}
+
+.premium-topic-dashboard-shell .topic-library.glass-lite,
+.premium-topic-dashboard-shell .premium-question-table-card {
+  border-radius: 15px !important;
+  min-height: 0 !important;
+}
+
+.premium-topic-dashboard-shell .topic-library.glass-lite {
+  gap: 8px !important;
+  padding: 12px !important;
+  max-height: 432px !important;
+}
+
+.premium-topic-rail-head .eyebrow {
+  font-size: 0.62rem !important;
+  letter-spacing: 0.12em !important;
+}
+
+.premium-topic-dashboard-shell .topic-picker.scalable-topic-picker,
+.premium-topic-dashboard-shell .premium-topic-rail-list {
+  gap: 8px !important;
+  max-height: 340px !important;
+}
+
+.premium-topic-dashboard-shell .topic-tab.glass,
+.premium-topic-dashboard-shell .premium-topic-rail-item {
+  grid-template-columns: 30px minmax(0, 1fr) !important;
+  min-height: 74px !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  gap: 10px !important;
+}
+
+.premium-topic-dashboard-shell .premium-topic-rail-icon {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.premium-topic-dashboard-shell .topic-tab strong,
+.premium-topic-rail-copy strong {
+  font-size: 0.78rem !important;
+  line-height: 1.12 !important;
+}
+
+.premium-topic-dashboard-shell .topic-tab small,
+.premium-topic-rail-copy small,
+.premium-topic-rail-copy em {
+  font-size: 0.66rem !important;
+  line-height: 1.15 !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-table-head {
+  gap: 10px !important;
+  padding: 16px 20px 10px !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-table-head h2 {
+  font-size: clamp(1.35rem, 2.4vw, 1.78rem) !important;
+  line-height: 1 !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-table-head p {
+  max-width: 560px !important;
+  margin-top: 8px !important;
+  font-size: 0.84rem !important;
+  line-height: 1.36 !important;
+}
+
+.premium-topic-question-count {
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  font-size: 0.78rem !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-table {
+  padding: 0 14px !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-row {
+  grid-template-columns: 30px minmax(160px, 1.35fr) 100px 60px 82px 22px !important;
+  gap: 12px !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-row--header {
+  min-height: 32px !important;
+  padding: 0 12px !important;
+  font-size: 0.62rem !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-row--item {
+  min-height: 52px !important;
+  margin-top: 6px !important;
+  padding: 0 12px !important;
+  border-radius: 12px !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-number {
+  font-size: 0.84rem !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-title {
+  font-size: 0.82rem !important;
+  line-height: 1.24 !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-row .pill {
+  min-width: 70px !important;
+  padding: 5px 9px !important;
+  border-radius: 10px !important;
+  font-size: 0.68rem !important;
+}
+
+.premium-question-status {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 0.8rem !important;
+}
+
+.premium-question-time {
+  font-size: 0.78rem !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-chevron {
+  font-size: 1.35rem !important;
+}
+
+.premium-question-footer {
+  margin-top: 8px !important;
+  padding: 10px 18px 12px !important;
+}
+
+.premium-question-footer p {
+  font-size: 0.78rem !important;
+}
+
+.premium-topic-dashboard-shell .premium-question-pagination .page-btn,
+.premium-topic-dashboard-shell .premium-question-pagination .premium-pagination-arrow {
+  min-width: 34px !important;
+  height: 34px !important;
+  border-radius: 10px !important;
+  font-size: 0.78rem !important;
+}
+
+@media (max-width: 760px) {
+  .premium-topic-dashboard-page {
+    gap: 8px !important;
+  }
+
+  .premium-category-overview-card {
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    gap: 8px 10px !important;
+    padding: 12px !important;
+    border-radius: 14px !important;
+  }
+
+  .premium-category-icon {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .premium-category-icon svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .premium-category-copy h1 {
+    font-size: clamp(1.32rem, 6vw, 1.72rem) !important;
+  }
+
+  .premium-category-copy p {
+    -webkit-line-clamp: 1 !important;
+    font-size: 0.76rem !important;
+    line-height: 1.28 !important;
+  }
+
+  .premium-category-progress-row {
+    font-size: 0.72rem !important;
+  }
+
+  .premium-category-progress-track {
+    height: 7px !important;
+  }
+
+  .premium-category-control-row {
+    gap: 6px !important;
+  }
+
+  .premium-category-control-row label {
+    min-width: 104px !important;
+    min-height: 38px !important;
+    padding: 0 24px 0 9px !important;
+    border-radius: 10px !important;
+  }
+
+  .premium-category-control-row label span,
+  .premium-category-control-row select {
+    font-size: 0.68rem !important;
+  }
+
+  .premium-category-control-row label::after {
+    right: 9px !important;
+    font-size: 0.84rem !important;
+  }
+
+  .premium-view-toggle {
+    grid-template-columns: repeat(2, 38px) !important;
+    min-height: 38px !important;
+    border-radius: 10px !important;
+  }
+
+  .premium-topic-dashboard-shell {
+    gap: 7px !important;
+  }
+
+  .premium-topic-dashboard-shell .topic-library.glass-lite {
+    padding: 8px !important;
+    max-height: 344px !important;
+  }
+
+  .premium-topic-dashboard-shell .topic-picker.scalable-topic-picker,
+  .premium-topic-dashboard-shell .premium-topic-rail-list {
+    max-height: 286px !important;
+    gap: 6px !important;
+  }
+
+  .premium-topic-dashboard-shell .topic-tab.glass,
+  .premium-topic-dashboard-shell .premium-topic-rail-item {
+    min-height: 62px !important;
+    padding: 8px !important;
+    gap: 7px !important;
+  }
+
+  .premium-topic-dashboard-shell .premium-question-table-head {
+    padding: 12px 10px 8px !important;
+  }
+
+  .premium-topic-dashboard-shell .premium-question-table-head h2 {
+    font-size: clamp(1rem, 4.6vw, 1.2rem) !important;
+  }
+
+  .premium-topic-dashboard-shell .premium-question-table-head p {
+    font-size: 0.68rem !important;
+    line-height: 1.28 !important;
+  }
+
+  .premium-topic-dashboard-shell .premium-question-row--item {
+    min-height: 50px !important;
+  }
+}

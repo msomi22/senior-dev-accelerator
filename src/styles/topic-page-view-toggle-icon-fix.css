@@ -1,0 +1,42 @@
+/* Issue #247: keep the list-view toggle as three clean horizontal bars. */
+
+.premium-view-toggle .list-icon {
+  position: relative !important;
+  display: block !important;
+  width: 20px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.premium-view-toggle .list-icon::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 20px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 6px 0 currentColor, 0 12px 0 currentColor;
+}
+
+.premium-view-toggle .list-icon::after {
+  content: '';
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .premium-view-toggle .list-icon {
+    width: 17px !important;
+    height: 14px !important;
+  }
+
+  .premium-view-toggle .list-icon::before {
+    width: 17px;
+    height: 3px;
+    box-shadow: 0 5px 0 currentColor, 0 10px 0 currentColor;
+  }
+}
