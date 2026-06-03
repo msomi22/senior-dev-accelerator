@@ -21,26 +21,6 @@ function getFullTopicProgress(topic, completed = {}) {
   return topicProgress(topic, completed);
 }
 
-function getTopicIcon(topic, index) {
-  const source = `${topic.id || topic.name || ''}`.toLowerCase();
-
-  if (source.includes('communication')) return '▱';
-  if (source.includes('delegation')) return '◎';
-  if (source.includes('ownership')) return '◇';
-  if (source.includes('mentor')) return '+';
-  if (source.includes('delivery')) return '↗';
-  if (source.includes('recursion')) return 'R';
-  if (source.includes('nodes') || source.includes('graph')) return 'N';
-  if (source.includes('pair')) return 'P';
-  if (source.includes('pref')) return '∑';
-  if (source.includes('search') || source.includes('sear')) return '⌕';
-  if (source.includes('stack')) return 'S';
-  if (source.includes('state')) return 'ƒ';
-  if (source.includes('wind')) return 'W';
-
-  return String(index + 1).padStart(2, '0');
-}
-
 export default function TopicLibrary({
   topics,
   selectedId,
@@ -184,7 +164,7 @@ export default function TopicLibrary({
       </div>
 
       <div className="topic-picker scalable-topic-picker premium-topic-rail-list">
-        {visibleTopics.map((topic, index) => {
+        {visibleTopics.map((topic) => {
           const count = topic.filteredCount ?? topic.count ?? 0;
           const progress = getVisibleTopicProgress(topic, completed);
           const fullProgress = getFullTopicProgress(topic, completed);
@@ -201,10 +181,6 @@ export default function TopicLibrary({
               } ${fullyCompleted ? 'done' : ''}`}
               onClick={() => onSelect(topic.id)}
             >
-              <span className="premium-topic-rail-icon" aria-hidden="true">
-                {getTopicIcon(topic, index)}
-              </span>
-
               <span className="premium-topic-rail-copy">
                 <strong>{topic.name}</strong>
                 <small>{count} questions</small>
