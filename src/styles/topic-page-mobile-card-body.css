@@ -53,7 +53,14 @@
     justify-self: center !important;
   }
 
+  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-copy,
+  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-copy strong,
+  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-copy small,
+  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-copy em,
   .premium-topic-dashboard-shell .premium-topic-rail-copy,
+  .premium-topic-dashboard-shell .premium-topic-rail-copy strong,
+  .premium-topic-dashboard-shell .premium-topic-rail-copy small,
+  .premium-topic-dashboard-shell .premium-topic-rail-copy em,
   .premium-topic-chip-code {
     display: none !important;
   }
