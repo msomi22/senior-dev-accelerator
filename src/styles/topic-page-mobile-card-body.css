@@ -1,0 +1,53 @@
+.premium-mobile-topic-card {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .premium-topic-dashboard-shell .topic-tab.glass,
+  .premium-topic-dashboard-shell .premium-topic-rail-item {
+    flex: 0 0 calc((100% - 10px) / 2) !important;
+    width: calc((100% - 10px) / 2) !important;
+    min-width: calc((100% - 10px) / 2) !important;
+    max-width: calc((100% - 10px) / 2) !important;
+    display: grid !important;
+    grid-template-columns: 26px minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 70px !important;
+    padding: 10px !important;
+    text-align: left !important;
+  }
+
+  .premium-topic-dashboard-shell .premium-topic-rail-copy,
+  .premium-topic-chip-code {
+    display: none !important;
+  }
+
+  .premium-mobile-topic-card {
+    display: grid !important;
+    min-width: 0 !important;
+    gap: 5px !important;
+  }
+
+  .premium-mobile-topic-card strong {
+    display: block !important;
+    overflow: hidden !important;
+    color: var(--text, var(--text-primary)) !important;
+    font-size: 0.8rem !important;
+    font-weight: 950 !important;
+    line-height: 1 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .premium-mobile-topic-card small {
+    display: block !important;
+    overflow: hidden !important;
+    color: var(--muted, var(--text-secondary)) !important;
+    font-size: 0.62rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
