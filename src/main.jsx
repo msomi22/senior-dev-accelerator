@@ -48,6 +48,7 @@ import './styles/topic-page-phone-topic-cards-final.css';
 import './styles/topic-page-mobile-card-body.css';
 import './styles/problem-page-mobile-text-wrap-final.css';
 import './styles/dashboard-mobile-premium.css';
+import './styles/dashboard-command-center-width.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
