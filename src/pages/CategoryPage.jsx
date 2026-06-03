@@ -265,8 +265,8 @@ export default function CategoryPage({ fixedCategoryId }) {
   }
 
   return (
-    <main className="page category-page">
-      <section className="page-title">
+    <main className="page category-page premium-topic-dashboard-page">
+      <section className="page-title premium-topic-dashboard-title">
         <p className="eyebrow">{category.shortName || category.name}</p>
         <h1>{category.name}</h1>
         <p>{category.description}</p>
@@ -275,7 +275,7 @@ export default function CategoryPage({ fixedCategoryId }) {
       {loadingTopics || loadingBanks ? (
         <LoadingCard label="Loading category topics…" />
       ) : (
-        <>
+        <div className="premium-topic-dashboard-shell">
           <TopicLibrary
             topics={visibleLibraryTopics}
             allTopicsCount={topics.length}
@@ -301,8 +301,7 @@ export default function CategoryPage({ fixedCategoryId }) {
               returnContext={returnContext}
             />
           ) : null}
-
-        </>
+        </div>
       )}
     </main>
   );
