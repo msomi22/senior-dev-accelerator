@@ -92,14 +92,12 @@ export default function TopicLibrary({
 
   const filteredTopics = useMemo(() => {
     return [...topics].sort((a, b) => {
-      const selectedDelta = Number(b.id === selectedId) - Number(a.id === selectedId);
-      if (selectedDelta !== 0) return selectedDelta;
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       if (sortBy === 'progress') return getVisibleTopicProgress(b, completed).percent - getVisibleTopicProgress(a, completed).percent;
       if (sortBy === 'questions') return (b.filteredCount ?? b.count ?? 0) - (a.filteredCount ?? a.count ?? 0);
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a.name.localeCompare(b.name);
     });
-  }, [topics, sortBy, completed, selectedId]);
+  }, [topics, sortBy, completed]);
 
   const totalPages = Math.max(1, Math.ceil(filteredTopics.length / topicLibraryConfig.topicsPerPage));
   const safePage = Math.min(currentPage, totalPages);
@@ -109,7 +107,7 @@ export default function TopicLibrary({
     return filteredTopics.slice(start, start + topicLibraryConfig.topicsPerPage);
   }, [filteredTopics, safePage]);
 
-  useEffect(() => { setCurrentPage(1); }, [difficulty, completionFilter, sortBy, selectedId]);
+  useEffect(() => { setCurrentPage(1); }, [difficulty, completionFilter, sortBy]);
   useEffect(() => { if (safePage !== currentPage) setCurrentPage(safePage); }, [currentPage, safePage]);
 
   function goToPage(page) {
