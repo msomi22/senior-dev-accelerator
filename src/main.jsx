@@ -44,6 +44,7 @@ import './styles/problem-page-timer-visibility.css';
 import './styles/topic-page-adaptive-hero-compact.css';
 import './styles/topic-page-phone-layout.css';
 import './styles/topic-page-phone-polish.css';
+import './styles/topic-page-phone-topic-cards-final.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
