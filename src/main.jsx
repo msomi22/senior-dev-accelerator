@@ -42,6 +42,7 @@ import './styles/topic-page-view-toggle-icon-fix.css';
 import './styles/topic-page-back-link.css';
 import './styles/problem-page-timer-visibility.css';
 import './styles/topic-page-adaptive-hero-compact.css';
+import './styles/topic-page-phone-layout.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
