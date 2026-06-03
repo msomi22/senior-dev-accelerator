@@ -162,7 +162,9 @@ export default function ProblemPage() {
         ...location.state.returnToCategory
       })
     : categoryPath(categoryId);
-  const primaryPattern = entry.question.finalPattern || entry.topic?.name;
+  const topicName = entry.topic?.name || entry.categoryName || 'Topic';
+  const categoryName = entry.category?.name || entry.categoryName || entry.topic?.category || 'Learning';
+  const primaryPattern = entry.question.finalPattern || topicName;
   const isComplexSystemDesign = entry.question.type === 'complex-system-design';
   const isMcq = isMcqType(entry.question.type);
   const isComplete = !!completed[entry.question.id];
@@ -177,17 +179,23 @@ export default function ProblemPage() {
   ]);
 
   return (
-    <main className="page problem-detail-shell focused-problem-page">
+    <main className="page problem-detail-shell focused-problem-page premium-problem-page">
       <div className="problem-breadcrumb compact-problem-breadcrumb">
-        <NavLink to="/">Back to Dashboard</NavLink>
+        <NavLink to="/">Dashboard</NavLink>
         <span>/</span>
-        <NavLink to={categoryBackPath}>{entry.topic?.name || entry.categoryName || 'Topic'}</NavLink>
+        <NavLink to={categoryBackPath}>{topicName}</NavLink>
         <span>/</span>
         <span>{entry.question.title}</span>
       </div>
 
-      <section className="reference-problem-intro">
-        <div>
+      <section className="reference-problem-intro premium-problem-intro">
+        <div className="premium-problem-title-area">
+          <div className="premium-problem-context-row">
+            <NavLink to={categoryBackPath}>Back to topic</NavLink>
+            <span>{categoryName}</span>
+            <span>{topicName}</span>
+          </div>
+
           <h1>{entry.question.title}</h1>
 
           <div className="problem-meta-pills" aria-label="Problem metadata">
@@ -198,18 +206,24 @@ export default function ProblemPage() {
             ))}
           </div>
 
-          {introText ? <p>{introText}</p> : null}
+          {introText ? <p className="premium-problem-summary">{introText}</p> : null}
         </div>
 
-        <div className="reference-action-group" aria-label="Focused problem actions">
-          <NavLink className="btn ghost" to={categoryBackPath}>Back to topic</NavLink>
+        <aside className="premium-problem-progress-card" aria-label="Focused problem actions">
+          <span className="mini-label">Current state</span>
+          <strong>{isComplete ? 'Completed' : 'Ready to solve'}</strong>
+          <small>{isMcq ? 'Select an answer, then review the explanation.' : 'Read, draft mentally, then compare with the solution.'}</small>
 
-          {!isComplexSystemDesign ? (
-            <button className="mark reference-mark" onClick={() => handleCompletionClick(entry.question.id)}>
-              {isComplete ? 'Reset progress' : 'Mark complete'}
-            </button>
-          ) : null}
-        </div>
+          <div className="reference-action-group premium-problem-actions">
+            <NavLink className="btn ghost" to={categoryBackPath}>Topic</NavLink>
+
+            {!isComplexSystemDesign ? (
+              <button className="mark reference-mark" onClick={() => handleCompletionClick(entry.question.id)}>
+                {isComplete ? 'Reset' : 'Done'}
+              </button>
+            ) : null}
+          </div>
+        </aside>
       </section>
 
       {isComplexSystemDesign ? (
