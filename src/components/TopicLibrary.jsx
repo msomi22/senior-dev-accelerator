@@ -55,23 +55,18 @@ function TopicIcon({ topic }) {
   if (type === 'communication') {
     return <svg {...commonProps}><path d="M5 6.5h9.5a3 3 0 0 1 3 3v3.2a3 3 0 0 1-3 3H10l-4.1 3.1v-3.1H5a3 3 0 0 1-3-3V9.5a3 3 0 0 1 3-3Z" /><path d="M17 9h2a3 3 0 0 1 3 3v2.5a3 3 0 0 1-3 3h-.6v2.2l-2.7-2" /></svg>;
   }
-
   if (type === 'delegation') {
     return <svg {...commonProps}><circle cx="8" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M2.5 20a6 6 0 0 1 11 0" /><path d="M13.5 18.5a5 5 0 0 1 8 1.5" /></svg>;
   }
-
   if (type === 'ownership') {
     return <svg {...commonProps}><path d="M12 3 20 6v6c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-3Z" /><path d="m8.5 12 2.2 2.2 4.8-5" /></svg>;
   }
-
   if (type === 'mentorship') {
     return <svg {...commonProps}><circle cx="9" cy="8" r="3" /><path d="M3.5 20a5.5 5.5 0 0 1 11 0" /><path d="M18 8v6" /><path d="M15 11h6" /></svg>;
   }
-
   if (type === 'delivery') {
     return <svg {...commonProps}><path d="M5 16c-1.6.6-2.4 1.7-2.8 3.8 2.1-.4 3.2-1.2 3.8-2.8" /><path d="M8 15 5 12l4-5c2.5-3 5.8-4.4 10-4-.4 4.2-1.8 7.5-4.8 10L9 17l-3-3" /><path d="M14 6.5h.01" /></svg>;
   }
-
   if (type === 'graph') {
     return <svg {...commonProps}><circle cx="6" cy="6" r="2.5" /><circle cx="18" cy="8" r="2.5" /><circle cx="12" cy="18" r="2.5" /><path d="m8.2 7 7.6 1" /><path d="m7.4 8.3 3.4 7.4" /><path d="m16.7 10.2-3.4 5.6" /></svg>;
   }
@@ -88,9 +83,10 @@ export default function TopicLibrary({
   onDifficultyChange,
   difficultyOptions,
   completionFilter,
-  onCompletionFilterChange
+  onCompletionFilterChange,
+  sortBy = 'recommended',
+  onSortChange
 }) {
-  const [sortBy, setSortBy] = useState('recommended');
   const [currentPage, setCurrentPage] = useState(1);
   const libraryRef = useRef(null);
 
@@ -119,9 +115,7 @@ export default function TopicLibrary({
   function goToPage(page) {
     const nextPage = Math.min(Math.max(page, 1), totalPages);
     setCurrentPage(nextPage);
-    requestAnimationFrame(() => {
-      libraryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+    requestAnimationFrame(() => libraryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   return (
@@ -131,7 +125,7 @@ export default function TopicLibrary({
       <div className="topic-library-controls premium-topic-rail-controls" aria-label="Question filters">
         <label><span>Difficulty</span><select value={difficulty} onChange={(event) => onDifficultyChange(event.target.value)}><option value={ALL}>All levels</option>{difficultyOptions.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
         <label><span>Status</span><select value={completionFilter} onChange={(event) => onCompletionFilterChange(event.target.value)}><option value="all">All</option><option value="completed">Complete</option><option value="incomplete">Todo</option></select></label>
-        <label><span>Sort</span><select value={sortBy} onChange={(event) => setSortBy(event.target.value)}><option value="recommended">Recommended</option><option value="name">Name</option><option value="progress">Progress</option><option value="questions">Questions</option></select></label>
+        <label><span>Sort</span><select value={sortBy} onChange={(event) => onSortChange?.(event.target.value)}><option value="recommended">Recommended</option><option value="name">Name</option><option value="progress">Progress</option><option value="questions">Questions</option></select></label>
       </div>
 
       <div className="topic-picker scalable-topic-picker premium-topic-rail-list">
