@@ -47,53 +47,25 @@
     scroll-snap-align: start !important;
   }
 
-  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-icon,
-  .premium-topic-dashboard-shell .premium-topic-rail-icon,
-  .premium-topic-dashboard-shell .premium-mobile-topic-card,
-  .premium-topic-dashboard-shell .premium-topic-rail-copy em,
-  .premium-topic-dashboard-shell .premium-topic-rail-title,
-  .premium-topic-chip-code {
+  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item > *,
+  .premium-topic-dashboard-shell .topic-tab.glass > *,
+  .premium-topic-dashboard-shell .premium-topic-rail-item > * {
     display: none !important;
   }
 
-  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item .premium-topic-rail-copy,
-  .premium-topic-dashboard-shell .premium-topic-rail-copy {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 0 !important;
+  .premium-topic-dashboard-shell .topic-tab.glass.premium-topic-rail-item::before,
+  .premium-topic-dashboard-shell .topic-tab.glass::before,
+  .premium-topic-dashboard-shell .premium-topic-rail-item::before {
+    content: attr(data-mobile-label);
+    display: block !important;
+    overflow: hidden !important;
     max-width: 100% !important;
-    gap: 0.35rem !important;
-  }
-
-  .premium-topic-dashboard-shell .premium-topic-rail-mobile-code {
-    display: inline-flex !important;
-    align-items: center !important;
-    overflow: hidden !important;
     color: var(--text, var(--text-primary)) !important;
-    font-size: 0.84rem !important;
-    font-weight: 950 !important;
-    letter-spacing: 0.04em !important;
-    line-height: 1 !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-  }
-
-  .premium-topic-dashboard-shell .premium-topic-rail-mobile-code::after {
-    content: "/";
-    margin-left: 0.35rem;
-    color: var(--muted, var(--text-secondary));
-    font-weight: 850;
-    opacity: 0.82;
-  }
-
-  .premium-topic-dashboard-shell .premium-topic-rail-copy small {
-    display: inline-block !important;
-    overflow: hidden !important;
-    color: var(--muted, var(--text-secondary)) !important;
-    font-size: 0.74rem !important;
-    font-weight: 850 !important;
-    line-height: 1 !important;
+    font-size: 0.78rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.01em !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
   }
