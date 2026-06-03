@@ -4,36 +4,60 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: -2px;
+  margin-bottom: 4px;
 }
 
 .premium-category-back-link {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
-  padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--line, var(--border)) 72%, var(--accent) 18%);
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 72%, var(--line, var(--border)) 28%);
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 850;
+  background:
+    radial-gradient(circle at 15% 0%, color-mix(in srgb, #fff 14%, transparent), transparent 42%),
+    color-mix(in srgb, var(--accent) 18%, var(--card, var(--bg-card)) 82%);
+  color: color-mix(in srgb, var(--accent) 86%, #ffffff 14%);
+  font-size: 0.84rem;
+  font-weight: 950;
   line-height: 1;
   text-decoration: none;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 7%, transparent);
+  letter-spacing: 0.01em;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 10%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent) 14%, transparent),
+    0 10px 22px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.premium-category-back-link::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
 }
 
 .premium-category-back-link:hover,
 .premium-category-back-link:focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 62%, var(--line, var(--border)) 38%);
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 88%, #fff 12%);
+  background:
+    radial-gradient(circle at 15% 0%, color-mix(in srgb, #fff 18%, transparent), transparent 42%),
+    color-mix(in srgb, var(--accent) 25%, var(--card, var(--bg-card)) 75%);
+  color: #ffffff;
   outline: none;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 760px) {
+  .premium-category-back-row {
+    margin-bottom: 2px;
+  }
+
   .premium-category-back-link {
-    min-height: 30px;
-    padding: 0 10px;
-    font-size: 0.68rem;
+    min-height: 34px;
+    padding: 0 12px;
+    font-size: 0.74rem;
   }
 }
