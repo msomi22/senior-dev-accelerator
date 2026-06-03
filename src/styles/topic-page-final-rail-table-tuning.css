@@ -1,4 +1,4 @@
-/* Issue #247 final tuning: 4-topic rail window, no icons, 8-question table. */
+/* Issue #247 final tuning: 4-topic rail window, reference icons, 8-question table. */
 
 .premium-topic-dashboard-shell .topic-library.glass-lite {
   align-self: start;
@@ -29,12 +29,43 @@
 
 .premium-topic-dashboard-shell .topic-tab.glass,
 .premium-topic-dashboard-shell .premium-topic-rail-item {
-  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
   min-height: 96px;
 }
 
 .premium-topic-dashboard-shell .premium-topic-rail-icon {
-  display: none !important;
+  display: block !important;
+  width: 36px;
+  height: 36px;
+}
+
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-communication .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-recursion .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-default .premium-topic-rail-icon {
+  color: var(--accent);
+}
+
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-delegation .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-search .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-stack .premium-topic-rail-icon {
+  color: #fb923c;
+}
+
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-ownership .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-state .premium-topic-rail-icon {
+  color: #c084fc;
+}
+
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-mentorship .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-graph .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-pair .premium-topic-rail-icon {
+  color: #60a5fa;
+}
+
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-delivery .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-prefix .premium-topic-rail-icon,
+.premium-topic-dashboard-shell .premium-topic-rail-item.icon-window .premium-topic-rail-icon {
+  color: #84cc16;
 }
 
 .premium-topic-dashboard-shell .topic-tab strong,
@@ -50,19 +81,15 @@
 }
 
 .premium-question-status {
-  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, transform 0.16s ease;
+  pointer-events: none;
+  cursor: default;
+  transition: none;
 }
 
 .premium-question-status:hover,
 .premium-question-status:focus-visible {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  transform: none;
   outline: none;
-  transform: scale(1.04);
-}
-
-.premium-question-row.is-complete .premium-question-status::before {
-  content: '✓';
 }
 
 .premium-question-row.is-complete .premium-question-status {
@@ -93,7 +120,13 @@
 
   .premium-topic-dashboard-shell .topic-tab.glass,
   .premium-topic-dashboard-shell .premium-topic-rail-item {
+    grid-template-columns: 28px minmax(0, 1fr) !important;
     min-height: 70px;
+  }
+
+  .premium-topic-dashboard-shell .premium-topic-rail-icon {
+    width: 24px;
+    height: 24px;
   }
 
   .premium-topic-dashboard-shell .premium-question-row--item {
@@ -109,6 +142,12 @@
 
   .premium-topic-dashboard-shell .topic-tab.glass,
   .premium-topic-dashboard-shell .premium-topic-rail-item {
+    grid-template-columns: 22px minmax(0, 1fr) !important;
     min-height: 64px;
+  }
+
+  .premium-topic-dashboard-shell .premium-topic-rail-icon {
+    width: 20px;
+    height: 20px;
   }
 }
