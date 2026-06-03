@@ -6,22 +6,6 @@ import { getQuestionSetProgress } from '../services/topicFilterService.js';
 
 const ALL = 'all';
 
-function pluralize(count, singular, plural = `${singular}s`) {
-  return `${count} ${count === 1 ? singular : plural}`;
-}
-
-function getFilterSummary(completionFilter, visibleTopicCount, allTopicsCount) {
-  if (completionFilter === 'completed') {
-    return `${pluralize(visibleTopicCount, 'topic')} contain completed questions.`;
-  }
-
-  if (completionFilter === 'incomplete') {
-    return `${pluralize(visibleTopicCount, 'topic')} contain incomplete questions.`;
-  }
-
-  return `${visibleTopicCount} of ${allTopicsCount} topics match the current filters.`;
-}
-
 function getVisibleTopicProgress(topic, completed = {}) {
   if (Array.isArray(topic.filteredQuestions)) {
     return getQuestionSetProgress(topic.filteredQuestions, completed);
@@ -37,21 +21,28 @@ function getFullTopicProgress(topic, completed = {}) {
   return topicProgress(topic, completed);
 }
 
-function getCountLabel(count, completionFilter) {
-  if (completionFilter === 'completed') {
-    return `${count} completed`;
-  }
+function getTopicIcon(topic, index) {
+  const source = `${topic.id || topic.name || ''}`.toLowerCase();
 
-  if (completionFilter === 'incomplete') {
-    return `${count} incomplete`;
-  }
+  if (source.includes('communication')) return '▱';
+  if (source.includes('delegation')) return '◎';
+  if (source.includes('ownership')) return '◇';
+  if (source.includes('mentor')) return '+';
+  if (source.includes('delivery')) return '↗';
+  if (source.includes('recursion')) return 'R';
+  if (source.includes('nodes') || source.includes('graph')) return 'N';
+  if (source.includes('pair')) return 'P';
+  if (source.includes('pref')) return '∑';
+  if (source.includes('search') || source.includes('sear')) return '⌕';
+  if (source.includes('stack')) return 'S';
+  if (source.includes('state')) return 'ƒ';
+  if (source.includes('wind')) return 'W';
 
-  return `${count} quiz`;
+  return String(index + 1).padStart(2, '0');
 }
 
 export default function TopicLibrary({
   topics,
-  allTopicsCount,
   selectedId,
   completed,
   onSelect,
@@ -139,24 +130,12 @@ export default function TopicLibrary({
   }
 
   return (
-    <section className="topic-library glass-lite" ref={libraryRef}>
-      <div className="library-head">
-        <div>
-          <p className="eyebrow">Topic library</p>
-
-          <h2>Choose a topic</h2>
-
-          <p>
-            {getFilterSummary(
-              completionFilter,
-              filteredTopics.length,
-              allTopicsCount ?? topics.length
-            )}
-          </p>
-        </div>
+    <section className="topic-library glass-lite premium-topic-rail" ref={libraryRef}>
+      <div className="library-head premium-topic-rail-head">
+        <p className="eyebrow">Topics</p>
       </div>
 
-      <div className="topic-library-controls">
+      <div className="topic-library-controls premium-topic-rail-controls" aria-label="Question filters">
         <label>
           <span>Difficulty</span>
 
@@ -164,7 +143,7 @@ export default function TopicLibrary({
             value={difficulty}
             onChange={(event) => onDifficultyChange(event.target.value)}
           >
-            <option value={ALL}>All difficulties</option>
+            <option value={ALL}>All levels</option>
 
             {difficultyOptions.map((item) => (
               <option key={item} value={item}>
@@ -183,9 +162,9 @@ export default function TopicLibrary({
               onCompletionFilterChange(event.target.value)
             }
           >
-            <option value="all">All questions</option>
-            <option value="completed">Completed only</option>
-            <option value="incomplete">Incomplete only</option>
+            <option value="all">All</option>
+            <option value="completed">Complete</option>
+            <option value="incomplete">Todo</option>
           </select>
         </label>
 
@@ -199,15 +178,14 @@ export default function TopicLibrary({
             <option value="recommended">Recommended</option>
             <option value="name">Name</option>
             <option value="progress">Progress</option>
-            <option value="questions">Question count</option>
+            <option value="questions">Questions</option>
           </select>
         </label>
       </div>
 
-      <div className="topic-picker scalable-topic-picker">
-        {visibleTopics.map((topic) => {
+      <div className="topic-picker scalable-topic-picker premium-topic-rail-list">
+        {visibleTopics.map((topic, index) => {
           const count = topic.filteredCount ?? topic.count ?? 0;
-
           const progress = getVisibleTopicProgress(topic, completed);
           const fullProgress = getFullTopicProgress(topic, completed);
 
@@ -218,41 +196,20 @@ export default function TopicLibrary({
             <button
               key={topic.id}
               type="button"
-              className={`topic-tab glass ${
+              className={`topic-tab glass premium-topic-rail-item ${
                 selectedId === topic.id ? 'active' : ''
               } ${fullyCompleted ? 'done' : ''}`}
               onClick={() => onSelect(topic.id)}
             >
-              <span className="eyebrow">
-                {getCountLabel(count, completionFilter)}
+              <span className="premium-topic-rail-icon" aria-hidden="true">
+                {getTopicIcon(topic, index)}
               </span>
 
-              <strong>{topic.name}</strong>
-
-              <small>
-                {progress.done}/{progress.total || count} visible complete
-              </small>
-
-              {completionFilter !== 'all' ? (
-                <small>
-                  Topic total: {fullProgress.done}/{fullProgress.total || topic.count || 0} complete
-                </small>
-              ) : null}
-
-              {difficulty !== ALL ? (
-                <small>Difficulty: {difficulty}</small>
-              ) : null}
-
-              {completionFilter !== 'all' ? (
-                <small>
-                  Status:{' '}
-                  {completionFilter === 'completed'
-                    ? 'Completed questions only'
-                    : 'Incomplete questions only'}
-                </small>
-              ) : null}
-
-              <em>{topic.description}</em>
+              <span className="premium-topic-rail-copy">
+                <strong>{topic.name}</strong>
+                <small>{count} questions</small>
+                <em>{progress.done}/{progress.total || count} complete</em>
+              </span>
             </button>
           );
         })}
@@ -267,7 +224,7 @@ export default function TopicLibrary({
 
       {totalPages > 1 ? (
         <nav
-          className="pagination compact-pagination"
+          className="pagination compact-pagination premium-topic-rail-pagination"
           aria-label="Topic library pages"
         >
           <div className="pagination-status">
@@ -277,18 +234,10 @@ export default function TopicLibrary({
           <div className="pagination-controls">
             <button
               type="button"
-              onClick={() => goToPage(1)}
-              disabled={safePage === 1}
-            >
-              First
-            </button>
-
-            <button
-              type="button"
               onClick={() => goToPage(safePage - 1)}
               disabled={safePage === 1}
             >
-              Previous
+              ‹
             </button>
 
             <button
@@ -296,15 +245,7 @@ export default function TopicLibrary({
               onClick={() => goToPage(safePage + 1)}
               disabled={safePage === totalPages}
             >
-              Next
-            </button>
-
-            <button
-              type="button"
-              onClick={() => goToPage(totalPages)}
-              disabled={safePage === totalPages}
-            >
-              Last
+              ›
             </button>
           </div>
         </nav>
