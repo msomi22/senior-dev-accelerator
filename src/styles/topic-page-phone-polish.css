@@ -21,13 +21,26 @@
     min-height: 38px !important;
   }
 
+  .premium-category-control-row label span {
+    font-size: 0.64rem !important;
+    opacity: 0.82;
+  }
+
+  .premium-category-control-row select {
+    font-size: 0.68rem !important;
+  }
+
+  .premium-category-control-row label:focus-within {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 36%, transparent) !important;
+  }
+
   .premium-category-control-row .premium-sort-control {
-    grid-column: 1 / -1 !important;
+    grid-column: 1 / 2 !important;
   }
 
   .premium-view-toggle {
-    grid-column: 1 / -1 !important;
-    justify-self: start !important;
+    grid-column: 2 / 3 !important;
+    justify-self: end !important;
     width: 74px !important;
     grid-template-columns: repeat(2, 37px) !important;
   }
