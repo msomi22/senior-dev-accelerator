@@ -5,10 +5,10 @@
   --dashboard-teal-soft: color-mix(in srgb, var(--dashboard-teal) 16%, transparent);
   --dashboard-card-bg: color-mix(in srgb, var(--bg-card) 92%, transparent);
   display: grid;
-  gap: clamp(14px, 2vw, 20px);
+  gap: clamp(12px, 1.7vw, 18px);
   width: 100%;
-  max-width: 1180px;
-  margin: 0 auto;
+  max-width: min(1360px, 100%);
+  margin: 0 auto 0 0;
   overflow-x: hidden;
 }
 
@@ -30,9 +30,9 @@
     "copy ring"
     "actions actions";
   align-items: center;
-  gap: 18px;
-  padding: clamp(18px, 3vw, 28px);
-  border-radius: 28px;
+  gap: 14px;
+  padding: clamp(16px, 2.2vw, 24px);
+  border-radius: 24px;
   overflow: hidden;
 }
 
@@ -51,7 +51,7 @@
   grid-area: copy;
   display: grid;
   min-width: 0;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dashboard-command-hero .eyebrow,
@@ -59,7 +59,7 @@
   margin: 0;
   color: var(--dashboard-teal) !important;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -68,7 +68,7 @@
 .dashboard-command-hero h1 {
   margin: 0;
   color: var(--text-primary);
-  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  font-size: clamp(1.55rem, 2.6vw, 2.1rem);
   line-height: 1.02;
   letter-spacing: -0.04em;
 }
@@ -77,33 +77,33 @@
 .dashboard-command-card p {
   margin: 0;
   color: var(--text-secondary);
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 .dashboard-command-hero__progress,
 .dashboard-inline-progress {
   display: grid;
-  gap: 8px;
+  gap: 7px;
   min-width: 0;
 }
 
 .dashboard-command-hero__progress span,
 .dashboard-inline-progress span {
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
 }
 
 .dashboard-command-hero__progress strong,
 .dashboard-inline-progress strong {
   color: var(--text-primary);
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   font-weight: 950;
 }
 
 .dashboard-progress-bar {
   width: 100%;
-  height: 8px;
+  height: 7px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--dashboard-teal) 18%, var(--line));
   border-radius: 999px;
@@ -121,8 +121,8 @@
   grid-area: ring;
   display: grid;
   place-items: center;
-  width: 116px;
-  height: 116px;
+  width: 104px;
+  height: 104px;
   border-radius: 999px;
   background:
     radial-gradient(circle, var(--bg-card) 56%, transparent 57%),
@@ -139,15 +139,15 @@
 .dashboard-progress-ring span {
   align-self: center;
   color: var(--text-primary);
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 950;
 }
 
 .dashboard-progress-ring small {
   align-self: end;
-  margin-bottom: 28px;
+  margin-bottom: 25px;
   color: var(--text-secondary);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 850;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -157,12 +157,12 @@
   grid-area: actions;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 9px;
 }
 
 .dashboard-command-primary,
 .dashboard-command-secondary {
-  min-height: 42px;
+  min-height: 38px;
   justify-content: center;
 }
 
@@ -176,7 +176,7 @@
 .dashboard-command-split,
 .dashboard-command-grid {
   display: grid;
-  gap: clamp(12px, 2vw, 18px);
+  gap: clamp(10px, 1.5vw, 16px);
   min-width: 0;
 }
 
@@ -196,18 +196,18 @@
 .dashboard-command-card {
   display: grid;
   align-content: start;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
   min-height: 100%;
-  padding: clamp(16px, 2.4vw, 24px);
-  border-radius: 24px;
+  padding: clamp(14px, 1.8vw, 20px);
+  border-radius: 20px;
 }
 
 .dashboard-command-card__head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -216,10 +216,10 @@
 }
 
 .dashboard-command-card h2 {
-  margin: 4px 0 0;
+  margin: 3px 0 0;
   color: var(--text-primary);
-  font-size: clamp(1.08rem, 1.8vw, 1.38rem);
-  line-height: 1.12;
+  font-size: clamp(1rem, 1.5vw, 1.24rem);
+  line-height: 1.1;
   letter-spacing: -0.03em;
 }
 
@@ -230,13 +230,13 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 34px;
-  padding: 8px 12px;
+  min-height: 32px;
+  padding: 7px 11px;
   border: 1px solid color-mix(in srgb, var(--dashboard-teal) 28%, var(--line));
   border-radius: 999px;
   background: var(--dashboard-teal-soft);
   color: var(--text-primary);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 900;
   text-decoration: none;
 }
@@ -266,9 +266,9 @@
 .dashboard-inline-progress {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid color-mix(in srgb, var(--dashboard-teal) 18%, var(--line));
-  border-radius: 16px;
+  border-radius: 14px;
   background: color-mix(in srgb, var(--bg-card) 82%, transparent);
 }
 
@@ -280,7 +280,7 @@
 .dashboard-category-list,
 .dashboard-practice-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -298,10 +298,10 @@
 }
 
 .dashboard-topic-row {
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 14px;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 9px;
+  padding: 9px;
+  border-radius: 13px;
 }
 
 .dashboard-topic-row__icon,
@@ -309,15 +309,15 @@
 .dashboard-practice-action > span:first-child {
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 11px;
   background: var(--dashboard-teal-soft);
   color: var(--dashboard-teal);
   font-weight: 950;
 }
 
 .dashboard-topic-row__icon {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
 
 .dashboard-topic-row__copy,
@@ -333,9 +333,9 @@
 .dashboard-practice-action strong {
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 900;
-  line-height: 1.2;
+  line-height: 1.18;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -345,8 +345,8 @@
 .dashboard-practice-action small {
   overflow: hidden;
   color: var(--text-secondary);
-  font-size: 0.74rem;
-  line-height: 1.25;
+  font-size: 0.7rem;
+  line-height: 1.22;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -354,21 +354,21 @@
 .dashboard-topic-row__percent,
 .dashboard-category-row__percent {
   color: var(--dashboard-teal);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 950;
 }
 
 .dashboard-category-row {
-  grid-template-columns: 40px minmax(0, 1fr) auto;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 16px;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 14px;
 }
 
 .dashboard-category-row__icon {
-  width: 38px;
-  height: 38px;
-  font-size: 0.82rem;
+  width: 34px;
+  height: 34px;
+  font-size: 0.78rem;
 }
 
 .dashboard-category-row .dashboard-progress-bar {
@@ -377,51 +377,51 @@
 }
 
 .dashboard-practice-action {
-  grid-template-columns: 38px minmax(0, 1fr);
-  gap: 12px;
-  padding: 12px;
-  border-radius: 16px;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+  border-radius: 14px;
 }
 
 .dashboard-practice-action > span:first-child {
-  width: 38px;
-  height: 38px;
-  font-size: 1rem;
+  width: 34px;
+  height: 34px;
+  font-size: 0.95rem;
 }
 
 .dashboard-metric-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .dashboard-metric-tile {
   display: grid;
   gap: 3px;
   min-width: 0;
-  padding: 13px;
+  padding: 11px;
   border: 1px solid color-mix(in srgb, var(--line) 86%, var(--dashboard-teal) 14%);
-  border-radius: 16px;
+  border-radius: 14px;
   background: color-mix(in srgb, var(--bg-card) 78%, transparent);
 }
 
 .dashboard-metric-tile strong {
   color: var(--text-primary);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 950;
   line-height: 1;
 }
 
 .dashboard-metric-tile span {
   color: var(--text-secondary);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 850;
 }
 
 .dashboard-metric-tile small {
   overflow: hidden;
   color: var(--dashboard-teal);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 900;
   text-overflow: ellipsis;
   text-transform: uppercase;
@@ -430,14 +430,14 @@
 
 .dashboard-stage-list {
   display: grid;
-  gap: 8px;
+  gap: 7px;
   margin: 0;
   padding-left: 18px;
   color: var(--text-secondary);
 }
 
 .dashboard-stage-list li {
-  line-height: 1.45;
+  line-height: 1.38;
 }
 
 .dashboard-stage-list strong {
@@ -446,7 +446,7 @@
 
 .dashboard-empty-note {
   color: var(--text-secondary);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
 }
 
 :root[data-theme="dark"] .dashboard-command-center {
