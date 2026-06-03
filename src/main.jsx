@@ -34,6 +34,7 @@ import './styles/topic-page-premium-question-grid.css';
 import './styles/topic-page-subtopic-grid-fix.css';
 import './styles/topic-page-reference-dashboard.css';
 import './styles/topic-page-mobile-two-column.css';
+import './styles/topic-page-final-rail-table-tuning.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
