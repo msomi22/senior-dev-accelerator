@@ -1,0 +1,113 @@
+/* Issue #247: adaptive category hero density, especially for tiny categories. */
+
+.premium-category-overview-card {
+  min-height: 0 !important;
+  grid-template-columns: 56px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 10px 16px !important;
+  padding: 14px 22px !important;
+  border-radius: 16px !important;
+}
+
+.premium-category-icon {
+  grid-row: 1 / span 2 !important;
+  width: 48px !important;
+  height: 48px !important;
+}
+
+.premium-category-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.premium-category-copy {
+  gap: 4px !important;
+}
+
+.premium-category-copy h1 {
+  font-size: clamp(1.55rem, 3.3vw, 2.7rem) !important;
+  line-height: 1 !important;
+  letter-spacing: -0.035em !important;
+}
+
+.premium-category-copy p {
+  display: -webkit-box !important;
+  max-width: 720px !important;
+  overflow: hidden !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  font-size: clamp(0.82rem, 1.55vw, 1.08rem) !important;
+  line-height: 1.35 !important;
+}
+
+.premium-category-progress-row {
+  grid-column: 3 !important;
+  grid-row: 1 / span 2 !important;
+  display: grid !important;
+  justify-items: end !important;
+  align-content: center !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  font-size: 0.82rem !important;
+  white-space: nowrap !important;
+}
+
+.premium-category-progress-row span:nth-child(2) {
+  display: none !important;
+}
+
+.premium-category-progress-row strong {
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+}
+
+.premium-category-progress-track {
+  grid-column: 1 / -1 !important;
+  height: 7px !important;
+  margin-top: 2px !important;
+}
+
+@media (max-width: 760px) {
+  .premium-category-overview-card {
+    grid-template-columns: 38px minmax(0, 1fr) !important;
+    padding: 10px 12px !important;
+    gap: 8px 10px !important;
+    border-radius: 13px !important;
+  }
+
+  .premium-category-icon {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .premium-category-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .premium-category-copy h1 {
+    font-size: clamp(1.18rem, 5.6vw, 1.55rem) !important;
+  }
+
+  .premium-category-copy p {
+    -webkit-line-clamp: 1 !important;
+    font-size: 0.68rem !important;
+  }
+
+  .premium-category-progress-row {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    font-size: 0.68rem !important;
+  }
+
+  .premium-category-progress-row strong {
+    font-size: 0.72rem !important;
+  }
+
+  .premium-category-progress-track {
+    height: 6px !important;
+  }
+}
