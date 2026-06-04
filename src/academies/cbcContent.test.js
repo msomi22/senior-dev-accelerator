@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import gradeOneFoundation from './cbc/grade-1/foundation-practice/practice/foundation-practice-001.js';
 import lesson from './cbc/grade-3/english/lessons/spelling-lesson-001.js';
 import practiceOne from './cbc/grade-3/english/practice/spelling-practice-001.js';
 import practiceTwo from './cbc/grade-3/english/practice/spelling-practice-002.js';
@@ -10,21 +11,66 @@ import { getAcademyCatalog } from './catalog.js';
 import { validateProblemCollection } from '../problems/validateProblem.js';
 
 const cbcTopics = getAcademyCatalog('cbc').topics;
-const allQuestions = [lesson, ...practiceOne, ...practiceTwo, ...examOne, ...examTwo];
+const gradeThreeQuestions = [lesson, ...practiceOne, ...practiceTwo, ...examOne, ...examTwo];
+const allQuestions = [...gradeOneFoundation, ...gradeThreeQuestions];
+
+test('CBC Grade 1 foundation practice has two questions per pilot learning area', () => {
+  const expectedSkills = [
+    'recognition',
+    'listening',
+    'matching',
+    'counting',
+    'reading-simple-words',
+    'choosing-clear-options'
+  ];
+
+  assert.equal(gradeOneFoundation.length, 12);
+  assert.equal(new Set(gradeOneFoundation.map((question) => question.id)).size, 12);
+
+  for (const skill of expectedSkills) {
+    assert.equal(
+      gradeOneFoundation.filter((question) => question.metadata.skill === skill).length,
+      2,
+      skill
+    );
+  }
+});
+
+test('CBC Grade 1 foundation practice is read-aloud enabled and timed for 60 seconds', () => {
+  for (const question of gradeOneFoundation) {
+    assert.equal(question.category, 'grade-1', question.id);
+    assert.equal(question.topicId, 'foundation-practice', question.id);
+    assert.equal(question.estimatedTimeSeconds, 60, question.id);
+    assert.equal(question.readAloud, true, question.id);
+    assert.equal(question.autoReadAloud, true, question.id);
+    assert.equal(question.readOptionsAloud, true, question.id);
+    assert.ok(question.readAloudText, question.id);
+    assert.equal(question.options.length, 3, question.id);
+    assert.ok(Number.isInteger(question.correctAnswer), question.id);
+    assert.ok(question.body?.some((block) => block.type === 'section' && block.title === 'Objective'), question.id);
+  }
+});
+
+test('CBC content is valid and includes unique ids', () => {
+  const validation = validateProblemCollection(allQuestions, { topics: cbcTopics });
+
+  assert.deepEqual(validation.errors, []);
+  assert.equal(new Set(allQuestions.map((question) => question.id)).size, allQuestions.length);
+});
 
 test('CBC spelling collections have the required sizes and unique ids', () => {
   assert.equal(practiceOne.length, 10);
   assert.equal(practiceTwo.length, 10);
   assert.equal(examOne.length, 20);
   assert.equal(examTwo.length, 20);
-  assert.equal(new Set(allQuestions.map((question) => question.id)).size, allQuestions.length);
+  assert.equal(new Set(gradeThreeQuestions.map((question) => question.id)).size, gradeThreeQuestions.length);
 });
 
 test('CBC spelling content is valid and includes a learner-facing Objective', () => {
-  const validation = validateProblemCollection(allQuestions, { topics: cbcTopics });
+  const validation = validateProblemCollection(gradeThreeQuestions, { topics: cbcTopics });
 
   assert.deepEqual(validation.errors, []);
-  assert.ok(allQuestions.every((question) => (
+  assert.ok(gradeThreeQuestions.every((question) => (
     question.body?.some((block) => block.type === 'section' && block.title === 'Objective')
   )));
 });
