@@ -8,6 +8,7 @@ const defaults = {
   selectedAnswers: {},
   timedQuestionAttempts: {},
   examAttempts: {},
+  activeExamSessions: {},
   complexDesignSubmissions: {}
 };
 
@@ -101,6 +102,31 @@ export const storageService = {
   },
   getExamAttempts(examId) {
     return [...(this.read().examAttempts?.[examId] || [])];
+  },
+  setActiveExamSession(examId, session) {
+    const state = this.read();
+    const activeExamSessions = {
+      ...state.activeExamSessions,
+      [examId]: {
+        ...session,
+        examId,
+        updatedAt: new Date().toISOString()
+      }
+    };
+
+    this.write({ activeExamSessions });
+    return activeExamSessions[examId];
+  },
+  getActiveExamSession(examId) {
+    return this.read().activeExamSessions?.[examId] || null;
+  },
+  clearActiveExamSession(examId) {
+    const state = this.read();
+    const activeExamSessions = { ...state.activeExamSessions };
+
+    delete activeExamSessions[examId];
+    this.write({ activeExamSessions });
+    return activeExamSessions;
   },
   setComplexDesignSubmission(questionId, submission) {
     const state = this.read();
