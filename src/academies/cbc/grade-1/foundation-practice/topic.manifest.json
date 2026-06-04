@@ -5,10 +5,12 @@
   "category": "grade-1",
   "description": "Grade 1 pilot practice for recognition, listening, matching, counting, reading simple words, and choosing clear options.",
   "status": "active",
+  "lessons": [],
   "practice": [
     {
       "id": "foundation-practice-001",
       "file": "practice/foundation-practice-001.js"
     }
-  ]
+  ],
+  "assessments": []
 }
