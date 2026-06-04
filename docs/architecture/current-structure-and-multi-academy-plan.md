@@ -266,16 +266,25 @@ sliding-window
 ```text
 src/
 └── data/
-    └── problems/
+    └── content/
         ├── tech/
         │   └── dsa/
         │       └── sliding-window/
+        │           ├── lessons/
+        │           ├── practice/
+        │           └── assessments/
         │
         ├── cbc/
         │   └── grade-3/
         │       └── english/
+        │           ├── lessons/
+        │           ├── practice/
+        │           └── assessments/
         │
         └── customer-experience/
             └── customer-support/
                 └── complaint-handling/
+                    ├── lessons/
+                    ├── practice/
+                    └── assessments/
 ```
