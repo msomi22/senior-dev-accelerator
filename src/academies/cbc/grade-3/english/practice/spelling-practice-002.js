@@ -22,7 +22,7 @@ function optionsFor(correctWord, wrongWords, answerPosition) {
 }
 
 const questions = words.map(([correctWord, wrongWords], index) => defineMcqProblem({
-  id: `grade-3-english-spelling-practice-002-q${String(index + 1).padStart(3, '0')}`,
+  id: `english-spelling-practice-002-q${String(index + 1).padStart(3, '0')}`,
   category: 'grade-3',
   topicId: 'english',
   title: `Spelling Practice 2: ${correctWord}`,
