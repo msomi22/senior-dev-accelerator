@@ -70,6 +70,26 @@ function AttemptHistory({ attempts, onViewResult }) {
   );
 }
 
+function RecoveryView({ exam, session, onContinue, onStartAgain, onBack }) {
+  return (
+    <main className="page cbc-exam-page">
+      <section className="cbc-exam-start-card cbc-exam-recovery-card">
+        <p className="cbc-exam-kicker">Unfinished exam</p>
+        <h1>Continue {exam.examTitle}?</h1>
+        <p>
+          We found an unfinished attempt from {formattedDate(session.updatedAt || session.startedAt)}.
+          You can continue from Question {(session.currentIndex || 0) + 1}, or start again.
+        </p>
+        <div className="cbc-exam-result-actions">
+          <button type="button" className="cbc-exam-button primary" onClick={onContinue}>Continue exam</button>
+          <button type="button" className="cbc-exam-button secondary" onClick={onStartAgain}>Start again</button>
+          <button type="button" className="cbc-exam-button quiet" onClick={onBack}>Back to English</button>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 function ResultView({ attempt, exam, onRetake, onHistory, onBack }) {
   const answerReview = Object.entries(attempt.answers || {});
 
@@ -143,12 +163,18 @@ export default function ExamSessionPage() {
   const [startedAt, setStartedAt] = useState('');
   const [attemptNumber, setAttemptNumber] = useState(1);
   const [result, setResult] = useState(null);
+  const [recoverySession, setRecoverySession] = useState(null);
   const activeRef = useRef(false);
   const exitSavedRef = useRef(false);
   const sessionRef = useRef({});
 
   activeRef.current = view === 'exam';
-  sessionRef.current = { answers, startedAt, attemptNumber };
+  sessionRef.current = { answers, currentIndex, startedAt, attemptNumber, timeLeftByQuestion };
+
+  const topicReturnPath = useMemo(() => buildCategoryReturnPath({
+    categoryId: exam?.category?.id,
+    topicId: exam?.topic?.id
+  }), [exam?.category?.id, exam?.topic?.id]);
 
   useEffect(() => {
     let alive = true;
@@ -162,8 +188,15 @@ export default function ExamSessionPage() {
           return;
         }
 
+        const savedSession = storageService.getActiveExamSession(foundExam.examId);
+
         setExam(foundExam);
         setHistory(storageService.getExamAttempts(foundExam.examId));
+        if (savedSession) {
+          setRecoverySession(savedSession);
+          setView('recover');
+          return;
+        }
         setView('start');
       })
       .catch((loadError) => {
@@ -184,10 +217,6 @@ export default function ExamSessionPage() {
   const remainingSeconds = currentQuestion
     ? timeLeftByQuestion[currentQuestion.id] ?? questionTimeLimit(currentQuestion)
     : 0;
-  const topicReturnPath = useMemo(() => buildCategoryReturnPath({
-    categoryId: exam?.category?.id,
-    topicId: exam?.topic?.id
-  }), [exam?.category?.id, exam?.topic?.id]);
 
   const saveAbandonedAttempt = useCallback(() => {
     if (!exam || !activeRef.current || exitSavedRef.current) return null;
@@ -205,9 +234,24 @@ export default function ExamSessionPage() {
     });
 
     storageService.addExamAttempt(exam.examId, attempt);
+    storageService.clearActiveExamSession(exam.examId);
     exitSavedRef.current = true;
     return attempt;
   }, [exam]);
+
+  useEffect(() => {
+    if (view !== 'exam') return undefined;
+
+    storageService.setActiveExamSession(exam.examId, {
+      answers,
+      currentIndex,
+      startedAt,
+      attemptNumber,
+      timeLeftByQuestion
+    });
+
+    return undefined;
+  }, [answers, attemptNumber, currentIndex, exam?.examId, startedAt, timeLeftByQuestion, view]);
 
   useEffect(() => {
     if (view !== 'exam') return undefined;
@@ -244,7 +288,7 @@ export default function ExamSessionPage() {
   }, [saveAbandonedAttempt, view]);
 
   useEffect(() => {
-    if (view !== 'exam' || !currentQuestion || currentAnswer || remainingSeconds <= 0) return undefined;
+    if (view !== 'exam' || !currentQuestion || remainingSeconds <= 0) return undefined;
 
     const timer = window.setTimeout(() => {
       setTimeLeftByQuestion((current) => ({
@@ -254,42 +298,62 @@ export default function ExamSessionPage() {
     }, 1000);
 
     return () => window.clearTimeout(timer);
-  }, [currentAnswer, currentQuestion, remainingSeconds, view]);
+  }, [currentQuestion, remainingSeconds, view]);
 
   useEffect(() => {
-    if (view !== 'exam' || !currentQuestion || currentAnswer || remainingSeconds !== 0) return;
+    if (view !== 'exam' || !currentQuestion || remainingSeconds !== 0) return;
 
-    const nextAnswers = {
-      ...answers,
-      [currentQuestion.id]: {
-        selectedAnswer: null,
-        timedOut: true
-      }
-    };
+    const nextAnswers = currentAnswer
+      ? answers
+      : {
+        ...answers,
+        [currentQuestion.id]: {
+          selectedAnswer: null,
+          timedOut: true
+        }
+      };
 
-    setAnswers(nextAnswers);
+    if (!currentAnswer) setAnswers(nextAnswers);
     if (currentIndex === exam.questions.length - 1) completeExam(nextAnswers);
     else setCurrentIndex((index) => index + 1);
   }, [answers, currentAnswer, currentIndex, currentQuestion, exam?.questions?.length, remainingSeconds, view]);
 
-  function startExam() {
-    const attempts = storageService.getExamAttempts(exam.examId);
-    const initialTimes = Object.fromEntries(
+  function initialQuestionTimes() {
+    return Object.fromEntries(
       exam.questions.map((question) => [question.id, questionTimeLimit(question)])
     );
+  }
 
+  function startExam() {
+    const attempts = storageService.getExamAttempts(exam.examId);
+
+    storageService.clearActiveExamSession(exam.examId);
     exitSavedRef.current = false;
     setAnswers({});
-    setTimeLeftByQuestion(initialTimes);
+    setTimeLeftByQuestion(initialQuestionTimes());
     setCurrentIndex(0);
     setStartedAt(new Date().toISOString());
     setAttemptNumber(attempts.length + 1);
+    setResult(null);
+    setRecoverySession(null);
+    setView('exam');
+  }
+
+  function continueExam() {
+    if (!recoverySession) return;
+
+    exitSavedRef.current = false;
+    setAnswers(recoverySession.answers || {});
+    setTimeLeftByQuestion(recoverySession.timeLeftByQuestion || initialQuestionTimes());
+    setCurrentIndex(Math.min(Math.max(Number(recoverySession.currentIndex || 0), 0), exam.questions.length - 1));
+    setStartedAt(recoverySession.startedAt || new Date().toISOString());
+    setAttemptNumber(Number(recoverySession.attemptNumber) || storageService.getExamAttempts(exam.examId).length + 1);
     setResult(null);
     setView('exam');
   }
 
   function selectAnswer(answerIndex) {
-    if (!currentQuestion || currentAnswer) return;
+    if (!currentQuestion || currentAnswer?.timedOut) return;
     setAnswers((current) => ({
       ...current,
       [currentQuestion.id]: {
@@ -314,6 +378,7 @@ export default function ExamSessionPage() {
     });
 
     storageService.addExamAttempt(exam.examId, attempt);
+    storageService.clearActiveExamSession(exam.examId);
     exam.questions.forEach((question) => storageService.markComplete(question.id));
     activeRef.current = false;
     exitSavedRef.current = true;
@@ -367,6 +432,18 @@ export default function ExamSessionPage() {
     );
   }
 
+  if (view === 'recover' && recoverySession) {
+    return (
+      <RecoveryView
+        exam={exam}
+        session={recoverySession}
+        onContinue={continueExam}
+        onStartAgain={startExam}
+        onBack={() => navigate(topicReturnPath)}
+      />
+    );
+  }
+
   if (view === 'result' && result) {
     return (
       <ResultView
@@ -402,6 +479,7 @@ export default function ExamSessionPage() {
   }
 
   const progress = Math.round(((currentIndex + 1) / exam.questions.length) * 100);
+  const questionTimedOut = Boolean(currentAnswer?.timedOut);
 
   return (
     <main className="page cbc-exam-page cbc-exam-active-page">
@@ -437,9 +515,9 @@ export default function ExamSessionPage() {
               <button
                 type="button"
                 key={`${option}-${index}`}
-                className={selected ? 'selected' : ''}
+                className={`${selected ? 'selected' : ''} ${questionTimedOut ? 'timed-out' : ''}`.trim()}
                 aria-pressed={selected}
-                disabled={Boolean(currentAnswer)}
+                disabled={questionTimedOut}
                 onClick={() => selectAnswer(index)}
               >
                 <strong>{optionLetter(index)}</strong>
@@ -450,7 +528,7 @@ export default function ExamSessionPage() {
         </div>
         {currentAnswer ? (
           <p className="cbc-exam-answer-status" role="status">
-            {currentAnswer.timedOut ? 'Time is up. Moving to the next question.' : 'Answer saved. Tap Next when you are ready.'}
+            {currentAnswer.timedOut ? 'Time is up. Moving to the next question.' : 'Answer saved. You can still change it before you finish.'}
           </p>
         ) : null}
       </section>
