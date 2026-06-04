@@ -37,3 +37,35 @@ test('exam attempts append so retakes preserve previous scores', () => {
     globalThis.localStorage = previousLocalStorage;
   }
 });
+
+test('active exam sessions can be saved, restored, and cleared', () => {
+  const previousLocalStorage = globalThis.localStorage;
+  globalThis.localStorage = memoryStorage();
+
+  try {
+    storageService.setActiveExamSession('spelling-exam-001', {
+      answers: {
+        q1: { selectedAnswer: 2, timedOut: false }
+      },
+      currentIndex: 3,
+      startedAt: '2026-06-04T10:00:00.000Z',
+      attemptNumber: 1,
+      timeLeftByQuestion: {
+        q1: 12
+      }
+    });
+
+    const session = storageService.getActiveExamSession('spelling-exam-001');
+
+    assert.equal(session.examId, 'spelling-exam-001');
+    assert.equal(session.currentIndex, 3);
+    assert.equal(session.answers.q1.selectedAnswer, 2);
+    assert.equal(session.timeLeftByQuestion.q1, 12);
+    assert.ok(session.updatedAt);
+
+    storageService.clearActiveExamSession('spelling-exam-001');
+    assert.equal(storageService.getActiveExamSession('spelling-exam-001'), null);
+  } finally {
+    globalThis.localStorage = previousLocalStorage;
+  }
+});
