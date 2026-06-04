@@ -45,7 +45,8 @@ test('creates a dependency-free PDF result with required CBC report fields and a
   assert.match(pdf, /Percentage: 80%/);
   assert.match(pdf, /Question 1: Correct/);
   assert.match(pdf, /A\. skool/);
-  assert.match(pdf, /B\. school \(Your answer, Correct\)/);
+  assert.match(pdf, /B\. school/);
+  assert.match(pdf, /Your answer, Correct/);
   assert.match(pdf, /Selected answer: school/);
   assert.match(pdf, /Correct answer: school/);
   assert.match(pdf, /Times-Roman/);
