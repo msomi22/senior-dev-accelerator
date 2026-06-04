@@ -3,7 +3,7 @@ import test from 'node:test';
 
 import { createExamResultPdf } from './examPdfService.js';
 
-test('creates a dependency-free PDF result with required CBC report fields', () => {
+test('creates a dependency-free PDF result with required CBC report fields and answers', () => {
   const pdf = createExamResultPdf({
     examId: 'spelling-exam-001',
     examTitle: 'Spelling Exam 1',
@@ -14,7 +14,20 @@ test('creates a dependency-free PDF result with required CBC report fields', () 
     incorrectCount: 3,
     unansweredCount: 1,
     totalQuestions: 20,
-    percentage: 80
+    percentage: 80,
+    answers: {
+      q1: {
+        question: 'Choose the correctly spelt word.',
+        options: ['skool', 'school', 'shool', 'scool'],
+        selectedAnswerIndex: 1,
+        selectedAnswer: 'school',
+        correctAnswerIndex: 1,
+        correctAnswer: 'school',
+        isCorrect: true,
+        timedOut: false,
+        explanation: 'school is the correct spelling.'
+      }
+    }
   }, {
     platformName: 'Qubitel Academy Platform',
     productName: 'CBC Exam Practice',
@@ -30,5 +43,11 @@ test('creates a dependency-free PDF result with required CBC report fields', () 
   assert.match(pdf, /Spelling Exam 1/);
   assert.match(pdf, /Score: 16 \/ 20/);
   assert.match(pdf, /Percentage: 80%/);
+  assert.match(pdf, /Question 1: Correct/);
+  assert.match(pdf, /A\. skool/);
+  assert.match(pdf, /B\. school \(Your answer, Correct\)/);
+  assert.match(pdf, /Selected answer: school/);
+  assert.match(pdf, /Correct answer: school/);
+  assert.match(pdf, /Times-Roman/);
   assert.ok(pdf.endsWith('%%EOF'));
 });
