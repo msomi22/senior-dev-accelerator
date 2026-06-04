@@ -69,3 +69,18 @@ test('active exam sessions can be saved, restored, and cleared', () => {
     globalThis.localStorage = previousLocalStorage;
   }
 });
+
+test('grade one voice preference defaults to female and persists male selection', () => {
+  const previousLocalStorage = globalThis.localStorage;
+  globalThis.localStorage = memoryStorage();
+
+  try {
+    assert.equal(storageService.getGradeOneVoiceType(), 'female');
+    assert.equal(storageService.setGradeOneVoiceType('male'), 'male');
+    assert.equal(storageService.getGradeOneVoiceType(), 'male');
+    assert.equal(storageService.setGradeOneVoiceType('unknown'), 'female');
+    assert.equal(storageService.getGradeOneVoiceType(), 'female');
+  } finally {
+    globalThis.localStorage = previousLocalStorage;
+  }
+});

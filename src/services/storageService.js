@@ -9,6 +9,7 @@ const defaults = {
   timedQuestionAttempts: {},
   examAttempts: {},
   activeExamSessions: {},
+  grade1VoiceType: 'female',
   complexDesignSubmissions: {}
 };
 
@@ -127,6 +128,14 @@ export const storageService = {
     delete activeExamSessions[examId];
     this.write({ activeExamSessions });
     return activeExamSessions;
+  },
+  setGradeOneVoiceType(voiceType) {
+    const grade1VoiceType = voiceType === 'male' ? 'male' : 'female';
+    this.write({ grade1VoiceType });
+    return grade1VoiceType;
+  },
+  getGradeOneVoiceType() {
+    return this.read().grade1VoiceType === 'male' ? 'male' : 'female';
   },
   setComplexDesignSubmission(questionId, submission) {
     const state = this.read();

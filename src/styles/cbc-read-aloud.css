@@ -1,0 +1,81 @@
+.cbc-read-aloud-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--line, var(--border)) 70%, #2f7d57 24%);
+  border-radius: 16px;
+  background: color-mix(in srgb, #2f7d57 9%, var(--card, var(--bg-card)) 91%);
+}
+
+.cbc-read-aloud-panel > div {
+  display: grid;
+  gap: 5px;
+}
+
+.cbc-read-aloud-panel p {
+  margin: 0;
+  color: var(--muted, var(--text-secondary));
+  font-size: 0.84rem;
+}
+
+.cbc-read-aloud-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #2f7d57;
+  border-radius: 999px;
+  background: #2f7d57;
+  color: #fff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgb(47 125 87 / 0.22);
+}
+
+.cbc-read-aloud-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.cbc-read-aloud-voice-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted, var(--text-secondary));
+  font-weight: 800;
+}
+
+.cbc-read-aloud-voice-select select {
+  min-height: 38px;
+  padding: 0 34px 0 12px;
+  border: 1px solid color-mix(in srgb, var(--line, var(--border)) 72%, #2f7d57 20%);
+  border-radius: 999px;
+  background: var(--card, var(--bg-card));
+  color: var(--text, var(--text-primary));
+  font: inherit;
+  font-weight: 850;
+}
+
+@media (max-width: 560px) {
+  .cbc-read-aloud-panel,
+  .cbc-read-aloud-panel > div,
+  .cbc-read-aloud-button,
+  .cbc-read-aloud-voice-select {
+    width: 100%;
+  }
+
+  .cbc-read-aloud-button,
+  .cbc-read-aloud-voice-select {
+    justify-content: center;
+  }
+
+  .cbc-read-aloud-voice-select select {
+    flex: 1;
+  }
+}
