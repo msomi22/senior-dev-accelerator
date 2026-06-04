@@ -19,11 +19,10 @@
   "dependencies": {
     "@vitejs/plugin-react": "latest",
     "compromise": "latest",
-    "fuzzball": "latest",
-    "vite": "latest",
+    "fuzzball": "^2.2.6",
     "react": "latest",
     "react-dom": "latest",
-    "react-router-dom": "latest"
-  },
-  "devDependencies": {}
+    "react-router-dom": "latest",
+    "vite": "latest"
+  }
 }
