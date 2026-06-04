@@ -1,0 +1,250 @@
+.app-shell.exam-route-shell .exam-route-layout .page-wrap {
+  padding: clamp(10px, 2vw, 24px) !important;
+}
+
+.app-shell .cbc-exam-page,
+.app-shell.light .cbc-exam-page,
+.app-shell.dark .cbc-exam-page {
+  width: min(840px, 100%) !important;
+  max-width: 840px !important;
+  gap: 12px !important;
+  padding-bottom: 20px !important;
+}
+
+.cbc-exam-start-card,
+.cbc-exam-result-card {
+  gap: 12px !important;
+  padding: clamp(18px, 4vw, 36px) !important;
+}
+
+.cbc-exam-start-card h1,
+.cbc-exam-result-card h1 {
+  font-size: clamp(1.5rem, 5vw, 2.65rem) !important;
+}
+
+.cbc-exam-session-head {
+  gap: 10px !important;
+  padding: 14px 16px !important;
+}
+
+.cbc-exam-session-head h1 {
+  font-size: clamp(1.08rem, 3vw, 1.65rem) !important;
+}
+
+.cbc-exam-timer {
+  min-width: 82px !important;
+  padding: 7px 10px !important;
+}
+
+.cbc-exam-timer strong {
+  font-size: 1.12rem !important;
+}
+
+.cbc-exam-button,
+.cbc-exam-leave,
+.cbc-exam-history button {
+  min-height: 40px !important;
+  padding-inline: 14px !important;
+  border-radius: 12px !important;
+}
+
+.cbc-exam-question-card {
+  gap: 13px !important;
+  padding: clamp(14px, 3vw, 26px) !important;
+}
+
+.cbc-exam-objective,
+.cbc-exam-answer-status {
+  padding: 8px 11px !important;
+  border-radius: 12px !important;
+}
+
+.cbc-exam-question-card h2 {
+  font-size: clamp(1.16rem, 3.5vw, 1.78rem) !important;
+}
+
+.cbc-exam-options {
+  gap: 9px !important;
+}
+
+.cbc-exam-options button {
+  grid-template-columns: 32px minmax(0, 1fr) !important;
+  gap: 9px !important;
+  min-height: 58px !important;
+  padding: 9px 11px !important;
+  border-radius: 14px !important;
+  font-size: clamp(0.98rem, 2.4vw, 1.12rem) !important;
+}
+
+.cbc-exam-options button strong {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.cbc-exam-options button.timed-out:not(.selected) {
+  opacity: 0.5 !important;
+}
+
+.cbc-exam-score strong {
+  font-size: clamp(2.2rem, 8vw, 4.4rem) !important;
+}
+
+.cbc-exam-history,
+.cbc-answer-review {
+  gap: 12px !important;
+  padding: clamp(14px, 3vw, 22px) !important;
+}
+
+.cbc-answer-review-list article,
+.cbc-exam-history-list article {
+  padding: 12px !important;
+  border-radius: 12px !important;
+}
+
+@media (max-width: 700px) {
+  .app-shell.exam-route-shell .exam-route-layout .page-wrap {
+    padding: 8px !important;
+  }
+
+  .app-shell .cbc-exam-page,
+  .app-shell.light .cbc-exam-page,
+  .app-shell.dark .cbc-exam-page {
+    gap: 8px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .cbc-exam-start-card,
+  .cbc-exam-result-card {
+    gap: 9px !important;
+    padding: 14px 11px !important;
+  }
+
+  .cbc-exam-start-card h1,
+  .cbc-exam-result-card h1 {
+    font-size: clamp(1.3rem, 7vw, 1.85rem) !important;
+  }
+
+  .cbc-exam-start-card > p:not(.cbc-exam-kicker),
+  .cbc-exam-result-card > p {
+    font-size: 0.92rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .cbc-exam-start-stats,
+  .cbc-exam-result-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+  }
+
+  .cbc-exam-start-stats span,
+  .cbc-exam-result-stats span {
+    min-height: 46px !important;
+    padding: 6px 4px !important;
+    font-size: 0.76rem !important;
+  }
+
+  .cbc-exam-start-stats strong,
+  .cbc-exam-result-stats strong {
+    font-size: 0.98rem !important;
+  }
+
+  .cbc-exam-session-head {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 7px !important;
+    padding: 9px !important;
+  }
+
+  .cbc-exam-session-head h1 {
+    font-size: 1.03rem !important;
+  }
+
+  .cbc-exam-timer {
+    min-width: 68px !important;
+    padding: 5px 7px !important;
+  }
+
+  .cbc-exam-timer strong {
+    font-size: 0.98rem !important;
+  }
+
+  .cbc-exam-leave {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-height: 33px !important;
+  }
+
+  .cbc-exam-progress {
+    height: 6px !important;
+  }
+
+  .cbc-exam-question-card {
+    gap: 9px !important;
+    padding: 11px !important;
+  }
+
+  .cbc-exam-objective,
+  .cbc-exam-answer-status {
+    padding: 7px 9px !important;
+    font-size: 0.87rem !important;
+  }
+
+  .cbc-exam-question-card h2 {
+    font-size: 1.14rem !important;
+  }
+
+  .cbc-exam-options {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 7px !important;
+  }
+
+  .cbc-exam-options button {
+    grid-template-columns: 28px minmax(0, 1fr) !important;
+    gap: 8px !important;
+    min-height: 50px !important;
+    padding: 8px 9px !important;
+    border-radius: 12px !important;
+    font-size: 0.98rem !important;
+  }
+
+  .cbc-exam-options button strong {
+    width: 27px !important;
+    height: 27px !important;
+  }
+
+  .cbc-exam-navigation {
+    padding: 5px !important;
+    border-radius: 13px !important;
+  }
+
+  .cbc-exam-navigation .cbc-exam-button {
+    min-height: 37px !important;
+  }
+
+  .cbc-exam-score strong {
+    font-size: 2.2rem !important;
+  }
+
+  .cbc-exam-result-actions {
+    width: 100% !important;
+  }
+
+  .cbc-exam-result-actions .cbc-exam-button {
+    flex: 1 1 138px !important;
+  }
+
+  .cbc-answer-review-list {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .cbc-exam-history,
+  .cbc-answer-review {
+    padding: 11px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .cbc-exam-start-stats,
+  .cbc-exam-result-stats {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
