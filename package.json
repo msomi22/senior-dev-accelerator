@@ -12,8 +12,8 @@
     "preview": "vite preview",
     "lint": "npm run build",
     "test": "node --test",
-    "test:unit": "node --test src/config/*.test.js src/problems/*.test.js src/services/*.test.js src/utils/*.test.js src/utils/**/*.test.js",
-    "test:integration": "node --test src/config/*.test.js src/services/*.test.js src/utils/*.test.js",
+    "test:unit": "node --test src/config/*.test.js src/config/*.test.ts src/problems/*.test.js src/services/*.test.js src/utils/*.test.js src/utils/**/*.test.js",
+    "test:integration": "node --test src/config/*.test.js src/config/*.test.ts src/services/*.test.js src/utils/*.test.js",
     "test:ci": "node --test"
   },
   "dependencies": {
@@ -25,5 +25,7 @@
     "react-dom": "latest",
     "react-router-dom": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "typescript": "latest"
+  }
 }
