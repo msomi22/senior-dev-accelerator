@@ -69,6 +69,14 @@ function isEntryComplete(question, completed) {
   return question.examQuestions.every((examQuestion) => completed[examQuestion.id]);
 }
 
+function examQuestionCount(entry) {
+  return entry?.examQuestions?.length || 0;
+}
+
+function examStatusLabel(entry, completed) {
+  return isEntryComplete(entry, completed) ? 'Completed' : 'Ready';
+}
+
 function TopicMetadataList({ className, items }) {
   if (!hasListItems(items)) return null;
   return <ul className={className}>{items.map((item) => <li key={item}>{item}</li>)}</ul>;
@@ -109,6 +117,39 @@ function TopicLearningGuide({ topic }) {
   );
 }
 
+function TopicAssessments({ assessments, completed, onOpen }) {
+  if (!assessments.length) return null;
+
+  return (
+    <section className="topic-assessment-panel" aria-labelledby="topic-assessments-heading">
+      <div className="topic-assessment-head">
+        <div>
+          <p className="eyebrow">Assessments</p>
+          <h3 id="topic-assessments-heading">Available quizzes</h3>
+        </div>
+        <span>{assessments.length} available</span>
+      </div>
+      <div className="topic-assessment-grid">
+        {assessments.map((assessment) => (
+          <button
+            key={assessment.id}
+            type="button"
+            className={`topic-assessment-card ${isEntryComplete(assessment, completed) ? 'is-complete' : ''}`}
+            onClick={() => onOpen(assessment)}
+          >
+            <span className="topic-assessment-icon" aria-hidden="true">📝</span>
+            <span className="topic-assessment-copy">
+              <strong>{assessment.title}</strong>
+              <small>{examQuestionCount(assessment)} questions • {assessment.estimatedTime}</small>
+            </span>
+            <span className="topic-assessment-status">{examStatusLabel(assessment, completed)}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function TopicSection({
   topic,
   questions,
@@ -125,11 +166,10 @@ function TopicSection({
   const isControlled = typeof currentPage === 'number';
 
   const safeQuestions = questions || topic.questions || [];
-  const orderedQuestions = useMemo(
-    () => createExamEntries(safeQuestions).sort(compareProblemsBySequence),
-    [safeQuestions]
-  );
-  const itemLabel = orderedQuestions.some(isExamEntry) ? 'activities' : 'questions';
+  const allTopicItems = useMemo(() => createExamEntries(safeQuestions).sort(compareProblemsBySequence), [safeQuestions]);
+  const assessments = useMemo(() => allTopicItems.filter(isExamEntry), [allTopicItems]);
+  const orderedQuestions = useMemo(() => allTopicItems.filter((item) => !isExamEntry(item)), [allTopicItems]);
+  const itemLabel = 'questions';
 
   const pageSize = Math.max(1, performanceConfig.questionsPerPage);
   const totalQuestions = orderedQuestions.length;
@@ -181,6 +221,8 @@ function TopicSection({
 
   return (
     <section className="topic-section premium-question-section premium-topic-detail" ref={sectionRef}>
+      <TopicAssessments assessments={assessments} completed={completed} onOpen={openFocusedProblem} />
+
       {totalQuestions === 0 ? (
         <div className="empty-state glass-lite premium-question-empty"><h3>No questions found</h3><p>Try another difficulty or clear the filter.</p></div>
       ) : (
@@ -191,9 +233,9 @@ function TopicSection({
             {visibleQuestions.map((question, index) => {
               const questionNumber = pageStart + index + 1;
               const isCompleted = isEntryComplete(question, completed);
-              const actionLabel = isExamEntry(question) ? `Start ${question.title}` : `Open ${question.title} in focused workspace`;
+              const actionLabel = `Open ${question.title} in focused workspace`;
               return (
-                <div key={question.id} role="button" tabIndex={0} className={`premium-question-row premium-question-row--item ${isExamEntry(question) ? 'is-exam-entry' : ''} ${isCompleted ? 'is-complete' : ''}`} aria-label={actionLabel} onClick={(event) => { if (shouldIgnoreCardNavigation(event)) return; openFocusedProblem(question); }} onKeyDown={(event) => { if (event.key !== 'Enter' && event.key !== ' ') return; if (shouldIgnoreCardNavigation(event)) return; event.preventDefault(); openFocusedProblem(question); }}>
+                <div key={question.id} role="button" tabIndex={0} className={`premium-question-row premium-question-row--item ${isCompleted ? 'is-complete' : ''}`} aria-label={actionLabel} onClick={(event) => { if (shouldIgnoreCardNavigation(event)) return; openFocusedProblem(question); }} onKeyDown={(event) => { if (event.key !== 'Enter' && event.key !== ' ') return; if (shouldIgnoreCardNavigation(event)) return; event.preventDefault(); openFocusedProblem(question); }}>
                   <span className="premium-question-number">{questionNumber}</span>
                   <span className="premium-question-title">{question.title}</span>
                   <span className={`pill ${difficultyClassName(question.difficulty)}`}>{question.difficulty || 'Practice'}</span>
