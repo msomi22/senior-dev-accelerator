@@ -185,6 +185,7 @@ export default function ProblemPage() {
     questionType: entry.question.type,
     interactionType: entry.question.interactionType || entry.question.metadata?.interactionType
   });
+  const rendererOwnsQuestionNavigation = activeAcademy.id === 'cbc' && categoryId === 'grade-1';
 
   const problemTags = uniqueItems([
     { label: entry.question.difficulty, type: 'difficulty' },
@@ -251,7 +252,7 @@ export default function ProblemPage() {
         />
       ) : (
         <>
-          <QuestionNavigationControls navigation={questionNavigation} className="question-navigation-top" />
+          {!rendererOwnsQuestionNavigation ? <QuestionNavigationControls navigation={questionNavigation} className="question-navigation-top" /> : null}
           <QuestionRenderer
             question={entry.question}
             completed={isComplete}
@@ -260,7 +261,7 @@ export default function ProblemPage() {
             navigation={questionNavigation}
             hideTopline
           />
-          <QuestionNavigationControls navigation={questionNavigation} className="question-navigation-bottom" />
+          {!rendererOwnsQuestionNavigation ? <QuestionNavigationControls navigation={questionNavigation} className="question-navigation-bottom" /> : null}
         </>
       )}
     </main>
