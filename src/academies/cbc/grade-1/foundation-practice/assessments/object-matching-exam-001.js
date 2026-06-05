@@ -5,21 +5,21 @@ function emoji(value) {
 }
 
 const items = [
-  ['apple', '🍎', ['apple', 'banana', 'cup'], ['🍎', '🍌', '🥤'], 'Choose the apple.'],
-  ['cat', '🐱', ['cat', 'car', 'cup'], ['🐱', '🚗', '🥤'], 'Choose the word cat.'],
-  ['ball', '⚽', ['ball', 'book', 'bird'], ['⚽', '📚', '🐦'], 'Choose the picture that matches ball.'],
-  ['dog', '🐶', ['dog', 'duck', 'door'], ['🐶', '🦆', '🚪'], 'Choose the dog.'],
-  ['book', '📚', ['bag', 'book', 'box'], ['🎒', '📚', '📦'], 'Choose the word book.'],
-  ['banana', '🍌', ['banana', 'apple', 'fish'], ['🍌', '🍎', '🐟'], 'Choose the banana.'],
-  ['sun', '☀️', ['star', 'sun', 'moon'], ['⭐', '☀️', '🌙'], 'Choose the picture that matches sun.'],
-  ['flower', '🌸', ['flower', 'fish', 'frog'], ['🌸', '🐟', '🐸'], 'Choose the flower.'],
-  ['house', '🏠', ['house', 'horse', 'hat'], ['🏠', '🐴', '🎩'], 'Choose the house.'],
-  ['car', '🚗', ['cat', 'cup', 'car'], ['🐱', '🥤', '🚗'], 'Choose the word car.'],
-  ['fish', '🐟', ['fish', 'flower', 'frog'], ['🐟', '🌸', '🐸'], 'Choose the fish.'],
-  ['pencil', '✏️', ['pencil', 'paper', 'plate'], ['✏️', '📄', '🍽️'], 'Choose the pencil.'],
-  ['cup', '🥤', ['cap', 'cup', 'cat'], ['🧢', '🥤', '🐱'], 'Choose the cup.'],
-  ['rabbit', '🐰', ['rabbit', 'robot', 'rain'], ['🐰', '🤖', '🌧️'], 'Choose the rabbit.'],
-  ['chair', '🪑', ['chair', 'table', 'bed'], ['🪑', '🪵', '🛏️'], 'Choose the picture that matches chair.']
+  ['apple', '🍎', ['apple', 'banana', 'cup', 'book'], ['🍎', '🍌', '🥤', '📚'], 'Choose the apple.'],
+  ['cat', '🐱', ['cat', 'car', 'cup', 'dog'], ['🐱', '🚗', '🥤', '🐶'], 'Choose the word cat.'],
+  ['ball', '⚽', ['ball', 'book', 'bird', 'bag'], ['⚽', '📚', '🐦', '🎒'], 'Choose the picture that matches ball.'],
+  ['dog', '🐶', ['dog', 'duck', 'door', 'cat'], ['🐶', '🦆', '🚪', '🐱'], 'Choose the dog.'],
+  ['book', '📚', ['bag', 'book', 'box', 'ball'], ['🎒', '📚', '📦', '⚽'], 'Choose the word book.'],
+  ['banana', '🍌', ['banana', 'apple', 'fish', 'cup'], ['🍌', '🍎', '🐟', '🥤'], 'Choose the banana.'],
+  ['sun', '☀️', ['star', 'sun', 'moon', 'cloud'], ['⭐', '☀️', '🌙', '☁️'], 'Choose the picture that matches sun.'],
+  ['flower', '🌸', ['flower', 'fish', 'frog', 'sun'], ['🌸', '🐟', '🐸', '☀️'], 'Choose the flower.'],
+  ['house', '🏠', ['house', 'horse', 'hat', 'car'], ['🏠', '🐴', '🎩', '🚗'], 'Choose the house.'],
+  ['car', '🚗', ['cat', 'cup', 'car', 'bus'], ['🐱', '🥤', '🚗', '🚌'], 'Choose the word car.'],
+  ['fish', '🐟', ['fish', 'flower', 'frog', 'bird'], ['🐟', '🌸', '🐸', '🐦'], 'Choose the fish.'],
+  ['pencil', '✏️', ['pencil', 'paper', 'plate', 'book'], ['✏️', '📄', '🍽️', '📚'], 'Choose the pencil.'],
+  ['cup', '🥤', ['cap', 'cup', 'cat', 'car'], ['🧢', '🥤', '🐱', '🚗'], 'Choose the cup.'],
+  ['rabbit', '🐰', ['rabbit', 'robot', 'rain', 'cat'], ['🐰', '🤖', '🌧️', '🐱'], 'Choose the rabbit.'],
+  ['chair', '🪑', ['chair', 'table', 'bed', 'house'], ['🪑', '🪵', '🛏️', '🏠'], 'Choose the picture that matches chair.']
 ];
 
 const questions = items.map(([answer, promptIcon, options, optionIcons, questionText], index) => defineMcqProblem({
