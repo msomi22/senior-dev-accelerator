@@ -32,6 +32,7 @@ export default function ReadAloudButton({ question, className = '' }) {
   }, []);
 
   useEffect(() => {
+    readAloudService.stop();
     return () => readAloudService.stop();
   }, [questionId]);
 
@@ -39,6 +40,7 @@ export default function ReadAloudButton({ question, className = '' }) {
     if (!enabled || !supported || !shouldAutoRead(question)) return undefined;
 
     const timer = window.setTimeout(() => {
+      readAloudService.stop();
       readAloudService.speak(readText, {
         voiceType,
         readOptionsAloud: shouldReadOptions(question),
@@ -55,6 +57,7 @@ export default function ReadAloudButton({ question, className = '' }) {
   if (!enabled) return null;
 
   function handleReadAgain() {
+    readAloudService.stop();
     readAloudService.speak(readText, {
       voiceType,
       readOptionsAloud: shouldReadOptions(question),
