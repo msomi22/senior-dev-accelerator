@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import ReadAloudButton from '../../cbc/ReadAloudButton.jsx';
 import { storageService } from '../../../services/storageService.js';
@@ -20,11 +21,58 @@ function friendlyPrompt(question) {
   return question?.question || question?.prompt || question?.readAloudText || question?.title || 'Choose the correct answer.';
 }
 
+function navigationState(navigation) {
+  return navigation?.returnToCategory ? { returnToCategory: navigation.returnToCategory } : undefined;
+}
+
+function CbcGradeOneNavigation({ navigation }) {
+  if (!navigation?.previousQuestion && !navigation?.nextQuestion) return null;
+
+  const currentNumber = Number.isInteger(navigation.currentIndex) && navigation.currentIndex >= 0
+    ? navigation.currentIndex + 1
+    : null;
+
+  return (
+    <nav className="cbc-grade-one-nav" aria-label="Grade 1 question navigation">
+      {navigation.previousQuestion ? (
+        <NavLink
+          className="cbc-grade-one-nav-button previous"
+          to={`/problem/${encodeURIComponent(navigation.previousQuestion.id)}`}
+          state={navigationState(navigation)}
+          aria-label={`Previous question: ${navigation.previousQuestion.title}`}
+        >
+          <span aria-hidden="true">←</span>
+          <strong>Previous</strong>
+        </NavLink>
+      ) : <span className="cbc-grade-one-nav-placeholder" aria-hidden="true" />}
+
+      {currentNumber && navigation.total ? (
+        <span className="cbc-grade-one-nav-progress" aria-label={`Question ${currentNumber} of ${navigation.total}`}>
+          {currentNumber} / {navigation.total}
+        </span>
+      ) : null}
+
+      {navigation.nextQuestion ? (
+        <NavLink
+          className="cbc-grade-one-nav-button next"
+          to={`/problem/${encodeURIComponent(navigation.nextQuestion.id)}`}
+          state={navigationState(navigation)}
+          aria-label={`Next question: ${navigation.nextQuestion.title}`}
+        >
+          <strong>Next</strong>
+          <span aria-hidden="true">→</span>
+        </NavLink>
+      ) : <span className="cbc-grade-one-nav-placeholder" aria-hidden="true" />}
+    </nav>
+  );
+}
+
 export default function CbcGradeOneQuestionRenderer({
   question,
   completed,
   onToggle,
-  onMarkComplete
+  onMarkComplete,
+  navigation
 }) {
   const [selected, setSelected] = useState(() => storageService.getSelectedAnswer(question.id));
   const answered = selected !== null;
@@ -98,6 +146,8 @@ export default function CbcGradeOneQuestionRenderer({
           <button type="button" onClick={handleReset}>Try again</button>
         </div>
       ) : null}
+
+      <CbcGradeOneNavigation navigation={navigation} />
     </article>
   );
 }

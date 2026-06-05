@@ -3,7 +3,6 @@ import { NavLink, useLocation, useParams } from 'react-router-dom';
 
 import LoadingCard from '../components/LoadingCard.jsx';
 import ComplexSystemDesignProblem from '../components/problems/ComplexSystemDesignProblem.jsx';
-import QuestionNavigationControls from '../components/question-renderers/shared/QuestionNavigationControls.jsx';
 import { getQuestionRenderer } from '../components/question-renderers/registry/questionRendererRegistry.js';
 import { getActiveAcademy } from '../config/detectAcademy.ts';
 
@@ -250,18 +249,14 @@ export default function ProblemPage() {
           onMarkComplete={handleMarkComplete}
         />
       ) : (
-        <>
-          <QuestionNavigationControls navigation={questionNavigation} className="question-navigation-top" />
-          <QuestionRenderer
-            question={entry.question}
-            completed={isComplete}
-            onToggle={handleCompletionClick}
-            onMarkComplete={handleMarkComplete}
-            navigation={questionNavigation}
-            hideTopline
-          />
-          <QuestionNavigationControls navigation={questionNavigation} className="question-navigation-bottom" />
-        </>
+        <QuestionRenderer
+          question={entry.question}
+          completed={isComplete}
+          onToggle={handleCompletionClick}
+          onMarkComplete={handleMarkComplete}
+          navigation={questionNavigation}
+          hideTopline
+        />
       )}
     </main>
   );
