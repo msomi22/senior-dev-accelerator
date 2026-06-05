@@ -537,7 +537,6 @@ export default function ExamSessionPage() {
   const questionTimedOut = Boolean(currentAnswer?.timedOut);
   const promptVisual = promptVisualFor(currentQuestion);
   const visualQuestion = hasVisualMcq(currentQuestion);
-  const phonics = currentQuestion?.metadata?.phonics;
 
   return (
     <main className="page cbc-exam-page cbc-exam-active-page">
@@ -566,13 +565,6 @@ export default function ExamSessionPage() {
       <section className={`cbc-exam-question-card ${visualQuestion ? 'visual-mcq' : ''}`.trim()}>
         <p className="cbc-exam-objective">{currentQuestion.body?.[0]?.content || `I can complete ${skillDisplayName(exam).toLowerCase()} questions.`}</p>
         <h2>{currentQuestion.question}</h2>
-        {phonics ? (
-          <div className="cbc-exam-phonics-chip" aria-label={`Phonics sound ${phonics.sound}`}>
-            <span>{phonics.letter}</span>
-            <strong>{phonics.sound}</strong>
-            <small>{phonics.exampleWord ? `as in ${phonics.exampleWord}` : 'phonics sound'}</small>
-          </div>
-        ) : null}
         <ReadAloudButton question={{ ...currentQuestion, autoReadAloud: false }} className="cbc-exam-read-aloud" />
         {promptVisual ? (
           <div className="cbc-exam-prompt-visual" aria-label="Question visual">
