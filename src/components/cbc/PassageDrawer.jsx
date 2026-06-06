@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import PassageReadAloudControls from './PassageReadAloudControls.jsx';
 
 export function formatPassageTime(totalSeconds = 0) {
