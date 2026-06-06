@@ -72,6 +72,7 @@ export default function PassageDrawer({
         <PassageReadAloudControls
           sentences={passage?.sentences || []}
           lang={lang}
+          preferredVoiceNames={preferredVoiceNames}
           onActiveSentenceChange={onActiveSentenceChange}
           className="cbc-passage-drawer-read-aloud"
         />

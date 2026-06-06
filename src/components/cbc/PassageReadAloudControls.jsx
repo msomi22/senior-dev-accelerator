@@ -18,6 +18,7 @@ export default function PassageReadAloudControls({
   sentences = [],
   lang = 'en-US',
   voiceType = 'female',
+  preferredVoiceNames = [],
   onActiveSentenceChange,
   className = ''
 }) {
@@ -59,9 +60,19 @@ export default function PassageReadAloudControls({
     const utterance = new Utterance(sentence.text);
     utterance.lang = activeLang;
     utterance.rate = rateForSpeed(speedRef.current);
-    utterance.pitch = 1.05;
+    
+    const isEnglish = activeLang.toLowerCase().startsWith('en');
+    utterance.pitch = isEnglish ? 1.05 : 1;
+    
+    const availableVoices = synth.getVoices?.() || [];
 
-    const voice = pickPreferredVoice(synth.getVoices?.() || [], voiceType, activeLang);
+    const preferredVoice = availableVoices.find((voice) =>
+      preferredVoiceNames.some((name) =>
+        voice.name.toLowerCase() === name.toLowerCase()
+      )
+    );
+    
+    const voice = preferredVoice || pickPreferredVoice(availableVoices, voiceType, activeLang);
     if (voice) utterance.voice = voice;
 
     utterance.onend = () => {
