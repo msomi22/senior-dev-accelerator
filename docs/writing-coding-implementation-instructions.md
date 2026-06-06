@@ -16,12 +16,6 @@ Do **not** push an instruction file to the repository unless the user explicitly
 
 Inline code examples are allowed inside the one Markdown block, but avoid nested fenced code blocks where possible. Use indented code blocks or plain text labels inside the main block so the copy-ready block remains easy to paste.
 
-## Mandatory first execution step for coding agents
-
-When an implementer, coding agent, or assistant is asked to execute coding implementation instructions, the chat name instruction must be handled before any other action.
-
-This means the first assistant response after receiving the implementation request must:
-
 ## Required structure
 
 Every implementation instruction should include these sections in this order.
@@ -207,13 +201,6 @@ Examples:
 
 Before posting implementation instructions, confirm:
 
-- [ ] The first generated line is `Required ChatGPT chat name: #<issue-number> — <short description>`.
-- [ ] The chat name is marked as required, not merely suggested.
-- [ ] The first section inside the Markdown block is `## 1. Chat Naming`.
-- [ ] The same required ChatGPT chat name appears inside that first Markdown section.
-- [ ] The first instruction explicitly says chat naming must happen before any repository, GitHub, branch, file, or coding work.
-- [ ] The instruction tells coding agents not to call tools or inspect context before surfacing the required chat name.
-- [ ] The instruction explains that if the assistant cannot rename ChatGPT directly, it must ask the user to rename the conversation manually first.
 - [ ] The final answer is one complete Markdown code block for one-click copying.
 - [ ] The target branch is named.
 - [ ] The task issue is linked.
@@ -236,20 +223,14 @@ Before posting implementation instructions, confirm:
 
 ## Preferred instruction template
 
-When producing the final answer in chat, first write the required ChatGPT chat name as plain text, then put the entire instruction inside a single `md` code block.
+When producing the final answer in chat, put the entire instruction inside a single `md` code block.
 
-    Required ChatGPT chat name: #<number> — <Short Title>
+    Issue: #<number> — <Short Title>
 
     Here is the copy-ready coding instruction:
 
     ```md
     # Coding Implementation Instruction: Issue #<number> — <Short Title>
-
-    ## 1. Chat Naming
-
-    Required ChatGPT chat name: #<number> — <Short Title>
-
-    Before doing any implementation work, rename this ChatGPT conversation/thread to the exact name above.
 
     If the assistant or coding agent cannot rename the conversation directly, it must first surface this name to the user and ask the user to rename the conversation manually before continuing.
 
