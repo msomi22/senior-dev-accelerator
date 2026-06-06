@@ -93,7 +93,8 @@ const timedComprehensionExam = {
   readAloud: {
     enabled: true,
     highlightCurrentSentence: true,
-    lang: 'sw-KE'
+    lang: 'sw-KE',
+    preferredVoiceNames: ['Google US English']
   },
   passage: safariYaAminaPassage
 };

@@ -1,6 +1,10 @@
 const FEMALE_HINTS = ['female', 'samantha', 'zira', 'susan', 'karen', 'victoria', 'moira', 'tessa', 'serena', 'ava'];
 const MALE_HINTS = ['male', 'david', 'daniel', 'alex', 'fred', 'tom', 'arthur', 'george'];
 
+const ENGLISH_PREFERRED_VOICE_NAMES = [
+  'Google US English'
+];
+
 function normalize(value) {
   return String(value || '').toLowerCase();
 }
@@ -24,12 +28,30 @@ export function pickPreferredVoice(voices = [], voiceType = 'female', lang = 'en
   if (!rows.length) return null;
 
   const hints = voiceType === 'male' ? MALE_HINTS : FEMALE_HINTS;
-  const languagePrefix = normalize(lang).split('-')[0];
-  const languageMatches = rows.filter((voice) => normalize(voice?.lang).startsWith(languagePrefix));
-  const candidates = languageMatches.length ? languageMatches : rows;
+  const normalizedLang = normalize(lang);
+  const languagePrefix = normalizedLang.split('-')[0];
+
+  const exactLanguageMatches = rows.filter((voice) => normalize(voice?.lang) === normalizedLang);
+  const prefixLanguageMatches = rows.filter((voice) => normalize(voice?.lang).startsWith(languagePrefix));
+  const languageMatches = exactLanguageMatches.length ? exactLanguageMatches : prefixLanguageMatches;
+
+  const isEnglish = languagePrefix === 'en';
+
+  if (isEnglish) {
+    const preferredEnglishVoice = rows.find((voice) =>
+      ENGLISH_PREFERRED_VOICE_NAMES.some((name) =>
+        normalize(voice?.name) === normalize(name)
+      )
+    );
+
+    if (preferredEnglishVoice) return preferredEnglishVoice;
+  }
+
+  const candidates = languageMatches.length ? languageMatches : isEnglish ? rows : [];
+
+  if (!candidates.length) return null;
 
   return candidates.find((voice) => voiceMatches(voice, hints))
-    || candidates.find((voice) => normalize(voice?.lang).startsWith(languagePrefix))
     || candidates[0]
     || null;
 }

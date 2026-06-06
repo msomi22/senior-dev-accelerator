@@ -246,11 +246,12 @@ function TimedComprehensionReadingView({
           <button type="button" className="cbc-exam-button quiet" onClick={onBack}>Back to {topicDisplayName(exam)}</button>
         </div>
       </section>
-
+      
       <PassageReadAloudControls
-      sentences={config.passage?.sentences || []}
-      lang={config.readAloud?.lang || 'en-US'}
-      onActiveSentenceChange={onActiveSentenceChange}
+        sentences={config.passage?.sentences || []}
+        lang={config.readAloud?.lang || 'en-US'}
+        preferredVoiceNames={config.readAloud?.preferredVoiceNames || []}
+        onActiveSentenceChange={onActiveSentenceChange}
       />
 
       <ReadingPassage
@@ -853,6 +854,7 @@ export default function ExamSessionPage() {
           onActiveSentenceChange={setActivePassageSentenceId}
           onClose={() => setPassageOpen(false)}
           lang={comprehensionConfig?.readAloud?.lang || 'en-US'}
+          preferredVoiceNames={comprehensionConfig?.readAloud?.preferredVoiceNames || []}
         />
       ) : null}
     </main>
