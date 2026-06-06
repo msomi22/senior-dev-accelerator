@@ -144,6 +144,72 @@ Each exam has:
 
 ---
 
+
+# Spelling Exam 11 — Random Super Hard
+
+**Exam ID:** `grade-3-spelling-random-super-hard-exam-011`
+**Title:** `Grade 3 Spelling Exam 11: Random Super Hard`
+**Theme:** Confusing word pairs and tricky spelling
+**Questions:** 20
+**Time per question:** 30 seconds
+
+| #  | Question                                             | A          | B           | C           | D           | Answer |
+| -- | ---------------------------------------------------- | ---------- | ----------- | ----------- | ----------- | ------ |
+| 1  | Complete: I need more ____ before the spelling test. | practise   | practice    | praktice    | practis     | B      |
+| 2  | Complete: Please ____ your friend to read slowly.    | advice     | advise      | advize      | advese      | B      |
+| 3  | Complete: My teacher gave me good ____.              | advise     | advize      | advice      | advese      | C      |
+| 4  | Complete: The rain will ____ our game.               | effect     | afect       | affect      | affact      | C      |
+| 5  | Complete: The medicine had a good ____.              | affect     | efect       | effect      | effact      | C      |
+| 6  | Complete: Put your books over ____.                  | their      | there       | they’re     | thier       | B      |
+| 7  | Complete: The learners carried ____ bags.            | there      | they’re     | thier       | their       | D      |
+| 8  | Complete: ____ going to the library now.             | Their      | There       | They’re     | Thier       | C      |
+| 9  | Complete: I do not know ____ it will rain today.     | weather    | whether     | wether      | weathar     | B      |
+| 10 | Complete: The ____ is cold and windy.                | whether    | wether      | weather     | weathar     | C      |
+| 11 | Complete: The school ____ spoke during assembly.     | principle  | principal   | prinsipal   | principel   | B      |
+| 12 | Complete: Honesty is an important ____.              | principal  | prinsiple   | principle   | principel   | C      |
+| 13 | Complete: I bought ____ for writing letters.         | stationary | stationery  | stationerry | stashionery | B      |
+| 14 | Complete: The parked car was ____.                   | stationery | stationerry | stationary  | stashionary | C      |
+| 15 | Complete: The camel walked across the ____.          | dessert    | desert      | desart      | dezert      | B      |
+| 16 | Complete: We ate cake for ____.                      | desert     | desart      | dessert     | dezert      | C      |
+| 17 | Complete: Do not ____ your pencil.                   | loose      | lose        | luse        | loze        | B      |
+| 18 | Complete: My shoe lace is ____.                      | lose       | loze        | loose       | luse        | C      |
+| 19 | Complete: The class was very ____ during the test.   | quite      | quiet       | quit        | quait       | B      |
+| 20 | Complete: This question is ____ hard.                | quiet      | quit        | quite       | quait       | C      |
+
+---
+
+# Spelling Exam 12 — Random Super Hard Genius
+
+**Exam ID:** `grade-3-spelling-random-super-hard-exam-012`
+**Title:** `Grade 3 Spelling Exam 12: Random Super Hard Genius`
+**Theme:** Very confusing spelling, meaning, and usage
+**Questions:** 20
+**Time per question:** 30 seconds
+
+| #  | Question                                             | A          | B          | C           | D           | Answer |
+| -- | ---------------------------------------------------- | ---------- | ---------- | ----------- | ----------- | ------ |
+| 1  | Complete: I will ____ my handwriting every day.      | practise   | practice   | praktise    | practize    | A      |
+| 2  | Complete: The spelling ____ was difficult.           | practise   | practis    | practice    | praktice    | C      |
+| 3  | Complete: The doctor gave useful ____.               | advise     | advize     | advice      | advese      | C      |
+| 4  | Complete: Parents ____ children to be careful.       | advice     | advise     | advize      | advese      | B      |
+| 5  | Complete: The loud noise had a bad ____ on the baby. | affect     | effect     | efect       | affact      | B      |
+| 6  | Complete: Lack of sleep can ____ your learning.      | effect     | affect     | efect       | affact      | B      |
+| 7  | Complete: The book is over ____.                     | their      | they’re    | there       | thier       | C      |
+| 8  | Complete: The pupils said ____ ready.                | their      | there      | they’re     | thier       | C      |
+| 9  | Complete: The girls packed ____ lunch boxes.         | they’re    | there      | thier       | their       | D      |
+| 10 | Complete: I asked ____ I could join the game.        | weather    | whether    | wether      | weathar     | B      |
+| 11 | Complete: The ____ changed in the afternoon.         | whether    | wether     | weather     | weathar     | C      |
+| 12 | Complete: The ____ rule is to be kind.               | principal  | principle  | principel   | prinsiple   | B      |
+| 13 | Complete: Our school ____ welcomed the visitors.     | principle  | principel  | principal   | prinsiple   | C      |
+| 14 | Complete: I used blue ____ to write the letter.      | stationary | stationery | stationerry | stashionery | B      |
+| 15 | Complete: The bus remained ____ for ten minutes.     | stationery | stationary | stationerry | stashionary | B      |
+| 16 | Complete: The hot ____ had very little water.        | dessert    | desert     | desart      | dezert      | B      |
+| 17 | Complete: Mango pudding is my favourite ____.        | desert     | desart     | dessert     | dezert      | C      |
+| 18 | Complete: Be careful not to ____ your homework.      | loose      | lose       | luse        | loze        | B      |
+| 19 | Complete: The door handle is ____.                   | lose       | loze       | loose       | luse        | C      |
+| 20 | Complete: The library is ____ than the playground.   | quite      | quiet      | quit        | quait       | B      |
+
+
 ## Implementation Notes
 
 Use these exams as separate spelling exam entries.
