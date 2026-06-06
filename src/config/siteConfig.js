@@ -1,7 +1,7 @@
 import { getActiveAcademy } from './detectAcademy.ts';
 
 const defaultPaypalSupportLink = 'https://www.paypal.com/ncp/payment/X9PVPTEPKSGS8';
-const defaultPaystackSupportLink = 'https://paystack.shop/pay/1lrvz0bahb';
+const defaultPaystackSupportLink = 'https://paystack.shop/pay/m6bwdpc03g';
 const activeAcademy = getActiveAcademy();
 const academyBrandAssets = {
   tech: {

@@ -1,4 +1,4 @@
-# Grade 3 Spelling Exams 7–10
+# Grade 3 English Spelling Exams 7–15
 
 Each exam has:
 
@@ -180,7 +180,7 @@ Each exam has:
 
 # Spelling Exam 12 — Random Super Hard Genius
 
-**Exam ID:** `grade-3-spelling-random-super-hard-exam-012`
+**Exam ID:** `grade-3-spelling-random-super-hard-genius-exam-012`
 **Title:** `Grade 3 Spelling Exam 12: Random Super Hard Genius`
 **Theme:** Very confusing spelling, meaning, and usage
 **Questions:** 20
