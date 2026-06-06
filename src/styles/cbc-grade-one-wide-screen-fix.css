@@ -1,0 +1,21 @@
+/*
+  CBC Grade 1 focused card wide-screen fix.
+  Grade 3 focused content fills the available workspace. Grade 1 should follow
+  the same desktop standard instead of floating as a centered mini-card.
+*/
+@media (min-width: 900px) {
+  .premium-problem-page .stable-question-shell {
+    width: 100%;
+    max-width: none;
+  }
+
+  .premium-problem-page .stable-question-shell .cbc-grade-one-card {
+    width: 100% !important;
+    max-width: none !important;
+    margin-inline: 0 !important;
+  }
+
+  .premium-problem-page .stable-question-shell .cbc-grade-one-options {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
