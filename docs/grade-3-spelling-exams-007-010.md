@@ -210,6 +210,104 @@ Each exam has:
 | 20 | Complete: The library is ____ than the playground.   | quite      | quiet      | quit        | quait       | B      |
 
 
+# Spelling Exam 13 — Domestic Animals
+
+**Exam ID:** `grade-3-spelling-domestic-animals-exam-013`
+**Title:** `Grade 3 Spelling Exam 13: Domestic Animals`
+**Theme:** Domestic animals
+**Questions:** 20
+**Time per question:** 30 seconds
+
+| #  | Question                                                                    | A       | B      | C       | D        | Answer |
+| -- | --------------------------------------------------------------------------- | ------- | ------ | ------- | -------- | ------ |
+| 1  | Which word means a farm animal that gives milk?                             | cow     | caw    | cowe    | kow      | A      |
+| 2  | Complete: The ____ gives us wool.                                           | sheep   | sheap  | sheepe  | ship     | A      |
+| 3  | Which word means a young dog?                                               | puppy   | pupy   | puppie  | puppey   | A      |
+| 4  | Complete: The ____ laid eggs in the nest.                                   | chicken | chiken | chickin | chickenn | A      |
+| 5  | Which word means an animal that carries heavy loads and looks like a horse? | donkey  | donky  | donkie  | donkkey  | A      |
+| 6  | Which word means a small animal kept to catch mice?                         | cat     | kat    | catt    | cate     | A      |
+| 7  | Complete: The ____ guards the home at night.                                | dog     | dag    | dogg    | doog     | A      |
+| 8  | Which word means a farm animal that gives meat and milk?                    | goat    | gote   | goate   | gout     | A      |
+| 9  | Complete: The ____ pulled the cart.                                         | ox      | ocks   | oxs     | oxe      | A      |
+| 10 | Which word means a male chicken?                                            | cock    | cok    | cokk    | coock    | A      |
+| 11 | Which word means a female chicken?                                          | hen     | henn   | han     | hene     | A      |
+| 12 | Complete: The ____ ran around the compound.                                 | rabbit  | rabit  | rabbitt | rabbet   | A      |
+| 13 | Which word means a large animal used for riding?                            | horse   | hourse | hors    | horce    | A      |
+| 14 | Complete: The ____ rolled in the mud.                                       | pig     | peg    | pigg    | pigue    | A      |
+| 15 | Which word means a young cow?                                               | calf    | caf    | calve   | calff    | A      |
+| 16 | Complete: The ____ followed its mother sheep.                               | lamb    | lam    | lumb    | lambb    | A      |
+| 17 | Which word means a young goat?                                              | kid     | kidd   | ked     | kide     | A      |
+| 18 | Complete: The ____ made a loud quack.                                       | duck    | duk    | duckk   | ducke    | A      |
+| 19 | Which word means a bird kept at home for eggs or meat?                      | poultry | poulty | poltry  | poultery | A      |
+| 20 | Complete: The ____ walked slowly near the house.                            | turkey  | turky  | terkye  | turkie   | A      |
+
+---
+
+# Spelling Exam 14 — Wild Animals
+
+**Exam ID:** `grade-3-spelling-wild-animals-exam-014`
+**Title:** `Grade 3 Spelling Exam 14: Wild Animals`
+**Theme:** Wild animals
+**Questions:** 20
+**Time per question:** 30 seconds
+
+| #  | Question                                                        | A            | B           | C             | D            | Answer |
+| -- | --------------------------------------------------------------- | ------------ | ----------- | ------------- | ------------ | ------ |
+| 1  | Which word means a large wild animal with a long trunk?         | elephant     | elefant     | elephent      | eliphant     | A      |
+| 2  | Complete: The ____ has a very long neck.                        | giraffe      | girafe      | geraffe       | giraff       | A      |
+| 3  | Which word means a black and white striped animal?              | zebra        | zembra      | zeebra        | zebar        | A      |
+| 4  | Which word means a big cat called the king of the jungle?       | lion         | loin        | lione         | lyion        | A      |
+| 5  | Complete: The ____ has black spots and runs very fast.          | cheetah      | cheeta      | chita         | cheetahh     | A      |
+| 6  | Which word means a big grey animal with a horn on its nose?     | rhinoceros   | rhinoseros  | rinoceros     | rhinocerous  | A      |
+| 7  | Complete: The ____ lives in water and has a very wide mouth.    | hippopotamus | hipopotamus | hippopottamus | hippopotomus | A      |
+| 8  | Which word means an animal with a hard shell that moves slowly? | tortoise     | tortise     | tortoisee     | tortos       | A      |
+| 9  | Which word means a jumping animal with strong back legs?        | kangaroo     | kangaro     | kangarou      | kanggaroo    | A      |
+| 10 | Complete: The ____ swings from tree to tree.                    | monkey       | monky       | monkye        | monkkey      | A      |
+| 11 | Which word means a dangerous reptile with sharp teeth?          | crocodile    | crocadile   | crocodil      | croccodile   | A      |
+| 12 | Complete: The ____ laughs loudly in the wild.                   | hyena        | hiena       | hayena        | hyenna       | A      |
+| 13 | Which word means a large wild cat with spots?                   | leopard      | lepard      | leopad        | leppard      | A      |
+| 14 | Complete: The ____ has strong horns and lives in herds.         | buffalo      | bufalo      | buffallo      | buffalow     | A      |
+| 15 | Which word means a wild dog-like animal?                        | jackal       | jakal       | jackle        | jackall      | A      |
+| 16 | Complete: The ____ climbed the tree quickly.                    | baboon       | babon       | baboone       | baboun       | A      |
+| 17 | Which word means a bear-like animal that eats bamboo?           | panda        | penda       | pandar        | pandda       | A      |
+| 18 | Complete: The ____ slept in a cave.                             | bear         | bare        | beare         | bair         | A      |
+| 19 | Which word means a wild animal with tusks and a snout?          | warthog      | wathog      | worthog       | warthogue    | A      |
+| 20 | Complete: The ____ moved quietly through the grass.             | tiger        | tigar       | tyger         | tigerr       | A      |
+
+---
+
+# Spelling Exam 15 — Aquatic Animals
+
+**Exam ID:** `grade-3-spelling-aquatic-animals-exam-015`
+**Title:** `Grade 3 Spelling Exam 15: Aquatic Animals`
+**Theme:** Aquatic animals
+**Questions:** 20
+**Time per question:** 30 seconds
+
+| #  | Question                                                            | A            | B           | C            | D             | Answer |
+| -- | ------------------------------------------------------------------- | ------------ | ----------- | ------------ | ------------- | ------ |
+| 1  | Which word means an animal that lives in water and has fins?        | fish         | fich        | fishe        | phish         | A      |
+| 2  | Complete: The ____ is a very large sea animal.                      | whale        | wale        | whail        | whael         | A      |
+| 3  | Which word means a clever sea animal that can jump from water?      | dolphin      | dolfin      | dolphine     | dolfine       | A      |
+| 4  | Complete: The ____ has eight arms.                                  | octopus      | octapus     | oktopus      | octopuss      | A      |
+| 5  | Which word means a sea animal with a hard shell and claws?          | crab         | crabb       | krab         | crabe         | A      |
+| 6  | Complete: The ____ moved slowly on the sea floor.                   | lobster      | lobstar     | lobester     | loppster      | A      |
+| 7  | Which word means a soft sea animal that can sting?                  | jellyfish    | jelyfish    | jellyfich    | jelly fish    | A      |
+| 8  | Complete: The ____ has a shell and moves slowly.                    | turtle       | turtel      | tortle       | turtlee       | A      |
+| 9  | Which word means a dangerous sea animal with sharp teeth?           | shark        | sharke      | shurk        | shaak         | A      |
+| 10 | Complete: The ____ looks like a horse and lives in water.           | seahorse     | sea horse   | seahors      | seehorse      | A      |
+| 11 | Which word means a small animal with a shell found in water?        | snail        | snaill      | snale        | sneil         | A      |
+| 12 | Complete: The ____ can live both in water and on land.              | frog         | frogg       | forg         | frogate       | A      |
+| 13 | Which word means a flat sea animal shaped like a star?              | starfish     | starfich    | star fish    | starfeesh     | A      |
+| 14 | Complete: The ____ has a soft body and a shell.                     | oyster       | oister      | oystar       | oyester       | A      |
+| 15 | Which word means a small sea animal often eaten as food?            | shrimp       | shrim       | shreemp      | schrimp       | A      |
+| 16 | Complete: The ____ has a hard shell and walks sideways.             | crab         | krabb       | crabe        | craab         | A      |
+| 17 | Which word means a fish that can puff up like a ball?               | pufferfish   | puffer fich | puferfish    | pufferfeesh   | A      |
+| 18 | Complete: The ____ lives in rivers and has sharp teeth.             | crocodile    | crocadile   | crocodil     | croccodile    | A      |
+| 19 | Which word means a large water animal with a wide mouth?            | hippopotamus | hipopotamus | hippopotomus | hippopottamus | A      |
+| 20 | Complete: The ____ has a long body and moves like a snake in water. | eel          | eal         | eell         | ile           | A      |
+
+
 ## Implementation Notes
 
 Use these exams as separate spelling exam entries.
@@ -234,4 +332,7 @@ src/academies/cbc/grade-3/english/assessments/spelling-body-parts-exam-009.js
 src/academies/cbc/grade-3/english/assessments/spelling-random-hard-exam-010.js
 src/academies/cbc/grade-3/english/assessments/spelling-random-super-hard-exam-011.js
 src/academies/cbc/grade-3/english/assessments/spelling-random-super-hard-genius-exam-012.js
+src/academies/cbc/grade-3/english/assessments/spelling-domestic-animals-exam-013.js
+src/academies/cbc/grade-3/english/assessments/spelling-wild-animals-exam-014.js
+src/academies/cbc/grade-3/english/assessments/spelling-aquatic-animals-exam-015.js
 ```
