@@ -20,6 +20,15 @@ import examThree from './cbc/grade-3/english/assessments/spelling-exam-003.js';
 import examFour from './cbc/grade-3/english/assessments/spelling-exam-004.js';
 import examFive from './cbc/grade-3/english/assessments/spelling-exam-005.js';
 import examSix from './cbc/grade-3/english/assessments/spelling-exam-006.js';
+import examSeven from './cbc/grade-3/english/assessments/spelling-classroom-items-exam-007.js';
+import examEight from './cbc/grade-3/english/assessments/spelling-furniture-exam-008.js';
+import examNine from './cbc/grade-3/english/assessments/spelling-body-parts-exam-009.js';
+import examTen from './cbc/grade-3/english/assessments/spelling-random-hard-exam-010.js';
+import examEleven from './cbc/grade-3/english/assessments/spelling-random-super-hard-exam-011.js';
+import examTwelve from './cbc/grade-3/english/assessments/spelling-random-super-hard-genius-exam-012.js';
+import examThirteen from './cbc/grade-3/english/assessments/spelling-domestic-animals-exam-013.js';
+import examFourteen from './cbc/grade-3/english/assessments/spelling-wild-animals-exam-014.js';
+import examFifteen from './cbc/grade-3/english/assessments/spelling-aquatic-animals-exam-015.js';
 import timedComprehensionExam from './cbc/grade-3/english/assessments/reading-comprehension-class-library-exam-001.js';
 import kiswahiliHadithiExam from './cbc/grade-3/kiswahili/assessments/kiswahili-hadithi-exam-001.js';
 import { getAcademyCatalog } from './catalog.js';
@@ -57,13 +66,33 @@ const gradeThreeSpellingExams = [
   ...examThree,
   ...examFour,
   ...examFive,
-  ...examSix
+  ...examSix,
+  ...examSeven,
+  ...examEight,
+  ...examNine,
+  ...examTen,
+  ...examEleven,
+  ...examTwelve,
+  ...examThirteen,
+  ...examFourteen,
+  ...examFifteen
 ];
 const newGradeThreeSpellingExams = [
   ...examThree,
   ...examFour,
   ...examFive,
   ...examSix
+];
+const gradeThreeSpellingExamsSevenToFifteen = [
+  ...examSeven,
+  ...examEight,
+  ...examNine,
+  ...examTen,
+  ...examEleven,
+  ...examTwelve,
+  ...examThirteen,
+  ...examFourteen,
+  ...examFifteen
 ];
 const gradeThreeSpellingQuestions = [spellingLesson, ...gradeThreeSpellingPractice, ...gradeThreeSpellingExams];
 const gradeThreeReadingQuestions = [readingLesson, ...readingPractice, ...timedComprehensionExam];
@@ -215,6 +244,15 @@ test('CBC Grade 3 English declares manifest-driven learning areas', () => {
       'spelling-exam-004',
       'spelling-exam-005',
       'spelling-exam-006',
+      'spelling-classroom-items-exam-007',
+      'spelling-furniture-exam-008',
+      'spelling-body-parts-exam-009',
+      'spelling-random-hard-exam-010',
+      'spelling-random-super-hard-exam-011',
+      'spelling-random-super-hard-genius-exam-012',
+      'spelling-domestic-animals-exam-013',
+      'spelling-wild-animals-exam-014',
+      'spelling-aquatic-animals-exam-015',
       'reading-comprehension-class-library-exam-001'
     ]
   );
@@ -274,7 +312,17 @@ test('CBC spelling collections have the required sizes and unique ids', () => {
   assert.equal(examFour.length, 20);
   assert.equal(examFive.length, 20);
   assert.equal(examSix.length, 20);
+  assert.equal(examSeven.length, 20);
+  assert.equal(examEight.length, 20);
+  assert.equal(examNine.length, 20);
+  assert.equal(examTen.length, 20);
+  assert.equal(examEleven.length, 20);
+  assert.equal(examTwelve.length, 20);
+  assert.equal(examThirteen.length, 20);
+  assert.equal(examFourteen.length, 20);
+  assert.equal(examFifteen.length, 20);
   assert.equal(newGradeThreeSpellingExams.length, 80);
+  assert.equal(gradeThreeSpellingExamsSevenToFifteen.length, 180);
   assert.equal(new Set(gradeThreeSpellingQuestions.map((question) => question.id)).size, gradeThreeSpellingQuestions.length);
 });
 
@@ -417,6 +465,10 @@ test('CBC spelling exam questions carry the required exam metadata and timing', 
   for (const question of gradeThreeSpellingExams) {
     assert.equal(question.estimatedTimeSeconds, 30, question.id);
     assert.equal(question.metadata.assessmentType, 'exam', question.id);
+    assert.equal(question.metadata.learningAreaId || 'spelling', 'spelling', question.id);
+    assert.equal(question.metadata.questionTimeSeconds || question.estimatedTimeSeconds, 30, question.id);
+    assert.equal(question.metadata.gradeId || question.category, 'grade-3', question.id);
+    assert.equal(question.metadata.subjectId || question.topicId, 'english', question.id);
     assert.ok(question.metadata.examId, question.id);
     assert.ok(question.metadata.examTitle, question.id);
     assert.equal(question.metadata.points, 1, question.id);

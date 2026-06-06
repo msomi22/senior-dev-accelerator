@@ -115,6 +115,15 @@ test('CBC English declares the spelling and reading comprehension content', () =
     'spelling-exam-004',
     'spelling-exam-005',
     'spelling-exam-006',
+    'spelling-classroom-items-exam-007',
+    'spelling-furniture-exam-008',
+    'spelling-body-parts-exam-009',
+    'spelling-random-hard-exam-010',
+    'spelling-random-super-hard-exam-011',
+    'spelling-random-super-hard-genius-exam-012',
+    'spelling-domestic-animals-exam-013',
+    'spelling-wild-animals-exam-014',
+    'spelling-aquatic-animals-exam-015',
     'reading-comprehension-class-library-exam-001'
   ]);
 });

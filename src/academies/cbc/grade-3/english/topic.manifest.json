@@ -92,6 +92,51 @@
       "learningAreaId": "spelling"
     },
     {
+      "id": "spelling-classroom-items-exam-007",
+      "file": "assessments/spelling-classroom-items-exam-007.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-furniture-exam-008",
+      "file": "assessments/spelling-furniture-exam-008.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-body-parts-exam-009",
+      "file": "assessments/spelling-body-parts-exam-009.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-random-hard-exam-010",
+      "file": "assessments/spelling-random-hard-exam-010.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-random-super-hard-exam-011",
+      "file": "assessments/spelling-random-super-hard-exam-011.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-random-super-hard-genius-exam-012",
+      "file": "assessments/spelling-random-super-hard-genius-exam-012.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-domestic-animals-exam-013",
+      "file": "assessments/spelling-domestic-animals-exam-013.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-wild-animals-exam-014",
+      "file": "assessments/spelling-wild-animals-exam-014.js",
+      "learningAreaId": "spelling"
+    },
+    {
+      "id": "spelling-aquatic-animals-exam-015",
+      "file": "assessments/spelling-aquatic-animals-exam-015.js",
+      "learningAreaId": "spelling"
+    },
+    {
       "id": "reading-comprehension-class-library-exam-001",
       "file": "assessments/reading-comprehension-class-library-exam-001.js",
       "learningAreaId": "reading-comprehension"
