@@ -1,5 +1,5 @@
 /*
-  CBC Grade 1 focused card wide-screen fix.
+  CBC Grade 1 focused card wide-screen and viewport-height fix.
   Grade 3 focused content fills the available workspace. Grade 1 should follow
   the same desktop standard instead of floating as a centered mini-card.
 */
@@ -17,5 +17,43 @@
 
   .premium-problem-page .stable-question-shell .cbc-grade-one-options {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.premium-problem-page .cbc-grade-one-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.premium-problem-page .cbc-grade-one-body-scroll {
+  display: grid;
+  align-content: start;
+  gap: clamp(7px, 1.8vw, 12px);
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 700px) {
+  .premium-problem-page .stable-question-shell,
+  .premium-problem-page .stable-question-shell .cbc-grade-one-card {
+    min-height: 0 !important;
+  }
+
+  .premium-problem-page .cbc-grade-one-card {
+    height: min(72svh, 680px);
+    min-height: 520px;
+    max-height: 72svh;
+  }
+}
+
+@media (max-width: 420px) {
+  .premium-problem-page .cbc-grade-one-card {
+    height: min(70svh, 640px);
+    min-height: 500px;
+    max-height: 70svh;
   }
 }
