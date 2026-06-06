@@ -106,13 +106,16 @@ test('CBC English declares the spelling and reading comprehension content', () =
   assert.deepEqual(english.practice.map((item) => item.id), [
     'spelling-practice-001',
     'spelling-practice-002',
-    'spelling-practice-003',
-    'spelling-practice-004',
-    'spelling-practice-005',
-    'spelling-practice-006',
     'reading-comprehension-school-garden-practice-001'
   ]);
-  assert.deepEqual(english.assessments.map((item) => item.id), ['spelling-exam-001', 'spelling-exam-002']);
+  assert.deepEqual(english.assessments.map((item) => item.id), [
+    'spelling-exam-001',
+    'spelling-exam-002',
+    'spelling-exam-003',
+    'spelling-exam-004',
+    'spelling-exam-005',
+    'spelling-exam-006'
+  ]);
 });
 
 test('CBC Grade 3 coming-soon subjects declare learning areas without content yet', () => {

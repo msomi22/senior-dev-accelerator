@@ -32,18 +32,18 @@ function optionsFor(correctWord, wrongWords, answerPosition) {
 }
 
 const questions = words.map(([correctWord, wrongWords], index) => defineMcqProblem({
-  id: `english-spelling-practice-004-q${String(index + 1).padStart(3, '0')}`,
+  id: `english-spelling-exam-004-q${String(index + 1).padStart(3, '0')}`,
   category: 'grade-3',
   topicId: 'english',
-  title: `Spelling Practice 4: ${correctWord}`,
+  title: `Spelling Exam 4 Question ${index + 1}`,
   difficulty: 'Easy',
-  estimatedTime: '1 min',
+  estimatedTimeSeconds: 30,
   question: 'Choose the correctly spelt farm item.',
   body: [
     {
       type: 'section',
       title: 'Objective',
-      content: 'I can check every letter before choosing an answer.'
+      content: 'I can finish a short spelling exam and see my score.'
     },
     {
       type: 'section',
@@ -54,16 +54,18 @@ const questions = words.map(([correctWord, wrongWords], index) => defineMcqProbl
   options: optionsFor(correctWord, wrongWords, answerPositions[index]),
   correctAnswer: correctWord,
   explanation: `${correctWord} is the correct spelling.`,
-  finalTakeaway: 'Look closely at the beginning, middle, and end of the word.',
-  tags: ['cbc', 'grade-3', 'english', 'spelling', 'practice', 'farm-items'],
+  finalTakeaway: 'Check every letter carefully.',
+  tags: ['cbc', 'grade-3', 'english', 'spelling', 'exam', 'farm-items'],
   metadata: {
     reviewStatus: 'approved',
     visibility: ['dev', 'prod'],
     source: 'original',
     audience: 'grade-3',
-    practiceId: 'spelling-practice-004',
-    practiceTitle: 'Spelling Practice 4',
-    sequence: 40 + index
+    examId: 'spelling-exam-004',
+    examTitle: 'Spelling Exam 4',
+    assessmentType: 'exam',
+    points: 1,
+    sequence: 90 + index
   }
 }));
 

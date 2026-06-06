@@ -14,12 +14,12 @@ import spellingLesson from './cbc/grade-3/english/lessons/spelling-lesson-001.js
 import readingPractice from './cbc/grade-3/english/practice/reading-comprehension-school-garden-practice-001.js';
 import practiceOne from './cbc/grade-3/english/practice/spelling-practice-001.js';
 import practiceTwo from './cbc/grade-3/english/practice/spelling-practice-002.js';
-import practiceThree from './cbc/grade-3/english/practice/spelling-practice-003.js';
-import practiceFour from './cbc/grade-3/english/practice/spelling-practice-004.js';
-import practiceFive from './cbc/grade-3/english/practice/spelling-practice-005.js';
-import practiceSix from './cbc/grade-3/english/practice/spelling-practice-006.js';
 import examOne from './cbc/grade-3/english/assessments/spelling-exam-001.js';
 import examTwo from './cbc/grade-3/english/assessments/spelling-exam-002.js';
+import examThree from './cbc/grade-3/english/assessments/spelling-exam-003.js';
+import examFour from './cbc/grade-3/english/assessments/spelling-exam-004.js';
+import examFive from './cbc/grade-3/english/assessments/spelling-exam-005.js';
+import examSix from './cbc/grade-3/english/assessments/spelling-exam-006.js';
 import { getAcademyCatalog } from './catalog.js';
 import { validateProblemCollection } from '../problems/validateProblem.js';
 
@@ -47,19 +47,23 @@ const gradeOneExamQuestions = [...gradeOneMathCountingExam, ...gradeOneReadingEx
 const gradeOneQuestions = [...gradeOnePracticeQuestions, ...gradeOneExamQuestions];
 const gradeThreeSpellingPractice = [
   ...practiceOne,
-  ...practiceTwo,
-  ...practiceThree,
-  ...practiceFour,
-  ...practiceFive,
-  ...practiceSix
+  ...practiceTwo
 ];
-const newGradeThreeSpellingPractice = [
-  ...practiceThree,
-  ...practiceFour,
-  ...practiceFive,
-  ...practiceSix
+const gradeThreeSpellingExams = [
+  ...examOne,
+  ...examTwo,
+  ...examThree,
+  ...examFour,
+  ...examFive,
+  ...examSix
 ];
-const gradeThreeSpellingQuestions = [spellingLesson, ...gradeThreeSpellingPractice, ...examOne, ...examTwo];
+const newGradeThreeSpellingExams = [
+  ...examThree,
+  ...examFour,
+  ...examFive,
+  ...examSix
+];
+const gradeThreeSpellingQuestions = [spellingLesson, ...gradeThreeSpellingPractice, ...gradeThreeSpellingExams];
 const gradeThreeReadingQuestions = [readingLesson, ...readingPractice];
 const gradeThreeQuestions = [...gradeThreeSpellingQuestions, ...gradeThreeReadingQuestions];
 const allQuestions = [...gradeOneQuestions, ...gradeThreeQuestions];
@@ -195,11 +199,18 @@ test('CBC Grade 3 English declares manifest-driven learning areas', () => {
     [
       'spelling-practice-001',
       'spelling-practice-002',
-      'spelling-practice-003',
-      'spelling-practice-004',
-      'spelling-practice-005',
-      'spelling-practice-006',
       'reading-comprehension-school-garden-practice-001'
+    ]
+  );
+  assert.deepEqual(
+    gradeThreeEnglishTopic.assessments.map((reference) => reference.id),
+    [
+      'spelling-exam-001',
+      'spelling-exam-002',
+      'spelling-exam-003',
+      'spelling-exam-004',
+      'spelling-exam-005',
+      'spelling-exam-006'
     ]
   );
   assert.ok(
@@ -250,13 +261,13 @@ test('CBC content is valid and includes unique ids', () => {
 test('CBC spelling collections have the required sizes and unique ids', () => {
   assert.equal(practiceOne.length, 10);
   assert.equal(practiceTwo.length, 10);
-  assert.equal(practiceThree.length, 20);
-  assert.equal(practiceFour.length, 20);
-  assert.equal(practiceFive.length, 20);
-  assert.equal(practiceSix.length, 20);
-  assert.equal(newGradeThreeSpellingPractice.length, 80);
   assert.equal(examOne.length, 20);
   assert.equal(examTwo.length, 20);
+  assert.equal(examThree.length, 20);
+  assert.equal(examFour.length, 20);
+  assert.equal(examFive.length, 20);
+  assert.equal(examSix.length, 20);
+  assert.equal(newGradeThreeSpellingExams.length, 80);
   assert.equal(new Set(gradeThreeSpellingQuestions.map((question) => question.id)).size, gradeThreeSpellingQuestions.length);
 });
 
@@ -270,7 +281,7 @@ test('CBC Grade 3 English content is valid and includes a learner-facing Objecti
 });
 
 test('CBC spelling MCQs have exactly four options and one configured answer', () => {
-  const mcqs = [...gradeThreeSpellingPractice, ...examOne, ...examTwo];
+  const mcqs = [...gradeThreeSpellingPractice, ...gradeThreeSpellingExams];
 
   for (const question of mcqs) {
     assert.equal(question.options.length, 4, question.id);
@@ -320,7 +331,7 @@ test('CBC reading comprehension school garden content exposes the passage and te
 });
 
 test('CBC spelling exam questions carry the required exam metadata and timing', () => {
-  for (const question of [...examOne, ...examTwo]) {
+  for (const question of gradeThreeSpellingExams) {
     assert.equal(question.estimatedTimeSeconds, 30, question.id);
     assert.equal(question.metadata.assessmentType, 'exam', question.id);
     assert.ok(question.metadata.examId, question.id);

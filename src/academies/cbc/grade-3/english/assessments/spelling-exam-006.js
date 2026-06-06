@@ -32,18 +32,18 @@ function optionsFor(correctWord, wrongWords, answerPosition) {
 }
 
 const questions = words.map(([correctWord, wrongWords], index) => defineMcqProblem({
-  id: `english-spelling-practice-006-q${String(index + 1).padStart(3, '0')}`,
+  id: `english-spelling-exam-006-q${String(index + 1).padStart(3, '0')}`,
   category: 'grade-3',
   topicId: 'english',
-  title: `Spelling Practice 6: ${correctWord}`,
+  title: `Spelling Exam 6 Question ${index + 1}`,
   difficulty: 'Easy',
-  estimatedTime: '1 min',
+  estimatedTimeSeconds: 30,
   question: 'Choose the correctly spelt fruit.',
   body: [
     {
       type: 'section',
       title: 'Objective',
-      content: 'I can check every letter before choosing an answer.'
+      content: 'I can finish a short spelling exam and see my score.'
     },
     {
       type: 'section',
@@ -54,16 +54,18 @@ const questions = words.map(([correctWord, wrongWords], index) => defineMcqProbl
   options: optionsFor(correctWord, wrongWords, answerPositions[index]),
   correctAnswer: correctWord,
   explanation: `${correctWord} is the correct spelling.`,
-  finalTakeaway: 'Check the spelling from the first letter to the last letter.',
-  tags: ['cbc', 'grade-3', 'english', 'spelling', 'practice', 'fruits'],
+  finalTakeaway: 'Check every letter carefully.',
+  tags: ['cbc', 'grade-3', 'english', 'spelling', 'exam', 'fruits'],
   metadata: {
     reviewStatus: 'approved',
     visibility: ['dev', 'prod'],
     source: 'original',
     audience: 'grade-3',
-    practiceId: 'spelling-practice-006',
-    practiceTitle: 'Spelling Practice 6',
-    sequence: 60 + index
+    examId: 'spelling-exam-006',
+    examTitle: 'Spelling Exam 6',
+    assessmentType: 'exam',
+    points: 1,
+    sequence: 130 + index
   }
 }));
 
