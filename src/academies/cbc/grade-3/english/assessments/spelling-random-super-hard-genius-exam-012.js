@@ -1,7 +1,7 @@
 import { defineMcqProblem } from "../../../../../problems/problemAuthoring.js";
 
 const examId = "grade-3-spelling-random-super-hard-genius-exam-012";
-const examTitle = "Grade 3 Spelling Exam 12: Random Super Hard Genius";
+const examTitle = "Spelling Exam 12: Random Super Hard Genius";
 const learningAreaId = "spelling";
 const questionTimeSeconds = 30;
 const sequenceBase = 250;

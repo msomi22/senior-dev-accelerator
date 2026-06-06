@@ -1,7 +1,7 @@
 import { defineMcqProblem } from "../../../../../problems/problemAuthoring.js";
 
 const examId = "grade-3-spelling-body-parts-exam-009";
-const examTitle = "Grade 3 Spelling Exam 9: Body Parts";
+const examTitle = "Spelling Exam 9: Body Parts";
 const learningAreaId = "spelling";
 const questionTimeSeconds = 30;
 const sequenceBase = 190;
