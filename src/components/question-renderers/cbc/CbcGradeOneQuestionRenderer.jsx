@@ -100,58 +100,60 @@ export default function CbcGradeOneQuestionRenderer({
     <article className="cbc-grade-one-card" aria-labelledby="grade-one-question-title">
       <CbcGradeOneNavigation navigation={navigation} placement="top" />
 
-      <header className="cbc-grade-one-header">
-        <p>Grade 1 Practice</p>
-        <h1 id="grade-one-question-title">{friendlyPrompt(question)}</h1>
-      </header>
+      <div className="cbc-grade-one-body-scroll">
+        <header className="cbc-grade-one-header">
+          <p>Grade 1 Practice</p>
+          <h1 id="grade-one-question-title">{friendlyPrompt(question)}</h1>
+        </header>
 
-      <ReadAloudButton question={{ ...question, autoReadAloud: false }} className="cbc-grade-one-read-aloud" />
+        <ReadAloudButton question={{ ...question, autoReadAloud: false }} className="cbc-grade-one-read-aloud" />
 
-      {promptVisual ? (
-        <section className="cbc-grade-one-prompt-visual" aria-label="Question visual">
-          <CbcVisualAid visual={promptVisual} label={question.title} />
+        {promptVisual ? (
+          <section className="cbc-grade-one-prompt-visual" aria-label="Question visual">
+            <CbcVisualAid visual={promptVisual} label={question.title} />
+          </section>
+        ) : null}
+
+        <section className="cbc-grade-one-options" aria-label="Answer choices">
+          {question.options?.map((option, index) => {
+            const selectedOption = selected === index;
+            const correctOption = question.correctAnswer === index;
+            const optionVisual = optionVisualFor(question, index);
+            const optionClass = [
+              'cbc-grade-one-option',
+              selectedOption ? 'selected' : '',
+              answered && correctOption ? 'correct' : '',
+              answered && selectedOption && !correctOption ? 'wrong' : ''
+            ].filter(Boolean).join(' ');
+
+            return (
+              <button
+                type="button"
+                key={`${option}-${index}`}
+                className={optionClass}
+                aria-pressed={selectedOption}
+                onClick={() => handleSelect(index)}
+              >
+                <span className="cbc-grade-one-option-letter">{optionLetter(index)}</span>
+                {optionVisual ? <CbcVisualAid visual={optionVisual} label={option} /> : null}
+                <span className="cbc-grade-one-option-text">{option}</span>
+              </button>
+            );
+          })}
         </section>
-      ) : null}
 
-      <section className="cbc-grade-one-options" aria-label="Answer choices">
-        {question.options?.map((option, index) => {
-          const selectedOption = selected === index;
-          const correctOption = question.correctAnswer === index;
-          const optionVisual = optionVisualFor(question, index);
-          const optionClass = [
-            'cbc-grade-one-option',
-            selectedOption ? 'selected' : '',
-            answered && correctOption ? 'correct' : '',
-            answered && selectedOption && !correctOption ? 'wrong' : ''
-          ].filter(Boolean).join(' ');
+        <section className={`cbc-grade-one-feedback ${answered ? (isCorrect ? 'correct' : 'wrong') : 'empty'}`} role="status" aria-live="polite">
+          {answered ? (
+            <>
+              <strong>{isCorrect ? 'Great job!' : 'Good try!'}</strong>
+              <p>{isCorrect ? 'That answer is correct.' : question.explanation || 'Try the correct answer next time.'}</p>
+            </>
+          ) : <span aria-hidden="true">&nbsp;</span>}
+        </section>
 
-          return (
-            <button
-              type="button"
-              key={`${option}-${index}`}
-              className={optionClass}
-              aria-pressed={selectedOption}
-              onClick={() => handleSelect(index)}
-            >
-              <span className="cbc-grade-one-option-letter">{optionLetter(index)}</span>
-              {optionVisual ? <CbcVisualAid visual={optionVisual} label={option} /> : null}
-              <span className="cbc-grade-one-option-text">{option}</span>
-            </button>
-          );
-        })}
-      </section>
-
-      <section className={`cbc-grade-one-feedback ${answered ? (isCorrect ? 'correct' : 'wrong') : 'empty'}`} role="status" aria-live="polite">
-        {answered ? (
-          <>
-            <strong>{isCorrect ? 'Great job!' : 'Good try!'}</strong>
-            <p>{isCorrect ? 'That answer is correct.' : question.explanation || 'Try the correct answer next time.'}</p>
-          </>
-        ) : <span aria-hidden="true">&nbsp;</span>}
-      </section>
-
-      <div className={`cbc-grade-one-actions ${completed || answered ? '' : 'empty'}`.trim()}>
-        {completed || answered ? <button type="button" onClick={handleReset}>Try again</button> : <span aria-hidden="true">&nbsp;</span>}
+        <div className={`cbc-grade-one-actions ${completed || answered ? '' : 'empty'}`.trim()}>
+          {completed || answered ? <button type="button" onClick={handleReset}>Try again</button> : <span aria-hidden="true">&nbsp;</span>}
+        </div>
       </div>
 
       <CbcGradeOneNavigation navigation={navigation} placement="bottom" />
