@@ -60,6 +60,7 @@ import './styles/cbc-exam-stability.css';
 import './styles/cbc-exam-scroll-jump-fix.css';
 import './styles/cbc-exam-natural-scroll-fix.css';
 import './styles/topic-assessments.css';
+import './styles/cbc-grade-one-wide-screen-fix.css';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
