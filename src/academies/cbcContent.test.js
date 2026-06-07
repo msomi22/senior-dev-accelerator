@@ -265,7 +265,17 @@ test('CBC Grade 3 English declares manifest-driven learning areas', () => {
       'spelling-aquatic-animals-exam-015',
       'grade-3-parts-of-speech-spelling-exam-001',
       'grade-3-parts-of-speech-spelling-exam-002',
-      'reading-comprehension-class-library-exam-001'
+      'reading-comprehension-class-library-exam-001',
+      'grade-3-english-comprehension-faithful-collie-exam-011',
+      'grade-3-english-comprehension-bear-cub-adventure-exam-012',
+      'grade-3-english-comprehension-black-beauty-and-ginger-exam-013',
+      'grade-3-english-comprehension-john-and-the-cherries-exam-014',
+      'grade-3-english-comprehension-camping-holiday-exam-015',
+      'grade-3-english-comprehension-lion-and-the-mouse-exam-016',
+      'grade-3-english-comprehension-fox-and-the-goat-exam-017',
+      'grade-3-english-comprehension-tom-thumb-exam-018',
+      'grade-3-english-comprehension-some-useful-finds-exam-019',
+      'grade-3-english-comprehension-raman-meets-the-rocking-horse-exam-020'
     ]
   );
   assert.ok(
@@ -275,7 +285,10 @@ test('CBC Grade 3 English declares manifest-driven learning areas', () => {
   );
   assert.ok(
     contentReferences
-      .filter((reference) => reference.id.startsWith('reading-comprehension'))
+      .filter((reference) => (
+        reference.id.startsWith('reading-comprehension')
+        || reference.id.startsWith('grade-3-english-comprehension')
+      ))
       .every((reference) => reference.learningAreaId === 'reading-comprehension')
   );
   assert.deepEqual(

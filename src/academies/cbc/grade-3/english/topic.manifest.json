@@ -161,6 +161,56 @@
       "id": "reading-comprehension-class-library-exam-001",
       "file": "assessments/reading-comprehension-class-library-exam-001.js",
       "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-faithful-collie-exam-011",
+      "file": "assessments/comprehension/faithful-collie-exam-011.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-bear-cub-adventure-exam-012",
+      "file": "assessments/comprehension/bear-cub-adventure-exam-012.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-black-beauty-and-ginger-exam-013",
+      "file": "assessments/comprehension/black-beauty-and-ginger-exam-013.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-john-and-the-cherries-exam-014",
+      "file": "assessments/comprehension/john-and-the-cherries-exam-014.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-camping-holiday-exam-015",
+      "file": "assessments/comprehension/camping-holiday-exam-015.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-lion-and-the-mouse-exam-016",
+      "file": "assessments/comprehension/lion-and-the-mouse-exam-016.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-fox-and-the-goat-exam-017",
+      "file": "assessments/comprehension/fox-and-the-goat-exam-017.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-tom-thumb-exam-018",
+      "file": "assessments/comprehension/tom-thumb-exam-018.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-some-useful-finds-exam-019",
+      "file": "assessments/comprehension/some-useful-finds-exam-019.js",
+      "learningAreaId": "reading-comprehension"
+    },
+    {
+      "id": "grade-3-english-comprehension-raman-meets-the-rocking-horse-exam-020",
+      "file": "assessments/comprehension/raman-meets-the-rocking-horse-exam-020.js",
+      "learningAreaId": "reading-comprehension"
     }
   ]
 }
