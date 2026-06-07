@@ -1526,3 +1526,481 @@ It supports:
 - Future academies without core rewrites
 
 The platform should now be implemented as a reusable learning framework, with CBC, Tech, and CX added as academies on top of the shared core.
+
+
+---
+
+# 28. Zero-Hardcoding Architecture
+
+## 28.1 Principle
+
+The platform should be designed so that business behavior, academy behavior, labels, navigation, themes, scoring, rewards, content, and feature availability are not hardcoded inside React components.
+
+The React code should render and execute based on configuration, schemas, registries, and provider contracts.
+
+## 28.2 What Must Not Be Hardcoded
+
+The following must not be hardcoded in UI components:
+
+- Academy names
+- Grade names
+- Subject names
+- Track names
+- Topic names
+- Route labels
+- Button labels
+- Menu labels
+- Theme colors
+- Font sizes
+- Card variants
+- Exam scoring rules
+- Star rules
+- Badge unlock rules
+- Celebration messages
+- Feature flags
+- Payment rules
+- Language text
+- Read-aloud settings
+- Progress storage strategy
+- Academy-specific layout behavior
+- Content type labels
+
+Bad example:
+
+```tsx
+<button>Start Grade 1 English</button>
+```
+
+Good example:
+
+```tsx
+<button>{t(action.labelKey)}</button>
+```
+
+Bad example:
+
+```tsx
+if (academy === "cbc") {
+  showGrades();
+}
+```
+
+Good example:
+
+```tsx
+renderNavigation(currentAcademy.navigationModel);
+```
+
+## 28.3 What Can Exist in Code
+
+Code may contain:
+
+- Generic rendering engines
+- Generic routing engine
+- Generic assessment engine
+- Generic progress engine
+- Generic speech interface
+- Generic theme resolver
+- Generic override resolver
+- Type definitions
+- Schema validation
+- Utility functions
+- Default fallback components
+
+Code should not contain academy-specific business decisions unless it is inside an academy module or override.
+
+---
+
+# 29. Configuration-Driven System
+
+## 29.1 Configuration Sources
+
+The system should support configuration from:
+
+- Local TypeScript config files
+- JSON/YAML content files
+- Remote backend config
+- Feature flag service
+- CMS or admin portal in future
+
+## 29.2 Config Categories
+
+The platform should define configs for:
+
+```text
+Academy Config
+Module Config
+Navigation Config
+Theme Config
+Localization Config
+Feature Config
+Reward Config
+Assessment Config
+Progress Config
+Speech Config
+Payment Config
+Content Config
+Route Config
+```
+
+## 29.3 Academy Config Example
+
+```ts
+export const academyConfig = {
+  id: "cbc",
+  nameKey: "academy.cbc.name",
+  defaultLocale: "en",
+  supportedLocales: ["en", "sw", "zh", "ru", "fr", "ar"],
+  themeIds: ["cbc-light", "cbc-dark", "cbc-grade-1-cartoon"],
+  navigationModel: "grade-subject-topic",
+  modules: ["grade-1", "grade-2", "grade-3"],
+  features: {
+    readAloud: true,
+    exams: true,
+    badges: true,
+    parentDashboard: true,
+    teacherDashboard: true,
+  },
+};
+```
+
+## 29.4 Feature Config Example
+
+```ts
+export const featureConfig = {
+  readAloud: {
+    enabled: true,
+    provider: "browser",
+    highlightText: true,
+    defaultRate: 0.85,
+  },
+
+  rewards: {
+    stars: true,
+    badges: true,
+    confetti: true,
+    cosmeticUnlocks: true,
+  },
+
+  videos: {
+    enabled: true,
+    providers: ["youtube", "cloudflare-stream", "self-hosted"],
+  },
+};
+```
+
+---
+
+# 30. Overrideable Core Features
+
+## 30.1 Principle
+
+All core features should have default behavior, but academies should be able to override behavior when needed.
+
+Core provides defaults.
+
+Academy overrides customize experience.
+
+## 30.2 Overrideable Features
+
+Academies should be able to override:
+
+- Layouts
+- Cards
+- Navigation
+- Lesson renderer
+- Quiz renderer
+- Exam renderer
+- Result screen
+- Reward rules
+- Badge rules
+- Theme tokens
+- Read-aloud behavior
+- Progress strategy
+- Payment strategy
+- Content rendering
+- Visualization rendering
+- Dashboard widgets
+- Parent dashboard sections
+- Teacher dashboard sections
+
+## 30.3 Override Contract
+
+Override resolution:
+
+```text
+Module-specific override
+→ Academy-specific override
+→ Core default
+```
+
+Example:
+
+```text
+tech/dsa/dynamic-programming/overrides/VisualizationRenderer
+→ tech/overrides/VisualizationRenderer
+→ core/VisualizationRenderer
+```
+
+## 30.4 Provider-Based Overrides
+
+Use provider interfaces for behavior.
+
+Example:
+
+```ts
+export interface SpeechProvider {
+  speak(input: SpeakInput): Promise<void>;
+  pause(): void;
+  resume(): void;
+  stop(): void;
+}
+```
+
+Academies can configure:
+
+```ts
+speechProvider: "browser"
+speechProvider: "cloud"
+speechProvider: "recorded-audio"
+```
+
+## 30.5 Engine-Based Overrides
+
+Core engines should accept config, not hardcoded rules.
+
+Example:
+
+```ts
+calculateStars(score, rewardConfig.starRules);
+```
+
+Not:
+
+```ts
+if (score > 90) return 5;
+```
+
+---
+
+# 31. Internationalization and Localization
+
+## 31.1 Principle
+
+The platform must support global languages from the start.
+
+The UI must not contain hardcoded visible strings.
+
+All visible text should use translation keys.
+
+Supported examples:
+
+- English
+- Kiswahili
+- Chinese
+- Russian
+- French
+- Arabic
+- Spanish
+- Portuguese
+- Hindi
+
+## 31.2 Language Switching
+
+Users should be able to switch language globally.
+
+Language may be determined by:
+
+- User selection
+- Browser language
+- Academy default
+- Parent/teacher preference
+
+## 31.3 Localization Files
+
+Example structure:
+
+```text
+src/
+  i18n/
+    locales/
+      en/
+        common.json
+        cbc.json
+        tech.json
+        rewards.json
+      sw/
+        common.json
+        cbc.json
+        tech.json
+        rewards.json
+      zh/
+        common.json
+        cbc.json
+        tech.json
+        rewards.json
+      ru/
+        common.json
+        cbc.json
+        tech.json
+        rewards.json
+```
+
+## 31.4 Translation Key Example
+
+```json
+{
+  "common.start": "Start",
+  "common.continue": "Continue",
+  "rewards.congratulations": "Congratulations!",
+  "cbc.grade1.english.title": "Grade 1 English",
+  "tech.dsa.dynamicProgramming.title": "Dynamic Programming"
+}
+```
+
+React usage:
+
+```tsx
+<h1>{t("cbc.grade1.english.title")}</h1>
+<button>{t("common.start")}</button>
+```
+
+## 31.5 Right-to-Left Language Support
+
+The platform should support RTL languages such as Arabic and Hebrew.
+
+Theme/layout must support:
+
+```text
+direction: ltr
+direction: rtl
+```
+
+Config example:
+
+```ts
+export const localeConfig = {
+  locale: "ar",
+  direction: "rtl",
+};
+```
+
+## 31.6 Localized Content
+
+Lessons, questions, exams, notes, and video metadata should support localization.
+
+Example:
+
+```ts
+titleKey: "tech.dsa.dynamicProgramming.lesson1.title"
+summaryKey: "tech.dsa.dynamicProgramming.lesson1.summary"
+```
+
+For full localized content:
+
+```text
+content/en/tech/dsa/dynamic-programming/
+content/zh/tech/dsa/dynamic-programming/
+content/ru/tech/dsa/dynamic-programming/
+```
+
+## 31.7 Read-Aloud Localization
+
+Read-aloud must respect language and voice.
+
+Example:
+
+```ts
+speech: {
+  locale: "en-US",
+  voicePreference: "child-friendly",
+  rate: 0.85
+}
+```
+
+For Chinese:
+
+```ts
+speech: {
+  locale: "zh-CN",
+  rate: 0.9
+}
+```
+
+For Russian:
+
+```ts
+speech: {
+  locale: "ru-RU",
+  rate: 0.9
+}
+```
+
+## 31.8 Localization Quality Rules
+
+Translations should support:
+
+- Different word lengths
+- Different sentence structures
+- Pluralization
+- Date formats
+- Number formats
+- Directionality
+- Voice availability
+- Fallback language
+
+Fallback example:
+
+```text
+zh-CN → zh → en
+ru-RU → ru → en
+```
+
+---
+
+# 32. Config-First Readiness Review
+
+## Requirement: All system configs are never hardcoded
+
+Supported after this update.
+
+The document now explicitly defines configuration categories and forbids hardcoded system behavior inside UI components.
+
+## Requirement: Nothing is hardcoded in code
+
+Mostly supported with a practical clarification.
+
+The correct target is:
+
+> No business behavior, academy behavior, labels, content, theme values, scoring rules, reward rules, or feature behavior should be hardcoded in components.
+
+Some generic framework logic must still exist in code, such as engines, validators, resolvers, and interfaces.
+
+## Requirement: Purely config driven
+
+Supported.
+
+The platform should be config-driven through academy, module, theme, navigation, reward, speech, progress, assessment, and localization configs.
+
+## Requirement: All core features can be overridden by specific academies
+
+Supported.
+
+The document now defines overrideable layouts, renderers, engines, providers, reward rules, progress behavior, speech behavior, and dashboard sections.
+
+## Requirement: Switch to global languages like English, Chinese, Russian
+
+Supported.
+
+The document now includes internationalization, localization files, translation keys, RTL support, content localization, read-aloud localization, and fallback language strategy.
+
+---
+
+# 33. Final Architecture Rule
+
+The final rule for implementation:
+
+> If changing the experience requires editing a shared React component, the framework is not yet flexible enough.
+
+A new academy, module, language, theme, reward model, or content type should be added through configuration, content files, registries, providers, or overrides.
+
