@@ -2004,3 +2004,193 @@ The final rule for implementation:
 
 A new academy, module, language, theme, reward model, or content type should be added through configuration, content files, registries, providers, or overrides.
 
+
+
+---
+
+# 34. Multi-Domain and Tenant Resolution
+
+## 34.1 Principle
+
+The platform must support multiple domains and subdomains where each domain resolves to the correct academy, theme, navigation, modules, and content.
+
+The same React application can serve many academies.
+
+The academy is selected by a tenant resolver before rendering the app experience.
+
+## 34.2 Example Domain Mapping
+
+```text
+cbc.academy.test.com  → CBC Academy
+tech.academy.test.com → Tech Academy
+cx.academy.test.com   → CX Academy
+```
+
+Expected behavior:
+
+```text
+Grade 1 learner visits cbc.academy.test.com
+→ App resolves academyId = "cbc"
+→ Loads CBC content
+→ Shows CBC grades, subjects, lessons, quizzes, exams
+
+IT student visits tech.academy.test.com
+→ App resolves academyId = "tech"
+→ Loads Tech content
+→ Shows Tech tracks such as DSA, Backend, Frontend, Databases
+
+Customer support specialist visits cx.academy.test.com
+→ App resolves academyId = "cx"
+→ Loads CX content
+→ Shows CX modules such as Communication, Support Skills, Ticket Handling
+```
+
+## 34.3 Important Correction
+
+Tech and CX domains should not land on CBC content.
+
+They should land on their own academy content.
+
+Correct mapping:
+
+```text
+cbc.academy.test.com  → CBC content
+tech.academy.test.com → Tech content
+cx.academy.test.com   → CX content
+```
+
+## 34.4 Tenant Resolver
+
+The platform should include a tenant resolver.
+
+Example:
+
+```ts
+export function resolveTenantFromHost(hostname: string): string {
+  const mappings = {
+    "cbc.academy.test.com": "cbc",
+    "tech.academy.test.com": "tech",
+    "cx.academy.test.com": "cx",
+  };
+
+  return mappings[hostname] ?? "default";
+}
+```
+
+## 34.5 Runtime Boot Flow
+
+Application boot sequence:
+
+```text
+1. Read current hostname
+2. Resolve academyId from hostname
+3. Load academy config
+4. Load academy theme
+5. Load academy navigation
+6. Load academy modules
+7. Load localization config
+8. Load feature config
+9. Render academy shell
+```
+
+## 34.6 Academy Host Config
+
+Each academy should define allowed hosts.
+
+Example:
+
+```ts
+export const cbcAcademyConfig = {
+  id: "cbc",
+  hosts: ["cbc.academy.test.com", "cbc.academy.qubitel.net"],
+  defaultRoute: "/",
+  modules: ["grade-1", "grade-2", "grade-3"],
+};
+```
+
+Example:
+
+```ts
+export const techAcademyConfig = {
+  id: "tech",
+  hosts: ["tech.academy.test.com", "tech.academy.qubitel.net"],
+  defaultRoute: "/",
+  modules: ["dsa", "backend", "frontend", "databases"],
+};
+```
+
+Example:
+
+```ts
+export const cxAcademyConfig = {
+  id: "cx",
+  hosts: ["cx.academy.test.com", "cx.academy.qubitel.net"],
+  defaultRoute: "/",
+  modules: ["communication", "support-skills", "ticket-handling"],
+};
+```
+
+## 34.7 Fallback Behavior
+
+If hostname is unknown:
+
+```text
+academy.test.com
+→ Show academy selector
+
+unknown.academy.test.com
+→ Show not configured page or academy selector
+```
+
+Do not silently load CBC for unknown domains unless configured intentionally.
+
+## 34.8 Local Development Support
+
+Local development should support host-based testing.
+
+Example `/etc/hosts` entries:
+
+```text
+127.0.0.1 cbc.academy.test.com
+127.0.0.1 tech.academy.test.com
+127.0.0.1 cx.academy.test.com
+```
+
+Dev server:
+
+```text
+http://cbc.academy.test.com:5173
+http://tech.academy.test.com:5173
+http://cx.academy.test.com:5173
+```
+
+## 34.9 Deployment Support
+
+The deployment platform should route all academy domains to the same frontend application.
+
+The frontend then resolves the correct academy from hostname.
+
+Possible deployment model:
+
+```text
+Same React build
+Same CDN/static hosting
+Multiple domains/subdomains
+Runtime academy resolution
+```
+
+## 34.10 Domain Resolution Readiness
+
+Requirement: Grade 1 student uses `cbc.academy.test.com` and lands on CBC content.
+
+Supported.
+
+Requirement: IT student uses `tech.academy.test.com` and lands on Tech content.
+
+Supported.
+
+Requirement: Customer support specialist uses `cx.academy.test.com` and lands on CX content.
+
+Supported.
+
+The document now explicitly defines host-based tenant resolution.
