@@ -1,2 +1,14 @@
-export const DEFAULT_ACADEMY_ID='tech';
-export const academyRegistry={tech:{id:'tech',displayName:'Technology Academy',productName:'Qubitel Academy',default:true,subdomains:['academy.qubitel.net','tech.academy.qubitel.net'],storageKey:'qubitel-academy:v2',categoryIds:['dsa','system','java','kubernetes-ckad','aptitude','ml-ai','engineering-leadership']},cbc:{id:'cbc',displayName:'CBC Academy',productName:'CBC Academy',subdomains:['cbc.academy.qubitel.net'],storageKey
+import { techAcademy } from './academies/tech.ts';
+import { cbcAcademy } from './academies/cbc.ts';
+import { customerExperienceAcademy } from './academies/customerExperience.ts';
+
+export const DEFAULT_ACADEMY_ID = 'tech';
+
+export const academyRegistry = {
+  tech: techAcademy,
+  cbc: cbcAcademy,
+  'customer-experience': customerExperienceAcademy
+};
+
+export function getAcademyById(academyId = DEFAULT_ACADEMY_ID) {
+  return academyRegistry[
