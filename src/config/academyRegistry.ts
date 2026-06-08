@@ -9,4 +9,5 @@ export const academyRegistry: Record<AcademyId, AcademyConfig> = {
     productName: 'Qubitel Academy',
     default: true,
     subdomains: ['academy.qubitel.net', 'tech.academy.qubitel.net'],
-    storageKey: 'qubitel-academy
+    storageKey: 'qubitel-academy:v2',
+    category
