@@ -8,46 +8,5 @@ export const academyRegistry: Record<AcademyId, AcademyConfig> = {
     displayName: 'Technology Academy',
     productName: 'Qubitel Academy',
     default: true,
-    subdomains: ['academy.qubitel.net'],
-    storageKey: 'qubitel-academy:v2',
-    categoryIds: [
-      'dsa',
-      'system',
-      'java',
-      'kubernetes-ckad',
-      'aptitude',
-      'ml-ai',
-      'engineering-leadership'
-    ]
-  },
-
-  cbc: {
-    id: 'cbc',
-    displayName: 'CBC Academy',
-    productName: 'CBC Academy',
-    subdomains: ['cbc.academy.qubitel.net'],
-    storageKey: 'qubitel-academy:v2:cbc',
-    categoryIds: ['grade-1', 'grade-3']
-  },
-
-  'customer-experience': {
-    id: 'customer-experience',
-    displayName: 'Customer Experience Academy',
-    productName: 'Customer Experience Academy',
-    subdomains: ['cx.academy.qubitel.net'],
-    storageKey: 'qubitel-academy:v2:customer-experience',
-    categoryIds: []
-  }
-};
-
-export function getAcademyById(academyId: string = DEFAULT_ACADEMY_ID): AcademyConfig {
-  return academyRegistry[academyId as AcademyId] || academyRegistry[DEFAULT_ACADEMY_ID];
-}
-
-export function getDefaultAcademy(): AcademyConfig {
-  return academyRegistry[DEFAULT_ACADEMY_ID];
-}
-
-export function getAcademies(): AcademyConfig[] {
-  return Object.values(academyRegistry);
-}
+    subdomains: ['academy.qubitel.net', 'tech.academy.qubitel.net'],
+    storage
