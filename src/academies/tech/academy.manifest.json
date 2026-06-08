@@ -4,7 +4,8 @@
   "productName": "Qubitel Academy",
   "description": "Engineering and computer science learning for professionals.",
   "subdomains": [
-    "academy.qubitel.net"
+    "academy.qubitel.net",
+    "tech.academy.qubitel.net"
   ],
   "storageKey": "qubitel-academy:v2",
   "default": true,
