@@ -1,11 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { getAcademyRootNodeIds } from './index.ts';
 
-test('academy registry exposes stable ids', () => {
-  assert.deepEqual(getAcademyRootNodeIds(), [
-    'technology-academy',
-    'cbc-academy',
-    'customer-experience-academy'
-  ]);
-});
+import { getBreadcrumbs } from '../navigation/index.ts';
+import { getChildren, getNodeById } from '../registry/index.ts';
+import { createNodeRoutePath } from '../routing/index.ts';
+import { validateLearningNodeRegistry } from '../validation/index.ts';
+import { QUBITEL_ACADEMY_ROOT_NODE_ID } from '../platform/index.ts';
+import {
+ 
