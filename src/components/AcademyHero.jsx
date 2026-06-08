@@ -1,0 +1,1 @@
+export default function AcademyHero({academy}){return <section className="glass dashboard-command-hero" aria-labelledby="academy-home-title"><div className="dashboard-command-hero__copy"><p className="eyebrow">{academy.productName}</p><h1 id="academy-home-title">{academy.displayName}</h1><p>{academy.description}</p></div></section>}
