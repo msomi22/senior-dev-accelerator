@@ -1,14 +1,5 @@
-import { techAcademy } from './academies/tech.ts';
-import { cbcAcademy } from './academies/cbc.ts';
-import { customerExperienceAcademy } from './academies/customerExperience.ts';
-
-export const DEFAULT_ACADEMY_ID = 'tech';
-
-export const academyRegistry = {
-  tech: techAcademy,
-  cbc: cbcAcademy,
-  'customer-experience': customerExperienceAcademy
-};
-
-export function getAcademyById(academyId = DEFAULT_ACADEMY_ID) {
-  return academyRegistry[
+import{t}from'./academies/t.ts';import{c}from'./academies/c.ts';import{x}from'./academies/x.ts';
+export const DEFAULT_ACADEMY_ID='tech';
+export const academyRegistry={tech:t,cbc:c,'customer-experience':x};
+export function getAcademyById(a=DEFAULT_ACADEMY_ID){return academyRegistry[a]||academyRegistry[DEFAULT_ACADEMY_ID]}
+export function getDefaultAcademy(){return
