@@ -27,7 +27,7 @@ to:
 msomi22/qubitel-academy
 ```
 
-If your local clone still points to the old repository URL, update it:
+If your local clone still points to the old repository URL, update it as follows:
 
 ```bash
 git remote set-url origin https://github.com/msomi22/qubitel-academy.git
