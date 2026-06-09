@@ -213,6 +213,8 @@
     line-height: 1;
   }
   
+  /* English card */
+  
   .cbc-home-subject-card--english {
     color: #159946;
     background: #f3ffe6;
@@ -275,11 +277,72 @@
     font-size: 14px;
   }
   
+  /* Math card */
+  
   .cbc-home-subject-card--math {
     color: #2878ff;
     background: #edf9ff;
     box-shadow: 0 13px 26px rgba(35, 98, 185, 0.13);
   }
+  
+  .cbc-home-subject-card--math::before {
+    content: none;
+  }
+  
+  .cbc-home-subject-card--math::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(237, 249, 255, 0.9) 0%,
+      rgba(237, 249, 255, 0.66) 29%,
+      rgba(237, 249, 255, 0.18) 43%,
+      transparent 64%
+    );
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-bg-image {
+    object-position: center 50%;
+    transform: translateY(-8px) scale(1.03);
+    transform-origin: center;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-card__copy-block {
+    position: relative;
+    z-index: 4;
+    max-width: 170px;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-card__title {
+    color: #2878ff;
+    font-size: 21px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-card__copy {
+    max-width: 12ch;
+    margin-top: 8px;
+    color: #121a3f;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-start-learning {
+    position: relative;
+    z-index: 4;
+    width: calc(100% - 28px);
+    min-height: 38px;
+    margin: auto auto 0;
+    padding: 0 10px 0 16px;
+    border-radius: 15px;
+    font-size: 14px;
+  }
+  
+  /* Other subject cards */
   
   .cbc-home-subject-card--kiswahili {
     color: #9a4cff;
@@ -302,7 +365,7 @@
   }
   
   :root[data-theme="dark"] .cbc-home-subject-card--math {
-    background: rgba(18, 50, 84, 0.94);
+    background: #edf9ff;
   }
   
   :root[data-theme="dark"] .cbc-home-subject-card--kiswahili {
@@ -322,50 +385,12 @@
      Setting position: relative would override the absolute positioning above.
   */
   
-  /* English uses a full-card background image now. Disable old CSS-drawn English art. */
+  /* English and Math now use full-card background images. Disable old CSS-drawn art. */
   .cbc-home-abc-book::before,
-  .cbc-home-abc-book::after {
-    content: none;
-  }
-  
-  .cbc-home-math-board::before {
-    content: "1+2=3";
-    position: absolute;
-    right: 3px;
-    bottom: 18px;
-    width: 86px;
-    height: 64px;
-    border: 7px solid #a35b18;
-    border-radius: 9px;
-    display: grid;
-    place-items: center;
-    color: #ffffff;
-    background: #28914b;
-    box-shadow: 0 12px 17px rgba(80, 47, 20, 0.18);
-    font-size: 21px;
-    font-weight: 950;
-    transform: rotate(-2deg);
-  }
-  
+  .cbc-home-abc-book::after,
+  .cbc-home-math-board::before,
   .cbc-home-math-board::after {
-    content: "3 2 1";
-    position: absolute;
-    left: 1px;
-    bottom: 0;
-    width: 74px;
-    height: 52px;
-    color: #ffffff;
-    display: flex;
-    align-items: end;
-    justify-content: center;
-    gap: 4px;
-    word-spacing: 6px;
-    font-weight: 950;
-    font-size: 19px;
-    text-shadow:
-      -28px -4px 0 #ff4d62,
-      0 -15px 0 #ffbc2e,
-      27px -1px 0 #1c98ff;
+    content: none;
   }
   
   .cbc-home-kiswahili-bubbles::before {

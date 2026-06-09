@@ -4,6 +4,7 @@ import actionContinueBook from '../../assets/academies/cbc/grade-1/home/action-c
 import actionReadOwlBook from '../../assets/academies/cbc/grade-1/home/action-read-owl-book.png';
 import actionPracticeTarget from '../../assets/academies/cbc/grade-1/home/action-practice-target.png';
 import subjectEnglishAbcBook from '../../assets/academies/cbc/grade-1/home/subject-english-abc-book.png';
+import subjectMathCardScene from '../../assets/academies/cbc/grade-1/home/subject-math-board-blocks.png';
 import '../../styles/cbc-academy-home.css';
 
 const emptyProgress = {
@@ -31,6 +32,7 @@ const SUBJECT_META = [
     cardClass: 'cbc-home-subject-card--math',
     lessonClass: 'cbc-home-lesson-card--math',
     visualClass: 'cbc-home-math-board',
+    backgroundSrc: subjectMathCardScene,
     lessonIcon: '⭐',
     lessonMeta: 'Math • 5 min'
   },
@@ -106,10 +108,17 @@ function getFriendlySubjectTitle(section, index = 0) {
 function getFriendlySubjectCopy(section, index = 0) {
   const meta = getSubjectMeta(section, index);
   const summary = String(section?.summary || '').trim();
+  const summaryLower = summary.toLowerCase();
 
-  if (!summary || summary.length > 52) return meta.copy;
+  const shouldUseFriendlyCopy =
+    !summary ||
+    summary.length > 52 ||
+    summaryLower.includes('grade') ||
+    summaryLower.includes('lessons') ||
+    summaryLower.includes('practice') ||
+    summaryLower.includes('exams');
 
-  return summary;
+  return shouldUseFriendlyCopy ? meta.copy : summary;
 }
 
 function CbcActionIllustration({ src }) {
