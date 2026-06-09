@@ -79,7 +79,7 @@
   
   .cbc-home-subject-card {
     position: relative;
-    min-height: 202px;
+    min-height: 232px;
     padding: 20px 22px 14px;
     border: 2.5px solid currentColor;
     border-radius: 20px;
@@ -114,7 +114,7 @@
   
   .cbc-home-subject-card__title {
     position: relative;
-    z-index: 2;
+    z-index: 4;
     max-width: 13ch;
     color: currentColor;
     font-size: 23px;
@@ -125,7 +125,7 @@
   
   .cbc-home-subject-card__copy {
     position: relative;
-    z-index: 2;
+    z-index: 4;
     max-width: 15ch;
     margin-top: 8px;
     color: #121a3f;
@@ -145,11 +145,33 @@
     z-index: 2;
     width: 102px;
     height: 96px;
+    pointer-events: none;
+  }
+  
+  /* English now uses a real PNG instead of CSS-drawn art */
+  .cbc-home-subject-card--english .cbc-home-subject-visual {
+    right: 42px;
+    top: 54px;
+    width: 138px;
+    height: 118px;
+    z-index: 2;
+  }
+  
+  .cbc-home-subject-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    user-select: none;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 16px rgba(98, 58, 18, 0.16));
   }
   
   .cbc-home-start-learning {
     position: relative;
-    z-index: 3;
+    z-index: 4;
+    margin-top: auto;
     min-height: 44px;
     width: 100%;
     padding: 0 13px 0 18px;
@@ -214,42 +236,17 @@
   
   /* Subject illustrations */
   
-  .cbc-home-abc-book,
-  .cbc-home-math-board,
-  .cbc-home-kiswahili-bubbles,
-  .cbc-home-world-art {
-    position: relative;
-  }
+  /*
+     Important:
+     Do not set .cbc-home-abc-book, .cbc-home-math-board, etc. to position: relative here.
+     Those classes are applied to the same node as .cbc-home-subject-visual.
+     Setting position: relative would override the absolute positioning above.
+  */
   
-  .cbc-home-abc-book::before {
-    content: "ABC";
-    position: absolute;
-    left: 5px;
-    bottom: 7px;
-    width: 76px;
-    height: 88px;
-    border-radius: 8px 14px 14px 8px;
-    display: grid;
-    place-items: center;
-    color: #fff4b3;
-    background: linear-gradient(135deg, #ff7448, #ed4c24);
-    box-shadow:
-      inset 7px 0 0 rgba(255, 197, 57, 0.45),
-      0 12px 18px rgba(136, 40, 21, 0.18);
-    font-size: 24px;
-    font-weight: 950;
-    transform: rotate(-4deg);
-  }
-  
+  /* Disable the old CSS-drawn English book */
+  .cbc-home-abc-book::before,
   .cbc-home-abc-book::after {
-    content: "";
-    position: absolute;
-    right: 4px;
-    bottom: 7px;
-    width: 34px;
-    height: 58px;
-    border-radius: 40px 40px 6px 6px;
-    background: linear-gradient(180deg, #ffffff, #a1d96c);
+    content: none;
   }
   
   .cbc-home-math-board::before {

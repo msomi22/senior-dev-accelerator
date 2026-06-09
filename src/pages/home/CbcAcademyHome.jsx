@@ -3,6 +3,8 @@ import owlWithBackpackTransparent from '../../assets/academies/cbc/grade-1/home/
 import actionContinueBook from '../../assets/academies/cbc/grade-1/home/action-continue-book.png';
 import actionReadOwlBook from '../../assets/academies/cbc/grade-1/home/action-read-owl-book.png';
 import actionPracticeTarget from '../../assets/academies/cbc/grade-1/home/action-practice-target.png';
+//import subjectEnglishAbcBookNoBg from '../../assets/academies/cbc/grade-1/home/subject-english-abc-book-no-bg.png';
+import subjectEnglishAbcBookNoBg from '../../assets/academies/cbc/grade-1/home/subject-english-abc-book.png';
 import '../../styles/cbc-academy-home.css';
 
 const emptyProgress = {
@@ -19,6 +21,7 @@ const SUBJECT_META = [
     cardClass: 'cbc-home-subject-card--english',
     lessonClass: 'cbc-home-lesson-card--english',
     visualClass: 'cbc-home-abc-book',
+    imageSrc: subjectEnglishAbcBookNoBg,
     lessonIcon: '📗',
     lessonMeta: 'English • 5 min'
   },
@@ -228,7 +231,17 @@ function CbcLearningAreaCard({ section, index }) {
       </div>
 
       <div className={visualClassName} aria-hidden="true">
-        {meta.visualClass === 'cbc-home-kiswahili-bubbles' ? (
+        {meta.imageSrc ? (
+          <img
+            className="cbc-home-subject-image"
+            src={meta.imageSrc}
+            alt=""
+            draggable="false"
+            loading="eager"
+          />
+        ) : null}
+
+        {!meta.imageSrc && meta.visualClass === 'cbc-home-kiswahili-bubbles' ? (
           <span className="cbc-home-kiswahili-bird">🐦</span>
         ) : null}
       </div>
