@@ -10,16 +10,16 @@
    .cbc-home-learning-area-panel {
     position: relative;
     z-index: 9;
-    margin-top: 36px;
-    padding: 24px 34px 20px;
-    border-radius: 36px;
-    background: rgba(255, 255, 255, 0.68);
-    box-shadow: 0 18px 38px rgba(67, 124, 61, 0.10);
+    margin-top: 28px;
+    padding: 20px 30px 18px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.74);
+    box-shadow: 0 16px 34px rgba(67, 124, 61, 0.1);
     backdrop-filter: blur(6px);
   }
   
   :root[data-theme="dark"] .cbc-home-learning-area-panel {
-    background: rgba(18, 28, 42, 0.7);
+    background: rgba(18, 28, 42, 0.72);
   }
   
   .cbc-home-learning-heading-row {
@@ -32,10 +32,10 @@
   .cbc-home-section-heading {
     display: flex;
     align-items: center;
-    gap: 13px;
-    margin: 0 0 18px;
+    gap: 11px;
+    margin: 0 0 16px;
     color: #161b4d;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 1.1;
     font-weight: 950;
   }
@@ -45,13 +45,13 @@
   }
   
   .cbc-home-heading-icon {
-    font-size: 26px;
+    font-size: 23px;
   }
   
   .cbc-home-view-all-link {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     color: #017f61;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 950;
     white-space: nowrap;
   }
@@ -73,15 +73,15 @@
   
   .cbc-home-learning-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 26px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
   }
   
   .cbc-home-subject-card {
     position: relative;
-    min-height: 238px;
-    padding: 24px 28px 17px;
-    border: 3px solid currentColor;
+    min-height: 202px;
+    padding: 20px 22px 14px;
+    border: 2.5px solid currentColor;
     border-radius: 20px;
     overflow: hidden;
     display: flex;
@@ -89,8 +89,10 @@
     justify-content: space-between;
     color: #159946;
     background: #f3ffe6;
-    box-shadow: 0 15px 31px rgba(28, 76, 38, 0.15);
-    transition: transform 170ms ease, box-shadow 170ms ease;
+    box-shadow: 0 13px 26px rgba(28, 76, 38, 0.13);
+    transition:
+      transform 170ms ease,
+      box-shadow 170ms ease;
   }
   
   .cbc-home-subject-card:hover,
@@ -102,7 +104,7 @@
     content: "";
     position: absolute;
     inset: auto 0 0;
-    height: 88px;
+    height: 72px;
     background:
       radial-gradient(ellipse at 5% 100%, rgba(112, 195, 38, 0.7) 0 28%, transparent 29%),
       radial-gradient(ellipse at 22% 100%, rgba(142, 212, 55, 0.8) 0 30%, transparent 31%),
@@ -113,9 +115,9 @@
   .cbc-home-subject-card__title {
     position: relative;
     z-index: 2;
-    max-width: 12ch;
+    max-width: 13ch;
     color: currentColor;
-    font-size: 26px;
+    font-size: 23px;
     line-height: 1.04;
     font-weight: 950;
     letter-spacing: -0.03em;
@@ -124,11 +126,11 @@
   .cbc-home-subject-card__copy {
     position: relative;
     z-index: 2;
-    max-width: 14ch;
-    margin-top: 10px;
+    max-width: 15ch;
+    margin-top: 8px;
     color: #121a3f;
-    font-size: 15px;
-    line-height: 1.25;
+    font-size: 14px;
+    line-height: 1.22;
     font-weight: 850;
   }
   
@@ -138,27 +140,27 @@
   
   .cbc-home-subject-visual {
     position: absolute;
-    right: 22px;
-    top: 65px;
+    right: 18px;
+    top: 62px;
     z-index: 2;
-    width: 118px;
-    height: 112px;
+    width: 102px;
+    height: 96px;
   }
   
   .cbc-home-start-learning {
     position: relative;
     z-index: 3;
-    min-height: 52px;
+    min-height: 44px;
     width: 100%;
-    padding: 0 16px 0 22px;
-    border-radius: 16px;
+    padding: 0 13px 0 18px;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: currentColor;
     background: #ffffff;
-    box-shadow: 0 10px 22px rgba(45, 73, 52, 0.13);
-    font-size: 17px;
+    box-shadow: 0 9px 19px rgba(45, 73, 52, 0.13);
+    font-size: 15px;
     font-weight: 950;
   }
   
@@ -168,8 +170,8 @@
   
   .cbc-home-start-learning span {
     display: grid;
-    width: 30px;
-    height: 30px;
+    width: 27px;
+    height: 27px;
     place-items: center;
     border-radius: 50%;
     color: #ffffff;
@@ -179,19 +181,19 @@
   .cbc-home-subject-card--math {
     color: #2878ff;
     background: #edf9ff;
-    box-shadow: 0 15px 31px rgba(35, 98, 185, 0.15);
+    box-shadow: 0 13px 26px rgba(35, 98, 185, 0.13);
   }
   
   .cbc-home-subject-card--kiswahili {
     color: #9a4cff;
     background: #f7ecff;
-    box-shadow: 0 15px 31px rgba(98, 45, 150, 0.15);
+    box-shadow: 0 13px 26px rgba(98, 45, 150, 0.13);
   }
   
   .cbc-home-subject-card--environment {
     color: #ff7b00;
     background: #fff5d7;
-    box-shadow: 0 15px 31px rgba(180, 92, 0, 0.15);
+    box-shadow: 0 13px 26px rgba(180, 92, 0, 0.13);
   }
   
   :root[data-theme="dark"] .cbc-home-subject-card {
@@ -222,17 +224,19 @@
   .cbc-home-abc-book::before {
     content: "ABC";
     position: absolute;
-    left: 6px;
+    left: 5px;
     bottom: 7px;
-    width: 86px;
-    height: 102px;
-    border-radius: 8px 15px 15px 8px;
+    width: 76px;
+    height: 88px;
+    border-radius: 8px 14px 14px 8px;
     display: grid;
     place-items: center;
     color: #fff4b3;
     background: linear-gradient(135deg, #ff7448, #ed4c24);
-    box-shadow: inset 8px 0 0 rgba(255, 197, 57, 0.45), 0 14px 20px rgba(136, 40, 21, 0.18);
-    font-size: 28px;
+    box-shadow:
+      inset 7px 0 0 rgba(255, 197, 57, 0.45),
+      0 12px 18px rgba(136, 40, 21, 0.18);
+    font-size: 24px;
     font-weight: 950;
     transform: rotate(-4deg);
   }
@@ -242,8 +246,8 @@
     position: absolute;
     right: 4px;
     bottom: 7px;
-    width: 38px;
-    height: 68px;
+    width: 34px;
+    height: 58px;
     border-radius: 40px 40px 6px 6px;
     background: linear-gradient(180deg, #ffffff, #a1d96c);
   }
@@ -251,18 +255,18 @@
   .cbc-home-math-board::before {
     content: "1+2=3";
     position: absolute;
-    right: 5px;
-    bottom: 20px;
-    width: 97px;
-    height: 72px;
-    border: 8px solid #a35b18;
+    right: 3px;
+    bottom: 18px;
+    width: 86px;
+    height: 64px;
+    border: 7px solid #a35b18;
     border-radius: 9px;
     display: grid;
     place-items: center;
     color: #ffffff;
     background: #28914b;
-    box-shadow: 0 13px 18px rgba(80, 47, 20, 0.18);
-    font-size: 24px;
+    box-shadow: 0 12px 17px rgba(80, 47, 20, 0.18);
+    font-size: 21px;
     font-weight: 950;
     transform: rotate(-2deg);
   }
@@ -272,33 +276,36 @@
     position: absolute;
     left: 1px;
     bottom: 0;
-    width: 82px;
-    height: 58px;
+    width: 74px;
+    height: 52px;
     color: #ffffff;
     display: flex;
     align-items: end;
     justify-content: center;
     gap: 4px;
-    word-spacing: 7px;
+    word-spacing: 6px;
     font-weight: 950;
-    font-size: 22px;
-    text-shadow: -32px -4px 0 #ff4d62, 0 -17px 0 #ffbc2e, 31px -1px 0 #1c98ff;
+    font-size: 19px;
+    text-shadow:
+      -28px -4px 0 #ff4d62,
+      0 -15px 0 #ffbc2e,
+      27px -1px 0 #1c98ff;
   }
   
   .cbc-home-kiswahili-bubbles::before {
     content: "Hujambo!";
     position: absolute;
     right: 0;
-    top: 9px;
-    min-width: 114px;
-    min-height: 46px;
-    border-radius: 22px 22px 22px 3px;
+    top: 8px;
+    min-width: 100px;
+    min-height: 40px;
+    border-radius: 20px 20px 20px 3px;
     display: grid;
     place-items: center;
     color: #ffffff;
     background: linear-gradient(135deg, #21c896, #0ba579);
     box-shadow: 0 12px 20px rgba(17, 136, 109, 0.18);
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 950;
   }
   
@@ -306,25 +313,25 @@
     content: "Nzuri sana!";
     position: absolute;
     right: 2px;
-    top: 68px;
-    min-width: 107px;
-    min-height: 42px;
-    border-radius: 20px 20px 4px 20px;
+    top: 62px;
+    min-width: 94px;
+    min-height: 36px;
+    border-radius: 18px 18px 4px 18px;
     display: grid;
     place-items: center;
     color: #ffffff;
     background: linear-gradient(135deg, #a35bff, #7860ff);
     box-shadow: 0 12px 20px rgba(78, 55, 180, 0.16);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 950;
   }
   
   .cbc-home-kiswahili-bird {
     position: absolute;
-    left: 18px;
-    bottom: 15px;
+    left: 14px;
+    bottom: 13px;
     z-index: 4;
-    font-size: 39px;
+    font-size: 34px;
   }
   
   .cbc-home-world-art::before {
@@ -332,7 +339,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    font-size: 88px;
+    font-size: 76px;
     filter: drop-shadow(0 13px 12px rgba(28, 84, 116, 0.15));
   }
   
@@ -341,7 +348,7 @@
     position: absolute;
     left: 4px;
     bottom: 0;
-    font-size: 48px;
+    font-size: 42px;
     transform: rotate(-9deg);
   }
   
