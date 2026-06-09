@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CBC Academy – Grade 1 Learner Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page-bg: #eef9f0;
+    --sidebar-bg: #ffffff;
+    --nav-text: #11183f;
+    --nav-muted: #5f6686;
+    --green: #12b76a;
+    --green-dark: #079455;
+    --navy: #11144a;
+    --blue: #2878ff;
+    --purple: #9147ff;
+    --orange: #ff7a00;
+    --yellow: #ffc928;
+    --red: #ff4949;
+    --card: rgba(255, 255, 255, 0.96);
+    --shadow-soft: 0 18px 45px rgba(36, 63, 91, 0.13);
+    --shadow-card: 0 13px 28px rgba(25, 39, 72, 0.14);
+    --radius-xl: 28px;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --sidebar-width: 252px;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-height: 100%;
+    background: var(--page-bg);
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--navy);
+    background: var(--page-bg);
+    overflow-x: hidden;
+  }
+
+  a, button {
+    font: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    border: 0;
+    cursor: pointer;
+  }
+
+  .app-shell {
+    min-height: 100vh;
+    display: flex;
+    background:
+      radial-gradient(circle at 8% 90%, rgba(166, 224, 89, 0.28), transparent 16rem),
+      radial-gradient(circle at 98% 90%, rgba(71, 190, 125, 0.26), transparent 16rem),
+      var(--page-bg);
+  }
+
+  /* Sidebar — intentionally close to target desktop reference */
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    width: var(--sidebar-width);
+    padding: 28px 30px 30px;
+    background: var(--sidebar-bg);
+    box-shadow: 10px 0 34px rgba(40, 63, 80, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 18px;
+  }
+
+  .brand-mark {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    position: relative;
+    background: linear-gradient(135deg, #0fb46d, #20a6f3);
+    box-shadow: 0 12px 25px rgba(19, 151, 142, 0.24);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .brand-mark::before {
+    content: "";
+    width: 30px;
+    height: 34px;
+    border-radius: 3px 18px 18px 3px;
+    border: 4px solid #fff;
+    border-left-width: 8px;
+    transform: rotate(-8deg);
+  }
+
+  .brand-mark::after {
+    content: "✦";
+    position: absolute;
+    top: 11px;
+    right: 12px;
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .brand-title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 0.98;
+    font-weight: 950;
+    letter-spacing: 0.01em;
+  }
+
+  .brand-subtitle {
+    margin-top: 4px;
+    color: #121a3f;
+    font-size: 13px;
+    font-weight: 850;
+  }
+
+  .nav-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .nav-link {
+    min-height: 67px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 18px;
+    border-radius: 20px;
+    color: var(--nav-text);
+    font-size: 17px;
+    font-weight: 950;
+    transition: 170ms ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active {
+    color: #087e55;
+    background: linear-gradient(135deg, #e7fff5, #f2fffa);
+    box-shadow: inset 0 0 0 1px rgba(14, 181, 107, 0.08);
+  }
+
+  .nav-icon {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .sidebar-cheer {
+    position: relative;
+    margin-top: auto;
+    padding: 28px 17px 24px;
+    border: 1px solid #ffe5a8;
+    border-radius: 30px;
+    background: linear-gradient(180deg, #fffdf6, #fff6da);
+    text-align: center;
+    box-shadow: 0 14px 33px rgba(247, 187, 66, 0.12);
+  }
+
+  .cheer-sun {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 9px;
+    border-radius: 50%;
+    background: #ffd437;
+    font-size: 36px;
+    box-shadow: 0 0 0 14px rgba(255, 212, 55, 0.15);
+  }
+
+  .cheer-title {
+    color: #9c4e10;
+    font-size: 23px;
+    font-weight: 950;
+    line-height: 1.05;
+  }
+
+  .cheer-copy {
+    margin-top: 8px;
+    color: var(--navy);
+    font-size: 16px;
+    line-height: 1.15;
+    font-weight: 850;
+  }
+
+  .sidebar-flowers {
+    height: 76px;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  .sidebar-flowers span {
+    position: absolute;
+    font-size: 30px;
+  }
+
+  .sidebar-flowers span:nth-child(1) { left: 28px; top: 8px; }
+  .sidebar-flowers span:nth-child(2) { right: 36px; bottom: 1px; font-size: 24px; }
+  .sidebar-flowers span:nth-child(3) { left: 82px; bottom: 0; font-size: 20px; }
+
+  .mobile-menu-button {
+    display: none;
+    position: fixed;
+    z-index: 70;
+    top: 14px;
+    left: 14px;
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    color: var(--navy);
+    background: #fff;
+    box-shadow: var(--shadow-card);
+    font-size: 24px;
+    font-weight: 950;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    background: rgba(5, 20, 35, 0.42);
+  }
+
+  .sidebar-overlay.is-open {
+    display: block;
+  }
+
+  /* Main stage */
+  .main {
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    margin-left: var(--sidebar-width);
+    padding: 0;
+  }
+
+  .learner-stage {
+    position: relative;
+    min-height: 742px;
+    padding: 36px 38px 32px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 86% 18%, rgba(255, 255, 255, 0.72) 0 2.1rem, transparent 2.2rem),
+      linear-gradient(180deg, #c7f2ff 0%, #d9f7ff 42%, #cdf2cb 62%, #bced91 100%);
+  }
+
+  .learner-stage::before,
+  .learner-stage::after {
+    content: "";
+    position: absolute;
+    left: -4%;
+    right: -4%;
+    pointer-events: none;
+  }
+
+  .learner-stage::before {
+    bottom: 236px;
+    height: 170px;
+    background:
+      radial-gradient(ellipse at 7% 100%, #8fdea8 0 13%, transparent 13.2%),
+      radial-gradient(ellipse at 18% 100%, #7fd2a1 0 11%, transparent 11.2%),
+      radial-gradient(ellipse at 80% 100%, #86d8a2 0 14%, transparent 14.2%),
+      radial-gradient(ellipse at 95% 100%, #6dc68c 0 16%, transparent 16.2%),
+      linear-gradient(180deg, transparent 24%, rgba(151, 220, 117, 0.88) 25% 100%);
+  }
+
+  .learner-stage::after {
+    bottom: 0;
+    height: 270px;
+    background:
+      radial-gradient(ellipse at 10% 16%, rgba(255, 255, 255, 0.96) 0 18%, transparent 18.5%),
+      radial-gradient(ellipse at 36% 2%, rgba(255, 255, 255, 0.98) 0 16%, transparent 16.5%),
+      radial-gradient(ellipse at 62% 6%, rgba(255, 255, 255, 0.98) 0 16%, transparent 16.5%),
+      radial-gradient(ellipse at 90% 18%, rgba(255, 255, 255, 0.96) 0 17%, transparent 17.5%),
+      linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.95));
+    border-radius: 58px 58px 0 0;
+  }
+
+  .cloud {
+    position: absolute;
+    z-index: 1;
+    width: 84px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    filter: drop-shadow(0 8px 10px rgba(77, 160, 194, 0.1));
+  }
+
+  .cloud::before,
+  .cloud::after {
+    content: "";
+    position: absolute;
+    bottom: 11px;
+    border-radius: 50%;
+    background: inherit;
+  }
+
+  .cloud::before {
+    left: 14px;
+    width: 37px;
+    height: 37px;
+  }
+
+  .cloud::after {
+    right: 12px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .cloud-one { left: 2%; top: 90px; transform: scale(1.08); }
+  .cloud-two { left: 44%; top: 140px; transform: scale(0.78); opacity: 0.85; }
+  .cloud-three { right: 26%; top: 77px; transform: scale(1.07); }
+
+  .top-grade-switcher {
+    position: absolute;
+    z-index: 12;
+    top: 28px;
+    right: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--navy);
+    font-size: 18px;
+    font-weight: 950;
+  }
+
+  .grade-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(37, 68, 91, 0.15);
+    font-size: 40px;
+  }
+
+  .grade-caret {
+    font-size: 21px;
+    margin-left: -3px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 5;
+    max-width: 660px;
+  }
+
+  .greeting {
+    margin: 2px 0 4px;
+    color: var(--navy);
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title {
+    margin: 0;
+    font-size: clamp(54px, 5.55vw, 78px);
+    line-height: 0.98;
+    letter-spacing: -0.055em;
+    color: #11145a;
+    text-shadow: 0 3px 0 rgba(255, 255, 255, 0.45);
+    font-weight: 950;
+  }
+
+  .hero-title .green-word {
+    color: #139e57;
+  }
+
+  .hero-subtitle {
+    margin: 19px 0 27px;
+    color: #353d73;
+    font-size: 20px;
+    line-height: 1.35;
+    font-weight: 800;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    max-width: 620px;
+  }
+
+  .action-card {
+    position: relative;
+    min-height: 124px;
+    border-radius: 18px;
+    padding: 18px 17px;
+    display: grid;
+    grid-template-columns: 82px 1fr;
+    align-items: center;
+    gap: 11px;
+    overflow: hidden;
+    color: #fff;
+    box-shadow: 0 16px 30px rgba(20, 62, 107, 0.22);
+    isolation: isolate;
+    transform: translateZ(0);
+    transition: 160ms ease;
+  }
+
+  .action-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .action-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.92;
+  }
+
+  .action-card--continue::before {
+    background: linear-gradient(135deg, #10c978, #00a87b);
+  }
+
+  .action-card--read::before {
+    background: linear-gradient(135deg, #2f8aff, #2356ed);
+  }
+
+  .action-card--practice::before {
+    background: linear-gradient(135deg, #ad62ff, #7543ec);
+  }
+
+  .action-card__shine {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 18% 14%, rgba(255,255,255,0.28), transparent 32%);
+    z-index: -1;
+  }
+
+  .action-title {
+    display: block;
+    font-size: 20px;
+    line-height: 1.1;
+    font-weight: 950;
+  }
+
+  .action-copy {
+    display: block;
+    margin-top: 7px;
+    font-size: 14px;
+    line-height: 1.22;
+    font-weight: 800;
+  }
+
+  .book-art,
+  .mini-owl-art,
+  .target-art {
+    position: relative;
+    width: 82px;
+    height: 82px;
+    display: grid;
+    place-items: center;
+  }
+
+  .book-art::before {
+    content: "";
+    width: 60px;
+    height: 70px;
+    border-radius: 7px 12px 12px 7px;
+    background: linear-gradient(90deg, #ffffff 0 47%, #fff5bf 47% 100%);
+    border: 5px solid rgba(255, 255, 255, 0.75);
+    box-shadow: inset 5px 0 0 #f7c15e, 0 10px 16px rgba(0, 71, 72, 0.19);
+    transform: rotate(-6deg);
+  }
+
+  .book-art::after {
+    content: "▶";
+    position: absolute;
+    right: 2px;
+    bottom: 6px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #13b86b;
+    border: 4px solid #fff;
+    font-size: 15px;
+    box-shadow: 0 8px 15px rgba(8, 80, 58, 0.25);
+  }
+
+  .mini-owl-art::before {
+    content: "🦉";
+    font-size: 68px;
+    filter: drop-shadow(0 9px 12px rgba(20, 32, 71, 0.22));
+  }
+
+  .target-art::before {
+    content: "";
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, #ffd95b 0 10%, transparent 11%),
+      radial-gradient(circle, transparent 0 25%, #fff 26% 38%, transparent 39%),
+      radial-gradient(circle, transparent 0 48%, #ff4b61 49% 64%, transparent 65%),
+      #fff;
+    box-shadow: 0 10px 18px rgba(49, 18, 118, 0.22);
+  }
+
+  .target-art::after {
+    content: "↗";
+    position: absolute;
+    top: -7px;
+    right: 5px;
+    color: #ffd233;
+    font-size: 48px;
+    font-weight: 950;
+    text-shadow: 0 3px 0 #c66900;
+    transform: rotate(-6deg);
+  }
+
+  /* CSS owl mascot */
+  .owl-mascot {
+    position: absolute;
+    z-index: 4;
+    top: 73px;
+    right: clamp(330px, 27vw, 472px);
+    width: 260px;
+    height: 276px;
+    filter: drop-shadow(0 18px 23px rgba(96, 63, 25, 0.22));
+  }
+
+  .owl-head {
+    position: absolute;
+    left: 40px;
+    top: 0;
+    width: 176px;
+    height: 157px;
+    border-radius: 47% 47% 50% 50%;
+    background: linear-gradient(180deg, #c87423, #a85617);
+  }
+
+  .owl-head::before,
+  .owl-head::after {
+    content: "";
+    position: absolute;
+    top: -16px;
+    width: 56px;
+    height: 45px;
+    border-radius: 20px 40px 6px 28px;
+    background: #a85617;
+  }
+
+  .owl-head::before {
+    left: 5px;
+    transform: rotate(-22deg);
+  }
+
+  .owl-head::after {
+    right: 5px;
+    transform: rotate(22deg) scaleX(-1);
+  }
+
+  .owl-face {
+    position: absolute;
+    inset: 22px 18px 17px;
+    border-radius: 48% 48% 50% 50%;
+    background: #fff0d9;
+  }
+
+  .owl-eye {
+    position: absolute;
+    top: 43px;
+    width: 52px;
+    height: 58px;
+    border-radius: 50%;
+    background: #fff;
+    border: 5px solid #ead8c2;
+  }
+
+  .owl-eye::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    background: #553014;
+    box-shadow: inset 7px -4px 0 #251107;
+  }
+
+  .owl-eye::after {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .owl-eye.left { left: 28px; }
+  .owl-eye.right { right: 28px; }
+
+  .owl-beak {
+    position: absolute;
+    left: 50%;
+    top: 92px;
+    width: 34px;
+    height: 30px;
+    background: #ffb21f;
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+    transform: translateX(-50%);
+  }
+
+  .owl-body {
+    position: absolute;
+    left: 54px;
+    top: 125px;
+    width: 150px;
+    height: 150px;
+    border-radius: 47% 47% 42% 42%;
+    background: linear-gradient(180deg, #d88c38, #ac601b);
+  }
+
+  .owl-belly {
+    position: absolute;
+    left: 29px;
+    top: 24px;
+    width: 92px;
+    height: 104px;
+    border-radius: 50% 50% 44% 44%;
+    background: #f6d7a5;
+  }
+
+  .owl-belly::before {
+    content: "⌄⌄⌄";
+    position: absolute;
+    left: 17px;
+    top: 29px;
+    color: rgba(151, 94, 39, 0.55);
+    letter-spacing: 6px;
+    font-size: 22px;
+    transform: rotate(90deg);
+  }
+
+  .owl-wing {
+    position: absolute;
+    top: 111px;
+    width: 92px;
+    height: 132px;
+    border-radius: 60% 48% 70% 45%;
+    background: linear-gradient(180deg, #b86118, #8c4713);
+  }
+
+  .owl-wing.left {
+    left: 3px;
+    transform: rotate(-23deg);
+  }
+
+  .owl-wing.right {
+    right: 0;
+    transform: rotate(24deg) scaleX(-1);
+  }
+
+  .owl-backpack {
+    position: absolute;
+    left: 24px;
+    top: 133px;
+    width: 42px;
+    height: 68px;
+    border-radius: 16px 8px 8px 16px;
+    background: linear-gradient(180deg, #12a66b, #087c65);
+    box-shadow: inset -5px 0 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .owl-foot {
+    position: absolute;
+    bottom: -4px;
+    width: 50px;
+    height: 18px;
+    background: #e58a18;
+    border-radius: 50%;
+  }
+
+  .owl-foot.left { left: 75px; }
+  .owl-foot.right { right: 75px; }
+
+  .stars-card {
+    position: absolute;
+    z-index: 10;
+    top: 96px;
+    right: 84px;
+    width: 338px;
+    min-height: 288px;
+    padding: 27px 27px 24px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 22px 55px rgba(50, 75, 99, 0.18);
+    overflow: hidden;
+  }
+
+  .stars-card::before {
+    content: "☀️";
+    position: absolute;
+    right: -16px;
+    top: -10px;
+    font-size: 78px;
+    opacity: 0.9;
+  }
+
+  .stars-card::after {
+    content: "🌟";
+    position: absolute;
+    right: 49px;
+    top: 74px;
+    font-size: 98px;
+    filter: drop-shadow(0 10px 9px rgba(255, 188, 41, 0.22));
+  }
+
+  .stars-title {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--navy);
+    font-size: 18px;
+    font-weight: 950;
+  }
+
+  .stars-title span {
+    font-size: 36px;
+  }
+
+  .stars-number {
+    position: relative;
+    z-index: 2;
+    margin-top: 14px;
+    color: var(--purple);
+    font-size: 55px;
+    line-height: 0.85;
+    font-weight: 950;
+  }
+
+  .stars-earned {
+    position: relative;
+    z-index: 2;
+    margin-top: 6px;
+    color: var(--navy);
+    font-size: 19px;
+    font-weight: 850;
+  }
+
+  .stars-progress {
+    position: relative;
+    z-index: 2;
+    width: 238px;
+    height: 16px;
+    margin: 25px 0 14px;
+    border-radius: 999px;
+    background: #e8edf1;
+    overflow: hidden;
+  }
+
+  .stars-progress span {
+    display: block;
+    width: 86%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #74c500, #54af18);
+  }
+
+  .stars-message {
+    position: relative;
+    z-index: 2;
+    color: #586087;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .progress-link {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 211px;
+    min-height: 48px;
+    margin-top: 18px;
+    border: 2px solid #03a573;
+    border-radius: 999px;
+    color: #017f61;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 950;
+  }
+
+  .decor-sparkle {
+    position: absolute;
+    z-index: 7;
+    color: #ffd52a;
+    font-size: 23px;
+    animation: twinkle 2.5s ease-in-out infinite;
+  }
+
+  .sparkle-a { top: 236px; left: 674px; }
+  .sparkle-b { top: 224px; right: 296px; animation-delay: 0.6s; }
+  .sparkle-c { top: 195px; right: 130px; animation-delay: 1s; }
+
+  @keyframes twinkle {
+    0%, 100% { transform: scale(0.9) rotate(0deg); opacity: 0.65; }
+    50% { transform: scale(1.18) rotate(9deg); opacity: 1; }
+  }
+
+  .learning-area-panel {
+    position: relative;
+    z-index: 9;
+    margin-top: 34px;
+    border-radius: 34px;
+    padding: 25px 38px 20px;
+    background: rgba(255, 255, 255, 0.68);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 18px 38px rgba(67, 124, 61, 0.10);
+  }
+
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin: 0 0 18px;
+    color: #161b4d;
+    font-size: 20px;
+    line-height: 1.1;
+    font-weight: 950;
+  }
+
+  .section-heading .heading-icon {
+    font-size: 26px;
+  }
+
+  .learning-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 30px;
+  }
+
+  .subject-card {
+    position: relative;
+    min-height: 238px;
+    border: 3px solid currentColor;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 28px 17px;
+    color: #159946;
+    background: #f3ffe6;
+    box-shadow: 0 15px 31px rgba(28, 76, 38, 0.15);
+    transition: 170ms ease;
+  }
+
+  .subject-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .subject-card::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 88px;
+    background:
+      radial-gradient(ellipse at 5% 100%, rgba(112, 195, 38, 0.7) 0 28%, transparent 29%),
+      radial-gradient(ellipse at 22% 100%, rgba(142, 212, 55, 0.8) 0 30%, transparent 31%),
+      radial-gradient(ellipse at 86% 100%, rgba(103, 190, 49, 0.58) 0 28%, transparent 29%);
+    opacity: 0.85;
+  }
+
+  .subject-card__title {
+    position: relative;
+    z-index: 2;
+    max-width: 12ch;
+    font-size: 26px;
+    line-height: 1.04;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+  }
+
+  .subject-card__copy {
+    position: relative;
+    z-index: 2;
+    max-width: 14ch;
+    margin-top: 10px;
+    color: #121a3f;
+    font-size: 15px;
+    line-height: 1.25;
+    font-weight: 850;
+  }
+
+  .subject-visual {
+    position: absolute;
+    right: 22px;
+    top: 65px;
+    width: 118px;
+    height: 112px;
+    z-index: 2;
+  }
+
+  .start-learning {
+    position: relative;
+    z-index: 3;
+    min-height: 52px;
+    width: 100%;
+    padding: 0 16px 0 22px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: currentColor;
+    background: #fff;
+    box-shadow: 0 10px 22px rgba(45, 73, 52, 0.13);
+    font-size: 17px;
+    font-weight: 950;
+  }
+
+  .start-learning span {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 50%;
+    color: #fff;
+    background: currentColor;
+  }
+
+  .subject-card--math {
+    color: #2878ff;
+    background: #edf9ff;
+    box-shadow: 0 15px 31px rgba(35, 98, 185, 0.15);
+  }
+
+  .subject-card--kiswahili {
+    color: #9a4cff;
+    background: #f7ecff;
+    box-shadow: 0 15px 31px rgba(98, 45, 150, 0.15);
+  }
+
+  .subject-card--environment {
+    color: #ff7b00;
+    background: #fff5d7;
+    box-shadow: 0 15px 31px rgba(180, 92, 0, 0.15);
+  }
+
+  .abc-book,
+  .math-board,
+  .kiswahili-bubbles,
+  .world-art {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .abc-book::before {
+    content: "ABC";
+    position: absolute;
+    left: 6px;
+    bottom: 7px;
+    width: 86px;
+    height: 102px;
+    border-radius: 8px 15px 15px 8px;
+    display: grid;
+    place-items: center;
+    color: #fff4b3;
+    background: linear-gradient(135deg, #ff7448, #ed4c24);
+    box-shadow: inset 8px 0 0 rgba(255, 197, 57, 0.45), 0 14px 20px rgba(136, 40, 21, 0.18);
+    font-size: 28px;
+    font-weight: 950;
+    transform: rotate(-4deg);
+  }
+
+  .abc-book::after {
+    content: "";
+    position: absolute;
+    right: 4px;
+    bottom: 7px;
+    width: 38px;
+    height: 68px;
+    border-radius: 40px 40px 6px 6px;
+    background: linear-gradient(180deg, #fff, #a1d96c);
+  }
+
+  .math-board::before {
+    content: "1+2=3";
+    position: absolute;
+    right: 5px;
+    bottom: 20px;
+    width: 97px;
+    height: 72px;
+    border: 8px solid #a35b18;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: #28914b;
+    box-shadow: 0 13px 18px rgba(80, 47, 20, 0.18);
+    font-size: 24px;
+    font-weight: 950;
+    transform: rotate(-2deg);
+  }
+
+  .math-board::after {
+    content: "3 2 1";
+    position: absolute;
+    left: 1px;
+    bottom: 0;
+    width: 82px;
+    height: 58px;
+    color: #fff;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: 4px;
+    word-spacing: 7px;
+    font-weight: 950;
+    font-size: 22px;
+    text-shadow: -32px -4px 0 #ff4d62, 0 -17px 0 #ffbc2e, 31px -1px 0 #1c98ff;
+  }
+
+  .kiswahili-bubbles::before {
+    content: "Hujambo!";
+    position: absolute;
+    right: 0;
+    top: 9px;
+    min-width: 114px;
+    min-height: 46px;
+    border-radius: 22px 22px 22px 3px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(135deg, #21c896, #0ba579);
+    box-shadow: 0 12px 20px rgba(17, 136, 109, 0.18);
+    font-size: 17px;
+    font-weight: 950;
+  }
+
+  .kiswahili-bubbles::after {
+    content: "Nzuri sana!";
+    position: absolute;
+    right: 2px;
+    top: 68px;
+    min-width: 107px;
+    min-height: 42px;
+    border-radius: 20px 20px 4px 20px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(135deg, #a35bff, #7860ff);
+    box-shadow: 0 12px 20px rgba(78, 55, 180, 0.16);
+    font-size: 14px;
+    font-weight: 950;
+  }
+
+  .kiswahili-bird {
+    position: absolute;
+    left: 18px;
+    bottom: 15px;
+    font-size: 39px;
+    z-index: 4;
+  }
+
+  .world-art::before {
+    content: "🌍";
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 88px;
+    filter: drop-shadow(0 13px 12px rgba(28, 84, 116, 0.15));
+  }
+
+  .world-art::after {
+    content: "🪣";
+    position: absolute;
+    left: 4px;
+    bottom: 0;
+    font-size: 48px;
+    transform: rotate(-9deg);
+  }
+
+  .lesson-panel {
+    position: relative;
+    z-index: 10;
+    padding: 0 38px 8px;
+  }
+
+  .lesson-heading-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  .lesson-heading-emoji {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #ffd739;
+    font-size: 29px;
+    box-shadow: 0 9px 18px rgba(255, 181, 31, 0.18);
+  }
+
+  .lesson-heading-title {
+    color: #171c4e;
+    font-size: 22px;
+    line-height: 1.05;
+    font-weight: 950;
+  }
+
+  .lesson-heading-copy {
+    margin-top: 4px;
+    color: #5e6688;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .lessons-wrap {
+    position: relative;
+  }
+
+  .lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    padding-right: 66px;
+  }
+
+  .lesson-card {
+    min-height: 104px;
+    border: 1px solid rgba(16, 27, 79, 0.08);
+    border-radius: 17px;
+    padding: 17px 17px 13px;
+    background: #fff;
+    box-shadow: 0 12px 26px rgba(31, 45, 79, 0.10);
+    display: grid;
+    grid-template-columns: 58px 1fr;
+    grid-template-rows: auto auto;
+    gap: 11px 14px;
+    align-items: center;
+  }
+
+  .lesson-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: #eef8e7;
+    font-size: 38px;
+    grid-row: span 2;
+  }
+
+  .lesson-title {
+    min-width: 0;
+    color: #171c4e;
+    font-size: 15px;
+    line-height: 1.15;
+    font-weight: 950;
+  }
+
+  .lesson-meta {
+    margin-top: 4px;
+    color: var(--green-dark);
+    font-size: 14px;
+    font-weight: 850;
+  }
+
+  .lesson-cta {
+    grid-column: 2;
+    min-height: 33px;
+    padding: 0 12px 0 16px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    background: var(--green);
+    font-size: 14px;
+    font-weight: 950;
+  }
+
+  .lesson-card--math .lesson-icon { background: #eff5ff; }
+  .lesson-card--math .lesson-meta { color: #225fea; }
+  .lesson-card--math .lesson-cta { background: #315cef; }
+
+  .lesson-card--kiswahili .lesson-icon { background: #f5efff; }
+  .lesson-card--kiswahili .lesson-meta { color: #8a44e8; }
+  .lesson-card--kiswahili .lesson-cta { background: #9347ed; }
+
+  .lesson-card--environment .lesson-icon { background: #fff5e8; }
+  .lesson-card--environment .lesson-meta { color: #ef7200; }
+  .lesson-card--environment .lesson-cta { background: var(--orange); }
+
+  .next-button {
+    position: absolute;
+    right: 0;
+    top: 25px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: #2878ff;
+    background: #fff;
+    box-shadow: 0 14px 27px rgba(26, 43, 85, 0.16);
+    font-size: 35px;
+    font-weight: 800;
+  }
+
+  .ground-decor {
+    position: absolute;
+    z-index: 8;
+    pointer-events: none;
+  }
+
+  .plant-left { left: 7px; bottom: 60px; font-size: 78px; }
+  .flower-right { right: 71px; bottom: 135px; font-size: 50px; }
+  .tree-right { right: -9px; bottom: 205px; font-size: 111px; }
+
+  @media (max-width: 1400px) {
+    .owl-mascot {
+      right: 340px;
+      transform: scale(0.9);
+      transform-origin: bottom right;
+    }
+
+    .stars-card {
+      right: 32px;
+      width: 304px;
+    }
+
+    .hero-actions {
+      max-width: 590px;
+    }
+
+    .learning-grid {
+      gap: 22px;
+    }
+  }
+
+  @media (max-width: 1180px) {
+    .hero-title {
+      font-size: clamp(43px, 5.2vw, 61px);
+    }
+
+    .hero-actions {
+      grid-template-columns: 1fr;
+      max-width: 350px;
+    }
+
+    .action-card {
+      min-height: 96px;
+    }
+
+    .owl-mascot {
+      right: 300px;
+      top: 122px;
+      transform: scale(0.78);
+    }
+
+    .learning-grid,
+    .lesson-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .learner-stage {
+      min-height: auto;
+      padding-bottom: 38px;
+    }
+
+    .learner-stage::after {
+      height: 520px;
+    }
+  }
+
+  @media (max-width: 940px) {
+    .mobile-menu-button {
+      display: grid;
+    }
+
+    .sidebar {
+      transform: translateX(-105%);
+      transition: transform 220ms ease;
+    }
+
+    .sidebar.is-open {
+      transform: translateX(0);
+    }
+
+    .main {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .learner-stage {
+      padding: 78px 18px 32px;
+    }
+
+    .top-grade-switcher {
+      top: 14px;
+      right: 18px;
+      font-size: 16px;
+    }
+
+    .grade-avatar {
+      width: 48px;
+      height: 48px;
+      font-size: 30px;
+    }
+
+    .hero-content {
+      max-width: none;
+    }
+
+    .hero-title {
+      max-width: 9ch;
+      font-size: clamp(44px, 12vw, 58px);
+    }
+
+    .hero-actions {
+      grid-template-columns: 1fr;
+      max-width: none;
+    }
+
+    .stars-card,
+    .owl-mascot {
+      position: relative;
+      top: auto;
+      right: auto;
+    }
+
+    .owl-mascot {
+      width: 245px;
+      height: 258px;
+      margin: 14px auto 0;
+      transform: scale(0.86);
+    }
+
+    .stars-card {
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    .learning-area-panel,
+    .lesson-panel {
+      padding-inline: 14px;
+    }
+
+    .learning-grid,
+    .lesson-grid {
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .learner-stage {
+      padding-inline: 12px;
+    }
+
+    .greeting {
+      font-size: 18px;
+    }
+
+    .hero-title {
+      max-width: 10ch;
+      font-size: 39px;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+    }
+
+    .action-card {
+      grid-template-columns: 70px 1fr;
+      min-height: 96px;
+      padding: 14px;
+    }
+
+    .book-art,
+    .mini-owl-art,
+    .target-art {
+      width: 68px;
+      height: 68px;
+    }
+
+    .mini-owl-art::before {
+      font-size: 57px;
+    }
+
+    .target-art::before {
+      width: 61px;
+      height: 61px;
+    }
+
+    .learning-area-panel {
+      margin-top: 24px;
+      border-radius: 26px;
+    }
+
+    .learning-grid,
+    .lesson-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .lesson-grid {
+      padding-right: 0;
+    }
+
+    .next-button {
+      display: none;
+    }
+
+    .subject-card {
+      min-height: 216px;
+    }
+
+    .subject-visual {
+      opacity: 0.96;
+      transform: scale(0.9);
+      transform-origin: right top;
+    }
+  }
+</style>
+</head>
+<body>
+<button class="mobile-menu-button" id="menuButton" aria-label="Open menu">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar" aria-label="CBC learner navigation">
+    <a class="brand" href="#home" aria-label="CBC Academy home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>
+        <span class="brand-title">CBC ACADEMY</span>
+        <span class="brand-subtitle">CBC Exam Practice</span>
+      </span>
+    </a>
+
+    <nav class="nav-list">
+      <a class="nav-link is-active" href="#home">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        <span>Home</span>
+      </a>
+      <a class="nav-link" href="#learn">
+        <span class="nav-icon" aria-hidden="true">📖</span>
+        <span>Learn</span>
+      </a>
+      <a class="nav-link" href="#stars">
+        <span class="nav-icon" aria-hidden="true">⭐</span>
+        <span>My Stars</span>
+      </a>
+      <a class="nav-link" href="#settings">
+        <span class="nav-icon" aria-hidden="true">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-cheer" aria-label="Encouragement card">
+      <div class="cheer-sun" aria-hidden="true">😊</div>
+      <div class="cheer-title">Great job!</div>
+      <div class="cheer-copy">Keep going,<br />you&apos;re doing amazing!</div>
+    </div>
+
+    <div class="sidebar-flowers" aria-hidden="true">
+      <span>🌸</span>
+      <span>🌿</span>
+      <span>🌼</span>
+    </div>
+  </aside>
+
+  <main class="main" id="home">
+    <section class="learner-stage" aria-labelledby="pageTitle">
+      <span class="cloud cloud-one" aria-hidden="true"></span>
+      <span class="cloud cloud-two" aria-hidden="true"></span>
+      <span class="cloud cloud-three" aria-hidden="true"></span>
+      <span class="decor-sparkle sparkle-a" aria-hidden="true">✦</span>
+      <span class="decor-sparkle sparkle-b" aria-hidden="true">✦</span>
+      <span class="decor-sparkle sparkle-c" aria-hidden="true">✦</span>
+
+      <div class="top-grade-switcher" aria-label="Selected grade">
+        <span class="grade-avatar" aria-hidden="true">🦉</span>
+        <span>Grade 1</span>
+        <span class="grade-caret" aria-hidden="true">⌄</span>
+      </div>
+
+      <div class="hero-content">
+        <p class="greeting">Hi there, young learner! 👋</p>
+        <h1 class="hero-title" id="pageTitle">Ready to <span class="green-word">learn</span> today?</h1>
+        <p class="hero-subtitle">Let&apos;s have fun, learn new things, and shine bright! ✨</p>
+
+        <div class="hero-actions" aria-label="Main learner actions">
+          <a class="action-card action-card--continue" href="#continue">
+            <span class="action-card__shine" aria-hidden="true"></span>
+            <span class="book-art" aria-hidden="true"></span>
+            <span>
+              <span class="action-title">Continue</span>
+              <span class="action-copy">Pick up where you left off</span>
+            </span>
+          </a>
+
+          <a class="action-card action-card--read" href="#read-with-me">
+            <span class="action-card__shine" aria-hidden="true"></span>
+            <span class="mini-owl-art" aria-hidden="true"></span>
+            <span>
+              <span class="action-title">Read with me</span>
+              <span class="action-copy">Listen and read fun stories</span>
+            </span>
+          </a>
+
+          <a class="action-card action-card--practice" href="#practice">
+            <span class="action-card__shine" aria-hidden="true"></span>
+            <span class="target-art" aria-hidden="true"></span>
+            <span>
+              <span class="action-title">Practice</span>
+              <span class="action-copy">Try questions and activities</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div class="owl-mascot" aria-hidden="true">
+        <div class="owl-wing left"></div>
+        <div class="owl-wing right"></div>
+        <div class="owl-backpack"></div>
+        <div class="owl-body"><div class="owl-belly"></div></div>
+        <div class="owl-head">
+          <div class="owl-face"></div>
+          <div class="owl-eye left"></div>
+          <div class="owl-eye right"></div>
+          <div class="owl-beak"></div>
+        </div>
+        <div class="owl-foot left"></div>
+        <div class="owl-foot right"></div>
+      </div>
+
+      <aside class="stars-card" id="stars" aria-label="My stars progress">
+        <div class="stars-title"><span aria-hidden="true">⭐</span> My stars</div>
+        <div class="stars-number">33</div>
+        <div class="stars-earned">stars earned!</div>
+        <div class="stars-progress" aria-label="Progress"><span></span></div>
+        <div class="stars-message">You&apos;re doing great! Keep it up! 🌈</div>
+        <a class="progress-link" href="#progress">See my progress</a>
+      </aside>
+
+      <span class="ground-decor plant-left" aria-hidden="true">🌿</span>
+      <span class="ground-decor flower-right" aria-hidden="true">🌸</span>
+      <span class="ground-decor tree-right" aria-hidden="true">🌲</span>
+
+      <section class="learning-area-panel" id="learn" aria-labelledby="learningAreasTitle">
+        <h2 class="section-heading" id="learningAreasTitle">
+          <span class="heading-icon" aria-hidden="true">⭐</span>
+          <span>Explore our learning areas</span>
+        </h2>
+
+        <div class="learning-grid">
+          <a class="subject-card subject-card--english" href="#english">
+            <div>
+              <div class="subject-card__title">English</div>
+              <div class="subject-card__copy">Read, write and have fun!</div>
+            </div>
+            <div class="subject-visual abc-book" aria-hidden="true"></div>
+            <span class="start-learning">Start learning <span aria-hidden="true">›</span></span>
+          </a>
+
+          <a class="subject-card subject-card--math" href="#math">
+            <div>
+              <div class="subject-card__title">Math</div>
+              <div class="subject-card__copy">Count, add and solve!</div>
+            </div>
+            <div class="subject-visual math-board" aria-hidden="true"></div>
+            <span class="start-learning">Start learning <span aria-hidden="true">›</span></span>
+          </a>
+
+          <a class="subject-card subject-card--kiswahili" href="#kiswahili">
+            <div>
+              <div class="subject-card__title">Kiswahili</div>
+              <div class="subject-card__copy">Soma, andika na uelewe!</div>
+            </div>
+            <div class="subject-visual kiswahili-bubbles" aria-hidden="true"><span class="kiswahili-bird">🐦</span></div>
+            <span class="start-learning">Start learning <span aria-hidden="true">›</span></span>
+          </a>
+
+          <a class="subject-card subject-card--environment" href="#environment">
+            <div>
+              <div class="subject-card__title">Environmental Activities</div>
+              <div class="subject-card__copy">Discover our world and take care!</div>
+            </div>
+            <div class="subject-visual world-art" aria-hidden="true"></div>
+            <span class="start-learning">Start learning <span aria-hidden="true">›</span></span>
+          </a>
+        </div>
+      </section>
+
+      <section class="lesson-panel" aria-labelledby="todaysLearningTitle">
+        <div class="lesson-heading-row">
+          <span class="lesson-heading-emoji" aria-hidden="true">😄</span>
+          <div>
+            <h2 class="lesson-heading-title" id="todaysLearningTitle">Today&apos;s learning</h2>
+            <div class="lesson-heading-copy">Pick a fun lesson to get started!</div>
+          </div>
+        </div>
+
+        <div class="lessons-wrap">
+          <div class="lesson-grid">
+            <a class="lesson-card lesson-card--english" href="#short-vowel-a">
+              <span class="lesson-icon" aria-hidden="true">📗</span>
+              <span>
+                <span class="lesson-title">Short Vowel &apos;a&apos;</span>
+                <span class="lesson-meta">English • 5 min</span>
+              </span>
+              <span class="lesson-cta">Let&apos;s go! <span aria-hidden="true">▶</span></span>
+            </a>
+
+            <a class="lesson-card lesson-card--math" href="#addition-to-10">
+              <span class="lesson-icon" aria-hidden="true">⭐</span>
+              <span>
+                <span class="lesson-title">Addition to 10</span>
+                <span class="lesson-meta">Math • 5 min</span>
+              </span>
+              <span class="lesson-cta">Let&apos;s go! <span aria-hidden="true">▶</span></span>
+            </a>
+
+            <a class="lesson-card lesson-card--kiswahili" href="#salamu-za-asubuhi">
+              <span class="lesson-icon" aria-hidden="true">💬</span>
+              <span>
+                <span class="lesson-title">Salamu za Asubuhi</span>
+                <span class="lesson-meta">Kiswahili • 5 min</span>
+              </span>
+              <span class="lesson-cta">Let&apos;s go! <span aria-hidden="true">▶</span></span>
+            </a>
+
+            <a class="lesson-card lesson-card--environment" href="#plants-around-us">
+              <span class="lesson-icon" aria-hidden="true">🌺</span>
+              <span>
+                <span class="lesson-title">Plants Around Us</span>
+                <span class="lesson-meta">Env. Activities • 5 min</span>
+              </span>
+              <span class="lesson-cta">Let&apos;s go! <span aria-hidden="true">▶</span></span>
+            </a>
+          </div>
+
+          <a class="next-button" href="#more-lessons" aria-label="More lessons">›</a>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<script>
+  const menuButton = document.getElementById('menuButton');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  function closeSidebar() {
+    sidebar.classList.remove('is-open');
+    overlay.classList.remove('is-open');
+  }
+
+  menuButton.addEventListener('click', () => {
+    sidebar.classList.add('is-open');
+    overlay.classList.add('is-open');
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+
+  document.querySelectorAll('.nav-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('.nav-link').forEach((item) => item.classList.remove('is-active'));
+      link.classList.add('is-active');
+      closeSidebar();
+    });
+  });
+</script>
+</body>
+</html>

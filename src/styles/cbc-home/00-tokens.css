@@ -1,0 +1,50 @@
+.cbc-home-page {
+    --cbc-page-bg: #eef9f0;
+    --cbc-green: #12b76a;
+    --cbc-green-dark: #079455;
+    --cbc-navy: #11144a;
+    --cbc-blue: #2878ff;
+    --cbc-purple: #9147ff;
+    --cbc-orange: #ff7a00;
+    --cbc-yellow: #ffc928;
+    --cbc-card: rgba(255, 255, 255, 0.96);
+    --cbc-shadow-soft: 0 18px 45px rgba(36, 63, 91, 0.13);
+    --cbc-shadow-card: 0 13px 28px rgba(25, 39, 72, 0.14);
+  
+    min-height: 100vh;
+    color: var(--cbc-navy);
+    background:
+      radial-gradient(circle at 8% 90%, rgba(166, 224, 89, 0.28), transparent 16rem),
+      radial-gradient(circle at 98% 90%, rgba(71, 190, 125, 0.26), transparent 16rem),
+      var(--cbc-page-bg);
+    overflow-x: hidden;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-page {
+    --cbc-page-bg: #0d1720;
+    --cbc-navy: #eef6ff;
+    --cbc-card: rgba(20, 30, 44, 0.96);
+    --cbc-shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.34);
+    --cbc-shadow-card: 0 13px 28px rgba(0, 0, 0, 0.32);
+  
+    background:
+      radial-gradient(circle at 8% 90%, rgba(18, 183, 106, 0.14), transparent 16rem),
+      radial-gradient(circle at 98% 90%, rgba(40, 120, 255, 0.14), transparent 16rem),
+      var(--cbc-page-bg);
+  }
+  
+  .cbc-home-page *,
+  .cbc-home-page *::before,
+  .cbc-home-page *::after {
+    box-sizing: border-box;
+  }
+  
+  .cbc-home-page a,
+  .cbc-home-page button {
+    font: inherit;
+  }
+  
+  .cbc-home-page a {
+    color: inherit;
+    text-decoration: none;
+  }

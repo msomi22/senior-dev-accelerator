@@ -1,4 +1,8 @@
 import { Link } from 'react-router-dom';
+import owlWithBackpackTransparent from '../../assets/academies/cbc/grade-1/home/owl-with-backpack-transparent.png';
+import actionContinueBook from '../../assets/academies/cbc/grade-1/home/action-continue-book.png';
+import actionReadOwlBook from '../../assets/academies/cbc/grade-1/home/action-read-owl-book.png';
+import actionPracticeTarget from '../../assets/academies/cbc/grade-1/home/action-practice-target.png';
 import '../../styles/cbc-academy-home.css';
 
 const emptyProgress = {
@@ -6,6 +10,49 @@ const emptyProgress = {
   total: 0,
   percent: 0
 };
+
+const SUBJECT_META = [
+  {
+    match: ['english', 'reading', 'comprehension', 'language', 'vowel', 'spelling'],
+    friendlyName: 'English',
+    copy: 'Read, write and have fun!',
+    cardClass: 'cbc-home-subject-card--english',
+    lessonClass: 'cbc-home-lesson-card--english',
+    visualClass: 'cbc-home-abc-book',
+    lessonIcon: '📗',
+    lessonMeta: 'English • 5 min'
+  },
+  {
+    match: ['math', 'mathematics', 'number', 'addition', 'subtraction', 'count'],
+    friendlyName: 'Math',
+    copy: 'Count, add and solve!',
+    cardClass: 'cbc-home-subject-card--math',
+    lessonClass: 'cbc-home-lesson-card--math',
+    visualClass: 'cbc-home-math-board',
+    lessonIcon: '⭐',
+    lessonMeta: 'Math • 5 min'
+  },
+  {
+    match: ['kiswahili', 'swahili', 'salamu'],
+    friendlyName: 'Kiswahili',
+    copy: 'Soma, andika na uelewe!',
+    cardClass: 'cbc-home-subject-card--kiswahili',
+    lessonClass: 'cbc-home-lesson-card--kiswahili',
+    visualClass: 'cbc-home-kiswahili-bubbles',
+    lessonIcon: '💬',
+    lessonMeta: 'Kiswahili • 5 min'
+  },
+  {
+    match: ['environmental', 'environment', 'activities', 'weather', 'plants', 'animals', 'home science'],
+    friendlyName: 'Environmental Activities',
+    copy: 'Discover our world and take care!',
+    cardClass: 'cbc-home-subject-card--environment',
+    lessonClass: 'cbc-home-lesson-card--environment',
+    visualClass: 'cbc-home-world-art',
+    lessonIcon: '🌺',
+    lessonMeta: 'Env. Activities • 5 min'
+  }
+];
 
 function clampPercent(value) {
   return Math.max(0, Math.min(100, Number(value) || 0));
@@ -21,104 +68,250 @@ function getSectionChildren(section) {
   return [];
 }
 
-function getNodeEmoji(section) {
-  const title = String(section?.title || '').toLowerCase();
-
-  if (title.includes('english')) return '📚';
-  if (title.includes('math')) return '🔢';
-  if (title.includes('kiswahili')) return '🗣️';
-  if (title.includes('grade 1')) return '🌱';
-  if (title.includes('grade 3')) return '⭐';
-
-  return '🎒';
+function normaliseText(value) {
+  return String(value || '').toLowerCase();
 }
 
-function CbcProgressPill({ progress }) {
+function getSectionText(section) {
+  return normaliseText(`${section?.title || ''} ${section?.summary || ''} ${section?.id || ''}`);
+}
+
+function getSubjectMeta(section, index = 0) {
+  const text = getSectionText(section);
+  const matched = SUBJECT_META.find((meta) => meta.match.some((term) => text.includes(term)));
+
+  if (matched) return matched;
+
+  return SUBJECT_META[index % SUBJECT_META.length] || SUBJECT_META[0];
+}
+
+function getFriendlySubjectTitle(section, index = 0) {
+  const meta = getSubjectMeta(section, index);
+  const rawTitle = String(section?.title || '').trim();
+
+  if (!rawTitle) return meta.friendlyName;
+
+  const rawTitleLower = rawTitle.toLowerCase();
+  const shouldUseFriendlyTitle =
+    rawTitleLower.includes('grade') ||
+    rawTitleLower.includes('learning path') ||
+    rawTitleLower.includes('category') ||
+    rawTitle.length > 28;
+
+  return shouldUseFriendlyTitle ? meta.friendlyName : rawTitle;
+}
+
+function getFriendlySubjectCopy(section, index = 0) {
+  const meta = getSubjectMeta(section, index);
+  const summary = String(section?.summary || '').trim();
+
+  if (!summary || summary.length > 52) return meta.copy;
+
+  return summary;
+}
+
+function CbcActionIllustration({ src }) {
+  return (
+    <span className="cbc-home-action-illustration" aria-hidden="true">
+      <img src={src} alt="" draggable="false" loading="eager" />
+    </span>
+  );
+}
+
+function findFriendlyHref(sections, terms, fallback = '/categories') {
+  const match = sections.find((section) => {
+    const text = getSectionText(section);
+    return terms.some((term) => text.includes(term));
+  });
+
+  return match?.href || fallback;
+}
+
+function getStarCount(progress) {
+  const done = Number(progress?.done || 0);
+  const percent = clampPercent(progress?.percent);
+
+  if (done > 0) return done;
+  if (percent > 0) return Math.round(percent);
+
+  return 0;
+}
+
+function getTodayLessons({ continueSection, focusChildren, learningAreas }) {
+  const seen = new Set();
+  const candidates = [continueSection, ...focusChildren, ...learningAreas].filter(Boolean);
+
+  return candidates.filter((section) => {
+    const key = section.id || section.href || section.title;
+
+    if (!key || seen.has(key)) return false;
+
+    seen.add(key);
+    return true;
+  }).slice(0, 4);
+}
+
+function CbcOwlMascot() {
+  return (
+    <figure className="cbc-home-owl-mascot" aria-hidden="true">
+      <img
+        className="cbc-home-owl-mascot__image"
+        src={owlWithBackpackTransparent}
+        alt=""
+        draggable="false"
+        loading="eager"
+      />
+    </figure>
+  );
+}
+
+function CbcActionCard({ to, title, description, imageSrc, variant }) {
+    return (
+      <Link to={to} className={`cbc-home-action-card ${variant}`.trim()}>
+        <span className="cbc-home-action-card-shine" aria-hidden="true" />
+  
+        <CbcActionIllustration src={imageSrc} />
+  
+        <span className="cbc-home-action-card-copy-wrap">
+          <span className="cbc-home-action-title">{title}</span>
+          <span className="cbc-home-action-copy">{description}</span>
+        </span>
+      </Link>
+    );
+  }
+
+function CbcStarsCard({ progress }) {
   const safeProgress = progress || emptyProgress;
+  const percent = clampPercent(safeProgress.percent);
+  const stars = getStarCount(safeProgress);
 
   return (
-    <div className="cbc-home-progress-pill">
-      <span>{clampPercent(safeProgress.percent)}%</span>
-      <small>{safeProgress.done || 0}/{safeProgress.total || 0} done</small>
-    </div>
+    <aside className="cbc-home-stars-card" aria-label="My stars progress">
+      <div className="cbc-home-stars-title">
+        <span aria-hidden="true">⭐</span>
+        My stars
+      </div>
+
+      <div className="cbc-home-stars-number">{stars}</div>
+      <div className="cbc-home-stars-earned">stars earned!</div>
+
+      <div className="cbc-home-stars-progress" aria-label={`${percent}% progress`}>
+        <span style={{ width: `${percent}%` }} />
+      </div>
+
+      <div className="cbc-home-stars-message">You&apos;re doing great! Keep it up! 🌈</div>
+
+      <Link className="cbc-home-progress-link" to="/progress">
+        See my progress
+      </Link>
+    </aside>
   );
 }
 
-function CbcActionCard({ to, emoji, title, description, variant = '' }) {
+function CbcLearningAreaCard({ section, index }) {
+  const meta = getSubjectMeta(section, index);
+  const visualClassName = `cbc-home-subject-visual ${meta.visualClass}`;
+
   return (
-    <Link to={to} className={`cbc-home-action-card ${variant}`.trim()}>
-      <span className="cbc-home-action-card__emoji" aria-hidden="true">{emoji}</span>
-      <span>
-        <strong>{title}</strong>
-        <small>{description}</small>
+    <Link
+      to={section.href || '/categories'}
+      className={`cbc-home-subject-card ${meta.cardClass}`.trim()}
+    >
+      <div>
+        <div className="cbc-home-subject-card__title">
+          {getFriendlySubjectTitle(section, index)}
+        </div>
+
+        <div className="cbc-home-subject-card__copy">
+          {getFriendlySubjectCopy(section, index)}
+        </div>
+      </div>
+
+      <div className={visualClassName} aria-hidden="true">
+        {meta.visualClass === 'cbc-home-kiswahili-bubbles' ? (
+          <span className="cbc-home-kiswahili-bird">🐦</span>
+        ) : null}
+      </div>
+
+      <span className="cbc-home-start-learning">
+        Start learning <span aria-hidden="true">›</span>
       </span>
     </Link>
   );
 }
 
-function CbcLearningAreaCard({ section }) {
-  const progress = section.progress || emptyProgress;
+function CbcLessonCard({ section, index }) {
+  const meta = getSubjectMeta(section, index);
+  const title = section?.title || getFriendlySubjectTitle(section, index);
 
   return (
-    <Link to={section.href || '/categories'} className="cbc-home-learning-card">
-      <span className="cbc-home-learning-card__emoji" aria-hidden="true">
-        {getNodeEmoji(section)}
+    <Link
+      to={section?.href || '/categories'}
+      className={`cbc-home-lesson-card ${meta.lessonClass}`.trim()}
+    >
+      <span className="cbc-home-lesson-icon" aria-hidden="true">
+        {meta.lessonIcon}
       </span>
 
-      <span className="cbc-home-learning-card__copy">
-        <strong>{section.title}</strong>
-        <small>{section.summary || 'Tap to learn and practise.'}</small>
-      </span>
-
-      <CbcProgressPill progress={progress} />
-    </Link>
-  );
-}
-
-function CbcFocusCard({ section }) {
-  const progress = section.progress || emptyProgress;
-
-  return (
-    <Link to={section.href || '/categories'} className="cbc-home-focus-card">
-      <span aria-hidden="true">💪</span>
       <span>
-        <strong>{section.title}</strong>
-        <small>{progress.done || 0}/{progress.total || 0} complete</small>
+        <span className="cbc-home-lesson-title">{title}</span>
+        <span className="cbc-home-lesson-meta">{meta.lessonMeta}</span>
       </span>
-      <b>{clampPercent(progress.percent)}%</b>
+
+      <span className="cbc-home-lesson-cta">
+        Let&apos;s go! <span aria-hidden="true">▶</span>
+      </span>
     </Link>
   );
 }
 
 function CbcEmptyHome({ homeModel }) {
-  const title = homeModel.title || 'CBC Academy';
   const primaryAction = homeModel.continueAction || {
     href: '/categories',
-    label: 'See learning areas'
+    label: 'Start learning'
   };
 
   return (
-    <main className="cbc-home-page">
-      <section className="cbc-home-hero">
-        <div className="cbc-home-hero__copy">
-          <p className="cbc-home-eyebrow">CBC Academy</p>
-          <h1>Hi learner! 🌈</h1>
-          <p>{homeModel.summary || `${title} lessons will appear here soon.`}</p>
+    <main className="cbc-home-page cbc-home-page--empty">
+      <section className="cbc-home-stage" aria-labelledby="cbc-home-title">
+        <span className="cbc-home-cloud cbc-home-cloud--one" aria-hidden="true" />
+        <span className="cbc-home-cloud cbc-home-cloud--two" aria-hidden="true" />
+        <span className="cbc-home-cloud cbc-home-cloud--three" aria-hidden="true" />
 
-          <Link className="cbc-home-primary-button" to={primaryAction.href}>
-            {primaryAction.label}
-          </Link>
+        <div className="cbc-home-hero-content">
+          <p className="cbc-home-greeting">Hi there, young learner! 👋</p>
+          
+          <h1 className="cbc-home-hero-title" id="cbc-home-title">
+            Ready to <span>learn</span> today?
+          </h1>
+
+          <p className="cbc-home-hero-subtitle">
+            Let&apos;s have fun, learn new things, and shine bright! ✨
+          </p>
+
+          <div className="cbc-home-hero-actions" aria-label="Main learner actions">
+          <CbcActionCard
+            to={primaryAction.href}
+            title="Continue"
+            description="Start your first fun activity"
+            imageSrc={actionContinueBook}
+            variant="cbc-home-action-card--continue"
+            />
+          </div>
         </div>
 
-        <div className="cbc-home-mascot-card" aria-hidden="true">
-          <span>🦉</span>
-          <strong>Ready to learn?</strong>
-        </div>
-      </section>
+        <CbcOwlMascot />
 
-      <section className="cbc-home-panel">
-        <h2>{homeModel.emptyState?.title || 'Lessons are coming soon'}</h2>
-        <p>{homeModel.emptyState?.description || 'Your learning areas will show here once they are ready.'}</p>
+        <section className="cbc-home-learning-area-panel" aria-labelledby="cbc-home-empty-title">
+          <h2 className="cbc-home-section-heading" id="cbc-home-empty-title">
+            <span className="cbc-home-heading-icon" aria-hidden="true">⭐</span>
+            <span>{homeModel.emptyState?.title || 'Lessons are coming soon'}</span>
+          </h2>
+
+          <p className="cbc-home-empty-note">
+            {homeModel.emptyState?.description || 'Your learning areas will show here once they are ready.'}
+          </p>
+        </section>
       </section>
     </main>
   );
@@ -129,9 +322,18 @@ export default function CbcAcademyHome({ homeModel, randomCount = 0 }) {
   const continueSection = getSectionByKind(homeModel, 'continue');
   const focusSection = getSectionByKind(homeModel, 'focus');
   const learningPathsSection = getSectionByKind(homeModel, 'learningPaths');
-  const stageSection = getSectionByKind(homeModel, 'stage');
+
   const focusChildren = getSectionChildren(focusSection);
   const learningAreas = getSectionChildren(learningPathsSection);
+  const todayLessons = getTodayLessons({ continueSection, focusChildren, learningAreas });
+
+  const continueHref = continueSection?.href || homeModel.continueAction?.href || '/categories';
+
+  const readWithMeHref = findFriendlyHref(
+    [...learningAreas, ...focusChildren],
+    ['read', 'reading', 'english', 'comprehension'],
+    '/categories'
+  );
 
   if (!homeModel.hasContent) {
     return <CbcEmptyHome homeModel={homeModel} />;
@@ -139,120 +341,118 @@ export default function CbcAcademyHome({ homeModel, randomCount = 0 }) {
 
   return (
     <main className="cbc-home-page">
-      <section className="cbc-home-hero" aria-labelledby="cbc-home-title">
-        <div className="cbc-home-hero__copy">
-          <p className="cbc-home-eyebrow">CBC Academy</p>
-          <h1 id="cbc-home-title">Ready for today’s learning? 🌟</h1>
-          <p>
-            Choose a learning area, practise a little, and keep growing step by step.
+      <section className="cbc-home-stage" aria-labelledby="cbc-home-title">
+        <span className="cbc-home-cloud cbc-home-cloud--one" aria-hidden="true" />
+        <span className="cbc-home-cloud cbc-home-cloud--two" aria-hidden="true" />
+        <span className="cbc-home-cloud cbc-home-cloud--three" aria-hidden="true" />
+
+        <span className="cbc-home-decor-sparkle cbc-home-sparkle-a" aria-hidden="true">✦</span>
+        <span className="cbc-home-decor-sparkle cbc-home-sparkle-b" aria-hidden="true">✦</span>
+        <span className="cbc-home-decor-sparkle cbc-home-sparkle-c" aria-hidden="true">✦</span>
+
+        <div className="cbc-home-hero-content">
+          <p className="cbc-home-greeting">Hi there, young learner! 👋</p>
+
+          <h1 className="cbc-home-hero-title" id="cbc-home-title">
+            Ready to <span>learn</span> today?
+          </h1>
+
+          <p className="cbc-home-hero-subtitle">
+            Let&apos;s have fun, learn new things, and shine bright! ✨
           </p>
 
-          <div className="cbc-home-hero__actions">
-            <Link className="cbc-home-primary-button" to={homeModel.continueAction.href}>
-              {homeModel.continueAction.label}
-            </Link>
+          <div className="cbc-home-hero-actions" aria-label="Main learner actions">
+          <CbcActionCard
+            to={continueHref}
+            title="Continue"
+            description={continueSection?.summary || 'Pick up where you left off'}
+            imageSrc={actionContinueBook}
+            variant="cbc-home-action-card--continue"
+            />
 
-            <Link className="cbc-home-secondary-button" to="/categories">
-              Pick a learning area
-            </Link>
+            <CbcActionCard
+            to={readWithMeHref}
+            title="Read with me"
+            description="Listen and read fun stories"
+            imageSrc={actionReadOwlBook}
+            variant="cbc-home-action-card--read"
+            />
+
+            <CbcActionCard
+            to="/random"
+            title="Practice"
+            description={randomCount > 0 ? `${randomCount} questions and activities` : 'Try questions and activities'}
+            imageSrc={actionPracticeTarget}
+            variant="cbc-home-action-card--practice"
+            />
           </div>
         </div>
 
-        <div className="cbc-home-mascot-card">
-          <span aria-hidden="true">🦉</span>
-          <strong>{clampPercent(progress.percent)}%</strong>
-          <small>overall progress</small>
-        </div>
-      </section>
+        <CbcOwlMascot />
+        <CbcStarsCard progress={progress} />
 
-      <section className="cbc-home-action-grid" aria-label="CBC quick actions">
-        <CbcActionCard
-          to={continueSection?.href || homeModel.continueAction.href}
-          emoji="📖"
-          title="Continue learning"
-          description={continueSection?.summary || 'Open your next activity.'}
-          variant="cbc-home-action-card--primary"
-        />
+        <span className="cbc-home-ground-decor cbc-home-plant-left" aria-hidden="true">🌿</span>
+        <span className="cbc-home-ground-decor cbc-home-flower-right" aria-hidden="true">🌸</span>
+        <span className="cbc-home-ground-decor cbc-home-tree-right" aria-hidden="true">🌲</span>
 
-        <CbcActionCard
-          to="/random"
-          emoji="🎯"
-          title="Practise"
-          description="Try a friendly mixed practice."
-        />
+        <section className="cbc-home-learning-area-panel" aria-labelledby="cbc-home-learning-areas-title">
+          <div className="cbc-home-learning-heading-row">
+            <h2 className="cbc-home-section-heading" id="cbc-home-learning-areas-title">
+              <span className="cbc-home-heading-icon" aria-hidden="true">⭐</span>
+              <span>Explore our learning areas</span>
+            </h2>
 
-        <CbcActionCard
-          to="/progress"
-          emoji="🏅"
-          title="My progress"
-          description={`${progress.done || 0} completed so far.`}
-        />
-      </section>
-
-      <section className="cbc-home-panel">
-        <div className="cbc-home-section-heading">
-          <div>
-            <p className="cbc-home-eyebrow">Learning areas</p>
-            <h2>{learningPathsSection?.title || 'Choose where to learn'}</h2>
+            <Link className="cbc-home-view-all-link" to={learningPathsSection?.href || '/categories'}>
+              View all
+            </Link>
           </div>
 
-          <Link to={learningPathsSection?.href || '/categories'}>
-            View all
-          </Link>
-        </div>
+          <div className="cbc-home-learning-grid">
+            {learningAreas.length ? learningAreas.map((section, index) => (
+              <CbcLearningAreaCard
+                key={section.id || section.href || section.title}
+                section={section}
+                index={index}
+              />
+            )) : (
+              <p className="cbc-home-empty-note">Learning areas will appear here soon.</p>
+            )}
+          </div>
+        </section>
 
-        <div className="cbc-home-learning-grid">
-          {learningAreas.length ? learningAreas.map((section) => (
-            <CbcLearningAreaCard key={section.id} section={section} />
-          )) : (
-            <p className="cbc-home-empty-note">Learning areas will appear here soon.</p>
-          )}
-        </div>
-      </section>
+        <section className="cbc-home-lesson-panel" aria-labelledby="cbc-home-todays-learning-title">
+          <div className="cbc-home-lesson-heading-row">
+            <span className="cbc-home-lesson-heading-emoji" aria-hidden="true">😄</span>
 
-      <section className="cbc-home-two-column">
-        <article className="cbc-home-panel">
-          <div className="cbc-home-section-heading">
             <div>
-              <p className="cbc-home-eyebrow">Practise more</p>
-              <h2>{focusSection?.title || 'Areas to improve'}</h2>
+              <h2 className="cbc-home-lesson-heading-title" id="cbc-home-todays-learning-title">
+                Today&apos;s learning
+              </h2>
+
+              <div className="cbc-home-lesson-heading-copy">
+                Pick a fun lesson to get started!
+              </div>
             </div>
           </div>
 
-          <div className="cbc-home-focus-list">
-            {focusChildren.length ? focusChildren.map((section) => (
-              <CbcFocusCard key={section.id} section={section} />
-            )) : (
-              <p className="cbc-home-empty-note">
-                Start learning to see what needs more practice.
-              </p>
-            )}
+          <div className="cbc-home-lessons-wrap">
+            <div className="cbc-home-lesson-grid">
+              {todayLessons.length ? todayLessons.map((section, index) => (
+                <CbcLessonCard
+                  key={section.id || section.href || section.title}
+                  section={section}
+                  index={index}
+                />
+              )) : (
+                <p className="cbc-home-empty-note">Start learning to see today&apos;s fun lessons.</p>
+              )}
+            </div>
+
+            <Link className="cbc-home-next-button" to="/categories" aria-label="More lessons">
+              ›
+            </Link>
           </div>
-        </article>
-
-        <article className="cbc-home-panel cbc-home-stage-card">
-          <p className="cbc-home-eyebrow">Today’s cheer</p>
-          <h2>{stageSection?.title || 'Keep going'}</h2>
-          <p>
-            {stageSection?.summary || 'Every small practice makes you stronger.'}
-          </p>
-
-          <div className="cbc-home-mini-stats">
-            <span>
-              <strong>{progress.done || 0}</strong>
-              <small>Done</small>
-            </span>
-            <span>
-              <strong>{Math.max((progress.total || 0) - (progress.done || 0), 0)}</strong>
-              <small>Left</small>
-            </span>
-            <span>
-              <strong>{randomCount}</strong>
-              <small>Practice</small>
-            </span>
-          </div>
-
-        </article>
+        </section>
       </section>
     </main>
   );

@@ -1,0 +1,573 @@
+/* =========================================================
+   Responsive rules
+   Owns:
+   - desktop tightening
+   - tablet layout
+   - mobile layout
+   - responsive owl/stars/scenic background positioning
+   ========================================================= */
+
+   @media (max-width: 1500px) {
+    .cbc-home-stage {
+      min-height: 670px;
+      padding-inline: 34px;
+    }
+  
+    .cbc-home-stage::before {
+      top: 250px;
+    }
+  
+    .cbc-home-stage::after {
+      top: 405px;
+    }
+  
+    .cbc-home-hero-title {
+      font-size: clamp(52px, 5vw, 68px);
+    }
+  
+    .cbc-home-hero-actions {
+      max-width: 620px;
+    }
+  
+    .cbc-home-owl-mascot {
+      top: 74px;
+      right: 330px;
+      width: 330px;
+      height: 330px;
+    }
+  
+    .cbc-home-stars-card {
+      right: 36px;
+      width: 315px;
+    }
+  
+    .cbc-home-learning-grid {
+      gap: 22px;
+    }
+  }
+  
+  @media (max-width: 1250px) {
+    .cbc-home-stage {
+      min-height: 720px;
+    }
+  
+    .cbc-home-stage::before {
+      top: 300px;
+    }
+  
+    .cbc-home-stage::after {
+      top: 465px;
+      height: 320px;
+    }
+  
+    .cbc-home-hero-title {
+      font-size: clamp(43px, 5.2vw, 61px);
+    }
+  
+    .cbc-home-hero-actions {
+      grid-template-columns: 1fr;
+      max-width: 360px;
+    }
+  
+    .cbc-home-action-card {
+      min-height: 96px;
+    }
+  
+    .cbc-home-owl-mascot {
+      top: 155px;
+      right: 300px;
+      width: 300px;
+      height: 300px;
+    }
+  
+    .cbc-home-stars-card {
+      top: 118px;
+      right: 28px;
+      width: 290px;
+    }
+  
+    .cbc-home-learning-grid,
+    .cbc-home-lesson-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (max-width: 980px) {
+    .cbc-home-stage {
+      min-height: auto;
+      padding: 32px 18px 32px;
+    }
+  
+    .cbc-home-stage::before {
+      top: 520px;
+      height: 210px;
+    }
+  
+    .cbc-home-stage::after {
+      top: 690px;
+      height: 520px;
+    }
+  
+    .cbc-home-hero-content {
+      max-width: none;
+    }
+  
+    .cbc-home-hero-title {
+      max-width: 9ch;
+      font-size: clamp(44px, 12vw, 58px);
+    }
+  
+    .cbc-home-hero-actions {
+      grid-template-columns: 1fr;
+      max-width: none;
+    }
+  
+    .cbc-home-owl-mascot,
+    .cbc-home-stars-card {
+      position: relative;
+      top: auto;
+      right: auto;
+      bottom: auto;
+    }
+  
+    .cbc-home-owl-mascot {
+      width: min(100%, 320px);
+      height: 300px;
+      margin: 20px auto 0;
+    }
+  
+    .cbc-home-stars-card {
+      width: 100%;
+      margin-top: 18px;
+    }
+  
+    .cbc-home-learning-area-panel,
+    .cbc-home-lesson-panel {
+      padding-inline: 14px;
+    }
+  
+    .cbc-home-learning-grid,
+    .cbc-home-lesson-grid {
+      gap: 16px;
+    }
+  
+    .cbc-home-lesson-grid {
+      padding-right: 0;
+    }
+  
+    .cbc-home-next-button {
+      display: none;
+    }
+  
+    .cbc-home-plant-left {
+      top: 540px;
+    }
+  
+    .cbc-home-flower-right {
+      top: 555px;
+      right: 40px;
+    }
+  
+    .cbc-home-tree-right {
+      top: 510px;
+      right: -18px;
+    }
+  }
+  
+  @media (max-width: 680px) {
+    .cbc-home-stage {
+      padding-inline: 12px;
+    }
+  
+    .cbc-home-greeting {
+      font-size: 18px;
+    }
+  
+    .cbc-home-hero-title {
+      max-width: 10ch;
+      font-size: 39px;
+    }
+  
+    .cbc-home-hero-subtitle {
+      font-size: 16px;
+    }
+  
+    .cbc-home-action-card {
+      grid-template-columns: 70px 1fr;
+      min-height: 96px;
+      padding: 14px;
+    }
+  
+    .cbc-home-book-art,
+    .cbc-home-mini-owl-art,
+    .cbc-home-target-art {
+      width: 68px;
+      height: 68px;
+    }
+  
+    .cbc-home-mini-owl-art::before {
+      font-size: 57px;
+    }
+  
+    .cbc-home-target-art::before {
+      width: 61px;
+      height: 61px;
+    }
+  
+    .cbc-home-owl-mascot {
+      width: min(100%, 280px);
+      height: 255px;
+    }
+  
+    .cbc-home-stars-card {
+      min-height: 260px;
+      padding: 22px;
+    }
+  
+    .cbc-home-learning-area-panel {
+      margin-top: 24px;
+      border-radius: 26px;
+    }
+  
+    .cbc-home-learning-heading-row {
+      align-items: flex-start;
+    }
+  
+    .cbc-home-learning-grid,
+    .cbc-home-lesson-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .cbc-home-subject-card {
+      min-height: 216px;
+    }
+  
+    .cbc-home-subject-visual {
+      opacity: 0.96;
+      transform: scale(0.9);
+      transform-origin: right top;
+    }
+  
+    .cbc-home-plant-left {
+      top: 525px;
+      font-size: 48px;
+    }
+  
+    .cbc-home-flower-right {
+      top: 545px;
+      right: 24px;
+      font-size: 34px;
+    }
+  
+    .cbc-home-tree-right {
+      top: 500px;
+      font-size: 74px;
+    }
+  }
+
+
+/* =========================================================
+   Mobile hero correction
+   - Clean 2-line title
+   - No word-by-word wrapping
+   - Compact action cards
+   ========================================================= */
+
+   @media (max-width: 760px) {
+    .cbc-home-hero-content {
+      max-width: 100%;
+    }
+  
+    .cbc-home-greeting {
+      margin-bottom: 10px;
+      font-size: clamp(24px, 6vw, 32px);
+      line-height: 1.08;
+    }
+  
+    .cbc-home-hero-title {
+      width: 100%;
+      max-width: 100%;
+      display: grid;
+      gap: 2px;
+      font-size: clamp(44px, 11.5vw, 56px);
+      line-height: 0.94;
+      letter-spacing: -0.05em;
+      text-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.75),
+        0 8px 22px rgba(255, 255, 255, 0.36);
+    }
+  
+    .cbc-home-hero-title span {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      white-space: nowrap;
+    }
+  
+    .cbc-home-hero-title .cbc-home-title-dark {
+      color: #11144a;
+    }
+  
+    .cbc-home-hero-title .cbc-home-title-green {
+      color: #067a3f;
+    }
+  
+    .cbc-home-hero-subtitle {
+      max-width: 100%;
+      margin: 14px 0 20px;
+      font-size: clamp(17px, 4.8vw, 22px);
+      line-height: 1.22;
+    }
+  
+    .cbc-home-hero-actions {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      max-width: 100%;
+    }
+  
+    .cbc-home-action-card {
+      min-height: 112px;
+      padding: 14px 16px;
+      grid-template-columns: 82px minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+      border-radius: 22px;
+    }
+  
+    .cbc-home-book-art,
+    .cbc-home-mini-owl-art,
+    .cbc-home-target-art {
+      width: 74px;
+      height: 74px;
+    }
+  
+    .cbc-home-mini-owl-art::before {
+      font-size: 60px;
+    }
+  
+    .cbc-home-action-title {
+      font-size: 24px;
+      line-height: 1.02;
+    }
+  
+    .cbc-home-action-copy {
+      margin-top: 6px;
+      font-size: 16px;
+      line-height: 1.15;
+    }
+  
+    :root[data-theme="dark"] .cbc-home-hero-title {
+      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+  
+    :root[data-theme="dark"] .cbc-home-hero-title .cbc-home-title-dark {
+      color: #f5fbff;
+    }
+  
+    :root[data-theme="dark"] .cbc-home-hero-title .cbc-home-title-green {
+      color: #86ffd2;
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .cbc-home-hero-title {
+      font-size: clamp(40px, 10.7vw, 48px);
+    }
+  
+    .cbc-home-action-card {
+      min-height: 104px;
+      grid-template-columns: 76px minmax(0, 1fr);
+      padding: 13px 14px;
+    }
+  
+    .cbc-home-action-title {
+      font-size: 22px;
+    }
+  
+    .cbc-home-action-copy {
+      font-size: 15px;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    .cbc-home-hero-title {
+      font-size: 36px;
+    }
+  }
+  
+  /* =========================================================
+   Add to the bottom of 08-responsive.css
+   Responsive action-card image sizes
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .cbc-home-action-illustration {
+    width: 84px;
+    height: 84px;
+  }
+}
+
+@media (max-width: 420px) {
+  .cbc-home-action-illustration {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+/* =========================================================
+   Action cards responsive correction
+   Match compact target card layout
+   ========================================================= */
+
+   @media (max-width: 980px) {
+    .cbc-home-hero-actions {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      max-width: 100%;
+    }
+  
+    .cbc-home-action-card {
+      height: 128px;
+      min-height: 128px;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px 18px;
+      border-radius: 22px;
+    }
+  
+    .cbc-home-action-illustration {
+      width: 82px;
+      height: 82px;
+    }
+  
+    .cbc-home-action-title {
+      font-size: 24px;
+      line-height: 1.04;
+    }
+  
+    .cbc-home-action-copy {
+      max-width: 18ch;
+      font-size: 16px;
+      line-height: 1.16;
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .cbc-home-action-card {
+      height: 112px;
+      min-height: 112px;
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 12px;
+      padding: 14px 15px;
+      border-radius: 20px;
+    }
+  
+    .cbc-home-action-illustration {
+      width: 68px;
+      height: 68px;
+    }
+  
+    .cbc-home-action-title {
+      font-size: 22px;
+    }
+  
+    .cbc-home-action-copy {
+      max-width: 17ch;
+      font-size: 15px;
+    }
+  }
+
+
+  /* =========================================================
+   Desktop/tablet action cards correction
+   Keep action cards compact and horizontal on large screens
+   ========================================================= */
+
+@media (min-width: 981px) {
+  .cbc-home-hero-actions {
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    gap: 18px;
+    max-width: 1060px;
+  }
+
+  .cbc-home-action-card {
+    height: 132px;
+    min-height: 132px;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px 22px;
+    border-radius: 24px;
+  }
+
+  .cbc-home-action-illustration {
+    width: 84px;
+    height: 84px;
+  }
+
+  .cbc-home-action-title {
+    font-size: 23px;
+    line-height: 1.05;
+    white-space: normal;
+  }
+
+  .cbc-home-action-copy {
+    margin-top: 7px;
+    max-width: 17ch;
+    font-size: 16px;
+    line-height: 1.16;
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1500px) {
+  .cbc-home-hero-actions {
+    max-width: 980px;
+  }
+
+  .cbc-home-action-card {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 14px;
+    padding: 17px 20px;
+  }
+
+  .cbc-home-action-illustration {
+    width: 78px;
+    height: 78px;
+  }
+
+  .cbc-home-action-title {
+    font-size: 22px;
+  }
+
+  .cbc-home-action-copy {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1250px) {
+  .cbc-home-hero-actions {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    max-width: 860px;
+  }
+
+  .cbc-home-action-card {
+    height: 124px;
+    min-height: 124px;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px 18px;
+  }
+
+  .cbc-home-action-illustration {
+    width: 68px;
+    height: 68px;
+  }
+
+  .cbc-home-action-title {
+    font-size: 20px;
+  }
+
+  .cbc-home-action-copy {
+    max-width: 15ch;
+    font-size: 14px;
+  }
+}
