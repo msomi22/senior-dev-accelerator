@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import SupportButton from '../../components/SupportButton.jsx';
 import '../../styles/cbc-academy-home.css';
 
 const emptyProgress = {
@@ -120,7 +119,6 @@ function CbcEmptyHome({ homeModel }) {
       <section className="cbc-home-panel">
         <h2>{homeModel.emptyState?.title || 'Lessons are coming soon'}</h2>
         <p>{homeModel.emptyState?.description || 'Your learning areas will show here once they are ready.'}</p>
-        <SupportButton className="cbc-home-support-link" />
       </section>
     </main>
   );
@@ -254,8 +252,7 @@ export default function CbcAcademyHome({ homeModel, randomCount = 0 }) {
               <small>Practice</small>
             </span>
           </div>
-
-          <SupportButton className="cbc-home-support-link" />
+          
         </article>
       </section>
     </main>
