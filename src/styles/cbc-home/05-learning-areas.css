@@ -9,8 +9,8 @@
 
    .cbc-home-learning-area-panel {
     position: relative;
-    z-index: 9;
-    margin-top: 28px;
+    z-index: 6;
+    margin-top: 88px;
     padding: 20px 30px 18px;
     border-radius: 32px;
     background: rgba(255, 255, 255, 0.74);
@@ -26,7 +26,7 @@
     display: flex;
     gap: 1rem;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
   
   .cbc-home-section-heading {
@@ -49,11 +49,7 @@
   }
   
   .cbc-home-view-all-link {
-    margin-bottom: 16px;
-    color: #017f61;
-    font-size: 14px;
-    font-weight: 950;
-    white-space: nowrap;
+    display: none;
   }
   
   :root[data-theme="dark"] .cbc-home-view-all-link {

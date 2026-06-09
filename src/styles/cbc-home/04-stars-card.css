@@ -10,12 +10,12 @@
    .cbc-home-stars-card {
     position: absolute;
     z-index: 10;
-    top: 88px;
+    top: 78px;
     right: 42px;
-    width: 292px;
-    min-height: 224px;
-    padding: 22px 22px 20px;
-    border-radius: 28px;
+    width: 268px;
+    min-height: 204px;
+    padding: 18px 20px 18px;
+    border-radius: 26px;
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 20px 48px rgba(50, 75, 99, 0.16);
     overflow: hidden;
@@ -37,9 +37,9 @@
   .cbc-home-stars-card::after {
     content: "🌟";
     position: absolute;
-    right: 36px;
-    top: 65px;
-    font-size: 76px;
+    right: 30px;
+    top: 62px;
+    font-size: 64px;
     filter: drop-shadow(0 10px 9px rgba(255, 188, 41, 0.22));
   }
   
@@ -65,9 +65,9 @@
   .cbc-home-stars-number {
     position: relative;
     z-index: 2;
-    margin-top: 12px;
+    margin-top: 10px;
     color: var(--cbc-purple);
-    font-size: 44px;
+    font-size: 40px;
     line-height: 0.9;
     font-weight: 950;
   }
