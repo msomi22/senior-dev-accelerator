@@ -1,96 +1,60 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/dashboard-hero.css';
-import {
-  getAllTopicsWithCounts,
-  getCategoriesWithCounts,
-  getCategorySummaries,
-  topicProgress
-} from '../services/questionBankService.js';
-import { getDashboardQuestionSummary } from '../services/visibleQuestionInventoryService.js';
-import { buildCategorySearchParams, categoryPath } from '../services/categoryNavigationService.js';
-import {
-  getRecommendedStartTopics,
-  getTopicDisplayName,
-  getTopicLearningTitle
-} from '../services/dashboardLearningPathService.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 import SupportButton from '../components/SupportButton.jsx';
+import { getAcademyHomeViewModel } from '../learning/home/index.ts';
 
-const emptySummary = { total: 0, done: 0, percent: 0 };
-
-const categoryIconMap = {
-  dsa: '⌁',
-  system: '▣',
-  java: '☕',
-  'kubernetes-ckad': '⎈',
-  aptitude: '∑',
-  'ml-ai': 'AI',
-  'engineering-leadership': '★'
+const emptyProgress = {
+  done: 0,
+  total: 0,
+  percent: 0
 };
 
-function getTopicLearningPath(topic) {
-  if (!topic?.category || !topic?.id) return '/random';
-
-  const query = buildCategorySearchParams({
-    topicId: topic.id,
-    page: 1
-  }).toString();
-  const basePath = categoryPath(topic.category);
-
-  return query ? `${basePath}?${query}` : basePath;
-}
-
-function buildLearningStage(percent) {
-  if (percent >= 80) {
-    return {
-      label: 'Senior interview polish',
-      description: 'Refine weak topics, explain trade-offs aloud, and practice mixed questions.'
-    };
-  }
-
-  if (percent >= 50) {
-    return {
-      label: 'Depth and consistency',
-      description: 'Keep building breadth while comparing patterns and why one approach wins.'
-    };
-  }
-
-  if (percent >= 20) {
-    return {
-      label: 'Pattern recognition sprint',
-      description: 'Focus on recognizing the problem shape before jumping into implementation.'
-    };
-  }
-
-  return {
-    label: 'Foundation builder',
-    description: 'Start with high-signal fundamentals and build a steady learning habit.'
-  };
-}
+const emptyHomeContent = {
+  summary: emptyProgress,
+  categories: [],
+  countedCategories: [],
+  topics: []
+};
 
 function clampPercent(value) {
   return Math.max(0, Math.min(100, Number(value) || 0));
 }
 
-function getCategoryIcon(category) {
-  return categoryIconMap[category?.id] || String(category?.name || '•').slice(0, 2).toUpperCase();
+function getSectionByKind(homeModel, kind) {
+  return homeModel?.sections?.find((section) => section.kind === kind) || null;
 }
 
-function getCategorySubtitle(category) {
-  if (category?.description) return category.description;
-  const topicCount = Number(category?.topicCount || 0);
-  const quizCount = Number(category?.quizCount || 0);
+function getSectionChildren(section) {
+  if (Array.isArray(section?.children)) return section.children;
+  if (Array.isArray(section?.nodes)) return section.nodes;
+  return [];
+}
 
-  if (quizCount > 0) return `${quizCount} practice questions`;
-  return `${topicCount} ${topicCount === 1 ? 'topic bank' : 'topic banks'}`;
+function getNodeIcon(node) {
+  return String(node?.title || node?.label || node?.id || '•')
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function getProgressLabel(progress) {
+  if (!progress) return 'Not started';
+  return `${progress.done || 0}/${progress.total || 0} complete`;
 }
 
 function ProgressBar({ percent, label }) {
   const safePercent = clampPercent(percent);
 
   return (
-    <div className="dashboard-progress-bar" aria-label={label} role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={safePercent}>
+    <div
+      className="dashboard-progress-bar"
+      aria-label={label}
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow={safePercent}
+    >
       <span style={{ width: `${safePercent}%` }} />
     </div>
   );
@@ -140,31 +104,33 @@ function MetricTile({ value, label, helper }) {
   );
 }
 
-function TopicProgressRow({ topic }) {
+function TopicProgressRow({ section }) {
+  const progress = section.progress || emptyProgress;
+
   return (
-    <Link to={getTopicLearningPath(topic)} className="dashboard-topic-row">
+    <Link to={section.href || '/categories'} className="dashboard-topic-row">
       <span className="dashboard-topic-row__icon" aria-hidden="true">↗</span>
       <span className="dashboard-topic-row__copy">
-        <strong>{getTopicDisplayName(topic)}</strong>
-        <small>{topic.progress.done}/{topic.progress.total} complete</small>
+        <strong>{section.title}</strong>
+        <small>{getProgressLabel(progress)}</small>
       </span>
-      <span className="dashboard-topic-row__percent">{topic.progress.percent}%</span>
+      <span className="dashboard-topic-row__percent">{clampPercent(progress.percent)}%</span>
     </Link>
   );
 }
 
-function CategoryProgressRow({ category }) {
-  const percent = clampPercent(category.progressPercent);
+function CategoryProgressRow({ section }) {
+  const progress = section.progress || emptyProgress;
 
   return (
-    <Link to={categoryPath(category.id)} className="dashboard-category-row">
-      <span className="dashboard-category-row__icon" aria-hidden="true">{getCategoryIcon(category)}</span>
+    <Link to={section.href || '/categories'} className="dashboard-category-row">
+      <span className="dashboard-category-row__icon" aria-hidden="true">{getNodeIcon(section)}</span>
       <span className="dashboard-category-row__copy">
-        <strong>{category.name}</strong>
-        <small>{getCategorySubtitle(category)}</small>
-        <ProgressBar percent={percent} label={`${category.name} progress`} />
+        <strong>{section.title}</strong>
+        <small>{section.summary}</small>
+        <ProgressBar percent={progress.percent} label={`${section.title} progress`} />
       </span>
-      <span className="dashboard-category-row__percent">{percent}%</span>
+      <span className="dashboard-category-row__percent">{clampPercent(progress.percent)}%</span>
     </Link>
   );
 }
@@ -181,30 +147,100 @@ function PracticeAction({ to, icon, title, description }) {
   );
 }
 
+function LoadingAcademyHome() {
+  return (
+    <div className="learning-dashboard-page dashboard-command-center">
+      <section className="glass dashboard-command-hero" aria-labelledby="dashboard-command-title">
+        <div className="dashboard-command-hero__copy">
+          <p className="eyebrow">Academy home</p>
+          <h1 id="dashboard-command-title">Preparing your learning space…</h1>
+          <p>Loading the academy home view.</p>
+
+          <div className="dashboard-command-hero__progress">
+            <span>Loading</span>
+            <strong>Preparing dashboard</strong>
+            <ProgressBar percent={0} label="Academy home loading" />
+          </div>
+        </div>
+
+        <ProgressRing percent={0} />
+      </section>
+    </div>
+  );
+}
+
+function EmptyAcademyHome({ homeModel }) {
+  const progress = homeModel.progress || emptyProgress;
+  const title = homeModel.title || homeModel.academyNode?.label || 'Academy';
+  const primaryAction = homeModel.continueAction || {
+    href: '/categories',
+    label: 'Check available content'
+  };
+
+  return (
+    <div className="learning-dashboard-page dashboard-command-center">
+      <section className="glass dashboard-command-hero" aria-labelledby="dashboard-command-title">
+        <div className="dashboard-command-hero__copy">
+          <p className="eyebrow">{title} command center</p>
+          <h1 id="dashboard-command-title">Welcome back! 👋</h1>
+          <p>{homeModel.summary}</p>
+
+          <div className="dashboard-command-hero__progress">
+            <span>Academy status</span>
+            <strong>Preparing content</strong>
+            <ProgressBar percent={progress.percent} label={`${title} content progress`} />
+          </div>
+        </div>
+
+        <ProgressRing percent={progress.percent} />
+
+        <div className="dashboard-command-hero__actions">
+          <Link className="btn dashboard-command-primary" to={primaryAction.href}>
+            {primaryAction.label}
+          </Link>
+        </div>
+      </section>
+
+      <section className="dashboard-command-grid" aria-label={`${title} content status`}>
+        <CommandCard
+          eyebrow="Academy content"
+          title={homeModel.emptyState?.title || `${title} is getting ready`}
+          className="dashboard-action-card"
+        >
+          <p>{homeModel.emptyState?.description || 'Learning content will appear here once it is published for this academy.'}</p>
+          <p className="dashboard-empty-note">
+            {homeModel.emptyState?.note || 'Published categories, topics, lessons, and assessments will show here when available.'}
+          </p>
+        </CommandCard>
+
+        <CommandCard
+          eyebrow="Current academy"
+          title={title}
+          className="dashboard-stage-card"
+        >
+          <p>
+            You are viewing the academy assigned to this domain. There is no academy switcher or cross-academy navigation.
+          </p>
+          <SupportButton className="dashboard-support-link" />
+        </CommandCard>
+      </section>
+    </div>
+  );
+}
+
 export default function Home() {
   const { completed, randomCount = 0 } = usePreferences();
-  const [summary, setSummary] = useState(emptySummary);
-  const [categories, setCategories] = useState([]);
-  const [countedCategories, setCountedCategories] = useState([]);
-  const [topics, setTopics] = useState([]);
+  const [homeModel, setHomeModel] = useState(null);
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     let alive = true;
     setLoadingStats(true);
 
-    Promise.all([
-      getDashboardQuestionSummary(completed),
-      getCategoriesWithCounts(completed),
-      getAllTopicsWithCounts(),
-      getCategorySummaries()
-    ])
-      .then(([nextSummary, nextCategories, nextTopics, nextCategorySummaries]) => {
+    getAcademyHomeViewModel({ completed })
+      .then((nextHomeModel) => {
         if (!alive) return;
-        setSummary(nextSummary);
-        setCountedCategories(Array.isArray(nextCategories) ? nextCategories : []);
-        setTopics(Array.isArray(nextTopics) ? nextTopics : []);
-        setCategories(Array.isArray(nextCategorySummaries) ? nextCategorySummaries : []);
+        setHomeModel(nextHomeModel);
       })
       .finally(() => {
         if (alive) setLoadingStats(false);
@@ -213,141 +249,170 @@ export default function Home() {
     return () => { alive = false; };
   }, [completed]);
 
-  const topicCount = categories.reduce((sum, category) => sum + (category.topicCount || 0), 0);
-  const remainingQuestions = Math.max(summary.total - summary.done, 0);
-  const learningStage = buildLearningStage(summary.percent);
+  if (!homeModel) {
+    return <LoadingAcademyHome />;
+  }
 
-  const topicProgressRows = useMemo(() => topics
-    .map((topic) => ({ ...topic, progress: topicProgress(topic, completed) }))
-    .filter((topic) => topic.progress.total > 0), [topics, completed]);
+  const progress = homeModel.progress || emptyProgress;
+  const homeContent = homeModel.homeContent || emptyHomeContent;
+  const remainingQuestions = Math.max(progress.total - progress.done, 0);
+  const topicCount = homeContent.categories.reduce(
+    (sum, category) => sum + (category.topicCount || 0),
+    0
+  );
+  const strongestCategory = [...homeContent.countedCategories]
+    .sort((a, b) => (b.progressPercent || 0) - (a.progressPercent || 0))[0];
 
-  const recommendedStartTopics = useMemo(
-    () => getRecommendedStartTopics(topicProgressRows),
-    [topicProgressRows]
+  const continueSection = getSectionByKind(homeModel, 'continue');
+  const focusSection = getSectionByKind(homeModel, 'focus');
+  const learningPathsSection = getSectionByKind(homeModel, 'learningPaths');
+  const stageSection = getSectionByKind(homeModel, 'stage');
+
+  const focusChildren = getSectionChildren(focusSection);
+  const learningPathChildren = getSectionChildren(learningPathsSection);
+  const nextTopicProgress = continueSection?.progress;
+
+  const randomPracticeAction = homeModel.secondaryActions.find(
+    (action) => action.kind === 'secondary'
+  );
+  const quickStartActions = homeModel.secondaryActions.filter(
+    (action) => action.kind === 'quickStart'
   );
 
-  const nextTopic = useMemo(() => {
-    const unfinished = topicProgressRows.filter((topic) => topic.progress.percent < 100);
-    const activeTopic = [...unfinished]
-      .filter((topic) => topic.progress.done > 0)
-      .sort((a, b) => b.progress.percent - a.progress.percent || a.name.localeCompare(b.name))[0];
-    const recommendedTopic = getRecommendedStartTopics(unfinished, { limit: 1 })[0];
-
-    return activeTopic || recommendedTopic || unfinished[0] || null;
-  }, [topicProgressRows]);
-
-  const weakAreas = useMemo(() => {
-    const lowProgressTopics = [...topicProgressRows]
-      .filter((topic) => topic.progress.percent < 75)
-      .sort((a, b) => a.progress.percent - b.progress.percent || b.progress.total - a.progress.total)
-      .slice(0, 3);
-
-    return lowProgressTopics.length ? lowProgressTopics : recommendedStartTopics.slice(0, 3);
-  }, [recommendedStartTopics, topicProgressRows]);
-
-  const categoryProgressRows = useMemo(() => [...countedCategories]
-    .sort((a, b) => {
-      const progressDelta = Number(b.progressPercent > 0) - Number(a.progressPercent > 0);
-      if (progressDelta !== 0) return progressDelta;
-
-      return (b.quizCount || 0) - (a.quizCount || 0) || a.name.localeCompare(b.name);
-    })
-    .slice(0, 4), [countedCategories]);
-
-  const strongestCategory = useMemo(() => [...countedCategories]
-    .sort((a, b) => (b.progressPercent || 0) - (a.progressPercent || 0))[0], [countedCategories]);
-
-  const nextTopicPath = getTopicLearningPath(nextTopic);
-  const nextTopicLabel = nextTopic ? getTopicDisplayName(nextTopic) : 'Review progress';
-  const nextTopicTitle = nextTopic ? getTopicLearningTitle(nextTopic) : 'All visible topics are complete.';
+  if (!homeModel.hasContent) {
+    return <EmptyAcademyHome homeModel={homeModel} />;
+  }
 
   return (
     <div className="learning-dashboard-page dashboard-command-center">
       <section className="glass dashboard-command-hero" aria-labelledby="dashboard-command-title">
         <div className="dashboard-command-hero__copy">
-          <p className="eyebrow">Learning command center</p>
+          <p className="eyebrow">{homeModel.title} command center</p>
           <h1 id="dashboard-command-title">Welcome back! 👋</h1>
-          <p>Keep your momentum going. Your next useful action is always one tap away.</p>
+          <p>{homeModel.summary}</p>
 
           <div className="dashboard-command-hero__progress">
             <span>Overall progress</span>
-            <strong>{summary.done}/{loadingStats ? '…' : summary.total} questions</strong>
-            <ProgressBar percent={summary.percent} label="Overall dashboard progress" />
+            <strong>{progress.done}/{loadingStats ? '…' : progress.total} questions</strong>
+            <ProgressBar percent={progress.percent} label="Overall dashboard progress" />
           </div>
         </div>
 
-        <ProgressRing percent={summary.percent} />
+        <ProgressRing percent={progress.percent} />
 
         <div className="dashboard-command-hero__actions">
-          <Link className="btn dashboard-command-primary" to={nextTopic ? nextTopicPath : '/progress'}>
-            Continue Learning
+          <Link className="btn dashboard-command-primary" to={homeModel.continueAction.href}>
+            {homeModel.continueAction.label}
           </Link>
-          <Link className="btn ghost dashboard-command-secondary" to="/random">Random Practice</Link>
+          {randomPracticeAction ? (
+            <Link className="btn ghost dashboard-command-secondary" to={randomPracticeAction.href}>
+              {randomPracticeAction.label}
+            </Link>
+          ) : null}
         </div>
       </section>
 
       <section className="dashboard-command-split" aria-label="Recommended dashboard actions">
-        <CommandCard eyebrow="Continue learning" title={nextTopicLabel} className="dashboard-action-card">
-          <p>{nextTopicTitle}</p>
-          {nextTopic ? (
+        <CommandCard
+          eyebrow="Continue learning"
+          title={continueSection?.title || 'Review progress'}
+          className="dashboard-action-card"
+        >
+          <p>{continueSection?.summary || 'All visible topics are complete.'}</p>
+          {nextTopicProgress ? (
             <div className="dashboard-inline-progress">
-              <span>{nextTopic.progress.done}/{nextTopic.progress.total} complete</span>
-              <strong>{nextTopic.progress.percent}%</strong>
-              <ProgressBar percent={nextTopic.progress.percent} label={`${nextTopic.name} progress`} />
+              <span>{getProgressLabel(nextTopicProgress)}</span>
+              <strong>{clampPercent(nextTopicProgress.percent)}%</strong>
+              <ProgressBar
+                percent={nextTopicProgress.percent}
+                label={`${continueSection.title} progress`}
+              />
             </div>
           ) : (
-            <p className="dashboard-empty-note">You have completed the visible question set. Review progress or start random practice.</p>
+            <p className="dashboard-empty-note">
+              You have completed the visible question set. Review progress or start random practice.
+            </p>
           )}
-          <Link className="dashboard-card-link" to={nextTopic ? nextTopicPath : '/progress'}>
-            {nextTopic ? 'Resume topic' : 'Review progress'}
+          <Link className="dashboard-card-link" to={continueSection?.href || '/progress'}>
+            {continueSection?.href ? 'Resume topic' : 'Review progress'}
           </Link>
         </CommandCard>
 
-        <CommandCard eyebrow="Focus areas" title="Weak topics" className="dashboard-action-card">
+        <CommandCard
+          eyebrow="Focus areas"
+          title={focusSection?.title || 'Weak topics'}
+          className="dashboard-action-card"
+        >
           <div className="dashboard-topic-list">
-            {weakAreas.length ? weakAreas.map((topic) => (
-              <TopicProgressRow key={`${topic.category}/${topic.id}`} topic={topic} />
-            )) : <p className="dashboard-empty-note">Start solving questions to unlock focus signals.</p>}
+            {focusChildren.length ? focusChildren.map((section) => (
+              <TopicProgressRow key={section.id} section={section} />
+            )) : (
+              <p className="dashboard-empty-note">Start solving questions to unlock focus signals.</p>
+            )}
           </div>
-          <Link className="dashboard-card-link" to="/categories">View all focus areas</Link>
+          <Link className="dashboard-card-link" to={focusSection?.href || '/categories'}>
+            View all focus areas
+          </Link>
         </CommandCard>
       </section>
 
       <section className="dashboard-command-grid" aria-label="Dashboard learning summary">
         <CommandCard
           eyebrow="Category progress"
-          title="Learning paths"
-          action={<Link to="/categories">View all categories</Link>}
+          title={learningPathsSection?.title || 'Learning paths'}
+          action={<Link to={learningPathsSection?.href || '/categories'}>View all categories</Link>}
           className="dashboard-category-card"
         >
           <div className="dashboard-category-list">
-            {categoryProgressRows.length ? categoryProgressRows.map((category) => (
-              <CategoryProgressRow key={category.id} category={category} />
-            )) : <p className="dashboard-empty-note">Category progress will appear once the question banks finish loading.</p>}
+            {learningPathChildren.length ? learningPathChildren.map((section) => (
+              <CategoryProgressRow key={section.id} section={section} />
+            )) : (
+              <p className="dashboard-empty-note">
+                Category progress will appear once the question banks finish loading.
+              </p>
+            )}
           </div>
         </CommandCard>
 
         <CommandCard eyebrow="Today's practice" title="Quick starts" className="dashboard-practice-card">
           <div className="dashboard-practice-list">
-            <PracticeAction to="/random" icon="🎯" title="Random Question" description="One fresh question from visible banks" />
-            <PracticeAction to="/random" icon="⚡" title="Mixed Quiz" description="Use random mode for mixed practice" />
-            <PracticeAction to="/progress" icon="📈" title="Progress Review" description="Check completed and remaining work" />
+            <PracticeAction
+              to="/random"
+              icon="🎯"
+              title="Random Question"
+              description="One fresh question from visible banks"
+            />
+            {quickStartActions.map((action) => (
+              <PracticeAction
+                key={action.id}
+                to={action.href}
+                icon={action.icon || '↗'}
+                title={action.label}
+                description={action.description || 'Continue practice'}
+              />
+            ))}
           </div>
         </CommandCard>
 
         <CommandCard eyebrow="Quick stats" title="Momentum" className="dashboard-stats-card">
           <div className="dashboard-metric-grid">
-            <MetricTile value={summary.done} label="Completed" helper="visible banks" />
+            <MetricTile value={progress.done} label="Completed" helper="visible banks" />
             <MetricTile value={remainingQuestions} label="Remaining" />
             <MetricTile value={randomCount} label="Random runs" />
             <MetricTile value={topicCount} label="Topic banks" />
           </div>
         </CommandCard>
 
-        <CommandCard eyebrow="Current stage" title={learningStage.label} className="dashboard-stage-card">
-          <p>{learningStage.description}</p>
+        <CommandCard
+          eyebrow="Current stage"
+          title={stageSection?.title || 'Foundation builder'}
+          className="dashboard-stage-card"
+        >
+          <p>
+            {stageSection?.summary || 'Start with high-signal fundamentals and build a steady learning habit.'}
+          </p>
           <ul className="dashboard-stage-list">
-            <li><strong>{categories.length}</strong> categories available.</li>
+            <li><strong>{homeContent.categories.length}</strong> categories available.</li>
             <li><strong>{strongestCategory?.name || 'No category yet'}</strong> is your strongest visible path.</li>
           </ul>
           <SupportButton className="dashboard-support-link" />
