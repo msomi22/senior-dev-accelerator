@@ -1,0 +1,73 @@
+/* =========================================================
+   Decorative elements
+   Owns:
+   - sparkles
+   - foreground plants / flowers / trees
+   - decorative animations
+   ========================================================= */
+
+   .cbc-home-decor-sparkle {
+    position: absolute;
+    z-index: 7;
+    color: #ffd52a;
+    font-size: 23px;
+    animation: cbcHomeTwinkle 2.5s ease-in-out infinite;
+  }
+  
+  .cbc-home-sparkle-a {
+    top: 236px;
+    left: 674px;
+  }
+  
+  .cbc-home-sparkle-b {
+    top: 224px;
+    right: 296px;
+    animation-delay: 0.6s;
+  }
+  
+  .cbc-home-sparkle-c {
+    top: 195px;
+    right: 130px;
+    animation-delay: 1s;
+  }
+  
+  .cbc-home-ground-decor {
+    position: absolute;
+    z-index: 8;
+    pointer-events: none;
+  }
+  
+  /* These are placed on the top scenic hill, not at the bottom of the full page. */
+  .cbc-home-plant-left {
+    left: 10px;
+    top: 345px;
+    bottom: auto;
+    font-size: 64px;
+  }
+  
+  .cbc-home-flower-right {
+    right: 86px;
+    top: 325px;
+    bottom: auto;
+    font-size: 44px;
+  }
+  
+  .cbc-home-tree-right {
+    right: -4px;
+    top: 290px;
+    bottom: auto;
+    font-size: 98px;
+  }
+  
+  @keyframes cbcHomeTwinkle {
+    0%,
+    100% {
+      opacity: 0.65;
+      transform: scale(0.9) rotate(0deg);
+    }
+  
+    50% {
+      opacity: 1;
+      transform: scale(1.18) rotate(9deg);
+    }
+  }

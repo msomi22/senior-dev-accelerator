@@ -1,0 +1,533 @@
+/* =========================================================
+   Learning areas
+   Owns:
+   - learning area panel
+   - section heading
+   - subject cards
+   - subject-card illustrations
+   ========================================================= */
+
+   .cbc-home-learning-area-panel {
+    position: relative;
+    z-index: 6;
+    margin-top: 88px;
+    padding: 20px 30px 18px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.74);
+    box-shadow: 0 16px 34px rgba(67, 124, 61, 0.1);
+    backdrop-filter: blur(6px);
+  }
+  
+  :root[data-theme="dark"] .cbc-home-learning-area-panel {
+    background: rgba(18, 28, 42, 0.72);
+  }
+  
+  .cbc-home-learning-heading-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .cbc-home-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 16px;
+    color: #161b4d;
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 950;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-section-heading {
+    color: var(--cbc-navy);
+  }
+  
+  .cbc-home-heading-icon {
+    font-size: 23px;
+  }
+  
+  .cbc-home-view-all-link {
+    display: none;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-view-all-link {
+    color: #76f5d2;
+  }
+  
+  .cbc-home-view-all-link:hover,
+  .cbc-home-view-all-link:focus-visible {
+    text-decoration: underline;
+  }
+  
+  .cbc-home-view-all-link:focus-visible,
+  .cbc-home-subject-card:focus-visible {
+    outline: 4px solid rgba(255, 212, 55, 0.72);
+    outline-offset: 3px;
+  }
+  
+  .cbc-home-learning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .cbc-home-subject-card {
+    position: relative;
+    min-height: 232px;
+    padding: 20px 22px 14px;
+    border: 2.5px solid currentColor;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #159946;
+    background: #f3ffe6;
+    box-shadow: 0 13px 26px rgba(28, 76, 38, 0.13);
+    transition:
+      transform 170ms ease,
+      box-shadow 170ms ease;
+    isolation: isolate;
+  }
+  
+  .cbc-home-subject-card:hover,
+  .cbc-home-subject-card:focus-visible {
+    transform: translateY(-3px);
+  }
+  
+  .cbc-home-subject-card::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 72px;
+    z-index: 1;
+    background:
+      radial-gradient(ellipse at 5% 100%, rgba(112, 195, 38, 0.7) 0 28%, transparent 29%),
+      radial-gradient(ellipse at 22% 100%, rgba(142, 212, 55, 0.8) 0 30%, transparent 31%),
+      radial-gradient(ellipse at 86% 100%, rgba(103, 190, 49, 0.58) 0 28%, transparent 29%);
+    opacity: 0.85;
+  }
+  
+  .cbc-home-subject-bg-image {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 56%;
+    user-select: none;
+    pointer-events: none;
+  }
+  
+  .cbc-home-subject-card__copy-block {
+    position: relative;
+    z-index: 4;
+  }
+  
+  .cbc-home-subject-card__title {
+    position: relative;
+    z-index: 4;
+    max-width: 13ch;
+    color: currentColor;
+    font-size: 23px;
+    line-height: 1.04;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+  }
+  
+  .cbc-home-subject-card__copy {
+    position: relative;
+    z-index: 4;
+    max-width: 15ch;
+    margin-top: 8px;
+    color: #121a3f;
+    font-size: 14px;
+    line-height: 1.22;
+    font-weight: 850;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-subject-card__copy {
+    color: #e7eefc;
+  }
+  
+  .cbc-home-subject-visual {
+    position: absolute;
+    right: 18px;
+    top: 62px;
+    z-index: 2;
+    width: 102px;
+    height: 96px;
+    pointer-events: none;
+  }
+  
+  .cbc-home-subject-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    user-select: none;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 16px rgba(98, 58, 18, 0.16));
+  }
+  
+  .cbc-home-start-learning {
+    position: relative;
+    z-index: 4;
+    margin-top: auto;
+    min-height: 44px;
+    width: 100%;
+    padding: 0 13px 0 18px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: currentColor;
+    background: #ffffff;
+    box-shadow: 0 9px 19px rgba(45, 73, 52, 0.13);
+    font-size: 15px;
+    font-weight: 950;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-start-learning {
+    background: rgba(255, 255, 255, 0.09);
+  }
+  
+  .cbc-home-start-learning span {
+    display: grid;
+    width: 25px;
+    height: 25px;
+    margin-left: auto;
+    place-items: center;
+    border-radius: 50%;
+    color: #ffffff;
+    background: currentColor;
+    font-size: 21px;
+    line-height: 1;
+  }
+  
+  /* English card */
+  
+  .cbc-home-subject-card--english {
+    color: #159946;
+    background: #f3ffe6;
+  }
+  
+  .cbc-home-subject-card--english::before {
+    content: none;
+  }
+  
+  .cbc-home-subject-card--english::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(245, 255, 235, 0.88) 0%,
+      rgba(245, 255, 235, 0.64) 29%,
+      rgba(245, 255, 235, 0.2) 43%,
+      transparent 64%
+    );
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-bg-image {
+    object-position: center 48%;
+    transform: translateY(-10px) scale(1.03);
+    transform-origin: center;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-card__copy-block {
+    position: relative;
+    z-index: 4;
+    max-width: 170px;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-card__title {
+    color: #159946;
+    font-size: 21px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-card__copy {
+    max-width: 13ch;
+    margin-top: 8px;
+    color: #121a3f;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-start-learning {
+    position: relative;
+    z-index: 4;
+    width: calc(100% - 28px);
+    min-height: 38px;
+    margin: auto auto 0;
+    padding: 0 10px 0 16px;
+    border-radius: 15px;
+    font-size: 14px;
+  }
+  
+  /* Math card */
+  
+  .cbc-home-subject-card--math {
+    color: #2878ff;
+    background: #edf9ff;
+    box-shadow: 0 13px 26px rgba(35, 98, 185, 0.13);
+  }
+  
+  .cbc-home-subject-card--math::before {
+    content: none;
+  }
+  
+  .cbc-home-subject-card--math::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(237, 249, 255, 0.9) 0%,
+      rgba(237, 249, 255, 0.66) 29%,
+      rgba(237, 249, 255, 0.18) 43%,
+      transparent 64%
+    );
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-bg-image {
+    object-position: center 50%;
+    transform: translateY(-8px) scale(1.03);
+    transform-origin: center;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-card__copy-block {
+    position: relative;
+    z-index: 4;
+    max-width: 170px;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-card__title {
+    color: #2878ff;
+    font-size: 21px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-subject-card__copy {
+    max-width: 12ch;
+    margin-top: 8px;
+    color: #121a3f;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  
+  .cbc-home-subject-card--math .cbc-home-start-learning {
+    position: relative;
+    z-index: 4;
+    width: calc(100% - 28px);
+    min-height: 38px;
+    margin: auto auto 0;
+    padding: 0 10px 0 16px;
+    border-radius: 15px;
+    font-size: 14px;
+  }
+  
+  /* Other subject cards */
+  
+  .cbc-home-subject-card--kiswahili {
+    color: #9a4cff;
+    background: #f7ecff;
+    box-shadow: 0 13px 26px rgba(98, 45, 150, 0.13);
+  }
+  
+  .cbc-home-subject-card--environment {
+    color: #ff7b00;
+    background: #fff5d7;
+    box-shadow: 0 13px 26px rgba(180, 92, 0, 0.13);
+  }
+  
+  :root[data-theme="dark"] .cbc-home-subject-card {
+    background: rgba(22, 65, 40, 0.94);
+  }
+  
+  :root[data-theme="dark"] .cbc-home-subject-card--english {
+    background: #f3ffe6;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-subject-card--math {
+    background: #edf9ff;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-subject-card--kiswahili {
+    background: rgba(53, 27, 82, 0.94);
+  }
+  
+  :root[data-theme="dark"] .cbc-home-subject-card--environment {
+    background: rgba(78, 46, 14, 0.94);
+  }
+  
+  /* Subject illustrations */
+  
+  /*
+     Important:
+     Do not set .cbc-home-abc-book, .cbc-home-math-board, etc. to position: relative here.
+     Those classes are applied to the same node as .cbc-home-subject-visual.
+     Setting position: relative would override the absolute positioning above.
+  */
+  
+  /* English and Math now use full-card background images. Disable old CSS-drawn art. */
+  .cbc-home-abc-book::before,
+  .cbc-home-abc-book::after,
+  .cbc-home-math-board::before,
+  .cbc-home-math-board::after {
+    content: none;
+  }
+  
+  .cbc-home-kiswahili-bubbles::before {
+    content: "Hujambo!";
+    position: absolute;
+    right: 0;
+    top: 8px;
+    min-width: 100px;
+    min-height: 40px;
+    border-radius: 20px 20px 20px 3px;
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    background: linear-gradient(135deg, #21c896, #0ba579);
+    box-shadow: 0 12px 20px rgba(17, 136, 109, 0.18);
+    font-size: 15px;
+    font-weight: 950;
+  }
+  
+  .cbc-home-kiswahili-bubbles::after {
+    content: "Nzuri sana!";
+    position: absolute;
+    right: 2px;
+    top: 62px;
+    min-width: 94px;
+    min-height: 36px;
+    border-radius: 18px 18px 4px 18px;
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    background: linear-gradient(135deg, #a35bff, #7860ff);
+    box-shadow: 0 12px 20px rgba(78, 55, 180, 0.16);
+    font-size: 12px;
+    font-weight: 950;
+  }
+  
+  .cbc-home-kiswahili-bird {
+    position: absolute;
+    left: 14px;
+    bottom: 13px;
+    z-index: 4;
+    font-size: 34px;
+  }
+  
+  .cbc-home-world-art::before {
+    content: "🌍";
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 76px;
+    filter: drop-shadow(0 13px 12px rgba(28, 84, 116, 0.15));
+  }
+  
+  .cbc-home-world-art::after {
+    content: "🪣";
+    position: absolute;
+    left: 4px;
+    bottom: 0;
+    font-size: 42px;
+    transform: rotate(-9deg);
+  }
+  
+  .cbc-home-empty-note {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    padding: 1rem;
+    border-radius: 18px;
+    color: #353d73;
+    background: rgba(255, 255, 255, 0.72);
+    font-weight: 850;
+  }
+  
+  :root[data-theme="dark"] .cbc-home-empty-note {
+    color: #c8d5f5;
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  /* =========================================================
+   Dark theme readability fixes
+   Do not change layout here.
+   Keeps scenic English/Math cards readable in dark mode.
+   ========================================================= */
+
+:root[data-theme="dark"] .cbc-home-learning-area-panel {
+  background: rgba(8, 18, 31, 0.72);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-theme="dark"] .cbc-home-section-heading {
+  color: #f7fbff;
+}
+
+:root[data-theme="dark"] .cbc-home-view-all-link {
+  color: #76f5d2;
+}
+
+/* Scenic cards should remain light even inside dark theme */
+:root[data-theme="dark"] .cbc-home-subject-card--english,
+:root[data-theme="dark"] .cbc-home-subject-card--math {
+  background: transparent;
+}
+
+:root[data-theme="dark"] .cbc-home-subject-card--english .cbc-home-subject-card__title {
+  color: #159946;
+}
+
+:root[data-theme="dark"] .cbc-home-subject-card--math .cbc-home-subject-card__title {
+  color: #2878ff;
+}
+
+:root[data-theme="dark"] .cbc-home-subject-card--english .cbc-home-subject-card__copy,
+:root[data-theme="dark"] .cbc-home-subject-card--math .cbc-home-subject-card__copy {
+  color: #121a3f;
+}
+
+/* Keep Start learning buttons white and readable on scenic cards */
+:root[data-theme="dark"] .cbc-home-subject-card--english .cbc-home-start-learning,
+:root[data-theme="dark"] .cbc-home-subject-card--math .cbc-home-start-learning {
+  color: #101648;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+}
+
+:root[data-theme="dark"] .cbc-home-subject-card--english .cbc-home-start-learning span {
+  color: #ffffff;
+  background: #159946;
+}
+
+:root[data-theme="dark"] .cbc-home-subject-card--math .cbc-home-start-learning span {
+  color: #ffffff;
+  background: #2878ff;
+}
+
+/* Keep non-scenic fallback cards dark-friendly */
+:root[data-theme="dark"] .cbc-home-subject-card--kiswahili {
+  color: #c084fc;
+  background: rgba(53, 27, 82, 0.94);
+}
+
+:root[data-theme="dark"] .cbc-home-subject-card--environment {
+  color: #fb923c;
+  background: rgba(78, 46, 14, 0.94);
+}
