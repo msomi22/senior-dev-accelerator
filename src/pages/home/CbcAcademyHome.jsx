@@ -3,8 +3,7 @@ import owlWithBackpackTransparent from '../../assets/academies/cbc/grade-1/home/
 import actionContinueBook from '../../assets/academies/cbc/grade-1/home/action-continue-book.png';
 import actionReadOwlBook from '../../assets/academies/cbc/grade-1/home/action-read-owl-book.png';
 import actionPracticeTarget from '../../assets/academies/cbc/grade-1/home/action-practice-target.png';
-//import subjectEnglishAbcBookNoBg from '../../assets/academies/cbc/grade-1/home/subject-english-abc-book-no-bg.png';
-import subjectEnglishAbcBookNoBg from '../../assets/academies/cbc/grade-1/home/subject-english-abc-book.png';
+import subjectEnglishAbcBook from '../../assets/academies/cbc/grade-1/home/subject-english-abc-book.png';
 import '../../styles/cbc-academy-home.css';
 
 const emptyProgress = {
@@ -21,7 +20,7 @@ const SUBJECT_META = [
     cardClass: 'cbc-home-subject-card--english',
     lessonClass: 'cbc-home-lesson-card--english',
     visualClass: 'cbc-home-abc-book',
-    imageSrc: subjectEnglishAbcBookNoBg,
+    backgroundSrc: subjectEnglishAbcBook,
     lessonIcon: '📗',
     lessonMeta: 'English • 5 min'
   },
@@ -144,14 +143,16 @@ function getTodayLessons({ continueSection, focusChildren, learningAreas }) {
   const seen = new Set();
   const candidates = [continueSection, ...focusChildren, ...learningAreas].filter(Boolean);
 
-  return candidates.filter((section) => {
-    const key = section.id || section.href || section.title;
+  return candidates
+    .filter((section) => {
+      const key = section.id || section.href || section.title;
 
-    if (!key || seen.has(key)) return false;
+      if (!key || seen.has(key)) return false;
 
-    seen.add(key);
-    return true;
-  }).slice(0, 4);
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 4);
 }
 
 function CbcOwlMascot() {
@@ -169,19 +170,19 @@ function CbcOwlMascot() {
 }
 
 function CbcActionCard({ to, title, description, imageSrc, variant }) {
-    return (
-      <Link to={to} className={`cbc-home-action-card ${variant}`.trim()}>
-        <span className="cbc-home-action-card-shine" aria-hidden="true" />
-  
-        <CbcActionIllustration src={imageSrc} />
-  
-        <span className="cbc-home-action-card-copy-wrap">
-          <span className="cbc-home-action-title">{title}</span>
-          <span className="cbc-home-action-copy">{description}</span>
-        </span>
-      </Link>
-    );
-  }
+  return (
+    <Link to={to} className={`cbc-home-action-card ${variant}`.trim()}>
+      <span className="cbc-home-action-card-shine" aria-hidden="true" />
+
+      <CbcActionIllustration src={imageSrc} />
+
+      <span className="cbc-home-action-card-copy-wrap">
+        <span className="cbc-home-action-title">{title}</span>
+        <span className="cbc-home-action-copy">{description}</span>
+      </span>
+    </Link>
+  );
+}
 
 function CbcStarsCard({ progress }) {
   const safeProgress = progress || emptyProgress;
@@ -220,7 +221,17 @@ function CbcLearningAreaCard({ section, index }) {
       to={section.href || '/categories'}
       className={`cbc-home-subject-card ${meta.cardClass}`.trim()}
     >
-      <div>
+      {meta.backgroundSrc ? (
+        <img
+          className="cbc-home-subject-bg-image"
+          src={meta.backgroundSrc}
+          alt=""
+          draggable="false"
+          loading="eager"
+        />
+      ) : null}
+
+      <div className="cbc-home-subject-card__copy-block">
         <div className="cbc-home-subject-card__title">
           {getFriendlySubjectTitle(section, index)}
         </div>
@@ -230,21 +241,23 @@ function CbcLearningAreaCard({ section, index }) {
         </div>
       </div>
 
-      <div className={visualClassName} aria-hidden="true">
-        {meta.imageSrc ? (
-          <img
-            className="cbc-home-subject-image"
-            src={meta.imageSrc}
-            alt=""
-            draggable="false"
-            loading="eager"
-          />
-        ) : null}
+      {!meta.backgroundSrc ? (
+        <div className={visualClassName} aria-hidden="true">
+          {meta.imageSrc ? (
+            <img
+              className="cbc-home-subject-image"
+              src={meta.imageSrc}
+              alt=""
+              draggable="false"
+              loading="eager"
+            />
+          ) : null}
 
-        {!meta.imageSrc && meta.visualClass === 'cbc-home-kiswahili-bubbles' ? (
-          <span className="cbc-home-kiswahili-bird">🐦</span>
-        ) : null}
-      </div>
+          {!meta.imageSrc && meta.visualClass === 'cbc-home-kiswahili-bubbles' ? (
+            <span className="cbc-home-kiswahili-bird">🐦</span>
+          ) : null}
+        </div>
+      ) : null}
 
       <span className="cbc-home-start-learning">
         Start learning <span aria-hidden="true">›</span>
@@ -293,7 +306,7 @@ function CbcEmptyHome({ homeModel }) {
 
         <div className="cbc-home-hero-content">
           <p className="cbc-home-greeting">Hi there, young learner! 👋</p>
-          
+
           <h1 className="cbc-home-hero-title" id="cbc-home-title">
             Ready to <span>learn</span> today?
           </h1>
@@ -303,12 +316,12 @@ function CbcEmptyHome({ homeModel }) {
           </p>
 
           <div className="cbc-home-hero-actions" aria-label="Main learner actions">
-          <CbcActionCard
-            to={primaryAction.href}
-            title="Continue"
-            description="Start your first fun activity"
-            imageSrc={actionContinueBook}
-            variant="cbc-home-action-card--continue"
+            <CbcActionCard
+              to={primaryAction.href}
+              title="Continue"
+              description="Start your first fun activity"
+              imageSrc={actionContinueBook}
+              variant="cbc-home-action-card--continue"
             />
           </div>
         </div>
@@ -375,28 +388,28 @@ export default function CbcAcademyHome({ homeModel, randomCount = 0 }) {
           </p>
 
           <div className="cbc-home-hero-actions" aria-label="Main learner actions">
-          <CbcActionCard
-            to={continueHref}
-            title="Continue"
-            description={continueSection?.summary || 'Pick up where you left off'}
-            imageSrc={actionContinueBook}
-            variant="cbc-home-action-card--continue"
+            <CbcActionCard
+              to={continueHref}
+              title="Continue"
+              description={continueSection?.summary || 'Pick up where you left off'}
+              imageSrc={actionContinueBook}
+              variant="cbc-home-action-card--continue"
             />
 
             <CbcActionCard
-            to={readWithMeHref}
-            title="Read with me"
-            description="Listen and read fun stories"
-            imageSrc={actionReadOwlBook}
-            variant="cbc-home-action-card--read"
+              to={readWithMeHref}
+              title="Read with me"
+              description="Listen and read fun stories"
+              imageSrc={actionReadOwlBook}
+              variant="cbc-home-action-card--read"
             />
 
             <CbcActionCard
-            to="/random"
-            title="Practice"
-            description={randomCount > 0 ? `${randomCount} questions and activities` : 'Try questions and activities'}
-            imageSrc={actionPracticeTarget}
-            variant="cbc-home-action-card--practice"
+              to="/random"
+              title="Practice"
+              description={randomCount > 0 ? `${randomCount} questions and activities` : 'Try questions and activities'}
+              imageSrc={actionPracticeTarget}
+              variant="cbc-home-action-card--practice"
             />
           </div>
         </div>

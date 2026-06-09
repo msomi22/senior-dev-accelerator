@@ -93,6 +93,7 @@
     transition:
       transform 170ms ease,
       box-shadow 170ms ease;
+    isolation: isolate;
   }
   
   .cbc-home-subject-card:hover,
@@ -105,11 +106,29 @@
     position: absolute;
     inset: auto 0 0;
     height: 72px;
+    z-index: 1;
     background:
       radial-gradient(ellipse at 5% 100%, rgba(112, 195, 38, 0.7) 0 28%, transparent 29%),
       radial-gradient(ellipse at 22% 100%, rgba(142, 212, 55, 0.8) 0 30%, transparent 31%),
       radial-gradient(ellipse at 86% 100%, rgba(103, 190, 49, 0.58) 0 28%, transparent 29%);
     opacity: 0.85;
+  }
+  
+  .cbc-home-subject-bg-image {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 56%;
+    user-select: none;
+    pointer-events: none;
+  }
+  
+  .cbc-home-subject-card__copy-block {
+    position: relative;
+    z-index: 4;
   }
   
   .cbc-home-subject-card__title {
@@ -148,15 +167,6 @@
     pointer-events: none;
   }
   
-  /* English now uses a real PNG instead of CSS-drawn art */
-  .cbc-home-subject-card--english .cbc-home-subject-visual {
-    right: 42px;
-    top: 54px;
-    width: 138px;
-    height: 118px;
-    z-index: 2;
-  }
-  
   .cbc-home-subject-image {
     display: block;
     width: 100%;
@@ -192,12 +202,77 @@
   
   .cbc-home-start-learning span {
     display: grid;
-    width: 27px;
-    height: 27px;
+    width: 25px;
+    height: 25px;
+    margin-left: auto;
     place-items: center;
     border-radius: 50%;
     color: #ffffff;
     background: currentColor;
+    font-size: 21px;
+    line-height: 1;
+  }
+  
+  .cbc-home-subject-card--english {
+    color: #159946;
+    background: #f3ffe6;
+  }
+  
+  .cbc-home-subject-card--english::before {
+    content: none;
+  }
+  
+  .cbc-home-subject-card--english::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(245, 255, 235, 0.88) 0%,
+      rgba(245, 255, 235, 0.64) 29%,
+      rgba(245, 255, 235, 0.2) 43%,
+      transparent 64%
+    );
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-bg-image {
+    object-position: center 48%;
+    transform: translateY(-10px) scale(1.03);
+    transform-origin: center;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-card__copy-block {
+    position: relative;
+    z-index: 4;
+    max-width: 170px;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-card__title {
+    color: #159946;
+    font-size: 21px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-subject-card__copy {
+    max-width: 13ch;
+    margin-top: 8px;
+    color: #121a3f;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  
+  .cbc-home-subject-card--english .cbc-home-start-learning {
+    position: relative;
+    z-index: 4;
+    width: calc(100% - 28px);
+    min-height: 38px;
+    margin: auto auto 0;
+    padding: 0 10px 0 16px;
+    border-radius: 15px;
+    font-size: 14px;
   }
   
   .cbc-home-subject-card--math {
@@ -222,6 +297,10 @@
     background: rgba(22, 65, 40, 0.94);
   }
   
+  :root[data-theme="dark"] .cbc-home-subject-card--english {
+    background: #f3ffe6;
+  }
+  
   :root[data-theme="dark"] .cbc-home-subject-card--math {
     background: rgba(18, 50, 84, 0.94);
   }
@@ -243,7 +322,7 @@
      Setting position: relative would override the absolute positioning above.
   */
   
-  /* Disable the old CSS-drawn English book */
+  /* English uses a full-card background image now. Disable old CSS-drawn English art. */
   .cbc-home-abc-book::before,
   .cbc-home-abc-book::after {
     content: none;
