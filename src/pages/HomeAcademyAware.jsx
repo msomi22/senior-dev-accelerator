@@ -17,6 +17,12 @@ import {
 import { usePreferences } from '../hooks/usePreferences.js';
 import SupportButton from '../components/SupportButton.jsx';
 import { getActiveAcademyCatalog } from '../academies/catalog.js';
+import {
+  CBC_ACADEMY_NODE_ID,
+  CUSTOMER_EXPERIENCE_ACADEMY_NODE_ID,
+  TECHNOLOGY_ACADEMY_NODE_ID,
+  getAcademyRootNodeById
+} from '../learning/academies/index.ts';
 
 const emptySummary = { total: 0, done: 0, percent: 0 };
 
@@ -29,6 +35,25 @@ const categoryIconMap = {
   'ml-ai': 'AI',
   'engineering-leadership': '★'
 };
+
+// Temporary bridge:
+// runtime domain config resolves the active academy,
+// while LearningNode owns academy identity and future hierarchy.
+const runtimeAcademyToLearningNodeId = {
+  tech: TECHNOLOGY_ACADEMY_NODE_ID,
+  cbc: CBC_ACADEMY_NODE_ID,
+  'customer-experience': CUSTOMER_EXPERIENCE_ACADEMY_NODE_ID
+};
+
+function getLearningNodeAcademyForRuntimeAcademy(runtimeAcademyId) {
+  const learningNodeId =
+    runtimeAcademyToLearningNodeId[runtimeAcademyId] || TECHNOLOGY_ACADEMY_NODE_ID;
+
+  return (
+    getAcademyRootNodeById(learningNodeId)
+    || getAcademyRootNodeById(TECHNOLOGY_ACADEMY_NODE_ID)
+  );
+}
 
 function getTopicLearningPath(topic) {
   if (!topic?.category || !topic?.id) return '/random';
@@ -80,6 +105,7 @@ function getCategoryIcon(category) {
 
 function getCategorySubtitle(category) {
   if (category?.description) return category.description;
+
   const topicCount = Number(category?.topicCount || 0);
   const quizCount = Number(category?.quizCount || 0);
 
@@ -91,27 +117,34 @@ function ProgressBar({ percent, label }) {
   const safePercent = clampPercent(percent);
 
   return (
-    <div className="dashboard-progress-bar" aria-label={label} role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={safePercent}>
+    <div
+      className="dashboard-progress-bar"
+      aria-label={label}
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow={safePercent}
+    >
       <span style={{ width: `${safePercent}%` }} />
     </div>
   );
 }
 
-function ProgressRing({ percent }) {
+function ProgressRing({ percent, label = 'Overall learning progress', caption = 'Overall' }) {
   const safePercent = clampPercent(percent);
 
   return (
     <div
       className="dashboard-progress-ring"
       role="progressbar"
-      aria-label="Overall learning progress"
+      aria-label={label}
       aria-valuemin="0"
       aria-valuemax="100"
       aria-valuenow={safePercent}
       style={{ '--progress': `${safePercent}%` }}
     >
       <span>{safePercent}%</span>
-      <small>Overall</small>
+      <small>{caption}</small>
     </div>
   );
 }
@@ -182,6 +215,66 @@ function PracticeAction({ to, icon, title, description }) {
   );
 }
 
+function EmptyAcademyHome({
+  academyDisplayName,
+  academyHeroDescription,
+  academyEmptyTitle,
+  academyEmptyDescription
+}) {
+  return (
+    <div className="learning-dashboard-page dashboard-command-center">
+      <section className="glass dashboard-command-hero" aria-labelledby="dashboard-command-title">
+        <div className="dashboard-command-hero__copy">
+          <p className="eyebrow">{academyDisplayName} command center</p>
+          <h1 id="dashboard-command-title">Welcome back! 👋</h1>
+          <p>{academyHeroDescription}</p>
+
+          <div className="dashboard-command-hero__progress">
+            <span>Academy status</span>
+            <strong>Preparing content</strong>
+            <ProgressBar percent={0} label={`${academyDisplayName} content progress`} />
+          </div>
+        </div>
+
+        <ProgressRing
+          percent={0}
+          label={`${academyDisplayName} content readiness`}
+          caption="Ready soon"
+        />
+
+        <div className="dashboard-command-hero__actions">
+          <Link className="btn dashboard-command-primary" to="/categories">
+            Check available content
+          </Link>
+        </div>
+      </section>
+
+      <section className="dashboard-command-grid" aria-label={`${academyDisplayName} content status`}>
+        <CommandCard
+          eyebrow="Academy content"
+          title={academyEmptyTitle}
+          className="dashboard-action-card"
+        >
+          <p>{academyEmptyDescription}</p>
+          <p className="dashboard-empty-note">
+            Published categories, topics, lessons, and assessments will show here when they are connected beneath this academy node.
+          </p>
+        </CommandCard>
+
+        <CommandCard
+          eyebrow="Current academy"
+          title={academyDisplayName}
+          className="dashboard-stage-card"
+        >
+          <p>
+            You are viewing the LearningNode academy assigned to this domain. There is no academy switcher or cross-academy navigation.
+          </p>
+        </CommandCard>
+      </section>
+    </div>
+  );
+}
+
 export default function Home() {
   const { completed, randomCount = 0 } = usePreferences();
   const [summary, setSummary] = useState(emptySummary);
@@ -191,22 +284,33 @@ export default function Home() {
   const [loadingStats, setLoadingStats] = useState(true);
 
   const activeAcademyCatalog = useMemo(() => getActiveAcademyCatalog(), []);
-  const activeAcademy = activeAcademyCatalog.academy;
-  const academyDisplayName = activeAcademy?.displayName || 'Technology Academy';
+  const activeRuntimeAcademy = activeAcademyCatalog.academy;
+  const activeAcademyNode = useMemo(
+    () => getLearningNodeAcademyForRuntimeAcademy(activeRuntimeAcademy?.id),
+    [activeRuntimeAcademy?.id]
+  );
 
-  const academyHeroDescription = activeAcademy?.id === 'tech'
-    ? 'Keep building your engineering skills. Your next useful action is always one tap away.'
-    : `Continue learning in ${academyDisplayName}. Your next useful action is always one tap away.`;
+  const academyDisplayName =
+    activeAcademyNode?.label
+    || activeRuntimeAcademy?.displayName
+    || 'Technology Academy';
+
+  const academySummary =
+    activeAcademyNode?.summary
+    || activeRuntimeAcademy?.description
+    || 'Learning content tailored to this academy.';
 
   const hasAcademyContent =
-  Array.isArray(activeAcademyCatalog?.categories)
-  && activeAcademyCatalog.categories.length > 0;
+    Array.isArray(activeAcademyCatalog?.categories)
+    && activeAcademyCatalog.categories.length > 0;
 
-  const academyEmptyTitle = `${academyDisplayName} content is being prepared`;
+  const academyHeroDescription = activeAcademyNode?.id === TECHNOLOGY_ACADEMY_NODE_ID
+    ? `${academySummary} Your next useful action is always one tap away.`
+    : `${academyDisplayName} is being prepared. ${academySummary}`;
+
+  const academyEmptyTitle = `${academyDisplayName} is getting ready`;
   const academyEmptyDescription =
     'Learning content will appear here once it is published for this academy.';
-
-
 
   useEffect(() => {
     let alive = true;
@@ -258,7 +362,7 @@ export default function Home() {
   const weakAreas = useMemo(() => {
     const lowProgressTopics = [...topicProgressRows]
       .filter((topic) => topic.progress.percent < 75)
-      .sort((a, b) => a.progress.percent - b.progress.percent || b.progress.total - a.progress.total)
+      .sort((a, b) => a.progress.percent - b.progress.total || b.progress.total - a.progress.total)
       .slice(0, 3);
 
     return lowProgressTopics.length ? lowProgressTopics : recommendedStartTopics.slice(0, 3);
@@ -280,54 +384,14 @@ export default function Home() {
   const nextTopicLabel = nextTopic ? getTopicDisplayName(nextTopic) : 'Review progress';
   const nextTopicTitle = nextTopic ? getTopicLearningTitle(nextTopic) : 'All visible topics are complete.';
 
-
   if (!hasAcademyContent) {
     return (
-      <div className="learning-dashboard-page dashboard-command-center">
-        <section className="glass dashboard-command-hero" aria-labelledby="dashboard-command-title">
-          <div className="dashboard-command-hero__copy">
-            <p className="eyebrow">{academyDisplayName} command center</p>
-            <h1 id="dashboard-command-title">Welcome back! 👋</h1>
-            <p>{academyHeroDescription}</p>
-  
-            <div className="dashboard-command-hero__progress">
-              <span>Academy status</span>
-              <strong>Preparing content</strong>
-              <ProgressBar percent={0} label={`${academyDisplayName} content progress`} />
-            </div>
-          </div>
-  
-          <ProgressRing percent={0} />
-  
-          <div className="dashboard-command-hero__actions">
-            <Link className="btn dashboard-command-primary" to="/progress">
-              View Progress
-            </Link>
-            <Link className="btn ghost dashboard-command-secondary" to="/settings">
-              Settings
-            </Link>
-          </div>
-        </section>
-  
-        <section className="dashboard-command-grid" aria-label={`${academyDisplayName} content status`}>
-          <CommandCard
-            eyebrow="Academy content"
-            title={academyEmptyTitle}
-            className="dashboard-action-card"
-          >
-            <p>{academyEmptyDescription}</p>
-            <p className="dashboard-empty-note">
-              This academy is active on its own domain. Published categories, topics, and learning paths will appear here automatically once added to the academy catalog.
-            </p>
-          </CommandCard>
-  
-          <CommandCard eyebrow="Access model" title="Domain-based academy entry" className="dashboard-stage-card">
-            <p>
-              You are viewing {academyDisplayName}. Academy access is controlled by the current domain, not by an academy switcher.
-            </p>
-          </CommandCard>
-        </section>
-      </div>
+      <EmptyAcademyHome
+        academyDisplayName={academyDisplayName}
+        academyHeroDescription={academyHeroDescription}
+        academyEmptyTitle={academyEmptyTitle}
+        academyEmptyDescription={academyEmptyDescription}
+      />
     );
   }
 
@@ -335,12 +399,9 @@ export default function Home() {
     <div className="learning-dashboard-page dashboard-command-center">
       <section className="glass dashboard-command-hero" aria-labelledby="dashboard-command-title">
         <div className="dashboard-command-hero__copy">
-          
           <p className="eyebrow">{academyDisplayName} command center</p>
           <h1 id="dashboard-command-title">Welcome back! 👋</h1>
           <p>{academyHeroDescription}</p>
-          
-
 
           <div className="dashboard-command-hero__progress">
             <span>Overall progress</span>
