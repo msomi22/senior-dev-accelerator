@@ -5,7 +5,7 @@ from google.cloud import texttospeech
 
 # --- 1. Google credentials ---
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
-    "/Users/pmnjeru/Documents/apps/test-copilot/black-overview-499313-b6-1640b07a5728.json"
+    "./black-overview-499313-b6-1640b07a5728.json"
 )
 
 # --- 2. Output folder ---
